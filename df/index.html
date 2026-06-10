@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DF Baseline Geometry Trainer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b0d;--panel:#0d1318;--panel2:#111820;--b1:#1a2530;--b2:#223040;
+  --green:#00ff88;--gdim:#00883a;--gfaint:#001a0d;
+  --amber:#ffb830;--red:#ff4040;--blue:#30aaff;--cyan:#00d4ff;--purple:#cc88ff;
+  --txt:#7aacbc;--txtd:#2a4a5a;--txtb:#c8e4f0;
+  --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--ui);font-size:14px;padding:14px;min-height:100vh}
+/* header */
+.hdr{margin-bottom:12px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.hdr-left .title{font-size:20px;font-weight:700;color:var(--txtb);letter-spacing:.07em;text-transform:uppercase}
+.hdr-left .sub{font-family:var(--mono);font-size:10px;color:var(--txtd);letter-spacing:.07em;margin-top:2px}
+.mode-btns{display:flex;gap:4px}
+.mbtn{background:var(--panel);border:1px solid var(--b2);color:var(--txtd);font-family:var(--ui);
+  font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:6px 14px;cursor:pointer;transition:all .15s}
+.mbtn:hover{color:var(--txt);border-color:var(--b1)}
+.mbtn.act{color:var(--green);border-color:var(--gdim);background:var(--gfaint)}
+/* layout */
+.layout{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.map-wrap{flex:1;min-width:320px;background:var(--panel2);border:1px solid var(--b2);position:relative}
+.map-hdr{background:var(--panel);border-bottom:1px solid var(--b2);padding:8px 12px;
+  display:flex;align-items:center;justify-content:space-between}
+.map-title{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.06em}
+.map-coords{font-family:var(--mono);font-size:10px;color:var(--txtd)}
+canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
+/* sidebar */
+.sidebar{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--panel2);border:1px solid var(--b2);padding:10px 12px}
+.card-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txtd);font-weight:700;margin-bottom:8px;font-family:var(--mono)}
+/* sensor list */
+.sensor-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--b1);font-size:12px}
+.sensor-item:last-child{border-bottom:none}
+.sensor-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.sensor-name{flex:1;font-weight:600;color:var(--txtb)}
+.sensor-lob{font-family:var(--mono);font-size:11px;color:var(--amber)}
+.sensor-del{background:none;border:1px solid #3a1010;color:var(--red);font-size:10px;
+  padding:2px 6px;cursor:pointer;font-family:var(--mono)}
+.sensor-del:hover{background:#1a0808}
+/* fix info */
+.fix-table{width:100%;font-size:12px;border-collapse:collapse}
+.fix-table td{padding:4px 0;border-bottom:1px solid var(--b1)}
+.fix-table td:last-child{font-family:var(--mono);color:var(--amber);text-align:right}
+.fix-table tr:last-child td{border-bottom:none}
+/* cep meter */
+.cep-bar-wrap{margin-top:8px}
+.cep-label{font-size:11px;color:var(--txtd);margin-bottom:4px}
+.cep-bar-bg{height:8px;background:var(--b2);position:relative}
+.cep-bar-fill{height:100%;background:var(--green);transition:width .3s;max-width:100%}
+.cep-val{font-family:var(--mono);font-size:13px;margin-top:4px}
+/* instructions */
+.instr{background:#050e08;border:1px solid #1a4428;padding:10px 12px}
+.instr-hdr{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.04em;margin-bottom:6px;font-family:var(--mono)}
+.instr-body{font-size:12px;color:var(--txt);line-height:1.65}
+.instr-body strong{color:var(--amber)}
+.instr-body em{color:var(--cyan)}
+/* buttons */
+.btn{background:var(--panel);border:1px solid var(--b2);color:var(--txt);font-family:var(--ui);
+  font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;width:100%;margin-top:6px;
+  letter-spacing:.04em;text-transform:uppercase;transition:all .15s}
+.btn:hover{border-color:var(--gdim);color:var(--green)}
+.btn.danger{border-color:#3a1010;color:var(--red)}
+.btn.danger:hover{background:#1a0808}
+/* quiz overlay */
+.quiz-banner{background:#0a1218;border:1px solid var(--b2);padding:8px 12px;font-size:12px;line-height:1.6;color:var(--txt);margin-bottom:8px}
+.quiz-banner strong{color:var(--amber)}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;padding:6px 0}
+.leg-item{display:flex;align-items:center;gap:5px}
+.leg-swatch{width:14px;height:3px}
+/* tooltip */
+#tooltip{position:fixed;background:#0d1318;border:1px solid var(--b2);padding:6px 10px;
+  font-family:var(--mono);font-size:10px;color:var(--amber);pointer-events:none;display:none;z-index:100;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="title">Direction Finding — Baseline Geometry Trainer</div>
+    <div class="sub">112-17E10F09  ·  LSA 2 — DIRECTION FINDING  ·  Click map to place sensors · Right-click to set emitter position</div>
+  </div>
+  <div class="mode-btns">
+    <button class="mbtn act" onclick="setMode('free')" id="btn-free">Free Build</button>
+    <button class="mbtn" onclick="setMode('concave')" id="btn-concave">Concave Demo</button>
+    <button class="mbtn" onclick="setMode('convex')" id="btn-convex">Convex Demo</button>
+    <button class="mbtn" onclick="setMode('quiz')" id="btn-quiz">Quiz Mode</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- MAP -->
+  <div class="map-wrap">
+    <div class="map-hdr">
+      <span class="map-title">TACTICAL MAP — GRID REFERENCE DISPLAY</span>
+      <span class="map-coords" id="coords">Hover for grid coords</span>
+    </div>
+    <canvas id="mapCanvas" height="520"></canvas>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Instructions -->
+    <div class="instr" id="instrBox">
+      <div class="instr-hdr">▶ HOW TO USE</div>
+      <div class="instr-body" id="instrText">
+        <strong>Left-click</strong> on the map to place a DF sensor (up to 4).<br><br>
+        <strong>Right-click</strong> to place the emitter (the target you're trying to locate).<br><br>
+        Each sensor generates a <em>Line of Bearing (LOB)</em> toward the emitter with realistic angular error.<br><br>
+        Watch how <strong>LOB → Cut → Fix</strong> accuracy improves as you add sensors. The <em>CEP circle</em> shrinks with each addition.<br><br>
+        Try the <strong>Concave</strong> and <strong>Convex</strong> demo modes to see how baseline shape affects accuracy.
+      </div>
+    </div>
+
+    <!-- Mode banner (quiz) -->
+    <div class="quiz-banner" id="quizBanner" style="display:none">
+      <strong id="quizQ">Question text</strong><br>
+      <span id="quizHint" style="color:var(--cyan)"></span>
+    </div>
+
+    <!-- Sensors -->
+    <div class="card">
+      <div class="card-title">DF Sensors <span style="color:var(--txtd);font-size:9px">(max 4)</span></div>
+      <div id="sensorList"><div style="color:var(--txtd);font-size:12px;font-style:italic">No sensors placed yet</div></div>
+      <button class="btn danger" onclick="clearSensors()" style="margin-top:8px">Clear All Sensors</button>
+    </div>
+
+    <!-- Fix Data -->
+    <div class="card">
+      <div class="card-title">Geolocation Data</div>
+      <table class="fix-table">
+        <tr><td style="color:var(--txtd)">Method</td><td id="fixMethod" style="color:var(--green)">—</td></tr>
+        <tr><td style="color:var(--txtd)">Sensors active</td><td id="fixSensors">0</td></tr>
+        <tr><td style="color:var(--txtd)">Baseline dist</td><td id="fixBaseline">—</td></tr>
+        <tr><td style="color:var(--txtd)">Fix quality</td><td id="fixQuality" style="color:var(--amber)">—</td></tr>
+        <tr><td style="color:var(--txtd)">CEP radius</td><td id="fixCEP">—</td></tr>
+        <tr><td style="color:var(--txtd)">Emitter grid</td><td id="fixGrid">—</td></tr>
+      </table>
+      <div class="cep-bar-wrap">
+        <div class="cep-label">Fix precision (wider CEP = less precise)</div>
+        <div class="cep-bar-bg"><div class="cep-bar-fill" id="cepBar" style="width:0%"></div></div>
+        <div class="cep-val" id="cepVal" style="color:var(--green)">—</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="card">
+      <div class="card-title">Legend</div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-swatch" style="background:#ffb830"></div><span>LOB (single bearing)</span></div>
+        <div class="leg-item"><div class="leg-swatch" style="background:#00ff88"></div><span>Cut (2-sensor fix)</span></div>
+        <div class="leg-item"><div class="leg-swatch" style="background:#30aaff"></div><span>Fix (3+ sensors)</span></div>
+        <div class="leg-item"><div class="leg-swatch" style="background:#cc88ff;height:1px;border:1px dashed #cc88ff"></div><span>CEP circle</span></div>
+        <div class="leg-item"><div style="width:14px;height:14px;background:#ff4040;border-radius:50%;opacity:.7"></div><span>Emitter</span></div>
+        <div class="leg-item"><div style="width:14px;height:14px;background:#00d4ff;border-radius:50%"></div><span>DF Sensor</span></div>
+      </div>
+    </div>
+
+    <!-- Quiz answer -->
+    <div class="card" id="quizAnswerCard" style="display:none">
+      <div class="card-title">Answer</div>
+      <div id="quizAnswer" style="font-size:12px;color:var(--txt);line-height:1.6"></div>
+      <button class="btn" onclick="nextQuizQ()" style="margin-top:8px">Next Question →</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+'use strict';
+
+/* ── CONFIG ─────────────────────────────────────── */
+const SENSOR_COLORS = ['#00d4ff','#ff8800','#cc88ff','#00ff88'];
+const SENSOR_NAMES  = ['SENSOR ALPHA','SENSOR BRAVO','SENSOR CHARLIE','SENSOR DELTA'];
+const MAP_SIZE = 520; // canvas logical size (we'll scale)
+const GRID_CELLS = 10;
+
+let mode = 'free';
+let sensors = [];   // {x,y,color,name,lob,errorDeg}
+let emitter = null; // {x,y}
+let errorMult = 1.0;
+
+/* ── CANVAS SETUP ────────────────────────────────── */
+const canvas = document.getElementById('mapCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const w = canvas.parentElement.clientWidth;
+  canvas.width  = w;
+  canvas.height = Math.round(w * 520/700);
+  draw();
+}
+new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+setTimeout(resizeCanvas, 50);
+
+function scale() { return canvas.width / 700; }
+
+/* ── COORD HELPERS ───────────────────────────────── */
+function canvasToGrid(cx, cy) {
+  const s = scale();
+  const gx = Math.round((cx/s / 700) * 100);
+  const gy = Math.round((cy/s / (520*700/700)) * 100);
+  return { gx, gy };
+}
+
+function gridLabel(cx, cy) {
+  const { gx, gy } = canvasToGrid(cx, cy);
+  return `${String(gx).padStart(2,'0')}${String(gy).padStart(2,'0')}`;
+}
+
+/* ── MOUSE ───────────────────────────────────────── */
+canvas.addEventListener('contextmenu', e => { e.preventDefault(); });
+
+canvas.addEventListener('click', e => {
+  if(mode === 'quiz') return;
+  const r = canvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
+  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
+  if(sensors.length < 4) {
+    const idx = sensors.length;
+    const errorDeg = 3 + Math.random() * 5; // 3–8° realistic LOB error
+    sensors.push({ x, y, color: SENSOR_COLORS[idx], name: SENSOR_NAMES[idx], lob: null, errorDeg });
+    computeLOBs();
+    updateSidebar();
+    draw();
+  }
+});
+
+canvas.addEventListener('contextmenu', e => {
+  if(mode === 'quiz') return;
+  const r = canvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
+  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
+  emitter = { x, y };
+  computeLOBs();
+  updateSidebar();
+  draw();
+});
+
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
+  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
+  document.getElementById('coords').textContent = `GRID: ${gridLabel(x,y)}`;
+  const tt = document.getElementById('tooltip');
+  tt.style.left = (e.clientX + 14) + 'px';
+  tt.style.top  = (e.clientY + 14) + 'px';
+
+  // Hover over sensor?
+  let hover = null;
+  sensors.forEach((s,i) => {
+    const dist = Math.hypot(x - s.x, y - s.y);
+    if(dist < 18) hover = s;
+  });
+  if(hover && hover.lob !== null) {
+    tt.style.display = 'block';
+    tt.innerHTML = `${hover.name}<br>LOB: ${hover.lob.toFixed(1)}°T<br>Error: ±${hover.errorDeg.toFixed(1)}°`;
+  } else {
+    tt.style.display = 'none';
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  document.getElementById('tooltip').style.display = 'none';
+});
+
+/* ── LOB COMPUTATION ─────────────────────────────── */
+function computeLOBs() {
+  if(!emitter) return;
+  sensors.forEach(s => {
+    const trueAz = Math.atan2(emitter.x - s.x, -(emitter.y - s.y)) * 180 / Math.PI;
+    const az = ((trueAz + 360) % 360);
+    // Add realistic error
+    const err = (Math.random() - 0.5) * 2 * s.errorDeg * errorMult;
+    s.lob = (az + err + 360) % 360;
+    s.trueLob = az;
+  });
+}
+
+/* ── INTERSECTION HELPERS ────────────────────────── */
+function lobToLine(s) {
+  // Bearing β: 0°=north(up), 90°=east(right)
+  // Canvas: +x=right, +y=DOWN, so north = negative Y
+  // dx = sin(β),  dy = -cos(β)
+  const b = s.lob * Math.PI / 180;
+  return { px: s.x, py: s.y, dx: Math.sin(b), dy: -Math.cos(b) };
+}
+
+function lineIntersect(l1, l2) {
+  // Solve: l1.p + t*l1.d = l2.p + u*l2.d
+  const dx = l2.px - l1.px, dy = l2.py - l1.py;
+  const det = l1.dx * l2.dy - l1.dy * l2.dx;
+  if(Math.abs(det) < 0.0001) return null;
+  const t = (dx * l2.dy - dy * l2.dx) / det;
+  if(t < 0) return null; // Behind sensor
+  return { x: l1.px + t * l1.dx, y: l1.py + t * l1.dy };
+}
+
+function computeFixPoint() {
+  if(sensors.length < 2) return null;
+  const pts = [];
+  for(let i = 0; i < sensors.length; i++){
+    for(let j = i+1; j < sensors.length; j++){
+      const pt = lineIntersect(lobToLine(sensors[i]), lobToLine(sensors[j]));
+      if(pt) pts.push(pt);
+    }
+  }
+  if(!pts.length) return null;
+  const cx = pts.reduce((a,p) => a+p.x, 0) / pts.length;
+  const cy = pts.reduce((a,p) => a+p.y, 0) / pts.length;
+  // CEP = mean distance from centroid to all intersection points
+  const cep = pts.reduce((a,p) => a + Math.hypot(p.x-cx, p.y-cy), 0) / pts.length;
+  return { x: cx, y: cy, cep, pts };
+}
+
+function baselineDistance() {
+  if(sensors.length < 2) return 0;
+  let maxDist = 0;
+  for(let i=0;i<sensors.length;i++){
+    for(let j=i+1;j<sensors.length;j++){
+      const d = Math.hypot(sensors[i].x-sensors[j].x, sensors[i].y-sensors[j].y);
+      if(d > maxDist) maxDist = d;
+    }
+  }
+  // Scale to km: 700px = 30km
+  return maxDist / 700 * 30;
+}
+
+/* ── SIDEBAR UPDATE ──────────────────────────────── */
+function updateSidebar() {
+  const sl = document.getElementById('sensorList');
+  if(!sensors.length) {
+    sl.innerHTML = '<div style="color:var(--txtd);font-size:12px;font-style:italic">No sensors placed yet</div>';
+  } else {
+    sl.innerHTML = sensors.map((s,i) => `
+      <div class="sensor-item">
+        <div class="sensor-dot" style="background:${s.color}"></div>
+        <span class="sensor-name">${s.name}</span>
+        <span class="sensor-lob">${s.lob !== null ? s.lob.toFixed(1)+'°T' : '—'}</span>
+        <button class="sensor-del" onclick="removeSensor(${i})">×</button>
+      </div>`).join('');
+  }
+
+  const n = sensors.length;
+  let method = '—', quality = '—', cepText = '—', cepPct = 0, color = 'var(--txtd)';
+  const fix = computeFixPoint();
+  const baseline = baselineDistance();
+
+  if(n === 0) { method = 'No sensors'; }
+  else if(n === 1) {
+    method = 'LOB only';
+    quality = 'Approximate direction only';
+    cepText = 'N/A — single sensor';
+    color = 'var(--amber)';
+  } else if(n === 2) {
+    method = 'CUT (2-sensor)';
+    quality = fix ? 'General location — moderate accuracy' : 'LOBs parallel — no cut';
+    cepText = fix ? (fix.cep/700*30).toFixed(1)+' km' : '—';
+    cepPct = fix ? Math.max(10, 100 - (fix.cep/150)*60) : 0;
+    color = 'var(--amber)';
+  } else if(n >= 3) {
+    method = 'FIX (' + n + '-sensor)';
+    quality = fix && fix.cep < 30 ? 'Precise fix — targetable' : fix ? 'Good fix — usable' : 'Poor geometry';
+    cepText = fix ? (fix.cep/700*30).toFixed(2)+' km' : '—';
+    cepPct = fix ? Math.max(5, 100 - (fix.cep/80)*70) : 0;
+    color = fix && fix.cep < 30 ? 'var(--green)' : 'var(--amber)';
+  }
+
+  document.getElementById('fixMethod').textContent = method;
+  document.getElementById('fixMethod').style.color = color;
+  document.getElementById('fixSensors').textContent = n;
+  document.getElementById('fixBaseline').textContent = baseline > 0 ? baseline.toFixed(1)+' km' : '—';
+  document.getElementById('fixQuality').textContent = quality;
+  document.getElementById('fixCEP').textContent = cepText;
+  document.getElementById('cepBar').style.width = cepPct + '%';
+  document.getElementById('cepBar').style.background = n >= 3 ? 'var(--green)' : n === 2 ? 'var(--amber)' : 'var(--red)';
+  document.getElementById('cepVal').textContent = cepText;
+  document.getElementById('cepVal').style.color = color;
+
+  if(emitter) {
+    document.getElementById('fixGrid').textContent = gridLabel(emitter.x, emitter.y);
+  } else {
+    document.getElementById('fixGrid').textContent = 'Right-click to set';
+  }
+}
+
+function removeSensor(i) {
+  sensors.splice(i, 1);
+  // Re-assign colors/names
+  sensors.forEach((s,j) => { s.color = SENSOR_COLORS[j]; s.name = SENSOR_NAMES[j]; });
+  computeLOBs();
+  updateSidebar();
+  draw();
+}
+
+function clearSensors() {
+  sensors = [];
+  emitter = null;
+  updateSidebar();
+  draw();
+}
+
+/* ── DRAW ────────────────────────────────────────── */
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  const s = scale();
+  const LW = 700, LH = 700 * H / W; // logical width/height
+  ctx.save();
+  ctx.scale(s, s);
+
+  // Background — terrain-like dark green
+  const bgGrad = ctx.createLinearGradient(0, 0, LW, LH);
+  bgGrad.addColorStop(0, '#060d0a');
+  bgGrad.addColorStop(1, '#050a08');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, LW, LH);
+
+  // Terrain texture patches
+  ctx.fillStyle = 'rgba(20,40,25,0.4)';
+  [[120,80,180,120],[300,200,120,90],[500,300,160,100],[80,350,140,80],[420,100,100,60]].forEach(([x,y,w,h]) => {
+    ctx.beginPath(); ctx.ellipse(x,y,w,h,0.3,0,Math.PI*2); ctx.fill();
+  });
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,255,136,0.06)';
+  ctx.lineWidth = 0.5;
+  for(let i=0;i<=GRID_CELLS;i++){
+    const gx = i/GRID_CELLS * LW, gy = i/GRID_CELLS * LH;
+    ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,LH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(LW,gy); ctx.stroke();
+  }
+  // Grid labels
+  ctx.fillStyle = 'rgba(0,255,136,0.18)';
+  ctx.font = '9px Share Tech Mono';
+  for(let i=0;i<GRID_CELLS;i++){
+    const gx = (i/GRID_CELLS + 0.5/GRID_CELLS) * LW;
+    const gy = (i/GRID_CELLS + 0.5/GRID_CELLS) * LH;
+    ctx.fillText(String(i*10).padStart(2,'0'), gx-7, LH-4);
+    ctx.fillText(String(i*10).padStart(2,'0'), 2, gy+3);
+  }
+
+  // Road/feature details
+  ctx.strokeStyle = 'rgba(120,100,60,0.25)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0,300); ctx.bezierCurveTo(200,280,400,320,LW,280); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(350,0); ctx.bezierCurveTo(360,150,340,300,350,LH); ctx.stroke();
+
+  // Water feature
+  ctx.fillStyle = 'rgba(20,60,80,0.4)';
+  ctx.beginPath(); ctx.ellipse(560,420,60,30,0.2,0,Math.PI*2); ctx.fill();
+
+  // ─── LOBs ───
+  const fix = computeFixPoint();
+
+  sensors.forEach((sen, idx) => {
+    if(sen.lob === null) return;
+    // Bearing β: dx=sin(β), dy=-cos(β)  (canvas +y is down, north = -y)
+    const b = sen.lob * Math.PI / 180;
+    const dx = Math.sin(b), dy = -Math.cos(b);
+    const len = 1200;
+    const ex = sen.x + dx * len;
+    const ey = sen.y + dy * len;
+
+    let lobColor;
+    if(sensors.length === 1) lobColor = '#ffb830';
+    else if(sensors.length === 2) lobColor = '#00ff88';
+    else lobColor = '#30aaff';
+
+    // LOB line
+    ctx.beginPath();
+    ctx.strokeStyle = lobColor + '99';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([8, 4]);
+    ctx.moveTo(sen.x, sen.y);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Error cone (subtle) — rotate ±errorDeg around the bearing
+    if(sen.errorDeg) {
+      const errRad = sen.errorDeg * Math.PI / 180;
+      const b1 = b - errRad, b2 = b + errRad;
+      ctx.beginPath();
+      ctx.moveTo(sen.x, sen.y);
+      ctx.lineTo(sen.x + Math.sin(b1)*600, sen.y - Math.cos(b1)*600);
+      ctx.lineTo(sen.x + Math.sin(b2)*600, sen.y - Math.cos(b2)*600);
+      ctx.closePath();
+      ctx.fillStyle = lobColor + '0f';
+      ctx.fill();
+    }
+
+    // LOB bearing label — position it partway along the line
+    const lx = sen.x + dx * 120;
+    const ly = sen.y + dy * 120;
+    ctx.font = 'bold 10px Share Tech Mono';
+    ctx.fillStyle = lobColor + 'cc';
+    ctx.fillText(sen.lob.toFixed(1)+'°', lx+5, ly-4);
+  });
+
+  // ─── CEP CIRCLE ───
+  if(fix && sensors.length >= 2) {
+    // Draw all intersection points
+    fix.pts.forEach(pt => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,184,48,0.5)';
+      ctx.fill();
+    });
+
+    // CEP circle
+    ctx.beginPath();
+    ctx.arc(fix.x, fix.y, fix.cep, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(204,136,255,0.6)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // CEP fill
+    ctx.beginPath();
+    ctx.arc(fix.x, fix.y, fix.cep, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(204,136,255,0.06)';
+    ctx.fill();
+
+    // Fix center mark
+    ctx.beginPath();
+    ctx.arc(fix.x, fix.y, 6, 0, Math.PI*2);
+    ctx.fillStyle = sensors.length >= 3 ? '#30aaff88' : '#00ff8888';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(fix.x, fix.y, 6, 0, Math.PI*2);
+    ctx.strokeStyle = sensors.length >= 3 ? '#30aaff' : '#00ff88';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // CEP label
+    const cepKm = (fix.cep/700*30).toFixed(1);
+    ctx.font = '10px Share Tech Mono';
+    ctx.fillStyle = '#cc88ffcc';
+    ctx.fillText(`CEP ~${cepKm} km`, fix.x + fix.cep + 4, fix.y);
+  }
+
+  // ─── EMITTER ───
+  if(emitter) {
+    // Pulse rings
+    const pulse = (Date.now() % 2000) / 2000;
+    [0, 0.33, 0.66].forEach(offset => {
+      const r = ((pulse + offset) % 1) * 35;
+      const alpha = 1 - ((pulse + offset) % 1);
+      ctx.beginPath();
+      ctx.arc(emitter.x, emitter.y, r, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(255,64,64,${alpha*0.5})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+    // Core
+    ctx.beginPath();
+    ctx.arc(emitter.x, emitter.y, 8, 0, Math.PI*2);
+    ctx.fillStyle = '#ff4040dd';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(emitter.x, emitter.y, 8, 0, Math.PI*2);
+    ctx.strokeStyle = '#ff8080';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Label
+    ctx.font = 'bold 10px Share Tech Mono';
+    ctx.fillStyle = '#ff6060';
+    ctx.fillText('EMITTER', emitter.x + 12, emitter.y - 6);
+    ctx.fillStyle = '#ff4040aa';
+    ctx.fillText(gridLabel(emitter.x, emitter.y), emitter.x + 12, emitter.y + 6);
+  }
+
+  // ─── SENSORS ───
+  sensors.forEach((s, i) => {
+    // Sensor body
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 10, 0, Math.PI*2);
+    ctx.fillStyle = s.color + '33';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 10, 0, Math.PI*2);
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Letter label
+    ctx.font = 'bold 11px Share Tech Mono';
+    ctx.fillStyle = s.color;
+    ctx.textAlign = 'center';
+    ctx.fillText('ΑΒΓΔ'[i], s.x, s.y + 4);
+    ctx.textAlign = 'left';
+    // Name label
+    ctx.font = '9px Share Tech Mono';
+    ctx.fillStyle = s.color + 'cc';
+    ctx.fillText(s.name, s.x + 14, s.y - 4);
+    ctx.fillStyle = s.color + '88';
+    ctx.fillText(gridLabel(s.x, s.y), s.x + 14, s.y + 6);
+  });
+
+  // ─── NORTH ARROW ───
+  ctx.save();
+  ctx.translate(LW - 30, 30);
+  ctx.strokeStyle = 'rgba(0,255,136,0.5)';
+  ctx.fillStyle = 'rgba(0,255,136,0.7)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0,-15); ctx.lineTo(5,5); ctx.lineTo(0,0); ctx.lineTo(-5,5); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  ctx.font = '9px Share Tech Mono';
+  ctx.fillStyle = 'rgba(0,255,136,0.6)';
+  ctx.textAlign = 'center';
+  ctx.fillText('N', 0, -18);
+  ctx.textAlign = 'left';
+  ctx.restore();
+
+  // Scale bar
+  ctx.strokeStyle = 'rgba(0,255,136,0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(20, LH-15); ctx.lineTo(20+700/30*5, LH-15); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(20, LH-12); ctx.lineTo(20, LH-18); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(20+700/30*5, LH-12); ctx.lineTo(20+700/30*5, LH-18); ctx.stroke();
+  ctx.font = '9px Share Tech Mono';
+  ctx.fillStyle = 'rgba(0,255,136,0.5)';
+  ctx.fillText('5 km', 20+700/30*5+4, LH-12);
+
+  ctx.restore();
+}
+
+/* ── ANIMATION LOOP (for emitter pulse) ─────────── */
+function animLoop() { draw(); requestAnimationFrame(animLoop); }
+requestAnimationFrame(animLoop);
+
+/* ── MODE MANAGEMENT ─────────────────────────────── */
+function setMode(m) {
+  mode = m;
+  ['free','concave','convex','quiz'].forEach(id => {
+    document.getElementById('btn-'+id).classList.toggle('act', id === m);
+  });
+  document.getElementById('quizBanner').style.display = m === 'quiz' ? 'block' : 'none';
+  document.getElementById('quizAnswerCard').style.display = 'none';
+
+  sensors = []; emitter = null;
+
+  if(m === 'concave') loadConcave();
+  else if(m === 'convex') loadConvex();
+  else if(m === 'quiz') startQuiz();
+  else {
+    document.getElementById('instrText').innerHTML = `
+      <strong>Left-click</strong> to place a DF sensor (up to 4).<br><br>
+      <strong>Right-click</strong> to place the emitter target.<br><br>
+      Watch how <strong>LOB → Cut → Fix</strong> accuracy changes as you add sensors and move them around.<br><br>
+      Try spreading sensors far apart, then close together — observe the CEP difference.`;
+  }
+  computeLOBs();
+  updateSidebar();
+}
+
+function loadConcave() {
+  // Sensors arc concave toward emitter (bowed toward target)
+  emitter = { x: 500, y: 120 };
+  sensors = [
+    { x:100, y:300, color:SENSOR_COLORS[0], name:SENSOR_NAMES[0], lob:null, errorDeg:4 },
+    { x:240, y:340, color:SENSOR_COLORS[1], name:SENSOR_NAMES[1], lob:null, errorDeg:4 },
+    { x:400, y:350, color:SENSOR_COLORS[2], name:SENSOR_NAMES[2], lob:null, errorDeg:4 },
+    { x:560, y:320, color:SENSOR_COLORS[3], name:SENSOR_NAMES[3], lob:null, errorDeg:4 },
+  ];
+  computeLOBs();
+  document.getElementById('instrText').innerHTML = `
+    <strong>Concave Baseline</strong><br><br>
+    Sensors arc <em>toward</em> the expected target area. This creates:<br><br>
+    • Compact, narrow but <strong>deep</strong> target zone<br>
+    • Excellent accuracy at <em>short ranges</em><br>
+    • Satisfactory bearings at longer ranges<br><br>
+    Notice the CEP is elongated along the radial axis — good lateral precision, less depth precision.`;
+}
+
+function loadConvex() {
+  // Sensors arc convex (bowed away from target)
+  emitter = { x: 350, y: 150 };
+  sensors = [
+    { x:80,  y:200, color:SENSOR_COLORS[0], name:SENSOR_NAMES[0], lob:null, errorDeg:4 },
+    { x:280, y:420, color:SENSOR_COLORS[1], name:SENSOR_NAMES[1], lob:null, errorDeg:4 },
+    { x:480, y:420, color:SENSOR_COLORS[2], name:SENSOR_NAMES[2], lob:null, errorDeg:4 },
+    { x:620, y:200, color:SENSOR_COLORS[3], name:SENSOR_NAMES[3], lob:null, errorDeg:4 },
+  ];
+  computeLOBs();
+  document.getElementById('instrText').innerHTML = `
+    <strong>Convex Baseline</strong><br><br>
+    Sensors arc <em>away</em> from the target area. This creates:<br><br>
+    • Reasonable azimuth angles over a <strong>wide front</strong><br>
+    • Satisfies the average tactical/strategic situation<br>
+    • Better all-around coverage<br><br>
+    Compare the CEP size here vs the concave demo. The convex baseline provides more even accuracy across a wider area.`;
+}
+
+/* ── QUIZ MODE ───────────────────────────────────── */
+const QUIZ_QS = [
+  {
+    q: 'Place sensors so that a CUT is established on the emitter. What is the minimum number of sensors needed for a Cut?',
+    hint: 'Right-click to place emitter first, then left-click to add sensors one at a time.',
+    setup: () => { emitter = {x:400, y:180}; },
+    check: () => sensors.length >= 2,
+    answer: 'A <strong>Cut</strong> requires exactly <strong>2 sensors</strong>. Two LOBs intersect to give a general location. It\'s more accurate than a single LOB but still has significant error — the intersection is a point but both LOBs carry angular error, producing an uncertainty area.'
+  },
+  {
+    q: 'Place sensors in a CONCAVE arrangement around the emitter and observe the CEP shape.',
+    hint: 'Place sensors in an arc that curves TOWARD the emitter (like a bowl facing the emitter). Right-click to set emitter first.',
+    setup: () => { emitter = {x:450, y:140}; },
+    check: () => sensors.length >= 3,
+    answer: 'A <strong>concave baseline</strong> curves toward the expected target area. It produces a narrow but deep target zone — excellent triangulation at short ranges, satisfactory bearings at longer ranges. The CEP is elongated radially (deep) but narrow laterally.'
+  },
+  {
+    q: 'Place 4 sensors and observe the difference in CEP compared to 2 or 3 sensors. Why does adding sensors improve accuracy?',
+    hint: 'Add sensors one at a time and watch the CEP circle change after each addition.',
+    setup: () => { emitter = {x:380, y:200}; },
+    check: () => sensors.length >= 4,
+    answer: 'More sensors create <strong>more intersection points</strong>. With 2 sensors you get 1 intersection. With 3 you get 3 intersections. With 4 you get 6 intersections. The centroid of all intersections is closer to the true emitter location, and the CEP radius shrinks. This is why a DF <strong>network</strong> outperforms a single LOB every time.'
+  },
+  {
+    q: 'Place sensors very close together (tight cluster) vs spread far apart. What happens to the CEP?',
+    hint: 'First place 3 sensors close together, note the CEP. Then clear and place 3 sensors spread widely.',
+    setup: () => { emitter = {x:400, y:200}; },
+    check: () => sensors.length >= 2,
+    answer: 'When sensors are <strong>spread far apart</strong>, the LOBs intersect at sharper angles — producing a smaller, tighter CEP. When sensors are <strong>clustered together</strong>, the LOBs are nearly parallel and intersect at shallow angles — producing a large, elongated CEP. This is why <strong>baseline distance matters</strong>: the DF network can effectively locate a transmitter at a depth equal to its baseline distance.'
+  },
+];
+let quizIdx = 0;
+function startQuiz() {
+  quizIdx = 0;
+  loadQuizQ();
+}
+function loadQuizQ() {
+  const q = QUIZ_QS[quizIdx % QUIZ_QS.length];
+  document.getElementById('quizBanner').style.display = 'block';
+  document.getElementById('quizQ').innerHTML = `Q${quizIdx+1}: ${q.q}`;
+  document.getElementById('quizHint').textContent = q.hint;
+  document.getElementById('quizAnswerCard').style.display = 'none';
+  if(q.setup) q.setup();
+  computeLOBs(); updateSidebar();
+  document.getElementById('instrText').innerHTML = `
+    Answer the question by <strong>placing sensors</strong> and <strong>right-clicking an emitter</strong> on the map.<br><br>
+    When you think you've demonstrated the answer, click <strong>Show Answer</strong> below.`;
+  // Show answer button
+  const existing = document.getElementById('showAnsBtn');
+  if(existing) existing.remove();
+  const btn = document.createElement('button');
+  btn.id = 'showAnsBtn';
+  btn.className = 'btn';
+  btn.textContent = 'Show Answer';
+  btn.style.marginTop = '8px';
+  btn.onclick = showQuizAnswer;
+  document.getElementById('instrBox').appendChild(btn);
+}
+function showQuizAnswer() {
+  const q = QUIZ_QS[quizIdx % QUIZ_QS.length];
+  document.getElementById('quizAnswer').innerHTML = q.answer;
+  document.getElementById('quizAnswerCard').style.display = 'block';
+}
+function nextQuizQ() {
+  quizIdx++;
+  sensors = []; emitter = null;
+  loadQuizQ();
+  updateSidebar();
+}
+
+/* ── INIT ─────────────────────────────────────────── */
+updateSidebar();
+</script>
+</body>
+</html>
