@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Traffic — 17E Interactive Reference</title>
+<title>Networking — 17E Interactive Reference</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -13,7 +13,7 @@
   --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
   --red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
   --purple:#bb88ff;--purple-dark:#1a0033;
-  --text:#c8d8e8;--text-dim:#6a8090;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
   --canvas-bg:#000000;
   --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
 }
@@ -24,20 +24,21 @@
   --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
   --red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
   --purple:#6633cc;--purple-dark:#ede0ff;
-  --text:#1a2a3a;--text-dim:#4a6070;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
   --canvas-bg:#f8fafc;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
-[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
 .header-left{display:flex;align-items:center;gap:16px}
-.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark)}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
 header h1{font-family:var(--display);font-size:22px;font-weight:700;color:var(--cyan);letter-spacing:3px;text-transform:uppercase}
 header h1 span{color:var(--text-dim);font-weight:400}
-.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6;display:flex;align-items:center;gap:12px}
-.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;white-space:nowrap;transition:all .15s}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
 .theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
 .live{color:var(--green);animation:blink 1.4s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 20px;gap:2px}
@@ -46,1323 +47,865 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .tab-btn .tnum{font-family:var(--mono);font-size:10px;color:inherit;opacity:.6}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
-.tab-content{display:none;padding:24px 28px;max-width:1160px;margin:0 auto}
+.tab-content{display:none;padding:24px 28px;max-width:1120px;margin:0 auto}
 .tab-content.active{display:block}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
 @media(max-width:760px){.two-col{grid-template-columns:1fr}}
-.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;transition:background .2s}
 .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);opacity:.4}
-.panel.green::before{background:var(--green)}
-.panel.amber::before{background:var(--amber)}
-.panel.purple::before{background:var(--purple)}
-.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel.green::before{background:var(--green)}.panel.amber::before{background:var(--amber)}
+.panel.red::before{background:var(--red)}.panel.purple::before{background:var(--purple)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .panel-title::before{content:'▶';color:var(--cyan);font-size:8px}
-.panel.green .panel-title::before{color:var(--green)}
-.panel.amber .panel-title::before{color:var(--amber)}
-.panel.purple .panel-title::before{color:var(--purple)}
-.section-head{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:18px}
-input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border-bright);outline:none;cursor:pointer;margin:4px 0}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--cyan);border:2px solid var(--bg);cursor:pointer;transition:transform .1s}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.3)}
+.panel.green .panel-title::before{color:var(--green)}.panel.amber .panel-title::before{color:var(--amber)}
+.panel.red .panel-title::before{color:var(--red)}.panel.purple .panel-title::before{color:var(--purple)}
+.section-head{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lesson-tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:3px 8px;background:var(--cyan-dark);text-transform:none;white-space:nowrap}
+.ctrl{margin-bottom:16px}
+.ctrl-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.ctrl-label .name{font-family:var(--display);font-size:13px;font-weight:600;color:var(--text);letter-spacing:1px}
+.num-wrap{display:flex;align-items:center;gap:4px}
+.num-input{font-family:var(--mono);font-size:13px;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--cyan);padding:4px 8px;width:120px;text-align:left;outline:none;transition:border-color .15s}
+.num-input:focus{border-color:var(--cyan)}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border-bright);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--cyan);border:2px solid var(--bg);cursor:pointer}
+.panel.green input[type=range]::-webkit-slider-thumb{background:var(--green)}
 .panel.amber input[type=range]::-webkit-slider-thumb{background:var(--amber)}
-.slider-row{margin-bottom:14px}
-.slider-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-.slider-label .name{font-family:var(--display);font-size:13px;font-weight:600;color:var(--text);letter-spacing:1px}
-.slider-label .value{font-family:var(--mono);font-size:13px;color:var(--cyan);min-width:100px;text-align:right}
-.panel.amber .slider-label .value{color:var(--amber)}
-canvas{width:100%;background:#000;border:1px solid var(--border);display:block}
-.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:12px}
-.readout{background:#000;border:1px solid var(--border);padding:8px 10px;text-align:center}
-.readout .rlabel{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:3px}
-.readout .rval{font-family:var(--mono);font-size:16px;color:var(--cyan);line-height:1}
-.readout .runit{font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:2px}
-.readout.amber .rval{color:var(--amber)}
-.readout.green .rval{color:var(--green)}
-.formula-box{background:#000;border-left:3px solid var(--cyan);padding:10px 14px;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.8}
-.formula-box .eq{color:var(--cyan);font-size:12px}
+canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);display:block;transition:background .2s}
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin-top:14px}
+.readout{background:var(--canvas-bg);border:1px solid var(--border);padding:10px 12px;text-align:center;transition:background .2s}
+.readout .label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px}
+.readout .val{font-family:var(--mono);font-size:16px;color:var(--cyan);line-height:1}
+.readout .unit{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px}
+.readout.green .val{color:var(--green)}.readout.amber .val{color:var(--amber)}.readout.red .val{color:var(--red)}.readout.purple .val{color:var(--purple)}
+.formula-box{background:var(--canvas-bg);border-left:3px solid var(--cyan);padding:12px 16px;margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.8;transition:background .2s}
+.formula-box .eq{color:var(--cyan);font-size:13px}
+.panel.green .formula-box{border-left-color:var(--green)}.panel.green .formula-box .eq{color:var(--green)}
 .panel.amber .formula-box{border-left-color:var(--amber)}.panel.amber .formula-box .eq{color:var(--amber)}
-.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:9px 13px;font-size:13px;color:var(--text);line-height:1.6;margin-top:12px}
-.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px;transition:background .2s}
 .callout.green{border-left-color:var(--green);background:var(--green-dark)}
-.callout.purple{border-left-color:var(--purple);background:var(--purple-dark)}
-.key{font-weight:700;color:var(--cyan)}
-.callout.amber .key{color:var(--amber)}
-.callout.green .key{color:var(--green)}
-.callout.purple .key{color:var(--purple)}
-
-/* ── OSI + TCP/IP side-by-side ── */
-.model-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:600px){.model-wrap{grid-template-columns:1fr}}
-.model-col-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px}
-.layer-row{display:flex;align-items:stretch;gap:2px;margin-bottom:2px;cursor:pointer}
-.layer-num{font-family:var(--mono);font-size:10px;width:22px;text-align:center;display:flex;align-items:center;justify-content:center;color:var(--text-dim);flex-shrink:0}
-.layer-bar{flex:1;padding:7px 10px;border:1px solid var(--border);transition:all .15s}
-.layer-bar .lname{font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:1px}
-.layer-bar .lsub{font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:1px}
-.layer-row:hover .layer-bar,.layer-row.active .layer-bar{border-color:currentColor;background:rgba(255,255,255,.03)}
-.tcpip-bar{flex:1;padding:7px 10px;border:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;transition:all .15s;cursor:pointer}
-.tcpip-bar .tname{font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:1px}
-.tcpip-bar .tsub{font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:1px}
-.bracket{display:flex;align-items:stretch;gap:2px;margin-bottom:2px}
-.bracket-line{width:6px;border-left:2px solid;border-top:1px solid;border-bottom:1px solid;border-color:inherit;flex-shrink:0}
-
-/* ── Packet viewer ── */
-.pkt-proto-btns{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.proto-btn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:#000;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.proto-btn:hover{border-color:var(--green);color:var(--green)}
-.proto-btn.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
-.pkt-fields-wrap{display:flex;flex-wrap:wrap;gap:2px;margin:8px 0}
-.pkt-field{background:#000;border:1px solid var(--border);padding:5px 7px;text-align:center;cursor:pointer;transition:all .12s;min-width:52px}
-.pkt-field:hover,.pkt-field.active{border-color:var(--green)}
-.pkt-field .fn{display:block;font-family:var(--mono);font-size:8px;color:var(--text-dim);letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px}
-.pkt-field .fb{display:block;font-family:var(--mono);font-size:10px;color:var(--green)}
-.field-detail{background:#000;border:1px solid var(--border-bright);border-left:3px solid var(--green);padding:10px 12px;margin-top:8px;min-height:60px;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--text-dim)}
-.field-detail .fd-name{color:var(--green);font-size:12px;display:block;margin-bottom:4px}
-
-/* ── Topology ── */
-.topo-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.topo-btn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:#000;border:1px solid var(--border);color:var(--text-dim);padding:7px 16px;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.topo-btn:hover{border-color:var(--purple);color:var(--purple)}
-.topo-btn.active{border-color:var(--purple);color:var(--purple);background:var(--purple-dark)}
-.topo-info{background:#000;border:1px solid var(--border);padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.8;margin-top:10px;min-height:80px}
-.topo-info .ti-title{color:var(--purple);font-size:13px;display:block;margin-bottom:5px}
-
-/* Subnet */
-.ip-wrap{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-.ip-input{font-family:var(--mono);font-size:14px;background:#000;border:1px solid var(--border);color:var(--amber);padding:7px 10px;outline:none;width:175px;letter-spacing:1px}
-.ip-input:focus{border-color:var(--amber)}
-.cidr-in{font-family:var(--mono);font-size:14px;background:#000;border:1px solid var(--border);color:var(--amber);padding:7px 7px;outline:none;width:52px}
-.cidr-in:focus{border-color:var(--amber)}
-.slash{font-family:var(--mono);font-size:18px;color:var(--text-dim)}
-.bin-display{font-family:var(--mono);font-size:12px;letter-spacing:2px;background:#000;border:1px solid var(--border);padding:9px 12px;margin-top:8px;line-height:2;overflow-x:auto;white-space:nowrap}
-.bn{color:var(--green)}.bh{color:var(--amber)}
-.subnet-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:10px}
-.subnet-table th{background:var(--border);color:var(--text-dim);padding:5px 8px;text-align:left;letter-spacing:1px;font-size:9px;text-transform:uppercase}
-.subnet-table td{padding:5px 8px;border-bottom:1px solid var(--border);color:var(--text)}
-.subnet-table .hl{color:var(--green)}.subnet-table .wb{color:var(--amber)}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}
+.callout.red{border-left-color:var(--red);background:var(--red-dark)}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.green .key{color:var(--green)}.callout.amber .key{color:var(--amber)}.callout.red .key{color:var(--red)}
+.lesson-box{border:1px solid var(--cyan-dim);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;margin-top:14px;transition:background .2s}
+.lesson-box .lb-head{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--cyan);text-transform:uppercase;margin-bottom:5px}
+.lesson-box .lb-body{font-size:13px;line-height:1.6;color:var(--text)}
+.osi-layer{display:flex;align-items:center;gap:10px;border:1px solid var(--border);margin-bottom:4px;padding:8px 12px;cursor:pointer;transition:all .14s;background:var(--canvas-bg)}
+.osi-layer:hover{border-color:var(--cyan)}
+.osi-layer.active{border-color:var(--cyan);background:var(--cyan-dark)}
+.osi-num{font-family:var(--mono);font-size:16px;font-weight:700;min-width:24px;text-align:center}
+.osi-name{font-family:var(--display);font-size:14px;font-weight:600;flex:1}
+.osi-pdu{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px}
+.detail-box{background:var(--canvas-bg);border:1px solid var(--border-bright);padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.7;min-height:64px;transition:background .2s}
+.detail-box .dn{font-size:13px;display:block;margin-bottom:5px;color:var(--cyan)}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:6px 12px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover,.cbtn.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.cbtn.green:hover,.cbtn.green.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.amber:hover,.cbtn.amber.active{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.dtable{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:10px}
+.dtable th{background:var(--border);color:var(--text-dim);padding:6px 8px;text-align:left;letter-spacing:1px;font-size:9px;text-transform:uppercase}
+.dtable td{padding:5px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+.dtable tr:hover td{background:var(--cyan-dark)}
+.dtable .hl{color:var(--cyan);font-weight:700}
+.frame-strip{display:flex;gap:2px;margin-top:10px;flex-wrap:wrap}
+.frame-field{flex:1;min-width:50px;padding:8px 4px;text-align:center;font-family:var(--mono);font-size:9px;border:1px solid;transition:all .12s}
+.mac-display{font-family:var(--mono);font-size:18px;letter-spacing:2px;text-align:center;padding:12px;background:var(--canvas-bg);border:1px solid var(--border-bright);margin:10px 0}
+.mac-oui{color:var(--green)}.mac-dev{color:var(--amber)}
 </style>
 </head>
 <body>
 <header>
   <div class="header-left">
     <div class="mil-badge">MIL-SPEC</div>
-    <h1>Network Traffic <span>// 17E Interactive Reference</span></h1>
+    <h1>Networking <span>// 17E Interactive Reference</span></h1>
   </div>
-  <div class="status-bar">
-    <button class="theme-btn" id="net-theme-btn" onclick="toggleTheme()">☀ LIGHT MODE</button>
-    <div style="text-align:right">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">● LIVE</span><br>UNCLASSIFIED // FOUO<br>REV 2.0</div>
+  <div class="hdr-right">
+    <button class="theme-btn" id="net-theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED // FOUO &nbsp;|&nbsp; REV 3.0</div>
   </div>
 </header>
-
 <nav class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('osi',this)"><span class="tnum">01</span> OSI / TCP-IP Models</button>
-  <button class="tab-btn" onclick="switchTab('pkt',this)"><span class="tnum">02</span> Packet Anatomy</button>
-  <button class="tab-btn" onclick="switchTab('subnet',this)"><span class="tnum">03</span> Subnetting / CIDR</button>
-  <button class="tab-btn" onclick="switchTab('topo',this)"><span class="tnum">04</span> Network Topologies</button>
+  <button class="tab-btn active" onclick="switchTab('osi',this)"><span class="tnum">01</span> OSI Model</button>
+  <button class="tab-btn" onclick="switchTab('mac',this)"><span class="tnum">02</span> MAC / Data Link</button>
+  <button class="tab-btn" onclick="switchTab('topo',this)"><span class="tnum">03</span> Network Topologies</button>
+  <button class="tab-btn" onclick="switchTab('ip',this)"><span class="tnum">04</span> IP Addressing &amp; Routing</button>
+  <button class="tab-btn" onclick="switchTab('wifi',this)"><span class="tnum">05</span> Wi-Fi Standards</button>
+  <button class="tab-btn" onclick="switchTab('chan',this)"><span class="tnum">06</span> Wi-Fi Topology &amp; Channels</button>
 </nav>
 
-<!-- ══════════════════════════ TAB 1: OSI + TCP/IP ══════════════════════════ -->
+<!-- TAB 1: OSI -->
 <div id="tab-osi" class="tab-content active">
-  <div class="section-head">MODULE 01 — OSI MODEL & TCP/IP MODEL COMPARISON</div>
+  <div class="section-head"><span>MODULE 01 — OSI MODEL</span><span class="lesson-tag">Aligns: E02 OSI Model (112-17E10E02)</span></div>
   <div class="two-col">
-
     <div class="panel">
-      <div class="panel-title">Side-by-Side Model Comparison — click any layer</div>
-      <div class="model-wrap">
-        <!-- OSI -->
-        <div>
-          <div class="model-col-title" style="color:var(--cyan)">OSI MODEL (7 Layers)</div>
-          <div id="osi-col"></div>
-        </div>
-        <!-- TCP/IP -->
-        <div>
-          <div class="model-col-title" style="color:var(--amber)">TCP/IP MODEL (4 Layers)</div>
-          <div id="tcpip-col"></div>
-        </div>
+      <div class="panel-title">7 Layers — click to explore</div>
+      <div id="osi-layers"></div>
+      <div class="detail-box" id="osi-detail" style="margin-top:8px"><span class="dn">Select a layer above</span>The OSI model breaks network communication into 7 layers, easing troubleshooting and ensuring vendor compatibility.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Encapsulation Flow</div>
+      <canvas id="osi-canvas" height="300"></canvas>
+      <div class="formula-box">
+        <div class="eq">Encapsulation: Layer 7 → Layer 1 (add headers)</div>
+        PDU names: Data (L7-5) → Segment (L4) → Packet (L3) → Frame (L2) → Bit (L1)<br>
+        Mnemonic 7→1: All People Seem To Need Data Processing
       </div>
-
-      <div class="formula-box" style="margin-top:14px">
-        <div class="eq">Encapsulation: DATA → SEGMENT → PACKET → FRAME → BITS</div>
-        Each OSI layer adds a header (and sometimes trailer) wrapping the layer above.<br>
-        TCP/IP collapses layers 5–7 into one Application layer.
+      <div class="lesson-box">
+        <div class="lb-head">◆ Lesson Alignment — E02 Open Systems Interconnection</div>
+        <div class="lb-body">The OSI model is a conceptual framework standardizing how network nodes communicate across 7 layers. Encapsulation adds headers as data moves down the stack; decapsulation removes them moving up. Each layer's Protocol Data Unit (PDU) has a specific name — knowing where data lives in the stack is the foundation for understanding where EW effects can be applied.</div>
       </div>
     </div>
-
-    <div class="panel">
-      <div class="panel-title">Layer Detail</div>
-      <div id="layer-detail" style="min-height:200px;font-family:var(--mono);font-size:11px;color:var(--text-dim);padding:16px 0;text-align:center">
-        ← Click any layer on the left to inspect
-      </div>
-
-      <div class="panel-title" style="margin-top:10px">Encapsulation Stack</div>
-      <div id="encap-stack" style="font-family:var(--mono);font-size:10px;letter-spacing:1px;margin-top:4px"></div>
-
-      <div class="callout" style="margin-top:12px">
-        <span class="key">KEY:</span> The OSI model is a <em>teaching tool</em>. Real networks run TCP/IP. Layers 5–7 are collapsed — your application talks HTTP (L7), TLS (L6), socket (L5) all in one stack. The PHY layer (L1) is where your RF background from the RF module applies directly to 802.11 wireless.
-      </div>
-    </div>
-
+  </div>
+  <div class="panel">
+    <div class="panel-title">OSI vs TCP/IP Model — how the two map together</div>
+    <canvas id="tcpip-canvas" height="200"></canvas>
+    <div class="callout"><span class="key">OSI vs TCP/IP:</span> The OSI model (7 layers) is the teaching/troubleshooting reference. The TCP/IP model (4 layers) is what the internet actually runs on. TCP/IP collapses OSI's top three layers (Application, Presentation, Session) into one Application layer, and merges Physical + Data Link into one Network Access layer. The middle two — Transport and Network/Internet — map one-to-one.</div>
   </div>
 </div>
 
-<!-- ══════════════════════════ TAB 2: PACKET ANATOMY ══════════════════════════ -->
-<div id="tab-pkt" class="tab-content">
-  <div class="section-head">MODULE 02 — PACKET ANATOMY: IPv4 vs IPv6 HEADERS & FRAME EXAMPLES</div>
-
-  <!-- TOP ROW: IPv4 left, IPv6 right -->
+<!-- TAB 2: MAC -->
+<div id="tab-mac" class="tab-content">
+  <div class="section-head"><span>MODULE 02 — MAC ADDRESSES &amp; DATA LINK LAYER</span><span class="lesson-tag">Aligns: E03 MAC Addresses (112-17E10E03)</span></div>
   <div class="two-col">
-
-    <!-- IPv4 -->
     <div class="panel green">
-      <div class="panel-title">IPv4 Header — click fields to inspect</div>
-      <div class="pkt-fields-wrap" id="pkt-fields-v4"></div>
-      <div class="field-detail" id="pkt-detail-v4">
-        <span class="fd-name">IPv4 Header Fields</span>
-        Click any field to see its purpose and tactical notes.
+      <div class="panel-title">MAC Address Breakdown — type a MAC</div>
+      <div class="ctrl">
+        <div class="ctrl-label"><span class="name">MAC Address</span>
+          <div class="num-wrap"><input class="num-input" type="text" id="mac-input" value="C8:5B:76:62:35:37" maxlength="17" oninput="updateMac()" style="color:var(--green);border-color:var(--green)"></div></div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:3px">48-bit / 6-byte hardware address (12 hex digits)</div>
       </div>
-      <div class="readout-grid" style="margin-top:10px">
-        <div class="readout green"><div class="rlabel">Header</div><div class="rval">20</div><div class="runit">bytes min</div></div>
-        <div class="readout green"><div class="rlabel">Addr Size</div><div class="rval">32</div><div class="runit">bits</div></div>
-        <div class="readout green"><div class="rlabel">Total Addrs</div><div class="rval" style="font-size:11px">~4.3B</div><div class="runit">theoretical</div></div>
-        <div class="readout green"><div class="rlabel">Checksum</div><div class="rval" style="font-size:12px">Yes</div><div class="runit">header only</div></div>
-      </div>
-      <div class="formula-box" style="margin-top:10px">
-        <div class="eq">TTL — decremented at each router hop</div>
-        At TTL=0: packet dropped, ICMP Time Exceeded returned.<br>
-        traceroute exploits this: sends probes with TTL 1,2,3…<br>
-        Options field: rarely used, extends header past 20 bytes.
-      </div>
-    </div>
-
-    <!-- IPv6 -->
-    <div class="panel" style="border-color:var(--border)">
-      <div class="panel-title" style="color:var(--cyan)">IPv6 Header — click fields to inspect</div>
-      <div class="pkt-fields-wrap" id="pkt-fields-v6"></div>
-      <div class="field-detail" id="pkt-detail-v6" style="border-left-color:var(--cyan)">
-        <span class="fd-name" style="color:var(--cyan)">IPv6 Header Fields</span>
-        Click any field to see its purpose and tactical notes.
-      </div>
-      <div class="readout-grid" style="margin-top:10px">
-        <div class="readout"><div class="rlabel">Header</div><div class="rval">40</div><div class="runit">bytes fixed</div></div>
-        <div class="readout"><div class="rlabel">Addr Size</div><div class="rval">128</div><div class="runit">bits</div></div>
-        <div class="readout"><div class="rlabel">Total Addrs</div><div class="rval" style="font-size:11px">3.4×10³⁸</div><div class="runit">theoretical</div></div>
-        <div class="readout"><div class="rlabel">Checksum</div><div class="rval" style="font-size:12px">No</div><div class="runit">removed</div></div>
-      </div>
-      <div class="formula-box" style="border-left-color:var(--cyan);margin-top:10px">
-        <div class="eq" style="color:var(--cyan)">No fragmentation in routers — source only</div>
-        No header checksum — recalc overhead eliminated.<br>
-        Extension headers chain via Next Header field.<br>
-        Flow Label enables per-flow QoS without L4 inspection.
-      </div>
-    </div>
-
-  </div>
-
-  <!-- HEX DUMP ROW -->
-  <div class="two-col" style="margin-top:0">
-    <div class="panel green">
-      <div class="panel-title">IPv4 Live Hex Dump</div>
-      <div style="display:flex;gap:14px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
-        <div style="flex:1;min-width:140px">
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:4px">TTL &nbsp;<span id="ttl4-disp" style="color:var(--green)">64</span></div>
-          <input type="range" id="ttl4-sl" min="1" max="255" value="64" step="1" oninput="updateHex()">
-        </div>
-        <div style="flex:1;min-width:140px">
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:4px">Payload &nbsp;<span id="pld4-disp" style="color:var(--green)">64 B</span></div>
-          <input type="range" id="pld4-sl" min="0" max="1460" value="64" step="8" oninput="updateHex()">
-        </div>
-      </div>
-      <canvas id="hex4-canvas" height="160"></canvas>
-    </div>
-    <div class="panel">
-      <div class="panel-title" style="color:var(--cyan)">IPv6 Live Hex Dump</div>
-      <div style="display:flex;gap:14px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
-        <div style="flex:1;min-width:140px">
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:4px">Hop Limit &nbsp;<span id="ttl6-disp" style="color:var(--cyan)">64</span></div>
-          <input type="range" id="ttl6-sl" min="1" max="255" value="64" step="1" oninput="updateHex()">
-        </div>
-        <div style="flex:1;min-width:140px">
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:4px">Payload &nbsp;<span id="pld6-disp" style="color:var(--cyan)">64 B</span></div>
-          <input type="range" id="pld6-sl" min="0" max="1460" value="64" step="8" oninput="updateHex()">
-        </div>
-      </div>
-      <canvas id="hex6-canvas" height="160"></canvas>
-    </div>
-  </div>
-
-  <!-- FRAME EXAMPLES ROW -->
-  <div class="panel" style="margin-bottom:20px">
-    <div class="panel-title">Frame Examples — select a real-world frame type</div>
-    <div class="pkt-proto-btns" style="margin-bottom:14px">
-      <button class="proto-btn active" id="fb0" onclick="selectFrame(0,this)">HTTP GET (IPv4/TCP)</button>
-      <button class="proto-btn" id="fb1" onclick="selectFrame(1,this)">DNS Query (IPv4/UDP)</button>
-      <button class="proto-btn" id="fb2" onclick="selectFrame(2,this)">ICMPv6 Ping (IPv6)</button>
-      <button class="proto-btn" id="fb3" onclick="selectFrame(3,this)">ARP Request</button>
-      <button class="proto-btn" id="fb4" onclick="selectFrame(4,this)">DHCP Discover</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px">FRAME STRUCTURE (visual)</div>
-        <canvas id="frame-canvas" height="120"></canvas>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:6px" id="frame-legend"></div>
-      </div>
-      <div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px">FRAME DETAIL</div>
-        <div id="frame-detail" style="background:#000;border:1px solid var(--border);padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.8;min-height:120px"></div>
-      </div>
-    </div>
-    <div id="frame-hex" style="background:#000;border:1px solid var(--border);padding:10px 14px;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.9;overflow-x:auto;white-space:pre-wrap;word-break:break-all"></div>
-  </div>
-
-</div>
-
-<!-- ══════════════════════════ TAB 3: SUBNETTING ══════════════════════════ -->
-<div id="tab-subnet" class="tab-content">
-  <div class="section-head">MODULE 03 — SUBNETTING & CIDR</div>
-  <div class="two-col">
-
-    <div class="panel amber">
-      <div class="panel-title">IP Address / CIDR Input</div>
-      <div class="ip-wrap">
-        <input class="ip-input" type="text" id="ip-in" value="192.168.10.0" oninput="updateSubnet()">
-        <span class="slash">/</span>
-        <input class="cidr-in" type="number" id="cidr-in" value="24" min="1" max="30" oninput="updateSubnet()">
-      </div>
-      <div class="bin-display" id="bin-disp"></div>
-      <div class="readout-grid" style="margin-top:10px">
-        <div class="readout amber"><div class="rlabel">Network</div><div class="rval" id="r-net" style="font-size:11px">192.168.10.0</div></div>
-        <div class="readout amber"><div class="rlabel">Broadcast</div><div class="rval" id="r-bcast" style="font-size:11px">192.168.10.255</div></div>
-        <div class="readout amber"><div class="rlabel">Subnet Mask</div><div class="rval" id="r-mask" style="font-size:11px">255.255.255.0</div></div>
-        <div class="readout amber"><div class="rlabel">Usable Hosts</div><div class="rval" id="r-hosts">254</div></div>
-        <div class="readout amber"><div class="rlabel">Host Bits</div><div class="rval" id="r-hbits">8</div></div>
-        <div class="readout amber"><div class="rlabel">Class</div><div class="rval" id="r-class">C</div></div>
+      <div class="mac-display" id="mac-display">C8:5B:76 : 62:35:37</div>
+      <div class="readout-grid">
+        <div class="readout green"><div class="label">OUI (vendor)</div><div class="val" id="r-mac-oui" style="font-size:13px">C8:5B:76</div><div class="unit">first 24 bits</div></div>
+        <div class="readout amber"><div class="label">Device ID</div><div class="val" id="r-mac-dev" style="font-size:13px">62:35:37</div><div class="unit">last 24 bits</div></div>
+        <div class="readout green"><div class="label">Cast Type</div><div class="val" id="r-mac-cast" style="font-size:13px">Unicast</div><div class="unit" id="r-mac-bit">1st bit 0</div></div>
       </div>
       <div class="formula-box">
-        <div class="eq">Hosts = 2^(32−CIDR) − 2</div>
-        Subtract 2: network addr + broadcast addr<br>
-        Each borrowed bit: subnets ×2, hosts ÷2<br>
-        /30 = point-to-point (2 usable hosts)
+        <div class="eq">MAC = OUI (24b) + Device ID (24b) = 48 bits</div>
+        Unicast: 1st bit 0 | Multicast: 1st bit 1<br>
+        Broadcast: FF:FF:FF:FF:FF:FF (all devices)<br>
+        OUI assigned by IEEE to vendors (Cisco, Intel, Apple)
       </div>
-
-      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px">
-        <div class="panel-title" style="margin-bottom:10px">IPv6 Address Compress / Decompress</div>
-        <input class="ip-input" type="text" id="ipv6-in" value="2001:0db8:0000:0000:0000:ff00:0042:8329"
-          oninput="ipv6Live()" placeholder="Enter full or compressed IPv6..."
-          style="width:100%;margin-bottom:8px;font-size:12px;letter-spacing:1.5px">
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <button onclick="ipv6Compress()" style="flex:1;font-family:var(--mono);font-size:11px;padding:7px 0;background:#000;border:1px solid var(--amber);color:var(--amber);cursor:pointer;letter-spacing:1px;text-transform:uppercase">⬡ COMPRESS</button>
-          <button onclick="ipv6Expand()" style="flex:1;font-family:var(--mono);font-size:11px;padding:7px 0;background:#000;border:1px solid var(--amber);color:var(--amber);cursor:pointer;letter-spacing:1px;text-transform:uppercase">⬡ EXPAND</button>
-        </div>
-        <div id="ipv6-result" style="background:#000;border:1px solid var(--border);border-left:3px solid var(--amber);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--amber);min-height:44px;letter-spacing:1px;line-height:1.8;word-break:break-all">
-          Result will appear here
-        </div>
-        <div id="ipv6-parts" style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.8"></div>
+      <div class="lesson-box">
+        <div class="lb-head">◆ Lesson Alignment — E03 Media Access Control</div>
+        <div class="lb-body">MAC addresses operate at Layer 2 (Data Link). They are burned into the NIC and used for communication on the same local network — unlike IP (Layer 3) which routes between networks. MACs are transmitted unencrypted in Ethernet frames, making them visible to anyone sniffing traffic (Wireshark/Kismet) — a key collection and device-tracking consideration for 17E.</div>
       </div>
     </div>
-
-    <div class="panel amber">
-      <div class="panel-title">Subnet Split Visualizer</div>
-      <div class="slider-row">
-        <div class="slider-label">
-          <span class="name">Split into N subnets</span>
-          <span class="value" id="split-disp">2 subnets (/25)</span>
-        </div>
-        <input type="range" id="split-sl" min="0" max="4" value="1" step="1" oninput="updateSubnet()">
-      </div>
-      <canvas id="subnet-canvas" height="110"></canvas>
-      <table class="subnet-table">
-        <thead><tr><th>#</th><th>Network</th><th>Range</th><th>Broadcast</th><th>Hosts</th></tr></thead>
-        <tbody id="subnet-tbody"></tbody>
-      </table>
-      <div class="callout amber" style="margin-top:10px">
-        <span class="key">KEY:</span> Each extra bit borrowed doubles subnets and halves hosts. VLSM lets you assign exactly the prefix size each segment needs — no waste.
-      </div>
+    <div class="panel green">
+      <div class="panel-title">Ethernet Frame Structure</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-bottom:6px;letter-spacing:1px">LOAD A VENDOR OUI:</div>
+      <div class="btn-row" id="oui-btns"></div>
+      <canvas id="frame-canvas" height="120"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">Frame fields drawn to approximate proportion</div>
+      <div class="panel-title" style="margin-top:16px">ARP — IP to MAC Resolution</div>
+      <canvas id="arp-canvas" height="150"></canvas>
+      <div class="callout green"><span class="key">17E — ARP SPOOFING:</span> ARP maps a known IP (L3) to a MAC (L2) via broadcast. An attacker can send forged ARP replies associating their MAC with the gateway's IP — intercepting all traffic in a Man-in-the-Middle attack. MAC spoofing also bypasses MAC filtering and hides attacker identity.</div>
     </div>
-
   </div>
 </div>
 
-<!-- ══════════════════════════ TAB 4: TOPOLOGIES ══════════════════════════ -->
-<div id="tab-topo" class="tab-content">
-  <div class="section-head">MODULE 04 — NETWORK TOPOLOGY EXPLORER</div>
+<!-- TAB 3: IP -->
+<div id="tab-ip" class="tab-content">
+  <div class="section-head"><span>MODULE 04 — IP ADDRESSING, SUBNETTING &amp; ROUTING</span><span class="lesson-tag">Aligns: E06 IP Addressing (112-17E10E06)</span></div>
   <div class="two-col">
-
-    <div class="panel purple">
-      <div class="panel-title">Select Topology</div>
-      <div class="topo-btns">
-        <button class="topo-btn active" onclick="selectTopo('bus',this)">Bus</button>
-        <button class="topo-btn" onclick="selectTopo('star',this)">Star</button>
-        <button class="topo-btn" onclick="selectTopo('mesh',this)">Mesh</button>
-        <button class="topo-btn" onclick="selectTopo('p2p',this)">Point-to-Point</button>
-        <button class="topo-btn" onclick="selectTopo('cs',this)">Client-Server</button>
-        <button class="topo-btn" onclick="selectTopo('ring',this)">Ring</button>
+    <div class="panel amber">
+      <div class="panel-title">IPv4 Address &amp; Subnet — type or slide</div>
+      <div class="ctrl">
+        <div class="ctrl-label"><span class="name">IP Address</span>
+          <div class="num-wrap"><input class="num-input" type="text" id="ip-input" value="192.168.1.50" maxlength="15" oninput="updateIp()" style="color:var(--amber);border-color:var(--amber)"></div></div>
       </div>
-
-      <canvas id="topo-canvas" height="280"></canvas>
-
-      <div class="topo-info" id="topo-info">
-        <span class="ti-title">BUS TOPOLOGY</span>
-        Loading...
+      <div class="ctrl">
+        <div class="ctrl-label"><span class="name">Subnet Mask (CIDR /)</span>
+          <div class="num-wrap"><input class="num-input" type="number" id="cidr-num" value="24" min="1" max="32" step="1" oninput="document.getElementById('cidr-slider').value=this.value;updateIp()" style="width:60px;text-align:right;color:var(--amber);border-color:var(--amber)"></div></div>
+        <input type="range" id="cidr-slider" min="1" max="32" value="24" step="1" oninput="document.getElementById('cidr-num').value=this.value;updateIp()">
       </div>
-    </div>
-
-    <div class="panel purple">
-      <div class="panel-title">Traffic Simulation — click Send Packet</div>
-
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-        <button class="topo-btn" onclick="sendPacket()" id="btn-send">▶ Send Packet</button>
-        <button class="topo-btn" onclick="sendBroadcast()" id="btn-bcast">⬡ Broadcast</button>
-        <button class="topo-btn" onclick="simulateFault()" id="btn-fault">✕ Fault Node</button>
-        <button class="topo-btn" onclick="clearFaults()" id="btn-clear">↺ Reset</button>
+      <div class="readout-grid">
+        <div class="readout amber"><div class="label">Subnet Mask</div><div class="val" id="r-mask" style="font-size:12px">255.255.255.0</div></div>
+        <div class="readout amber"><div class="label">Network ID</div><div class="val" id="r-netid" style="font-size:12px">192.168.1.0</div></div>
+        <div class="readout amber"><div class="label">Broadcast</div><div class="val" id="r-bcast" style="font-size:12px">192.168.1.255</div></div>
+        <div class="readout amber"><div class="label">Usable Hosts</div><div class="val" id="r-hosts">254</div></div>
       </div>
-
-      <canvas id="topo-sim-canvas" height="280"></canvas>
-
-      <div style="background:#000;border:1px solid var(--border);padding:8px 12px;font-family:var(--mono);font-size:11px;color:var(--text-dim);height:80px;overflow-y:auto;margin-top:8px;line-height:1.7" id="topo-log">
-        <span style="color:var(--purple)">// Topology simulation log. Use controls above.</span>
+      <canvas id="ip-canvas" height="90" style="margin-top:14px"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:4px">GREEN = network bits &nbsp;|&nbsp; AMBER = host bits</div>
+      <div class="formula-box">
+        <div class="eq">Usable hosts = 2^(32−CIDR) − 2</div>
+        IPv4 = 32 bits (4 octets, 0–255 each)<br>
+        Network ID = first addr | Broadcast = last addr<br>
+        Private: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
       </div>
     </div>
+    <div class="panel amber">
+      <div class="panel-title">Routing Process &amp; Address Type</div>
+      <div class="detail-box" id="ip-type" style="margin-bottom:10px"><span class="dn" style="color:var(--amber)">Address Classification</span>Loading...</div>
+      <canvas id="route-canvas" height="180"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">Local vs remote routing decision &amp; next-hop forwarding</div>
+      <div class="lesson-box">
+        <div class="lb-head">◆ Lesson Alignment — E06 IP Addressing &amp; Routing</div>
+        <div class="lb-body">Layer 3 moves packets between networks using hierarchical IP addresses. Routing: the host compares its IP+mask to the destination to decide local vs remote. If remote, it sends to the default gateway (found via ARP), which consults its routing table and forwards to the next hop. TTL decrements each hop to prevent loops. IPv6 (128-bit) solves IPv4 exhaustion.</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel amber">
+    <div class="panel-title">IPv6 Expansion &amp; Compression — type an address (RFC 5952)</div>
+    <div class="two-col" style="margin-bottom:0">
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-label"><span class="name">IPv6 Address</span></div>
+          <input class="num-input" type="text" id="ipv6-input" value="2001:db8:85a3::8a2e:370:7334" oninput="updateIpv6()" style="width:100%;color:var(--amber);border-color:var(--amber)">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:3px">128-bit, 8 groups of 16-bit hex. Use :: for consecutive zero groups.</div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">FULLY EXPANDED (no shortcuts):</div>
+          <div class="mac-display" id="ipv6-expanded" style="font-size:13px;letter-spacing:1px">—</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin:8px 0 4px">COMPRESSED (RFC 5952 canonical):</div>
+          <div class="mac-display" id="ipv6-compressed" style="font-size:15px;letter-spacing:1px;color:var(--green)">—</div>
+        </div>
+      </div>
+      <div>
+        <div class="readout-grid" style="margin-top:0">
+          <div class="readout amber"><div class="label">Valid</div><div class="val" id="r-v6-valid" style="font-size:13px">Yes</div></div>
+          <div class="readout amber"><div class="label">Groups</div><div class="val" id="r-v6-groups">8</div><div class="unit">× 16 bits</div></div>
+          <div class="readout amber"><div class="label">:: saved</div><div class="val" id="r-v6-saved">0</div><div class="unit">zero groups</div></div>
+        </div>
+        <div class="formula-box">
+          <div class="eq">IPv6 = 128 bits = 8 × 16-bit hex groups</div>
+          Compression rules (RFC 5952):<br>
+          1. Drop leading zeros in each group<br>
+          2. Replace ONE run of all-zero groups with ::<br>
+          3. Use the longest zero run; leftmost if tied<br>
+          4. Lowercase hex digits
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- TAB 4: WIFI STANDARDS -->
+<div id="tab-wifi" class="tab-content">
+  <div class="section-head"><span>MODULE 05 — WI-FI STANDARDS (IEEE 802.11)</span><span class="lesson-tag">Aligns: E08 Wi-Fi Standards (112-17E10E08)</span></div>
+  <div class="two-col">
+    <div class="panel purple">
+      <div class="panel-title">802.11 Standard — select one</div>
+      <div class="btn-row" id="wifi-btns"></div>
+      <div class="readout-grid">
+        <div class="readout purple"><div class="label">Year</div><div class="val" id="r-wifi-year">2009</div></div>
+        <div class="readout purple"><div class="label">Frequency</div><div class="val" id="r-wifi-freq" style="font-size:13px">2.4/5 GHz</div></div>
+        <div class="readout purple"><div class="label">Max Rate</div><div class="val" id="r-wifi-rate" style="font-size:14px">600</div><div class="unit">Mbps</div></div>
+      </div>
+      <div class="detail-box" id="wifi-detail" style="margin-top:12px"><span class="dn" style="color:var(--purple)">802.11n (Wi-Fi 4)</span>Loading...</div>
+      <div class="lesson-box">
+        <div class="lb-head">◆ Lesson Alignment — E08 Wi-Fi Standards</div>
+        <div class="lb-body">Wi-Fi is radio transmission tech governed by IEEE 802.11 standards, ensuring interoperability between products. Standards evolved from 2 Mbps (1997) to 23 Gbps (Wi-Fi 7). Key milestones: 1985 FCC released the ISM band for unlicensed use; 1999 Wi-Fi Alliance formed. A 2.4 GHz AP reaches ~100m open-air (10-35m practical indoors).</div>
+      </div>
+    </div>
+    <div class="panel purple">
+      <div class="panel-title">Frequency Band Occupancy — where it operates</div>
+      <canvas id="wifi-canvas" height="280"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">PURPLE band(s) = where the selected standard transmits across the RF spectrum</div>
+      <div class="callout"><span class="key">17E:</span> Each standard's frequency band and modulation (DSSS→OFDM→OFDMA) determines its RF signature and jamming/collection profile. 2.4 GHz penetrates better but is congested; 5/6 GHz offer speed but shorter range. 60 GHz (WiGig) is very high speed, very short range.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: CHANNELS -->
+<div id="tab-chan" class="tab-content">
+  <div class="section-head"><span>MODULE 06 — WI-FI TOPOLOGY, CHANNELS &amp; ACCESS</span><span class="lesson-tag">Aligns: E09 Wi-Fi Topology &amp; Channels (112-17E10E09)</span></div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">2.4 GHz Channel Overlap — select channels</div>
+      <div class="btn-row" id="chan-btns"></div>
+      <canvas id="chan-canvas" height="180"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">Only channels 1, 6, 11 are non-overlapping in the US</div>
+      <div class="formula-box">
+        <div class="eq">2.4 GHz: 14 channels, each 22 MHz wide</div>
+        Channels 1-11 authorized in US | 1, 6, 11 non-overlapping<br>
+        Adjacent channel interference if overlapping channels used<br>
+        Channel bonding combines adjacent channels for more bandwidth
+      </div>
+      <div class="lesson-box">
+        <div class="lb-head">◆ Lesson Alignment — E09 Wi-Fi Topology &amp; Channels</div>
+        <div class="lb-body">The FCC divides spectrum into licensed (auction, high power) and unlicensed (public, low power — Wi-Fi/Bluetooth) bands. In 2.4 GHz, the 22 MHz channels overlap, so only 1/6/11 avoid adjacent-channel interference. Collision management: wired uses CSMA/CD (detection), wireless uses CSMA/CA (avoidance) with optional RTS/CTS.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">WLAN Topology &amp; Connection Process</div>
+      <div class="btn-row">
+        <button class="cbtn active" id="topo-ibss" onclick="selectTopo('ibss',this)">IBSS / Ad-hoc</button>
+        <button class="cbtn" id="topo-bss" onclick="selectTopo('bss',this)">BSS</button>
+        <button class="cbtn" id="topo-ess" onclick="selectTopo('ess',this)">ESS</button>
+      </div>
+      <canvas id="topo-canvas" height="180"></canvas>
+      <div class="detail-box" id="topo-detail" style="margin-top:8px"><span class="dn">IBSS / Ad-hoc</span>Loading...</div>
+      <div class="callout"><span class="key">CONNECTION (3 steps):</span> 1) Discovery — client hears Beacon frames or sends Probe Requests. 2) Authentication — Open or Protected (WPA3). 3) Association — client gets an Association ID (AID). <br><span class="key" style="color:var(--red)">CAPTIVE PORTALS</span> intercept traffic and can negate HTTPS security — prime MITM environment.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 6: NETWORK TOPOLOGIES -->
+<div id="tab-topo" class="tab-content">
+  <div class="section-head"><span>MODULE 03 — NETWORK TOPOLOGIES &amp; ARCHITECTURE</span><span class="lesson-tag">Aligns: E04 Fundamentals of Networking (112-17E10E04)</span></div>
+  <div class="two-col">
+    <div class="panel green">
+      <div class="panel-title">Topology Selector</div>
+      <div class="btn-row" id="nt-btns"></div>
+      <div class="btn-row" style="margin-top:2px">
+        <button class="cbtn green" id="nt-send" onclick="ntSend('unicast')">▶ Send Unicast</button>
+        <button class="cbtn green" id="nt-bcast" onclick="ntSend('broadcast')">◆ Broadcast</button>
+        <button class="cbtn green" id="nt-fault" onclick="ntFault()">✕ Fail a Node</button>
+        <button class="cbtn green" id="nt-reset" onclick="ntReset()">↺ Reset</button>
+      </div>
+      <div class="detail-box" id="nt-detail" style="margin-top:6px"><span class="dn" style="color:var(--green)">Point-to-Point</span>Loading...</div>
+      <div class="readout-grid">
+        <div class="readout green"><div class="label">Nodes</div><div class="val" id="r-nt-nodes">2</div></div>
+        <div class="readout green"><div class="label">Links</div><div class="val" id="r-nt-links">1</div></div>
+        <div class="readout green"><div class="label">Redundancy</div><div class="val" id="r-nt-redun" style="font-size:12px">None</div></div>
+      </div>
+      <div class="lesson-box">
+        <div class="lb-head">◆ Lesson Alignment — E04 Fundamentals of Networking</div>
+        <div class="lb-body" id="nt-lesson">Networks are organized by size (PAN/LAN/WLAN/MAN/WAN) and arranged in topologies. Architecture describes how nodes communicate: Client-Server (clients request, servers provide) vs Peer-to-Peer (every device is both). Click a topology, then Send or Broadcast to watch how traffic flows — and Fail a Node to see resilience.</div>
+      </div>
+    </div>
+    <div class="panel green">
+      <div class="panel-title">Topology Visualizer — <span id="nt-name-disp" style="color:var(--green)">Point-to-Point</span></div>
+      <canvas id="nt-canvas" height="340"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px" id="nt-legend">Click Send Unicast or Broadcast to animate traffic flow</div>
+    </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════ THEME ═══════════════════
 function toggleTheme(){
-  const h=document.documentElement;
-  const light=h.getAttribute('data-theme')==='light';
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
   h.setAttribute('data-theme',light?'dark':'light');
-  const btn=document.getElementById('net-theme-btn');
-  if(btn)btn.textContent=light?'☀ LIGHT MODE':'☾ DARK MODE';
-  setTimeout(()=>{
-    const a=document.querySelector('.tab-content.active');
-    if(!a)return;
-    if(a.id==='tab-pkt'){updateHex();if(FRAMES[currentFrame])drawFrameBar(FRAMES[currentFrame]);}
-    if(a.id==='tab-subnet')updateSubnet();
-    if(a.id==='tab-topo'){drawTopo();drawSimTopo();}
-  },20);
+  document.getElementById('net-theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  setTimeout(redrawActive,20);
 }
-// ═══════════════════ UTILITIES ═══════════════════
-function switchTab(id, btn) {
+function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
+function cbg(){return isLight()?'#f8fafc':'#000000';}
+function col(k){return getComputedStyle(document.documentElement).getPropertyValue('--'+k).trim();}
+function gridCol(){return isLight()?'#d0dce8':'#1a2530';}
+function dimCol(){return isLight()?'#4a6070':'#6a8090';}
+function redrawActive(){const a=document.querySelector('.tab-content.active');if(!a)return;
+  if(a.id==='tab-osi'){drawOsi();drawTcpip();}if(a.id==='tab-mac')updateMac();if(a.id==='tab-ip'){updateIp();updateIpv6();}
+  if(a.id==='tab-wifi')updateWifi();if(a.id==='tab-chan'){drawChan();drawTopo();}if(a.id==='tab-topo')ntDraw();}
+function switchTab(id,btn){
   document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
-  setTimeout(()=>{
-    if(id==='osi')initOsi();
-    if(id==='pkt'){initPktFields();updateHex();selectFrame(currentFrame,document.getElementById('fb'+currentFrame));}
-    if(id==='subnet')updateSubnet();
-    if(id==='topo'){drawTopo();drawSimTopo();}
-  },10);
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+  setTimeout(()=>{if(id==='osi'){initOsi();drawOsi();drawTcpip();}if(id==='mac'){initOui();updateMac();}if(id==='ip'){updateIp();updateIpv6();}
+    if(id==='wifi'){initWifiBtns();updateWifi();}if(id==='chan'){initChan();drawChan();selectTopo(curTopo,document.getElementById('topo-'+curTopo));}
+    if(id==='topo'){initNt();ntSelect(ntCur,null);}},10);
 }
-
-// ═══════════════════ MODULE 1: OSI + TCP/IP ═══════════════════
-const OSI = [
-  {n:7,name:'Application', color:'#00d4ff', tcpip:'Application', pdu:'Data',    proto:'HTTP · FTP · SSH · DNS · SMTP · SNMP',
-   detail:'Closest to the user. Provides network services to applications. In TCP/IP, this single layer covers OSI layers 5–7. HTTP runs here; your browser, ATAK, and C2 systems operate at this layer.'},
-  {n:6,name:'Presentation',color:'#00bcd4', tcpip:'Application', pdu:'Data',    proto:'TLS/SSL · JPEG · ASCII · MIME · XDR',
-   detail:'Translates data formats between systems. Handles encryption (TLS), compression, and character encoding. Collapsed into the TCP/IP Application layer. TLS operates conceptually here.'},
-  {n:5,name:'Session',     color:'#009ab0', tcpip:'Application', pdu:'Data',    proto:'NetBIOS · RPC · PPTP · SIP',
-   detail:'Establishes, manages, and terminates sessions between applications. Checkpointing and recovery for long transfers. Collapsed into TCP/IP Application layer in practice.'},
-  {n:4,name:'Transport',   color:'#00ff88', tcpip:'Transport',   pdu:'Segment', proto:'TCP (6) · UDP (17) · SCTP',
-   detail:'End-to-end communication, flow control, error recovery, multiplexing via ports. TCP = reliable, ordered, connection-oriented. UDP = fast, connectionless. Port numbers live here. Critical for traffic analysis.'},
-  {n:3,name:'Network',     color:'#ffb300', tcpip:'Internet',    pdu:'Packet',  proto:'IP · ICMP · OSPF · BGP · ARP',
-   detail:'Logical addressing (IP) and routing between networks. Routers operate here. TTL field prevents routing loops. IP fragmentation/reassembly. Every router hop inspects the L3 header.'},
-  {n:2,name:'Data Link',   color:'#ff7700', tcpip:'Link',        pdu:'Frame',   proto:'Ethernet · 802.11 · HDLC · PPP · 802.1Q',
-   detail:'Physical addressing (MAC), framing, and error detection (CRC). Switches operate here. VLAN tagging (802.1Q) lives at L2. 802.11 wireless adds encryption at this layer. Broadcast domain ends at L3.'},
-  {n:1,name:'Physical',    color:'#ff4444', tcpip:'Link',        pdu:'Bits',    proto:'Copper · Fiber · RF · DSL · RS-232',
-   detail:'Raw bit transmission: voltage levels, frequencies, connectors, cable specs, signal encoding. THIS is where your RF theory directly applies — 802.11 PHY IS an RF waveform. Frequency, modulation, path loss all live at Layer 1.'},
+// MODULE 1: OSI
+const OSI=[
+  {n:7,name:'Application',pdu:'Data',color:'#ff66aa',d:'Interface for end-user applications to access network services. The "visual layer" closest to the user. Protocols: HTTP/HTTPS, FTP, SMTP, DNS, DHCP, SSH. Raw user data begins here.'},
+  {n:6,name:'Presentation',pdu:'Data',color:'#bb88ff',d:'The "translator." Data formatting (.jpeg/.txt), character encoding (ASCII/UTF-8), compression, and encryption/decryption (TLS/SSL). Encodes data into a standard format.'},
+  {n:5,name:'Session',pdu:'Data',color:'#8888ff',d:'Establishes, manages, and terminates sessions between applications. Connection management, authentication, authorization, session restoration (check-pointing). Adds a Session ID.'},
+  {n:4,name:'Transport',pdu:'Segment',color:'#00d4ff',d:'Manages reliability and quality of transfer. Segmentation, flow control, congestion avoidance, error checking. TCP (reliable, connection-oriented) vs UDP (fast, connectionless). Hardware: firewalls.'},
+  {n:3,name:'Network',pdu:'Packet',color:'#00ff88',d:'Logical addressing and routing — moves packets across networks. Forwarding/routing, IP addresses, fragmentation. Hardware: routers. This is where IP lives.'},
+  {n:2,name:'Data Link',pdu:'Frame',color:'#ffb300',d:'Encapsulates packets into frames with MAC addressing and error detection (FCS). Physical addressing for the local network. Hardware: switches. This is where MAC addresses live.'},
+  {n:1,name:'Physical',pdu:'Bit',color:'#ff7700',d:'Transmits raw bits over the physical medium — cables, radio, fiber. Voltage levels, timing, connectors, RF signals. This is the layer EW directly contests in the EM spectrum.'},
 ];
-// TCP/IP layers map to OSI layers (OSI indices 0-based from top)
-const TCPIP = [
-  {name:'Application', color:'#00d4ff', osiIdx:[0,1,2], proto:'HTTP · FTP · SSH · DNS · TLS'},
-  {name:'Transport',   color:'#00ff88', osiIdx:[3],     proto:'TCP · UDP · SCTP'},
-  {name:'Internet',    color:'#ffb300', osiIdx:[4],     proto:'IP · ICMP · ARP · OSPF'},
-  {name:'Link',        color:'#ff7700', osiIdx:[5,6],   proto:'Ethernet · 802.11 · PPP'},
-];
-
-let selOsiIdx = null;
-
-function initOsi() {
-  // Build OSI column
-  const osiCol = document.getElementById('osi-col');
-  osiCol.innerHTML = '';
-  OSI.forEach((l,i)=>{
-    const row = document.createElement('div');
-    row.className='layer-row';
-    row.id='osi-row-'+i;
-    row.style.color=l.color;
-    row.innerHTML=`<div class="layer-num">${l.n}</div>
-      <div class="layer-bar" style="border-color:${l.color}33">
-        <div class="lname" style="color:${l.color}">${l.name}</div>
-        <div class="lsub">${l.pdu}</div>
-      </div>`;
-    row.onclick=()=>selectOsiLayer(i);
-    osiCol.appendChild(row);
+let selOsi=null;
+function initOsi(){
+  const c=document.getElementById('osi-layers');
+  c.innerHTML=OSI.map((L,i)=>`<div class="osi-layer" id="osil-${i}" onclick="selOsiLayer(${i})">
+    <div class="osi-num" style="color:${L.color}">${L.n}</div>
+    <div class="osi-name">${L.name}</div><div class="osi-pdu">${L.pdu}</div></div>`).join('');
+}
+function selOsiLayer(i){
+  document.querySelectorAll('.osi-layer').forEach(e=>e.classList.remove('active'));
+  document.getElementById('osil-'+i).classList.add('active');selOsi=i;
+  const L=OSI[i];
+  document.getElementById('osi-detail').innerHTML=`<span class="dn" style="color:${L.color}">Layer ${L.n}: ${L.name} (PDU: ${L.pdu})</span>${L.d}`;
+  drawOsi();
+}
+function drawOsi(){
+  const c=document.getElementById('osi-canvas');if(!c)return;const W=c.clientWidth||520,H=300;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const lh=(H-30)/7;
+  x.fillStyle=dimCol();x.font='9px Share Tech Mono';x.textAlign='center';
+  x.fillText('ENCAPSULATION: data gains headers descending L7→L1',W/2,12);
+  OSI.forEach((L,i)=>{
+    const y=20+i*lh,sel=selOsi===i;
+    const boxW=W*0.5+i*(W*0.06);
+    x.fillStyle=sel?L.color+'44':L.color+'18';x.strokeStyle=L.color+(sel?'':'88');x.lineWidth=sel?2:1;
+    x.fillRect((W-boxW)/2,y+2,boxW,lh-4);x.strokeRect((W-boxW)/2,y+2,boxW,lh-4);
+    x.fillStyle=L.color;x.font='10px Share Tech Mono';x.textAlign='center';
+    x.fillText('L'+L.n+' '+L.name+'  ['+L.pdu+']',W/2,y+lh/2+3);
   });
-
-  // Build TCP/IP column with brackets
-  const tcpCol = document.getElementById('tcpip-col');
-  tcpCol.innerHTML='';
-  TCPIP.forEach((t,ti)=>{
-    const rows = t.osiIdx.length;
-    const wrap = document.createElement('div');
-    wrap.style.cssText=`display:flex;gap:2px;margin-bottom:${rows>1?'0':'2'}px;align-items:stretch`;
-    const bracketDiv = document.createElement('div');
-    bracketDiv.style.cssText=`width:8px;border-left:2px solid ${t.color}66;border-top:1px solid ${t.color}44;border-bottom:1px solid ${t.color}44;flex-shrink:0`;
-    const bar = document.createElement('div');
-    bar.className='tcpip-bar';
-    bar.id='tcpip-bar-'+ti;
-    const h=rows*32+(rows-1)*4;
-    bar.style.cssText=`min-height:${h}px;border-color:${t.color}33;cursor:pointer`;
-    bar.innerHTML=`<div class="tname" style="color:${t.color}">${t.name}</div><div class="tsub">${t.proto}</div>`;
-    bar.onclick=()=>selectTcpIpLayer(ti);
-    wrap.appendChild(bracketDiv);
-    wrap.appendChild(bar);
-    tcpCol.appendChild(wrap);
-    // spacer rows for alignment
-    for(let r=1;r<rows;r++){
-      const sp=document.createElement('div');
-      sp.style.cssText='height:2px';
-      tcpCol.appendChild(sp);
-    }
-  });
-
-  drawEncapStack(-1);
+  x.textAlign='left';
 }
-
-function selectOsiLayer(i) {
-  selOsiIdx=i;
-  document.querySelectorAll('.layer-row').forEach((r,j)=>r.classList.toggle('active',j===i));
-  const l=OSI[i];
-  document.getElementById('layer-detail').innerHTML=`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div style="width:10px;height:10px;background:${l.color};flex-shrink:0"></div>
-      <div style="color:var(--text-dim);letter-spacing:2px">OSI LAYER ${l.n} / TCP-IP: ${l.tcpip.toUpperCase()}</div>
-    </div>
-    <div style="font-size:20px;font-weight:700;color:${l.color};letter-spacing:2px;margin-bottom:8px;font-family:var(--display)">${l.name}</div>
-    <div style="font-size:13px;line-height:1.7;color:var(--text);margin-bottom:10px;font-family:var(--display)">${l.detail}</div>
-    <div style="font-size:10px;color:var(--text-dim)">PDU: <span style="color:${l.color}">${l.pdu}</span> &nbsp;|&nbsp; Protocols: <span style="color:${l.color}">${l.proto}</span></div>
-  `;
-  drawEncapStack(i);
+function drawTcpip(){
+  const c=document.getElementById('tcpip-canvas');if(!c)return;const W=c.clientWidth||960,H=200;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const colL=W*0.5,osiX=20,tcpX=colL+20,colW=colL-40;
+  x.fillStyle=dimCol();x.font='10px Share Tech Mono';x.textAlign='center';
+  x.fillText('OSI MODEL (7 layers)',osiX+colW/2,14);x.fillText('TCP/IP MODEL (4 layers)',tcpX+colW/2,14);
+  const lh=(H-30)/7;
+  // OSI 7
+  OSI.forEach((L,i)=>{const y=22+i*lh;x.fillStyle=L.color+'22';x.strokeStyle=L.color+'88';x.lineWidth=1;
+    x.fillRect(osiX,y+1,colW,lh-2);x.strokeRect(osiX,y+1,colW,lh-2);
+    x.fillStyle=L.color;x.font='9px Share Tech Mono';x.textAlign='center';x.fillText('L'+L.n+' '+L.name,osiX+colW/2,y+lh/2+3);});
+  // TCP/IP 4 mapped
+  const tcp=[{n:'Application',span:[0,1,2],color:'#bb88ff'},{n:'Transport',span:[3],color:'#00d4ff'},{n:'Internet',span:[4],color:'#00ff88'},{n:'Network Access',span:[5,6],color:'#ffb300'}];
+  tcp.forEach(t=>{const yTop=22+t.span[0]*lh+1,yBot=22+(t.span[t.span.length-1]+1)*lh-1;
+    x.fillStyle=t.color+'22';x.strokeStyle=t.color;x.lineWidth=1.5;
+    x.fillRect(tcpX,yTop,colW,yBot-yTop);x.strokeRect(tcpX,yTop,colW,yBot-yTop);
+    x.fillStyle=t.color;x.font='10px Share Tech Mono';x.textAlign='center';x.fillText(t.n,tcpX+colW/2,(yTop+yBot)/2+3);
+    // connector bracket
+    x.strokeStyle=t.color+'66';x.lineWidth=1;x.setLineDash([3,2]);
+    x.beginPath();x.moveTo(osiX+colW,(yTop+yBot)/2);x.lineTo(tcpX,(yTop+yBot)/2);x.stroke();x.setLineDash([]);});
+  x.textAlign='left';
 }
-
-function selectTcpIpLayer(ti) {
-  const t=TCPIP[ti];
-  // highlight corresponding OSI layers
-  t.osiIdx.forEach(idx=>selectOsiLayer(idx));
+const OUIS=[['Cisco','00:1A:A1'],['Apple','A4:5E:60'],['Intel','00:1B:21'],['Dell','00:14:22'],['Samsung','5C:0A:5B'],['HP','00:1F:29'],['Meraki','00:18:0A'],['Broadcast','FF:FF:FF']];
+function initOui(){
+  const c=document.getElementById('oui-btns');if(!c)return;
+  c.innerHTML=OUIS.map(([nm,oui])=>`<button class="cbtn green" onclick="loadOui('${oui}','${nm}')">${nm}</button>`).join('');
 }
-
-function drawEncapStack(selected) {
-  const wrap=document.getElementById('encap-stack');
-  const pdus=['DATA','DATA','DATA','SEG','PKT','FRAME','BITS'];
-  const cols=OSI.map(l=>l.color);
-  let html='<div style="margin-bottom:4px;font-size:9px;color:var(--text-dim);letter-spacing:1px">ENCAPSULATION (outermost first):</div>';
-  const showTo = selected>=0 ? selected : 6;
-  for(let i=showTo;i>=0;i--){
-    const op=selected<0?0.4:(i===selected?1:0.3);
-    html+=`<span style="display:inline-block;background:#000;border:1px solid ${cols[i]};padding:2px 6px;margin:1px;font-size:10px;color:${cols[i]};opacity:${op}">${pdus[i]}</span>`;
-  }
-  wrap.innerHTML=html;
+function loadOui(oui,nm){
+  if(nm==='Broadcast'){document.getElementById('mac-input').value='FF:FF:FF:FF:FF:FF';}
+  else{const dev=Array.from({length:3},()=>Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase()).join(':');
+    document.getElementById('mac-input').value=oui+':'+dev;}
+  updateMac();
 }
-
-// ═══════════════════ MODULE 2: PACKET ANATOMY ═══════════════════
-const V4_FIELDS=[
-  {n:'Version',   b:'4b',  c:'#00d4ff',d:'Always 4 for IPv4. First nibble. If this reads 6, it\'s an IPv6 packet — completely different header follows.'},
-  {n:'IHL',       b:'4b',  c:'#00d4ff',d:'Internet Header Length. Number of 32-bit words in header. Min=5 (20 bytes). Options extend to 60 bytes. Parser must read this before the rest of the header.'},
-  {n:'DSCP/ECN',  b:'8b',  c:'#009ac0',d:'DSCP (6b) = QoS priority class — voice/video gets elevated treatment. ECN (2b) = explicit congestion notification without dropping packets.'},
-  {n:'Total Len', b:'16b', c:'#00d4ff',d:'Total packet bytes (header + data). Max 65,535B. Ethernet MTU 1500B caps it in practice. Larger packets are fragmented before transmission.'},
-  {n:'ID / Frag', b:'32b', c:'#3a4a5a',d:'Identification (16b) + Flags (3b: DF=Don\'t Fragment, MF=More Fragments) + Fragment Offset (13b). Used to split and reassemble packets that exceed link MTU.'},
-  {n:'TTL',       b:'8b',  c:'#00ff88',d:'Time To Live. Decremented -1 at each router. Dropped at 0 with ICMP Time Exceeded returned to sender. Linux default=64, Windows=128. traceroute exploits this field.'},
-  {n:'Protocol',  b:'8b',  c:'#00d4ff',d:'Identifies L4 payload: 6=TCP, 17=UDP, 1=ICMP, 89=OSPF, 50=ESP (IPsec). Receiver uses this to hand the payload to the correct transport handler.'},
-  {n:'Hdr CSum',  b:'16b', c:'#3a4a5a',d:'Header-only checksum. Recalculated at EVERY router (TTL changes each hop). IPv6 dropped this — overhead at scale. L2 FCS and L4 checksums handle error detection.'},
-  {n:'Src IP',    b:'32b', c:'#ffb300', d:'Source IPv4 address. 4 bytes. RFC1918 private ranges: 10.x.x.x/8, 172.16–31.x.x/12, 192.168.x.x/16. Can be spoofed — TCP handshake provides partial verification.'},
-  {n:'Dst IP',    b:'32b', c:'#bb88ff', d:'Destination IPv4. Every router performs a longest-prefix-match (LPM) lookup on this field to determine next hop. This is the core routing decision at L3.'},
-];
-const V6_FIELDS=[
-  {n:'Version',     b:'4b',   c:'#00d4ff',d:'Always 6 for IPv6. First nibble. Disambiguates from IPv4 (=4). Dual-stack hosts run both stacks and check this field to route to the correct IP implementation.'},
-  {n:'Traffic Cls', b:'8b',   c:'#009ac0',d:'Equivalent to IPv4 DSCP/ECN. Top 6 bits = DSCP QoS class, bottom 2 = ECN congestion signal. Same QoS semantics, compatible with IPv4 DSCP codepoints.'},
-  {n:'Flow Label',  b:'20b',  c:'#00c8a0',d:'NEW in IPv6. 20-bit flow identifier. Routers can use this for consistent per-flow treatment (QoS, ECMP) without inspecting L4 headers. Set by source, unmodified in transit.'},
-  {n:'Payload Len', b:'16b',  c:'#00d4ff',d:'Length of everything AFTER the fixed 40-byte header. No IHL field needed — IPv6 base header is always exactly 40 bytes. Extension headers are counted here.'},
-  {n:'Next Header', b:'8b',   c:'#00ff88',d:'What follows this header: 6=TCP, 17=UDP, 58=ICMPv6, 43=Routing EH, 44=Fragment EH, 0=Hop-by-Hop EH. Extension headers chain via this field instead of a variable options section.'},
-  {n:'Hop Limit',   b:'8b',   c:'#00ff88',d:'Direct equivalent of IPv4 TTL. Decremented at each router. Dropped at 0. traceroute works identically. Typical defaults: 64 (Linux/macOS), 128 (Windows), 255 (Cisco).'},
-  {n:'Src Addr',    b:'128b', c:'#ffb300', d:'Source IPv6. 128 bits / 16 bytes. Written as 8 colon-separated hex groups. Link-local: fe80::/10. Global unicast: 2000::/3. Multicast: ff00::/8. No NAT needed — every host gets a global addr.'},
-  {n:'Dst Addr',    b:'128b', c:'#bb88ff', d:'Destination IPv6. 128-bit. 3.4×10^38 addresses. No fragmentation by routers — only source can fragment (via Fragment Extension Header). Neighbor Discovery Protocol (NDP) replaces ARP.'},
-];
-
-function initPktFields(){
-  function renderFields(fields, containerId, detailId, color){
-    const wrap=document.getElementById(containerId);
-    if(!wrap)return;
-    wrap.innerHTML=fields.map((f,i)=>
-      `<div class="pkt-field" onclick="selectPktField('${containerId}','${detailId}',${i})" id="${containerId}-f${i}" style="border-color:${f.c}33">
-        <span class="fn" style="color:${f.c}88">${f.n}</span>
-        <span class="fb" style="color:${f.c}">${f.b}</span>
-      </div>`
-    ).join('');
-  }
-  renderFields(V4_FIELDS,'pkt-fields-v4','pkt-detail-v4','#00ff88');
-  renderFields(V6_FIELDS,'pkt-fields-v6','pkt-detail-v6','#00d4ff');
+function updateMac(){
+  let v=document.getElementById('mac-input').value.toUpperCase().replace(/[^0-9A-F:]/g,'');
+  const hex=v.replace(/:/g,'');
+  document.getElementById('mac-display').innerHTML=hex.length>=6?
+    `<span class="mac-oui">${hex.slice(0,2)}:${hex.slice(2,4)}:${hex.slice(4,6)}</span> : <span class="mac-dev">${hex.slice(6,8)}:${hex.slice(8,10)}:${hex.slice(10,12)}</span>`:v;
+  document.getElementById('r-mac-oui').textContent=hex.length>=6?`${hex.slice(0,2)}:${hex.slice(2,4)}:${hex.slice(4,6)}`:'—';
+  document.getElementById('r-mac-dev').textContent=hex.length>=12?`${hex.slice(6,8)}:${hex.slice(8,10)}:${hex.slice(10,12)}`:'—';
+  let cast='Unicast',bit='1st bit 0';
+  if(hex.length>=2){const fb=parseInt(hex.slice(0,2),16);
+    if(hex.slice(0,12)==='FFFFFFFFFFFF'){cast='Broadcast';bit='all 1s';}
+    else if(fb&1){cast='Multicast';bit='1st bit 1';}}
+  document.getElementById('r-mac-cast').textContent=cast;document.getElementById('r-mac-bit').textContent=bit;
+  drawFrame();drawArp();
 }
-
-function selectPktField(containerId, detailId, idx){
-  document.querySelectorAll('#'+containerId+' .pkt-field').forEach(e=>e.classList.remove('active'));
-  document.getElementById(containerId+'-f'+idx).classList.add('active');
-  const fields=containerId.includes('v4')?V4_FIELDS:V6_FIELDS;
-  const f=fields[idx];
-  const accentColor=containerId.includes('v4')?'var(--green)':'var(--cyan)';
-  document.getElementById(detailId).innerHTML=
-    `<span class="fd-name" style="color:${accentColor}">${f.n} — ${f.b}</span>${f.d}`;
+function drawFrame(){
+  const c=document.getElementById('frame-canvas');if(!c)return;const W=c.clientWidth||520,H=120;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const fields=[['Preamble',7,'#6a8090'],['SFD',1,'#6a8090'],['Dest MAC',6,col('green')],['Src MAC',6,col('green')],['Type',2,col('cyan')],['Payload',20,col('amber')],['FCS',4,col('red')]];
+  const tot=fields.reduce((s,f)=>s+f[1],0);let cx=4;const y=30,h=44;
+  x.fillStyle=dimCol();x.font='9px Share Tech Mono';x.textAlign='left';x.fillText('ETHERNET FRAME',4,16);
+  fields.forEach(([nm,w,clr])=>{const fw=(w/tot)*(W-8);
+    x.fillStyle=clr+'33';x.strokeStyle=clr;x.lineWidth=1;x.fillRect(cx,y,fw-1,h);x.strokeRect(cx,y,fw-1,h);
+    x.fillStyle=clr;x.font='8px Share Tech Mono';x.textAlign='center';x.save();
+    if(fw<40){x.translate(cx+fw/2,y+h/2);x.rotate(-Math.PI/2);x.fillText(nm,0,3);}else{x.fillText(nm,cx+fw/2,y+h/2-2);x.fillText(w+'B',cx+fw/2,y+h/2+10);}
+    x.restore();cx+=fw;});
+  x.textAlign='left';x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.fillText('MAC addresses sent in the clear — visible to any sniffer',4,H-6);
 }
-
-function updateHex(){
-  const ttl4=parseInt(document.getElementById('ttl4-sl').value);
-  const pld4=parseInt(document.getElementById('pld4-sl').value);
-  const ttl6=parseInt(document.getElementById('ttl6-sl').value);
-  const pld6=parseInt(document.getElementById('pld6-sl').value);
-  document.getElementById('ttl4-disp').textContent=ttl4;
-  document.getElementById('pld4-disp').textContent=pld4+' B';
-  document.getElementById('ttl6-disp').textContent=ttl6;
-  document.getElementById('pld6-disp').textContent=pld6+' B';
-  drawHexOnCanvas('hex4-canvas','v4',ttl4,pld4);
-  drawHexOnCanvas('hex6-canvas','v6',ttl6,pld6);
+function drawArp(){
+  const c=document.getElementById('arp-canvas');if(!c)return;const W=c.clientWidth||520,H=150;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const aX=W*0.18,bX=W*0.82,y1=46,y2=104;
+  [['Host A',aX],['Host B',bX]].forEach(([nm,nx])=>{x.fillStyle='#000';x.strokeStyle=col('green');x.lineWidth=1.5;
+    x.fillStyle=isLight()?'#fff':'#000';x.fillRect(nx-30,20,60,24);x.strokeRect(nx-30,20,60,24);
+    x.fillStyle=col('green');x.font='9px Share Tech Mono';x.textAlign='center';x.fillText(nm,nx,36);});
+  x.strokeStyle=col('amber');x.lineWidth=1.5;x.beginPath();x.moveTo(aX+30,y1);x.lineTo(bX-30,y1);x.stroke();
+  x.fillStyle=col('amber');x.beginPath();x.moveTo(bX-30,y1);x.lineTo(bX-38,y1-4);x.lineTo(bX-38,y1+4);x.fill();
+  x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('ARP Request (broadcast): "Who has 192.168.1.1?"',W/2,y1-6);
+  x.strokeStyle=col('cyan');x.beginPath();x.moveTo(bX-30,y2);x.lineTo(aX+30,y2);x.stroke();
+  x.fillStyle=col('cyan');x.beginPath();x.moveTo(aX+30,y2);x.lineTo(aX+38,y2-4);x.lineTo(aX+38,y2+4);x.fill();
+  x.fillText('ARP Reply (unicast): "That IP is at C8:5B:76..."',W/2,y2-6);
+  x.textAlign='left';
 }
-
-function drawHexOnCanvas(canvasId, proto, ttl, pld){
-  const canvas=document.getElementById(canvasId);
-  if(!canvas)return;
-  const W=canvas.clientWidth||500, H=160;
-  canvas.width=W; canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-
-  let bytes=[], fc=[], labels={};
-
-  if(proto==='v4'){
-    const hdr=[0x45,0x00,0x00,Math.min(20+pld,0xffff)>>8&0xff,Math.min(20+pld,0xffff)&0xff,
-      0xab,0xcd,0x40,0x00, ttl,0x06,0x00,0x00,
-      0xc0,0xa8,0x0a,0x01, 0xc0,0xa8,0x0a,0x02];
-    bytes=[...hdr,...Array.from({length:Math.min(pld,28)},(_,i)=>(i*23+0x41)%256)];
-    [0,1].forEach(i=>fc[i]='#00d4ff');
-    [2,3,4].forEach(i=>fc[i]='#00d4ff');
-    [5,6,7,8].forEach(i=>fc[i]='#3a4a5a');
-    fc[9]=ttl<32?'#ff4444':ttl<64?'#ffb300':'#00ff88';
-    fc[10]='#00d4ff'; fc[11]='#3a4a5a'; fc[12]='#3a4a5a';
-    for(let i=13;i<17;i++)fc[i]='#ffb300';
-    for(let i=17;i<21;i++)fc[i]='#bb88ff';
-    for(let i=21;i<bytes.length;i++)fc[i]='#1e3040';
-    labels={0:'Ver/IHL/DSCP',5:'ID/Frag',9:'TTL',10:'Proto',13:'Src',17:'Dst',21:'Payload'};
-  } else {
-    const hdr=[0x60,0x00,0x00,0x00,
-      (pld>>8)&0xff,pld&0xff,
-      0x3a, ttl&0xff,
-      0x20,0x01,0x0d,0xb8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,
-      0x20,0x01,0x0d,0xb8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02];
-    bytes=[...hdr,...Array.from({length:Math.min(pld,16)},(_,i)=>(i*31+0x10)%256)];
-    for(let i=0;i<4;i++)fc[i]='#00d4ff';
-    fc[4]='#009ab0'; fc[5]='#009ab0';
-    fc[6]='#00ff88';
-    fc[7]=ttl<32?'#ff4444':ttl<64?'#ffb300':'#00ff88';
-    for(let i=8;i<24;i++)fc[i]='#ffb300';
-    for(let i=24;i<40;i++)fc[i]='#bb88ff';
-    for(let i=40;i<bytes.length;i++)fc[i]='#1e3040';
-    labels={0:'Ver+TC+Flow',4:'PayLen',6:'NxtHdr',7:'HopLim',8:'Src(128b)',24:'Dst(128b)',40:'Payload'};
-  }
-
-  const cols=16, rowH=14, sX=46, sY=14;
-  ctx.font='10px Share Tech Mono';
-  bytes.forEach((b,i)=>{
-    const row=Math.floor(i/cols), col=i%cols;
-    const x=sX+col*20, y=sY+row*rowH;
-    if(y>H-10)return;
-    ctx.fillStyle=fc[i]||'#1e3040';
-    ctx.fillText(b.toString(16).padStart(2,'0'),x,y);
-    if(labels[i]!==undefined){
-      ctx.fillStyle='#2a3a4a'; ctx.font='7px Share Tech Mono';
-      ctx.fillText(labels[i],x,y-5); ctx.font='10px Share Tech Mono';
-    }
-  });
-  ctx.fillStyle='#2a4050'; ctx.font='9px Share Tech Mono';
-  for(let r=0;r*cols<bytes.length&&sY+r*rowH<H;r++)
-    ctx.fillText('0x'+(r*cols).toString(16).padStart(2,'0'),1,sY+r*rowH);
-
-  // legend
-  const lg=proto==='v4'?[
-    {c:'#00d4ff',t:'Header'},{c:'#ffb300',t:'SrcIP'},{c:'#bb88ff',t:'DstIP'},
-    {c:ttl<32?'#ff4444':ttl<64?'#ffb300':'#00ff88',t:'TTL='+ttl},{c:'#1e3040',t:'Payload'}
-  ]:[
-    {c:'#00d4ff',t:'Fixed Hdr'},{c:'#ffb300',t:'Src IPv6'},{c:'#bb88ff',t:'Dst IPv6'},
-    {c:ttl<32?'#ff4444':ttl<64?'#ffb300':'#00ff88',t:'HopLim='+ttl},{c:'#1e3040',t:'Payload'}
-  ];
-  let lx=4; ctx.font='8px Share Tech Mono';
-  lg.forEach(item=>{if(lx>W-10)return;ctx.fillStyle=item.c;ctx.fillText('■ '+item.t,lx,H-3);lx+=item.t.length*5+22;});
+// MODULE 3: IP
+function ipToInt(ip){const p=ip.split('.').map(Number);if(p.length!==4||p.some(o=>isNaN(o)||o<0||o>255))return null;return ((p[0]<<24)>>>0)+(p[1]<<16)+(p[2]<<8)+p[3];}
+function intToIp(n){return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.');}
+function updateIp(){
+  const ip=document.getElementById('ip-input').value.trim();const cidr=parseInt(document.getElementById('cidr-num').value);
+  const ipi=ipToInt(ip);
+  if(ipi===null){document.getElementById('ip-type').innerHTML='<span class="dn" style="color:var(--red)">Invalid IP</span>Enter a valid dotted-decimal IPv4 address (e.g. 192.168.1.50)';return;}
+  const mask=cidr===0?0:(0xFFFFFFFF<<(32-cidr))>>>0;
+  const net=(ipi&mask)>>>0,bcast=(net|(~mask>>>0))>>>0;
+  const hosts=cidr>=31?(cidr===31?2:1):Math.pow(2,32-cidr)-2;
+  document.getElementById('r-mask').textContent=intToIp(mask);
+  document.getElementById('r-netid').textContent=intToIp(net);
+  document.getElementById('r-bcast').textContent=intToIp(bcast);
+  document.getElementById('r-hosts').textContent=hosts.toLocaleString();
+  const o1=(ipi>>>24)&255;let cls,priv=false;
+  if(o1===10||(o1===172&&((ipi>>>16)&255)>=16&&((ipi>>>16)&255)<=31)||(o1===192&&((ipi>>>16)&255)===168))priv=true;
+  if(o1===127)cls='Loopback';else if(o1<128)cls='Class A';else if(o1<192)cls='Class B';else if(o1<224)cls='Class C';else if(o1<240)cls='Class D (multicast)';else cls='Class E';
+  document.getElementById('ip-type').innerHTML=`<span class="dn" style="color:var(--amber)">${cls}${priv?' — PRIVATE':' — Public'}</span>`+
+    (cls==='Loopback'?'127.0.0.0/8 refers to the local host itself, used for testing.':
+    priv?'RFC1918 private range — not routable on the public internet. Requires NAT to reach the internet.':'Publicly routable address. Allocated via IANA → RIR (e.g. ARIN) → ISP.');
+  drawIpBits(ipi,cidr);drawRoute();
 }
-
-// ── Frame Examples ──────────────────────────────────────────────
-const FRAMES=[
-  {
-    name:'HTTP GET (IPv4/TCP)',
-    layers:[
-      {label:'Eth II',   bytes:14, color:'#6644aa'},
-      {label:'IPv4',     bytes:20, color:'#00d4ff'},
-      {label:'TCP',      bytes:20, color:'#00ff88'},
-      {label:'HTTP GET', bytes:128,color:'#ffb300'},
-    ],
-    detail:`<span style="color:var(--green)">Ethernet II Frame carrying an HTTP GET request</span>
-Eth DST: aa:bb:cc:dd:ee:01  SRC: aa:bb:cc:dd:ee:02  EtherType: 0x0800 (IPv4)
-IPv4 Src: 192.168.1.100  Dst: 93.184.216.34  TTL: 64  Proto: 6 (TCP)
-TCP  Src Port: 54321 (ephemeral)  Dst Port: 80 (HTTP)  Flags: PSH+ACK
-HTTP GET /index.html HTTP/1.1
-     Host: example.com
-     User-Agent: Mozilla/5.0
-     Connection: keep-alive
-
-<span style="color:var(--amber)">Total frame: 14+20+20+128 = 182 bytes  |  Overhead: 29.7%</span>`,
-    hex:'45 00 00 b6 ab cd 40 00 40 06 00 00 c0 a8 01 64\n5d b8 d8 22 d4 31 00 50 00 00 00 01 00 00 00 00\n50 18 20 00 00 00 00 00 47 45 54 20 2f 69 6e 64\n65 78 2e 68 74 6d 6c 20 48 54 54 50 2f 31 2e 31\n0d 0a 48 6f 73 74 3a 20 65 78 61 6d 70 6c 65 2e\n63 6f 6d 0d 0a 0d 0a'
-  },
-  {
-    name:'DNS Query (IPv4/UDP)',
-    layers:[
-      {label:'Eth II', bytes:14, color:'#6644aa'},
-      {label:'IPv4',   bytes:20, color:'#00d4ff'},
-      {label:'UDP',    bytes:8,  color:'#009ab0'},
-      {label:'DNS',    bytes:29, color:'#ff7700'},
-    ],
-    detail:`<span style="color:var(--cyan)">DNS Query — resolving example.com via UDP</span>
-Eth  DST: ff:ff:ff:ff:ff:ff (broadcast to gateway)  EtherType: 0x0800
-IPv4 Src: 192.168.1.100  Dst: 8.8.8.8 (Google DNS)  TTL: 64  Proto: 17 (UDP)
-UDP  Src Port: 51234 (random ephemeral)  Dst Port: 53  Length: 37
-DNS  Transaction ID: 0x1a2b  Flags: 0x0100 (Standard Query, Recursion Desired)
-     Questions: 1
-     QNAME: example.com  QTYPE: A (IPv4 address)  QCLASS: IN (Internet)
-
-<span style="color:var(--amber)">Note: UDP used for DNS — no handshake, low latency. If response >512B, falls back to TCP port 53.</span>`,
-    hex:'00 00 00 00 00 00 c0 a8 01 64 08 08 08 08 c8 82\n00 35 00 25 00 00 1a 2b 01 00 00 01 00 00 00 00\n00 00 07 65 78 61 6d 70 6c 65 03 63 6f 6d 00 00\n01 00 01'
-  },
-  {
-    name:'ICMPv6 Ping (IPv6)',
-    layers:[
-      {label:'Eth II', bytes:14, color:'#6644aa'},
-      {label:'IPv6',   bytes:40, color:'#00d4ff'},
-      {label:'ICMPv6', bytes:8,  color:'#00ff88'},
-      {label:'Payload',bytes:56, color:'#2a3a4a'},
-    ],
-    detail:`<span style="color:var(--cyan)">ICMPv6 Echo Request (ping6) — IPv6 native</span>
-Eth   DST: 33:33:00:00:00:01  SRC: aa:bb:cc:dd:ee:01  EtherType: 0x86DD (IPv6)
-IPv6  Src: 2001:db8::1  Dst: 2001:db8::2
-      Ver: 6  Traffic Class: 0x00  Flow Label: 0x00000
-      Payload Length: 64  Next Header: 58 (ICMPv6)  Hop Limit: 64
-ICMPv6 Type: 128 (Echo Request)  Code: 0
-      Identifier: 0x1234  Sequence: 1
-      Data: 56 bytes of ABCDEFG... padding
-
-<span style="color:var(--amber)">ICMPv6 replaces both ICMPv4 and ARP. NDP (Neighbor Discovery) uses ICMPv6 Type 135/136 for address resolution.</span>`,
-    hex:'60 00 00 00 00 40 3a 40 20 01 0d b8 00 00 00 00\n00 00 00 00 00 00 00 01 20 01 0d b8 00 00 00 00\n00 00 00 00 00 00 00 02 80 00 a8 4a 12 34 00 01\n61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70\n71 72 73 74 75 76 77 78 79 7a 61 62 63 64 65 66'
-  },
-  {
-    name:'ARP Request',
-    layers:[
-      {label:'Eth II',    bytes:14, color:'#6644aa'},
-      {label:'ARP',       bytes:28, color:'#ff4444'},
-    ],
-    detail:`<span style="color:var(--red)">ARP — Address Resolution Protocol (L2 → L3 mapping)</span>
-Eth  DST: ff:ff:ff:ff:ff:ff (BROADCAST)  SRC: aa:bb:cc:dd:ee:01  EtherType: 0x0806 (ARP)
-ARP  Hardware Type: 1 (Ethernet)  Protocol Type: 0x0800 (IPv4)
-     HW Addr Len: 6  Proto Addr Len: 4  Opcode: 1 (Request)
-     Sender MAC: aa:bb:cc:dd:ee:01  Sender IP: 192.168.1.100
-     Target MAC: 00:00:00:00:00:00  Target IP: 192.168.1.1
-
-Message: "Who has 192.168.1.1? Tell 192.168.1.100"
-
-<span style="color:var(--amber)">ARP is IPv4-only, L2 broadcast. IPv6 uses ICMPv6 NDP instead (Type 135 Neighbor Solicitation). ARP spoofing is a common L2 attack vector.</span>`,
-    hex:'ff ff ff ff ff ff aa bb cc dd ee 01 08 06 00 01\n08 00 06 04 00 01 aa bb cc dd ee 01 c0 a8 01 64\n00 00 00 00 00 00 c0 a8 01 01'
-  },
-  {
-    name:'DHCP Discover',
-    layers:[
-      {label:'Eth II', bytes:14, color:'#6644aa'},
-      {label:'IPv4',   bytes:20, color:'#00d4ff'},
-      {label:'UDP',    bytes:8,  color:'#009ab0'},
-      {label:'DHCP',   bytes:236,color:'#ff7700'},
-    ],
-    detail:`<span style="color:var(--amber)">DHCP Discover — broadcast seeking an IP address lease</span>
-Eth  DST: ff:ff:ff:ff:ff:ff (broadcast)  SRC: aa:bb:cc:dd:ee:01  EtherType: 0x0800
-IPv4 Src: 0.0.0.0 (no IP yet)  Dst: 255.255.255.255 (limited broadcast)  TTL: 64
-UDP  Src Port: 68 (DHCP client)  Dst Port: 67 (DHCP server)
-DHCP Op: 1 (BOOT Request)  HType: 1 (Ethernet)  HLen: 6  Hops: 0
-     XID: 0x3d1d (transaction ID)
-     Secs: 0  Flags: 0x8000 (Broadcast)
-     Client IP: 0.0.0.0  Your IP: 0.0.0.0
-     Client MAC: aa:bb:cc:dd:ee:01
-     Options: DHCP Message Type=1 (Discover), Parameter Request List
-
-<span style="color:var(--amber)">DHCP 4-way: Discover → Offer → Request → ACK. DORA process. Relay agents forward across subnets.</span>`,
-    hex:'ff ff ff ff ff ff aa bb cc dd ee 01 08 00 45 00\n01 1c ab cd 00 00 40 11 00 00 00 00 00 00 ff ff\nff ff 00 44 00 43 01 08 00 00 01 01 06 00 3d 1d\n00 00 00 00 80 00 00 00 00 00 00 00 00 00 00 00\n00 00 aa bb cc dd ee 01 00 00 00 00 00 00 00 00'
-  },
-];
-
-let currentFrame=0;
-function selectFrame(idx, btn){
-  currentFrame=idx;
-  document.querySelectorAll('.proto-btn').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  const f=FRAMES[idx];
-  drawFrameBar(f);
-  document.getElementById('frame-detail').innerHTML=f.detail;
-  document.getElementById('frame-hex').innerHTML=
-    '<span style="color:var(--text-dim);font-size:9px;letter-spacing:1px;display:block;margin-bottom:4px">HEX DUMP (partial):</span>'+
-    f.hex.split('\n').map(row=>row.split(' ').map(b=>`<span style="color:#3a5a70">${b}</span>`).join(' ')).join('\n');
+function drawIpBits(ipi,cidr){
+  const c=document.getElementById('ip-canvas');if(!c)return;const W=c.clientWidth||520,H=90;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const bw=W/32;
+  for(let i=0;i<32;i++){const bit=(ipi>>>(31-i))&1,isNet=i<cidr;
+    x.fillStyle=isNet?col('green')+'44':col('amber')+'44';x.strokeStyle=isNet?col('green'):col('amber');x.lineWidth=0.5;
+    x.fillRect(i*bw,24,bw-0.5,34);x.strokeRect(i*bw,24,bw-0.5,34);
+    x.fillStyle=isNet?col('green'):col('amber');x.font='9px Share Tech Mono';x.textAlign='center';x.fillText(bit,i*bw+bw/2,45);
+    if(i%8===0){x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.fillText('octet '+(i/8+1),i*bw+bw*4-bw/2,18);}}
+  x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='left';
+  x.fillText('/'+cidr+' → '+cidr+' network bits, '+(32-cidr)+' host bits',4,H-6);
 }
-
-function drawFrameBar(frame){
-  const canvas=document.getElementById('frame-canvas');
-  if(!canvas)return;
-  const W=canvas.clientWidth||500, H=120;
-  canvas.width=W; canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-
-  const total=frame.layers.reduce((s,l)=>s+l.bytes,0);
-  const barY=36, barH=44;
-  let x=10;
-  const bW=W-20;
-
-  frame.layers.forEach((l,i)=>{
-    const w=Math.max((l.bytes/total)*bW, 30);
-    ctx.fillStyle=l.color; ctx.globalAlpha=0.2;
-    ctx.fillRect(x, barY, w, barH);
-    ctx.globalAlpha=1;
-    ctx.strokeStyle=l.color; ctx.lineWidth=1.5;
-    ctx.strokeRect(x, barY, w, barH);
-
-    ctx.fillStyle=l.color; ctx.font='bold 10px Share Tech Mono'; ctx.textAlign='center';
-    ctx.fillText(l.label, x+w/2, barY+barH/2-3);
-    ctx.font='9px Share Tech Mono';
-    ctx.fillText(l.bytes+'B', x+w/2, barY+barH/2+10);
-
-    // tick at top
-    ctx.fillStyle='#2a4050'; ctx.font='8px Share Tech Mono';
-    ctx.fillText((x-10).toString(), x, barY-4);
-
-    x+=w;
-    ctx.textAlign='left';
-  });
-  ctx.fillStyle='#2a4050'; ctx.font='8px Share Tech Mono'; ctx.textAlign='right';
-  ctx.fillText(total+'B total', W-8, barY-4);
-  ctx.textAlign='left';
-
-  // legend
-  let lx=10;
-  ctx.font='9px Share Tech Mono';
-  frame.layers.forEach(l=>{
-    ctx.fillStyle=l.color;
-    ctx.fillText('■ '+l.label+' ('+l.bytes+'B)', lx, H-5);
-    lx+=l.label.length*6+l.bytes.toString().length*6+36;
-  });
+function drawRoute(){
+  const c=document.getElementById('route-canvas');if(!c)return;const W=c.clientWidth||520,H=180;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const nodes=[['Host A',W*0.12,col('green')],['Router A',W*0.38,col('amber')],['Router B',W*0.64,col('amber')],['Host B',W*0.88,col('cyan')]];
+  const y=H/2;
+  for(let i=0;i<nodes.length-1;i++){x.strokeStyle=dimCol();x.lineWidth=1.5;x.beginPath();x.moveTo(nodes[i][1]+22,y);x.lineTo(nodes[i+1][1]-22,y);x.stroke();
+    x.fillStyle=col('cyan');x.beginPath();x.moveTo(nodes[i+1][1]-22,y);x.lineTo(nodes[i+1][1]-30,y-4);x.lineTo(nodes[i+1][1]-30,y+4);x.fill();
+    x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('hop',( nodes[i][1]+nodes[i+1][1])/2,y-6);}
+  nodes.forEach(([nm,nx,clr])=>{x.fillStyle=isLight()?'#fff':'#000';x.strokeStyle=clr;x.lineWidth=1.5;
+    x.fillRect(nx-22,y-16,44,32);x.strokeRect(nx-22,y-16,44,32);
+    x.fillStyle=clr;x.font='8px Share Tech Mono';x.textAlign='center';nm.split(' ').forEach((w,wi)=>x.fillText(w,nx,y-2+wi*10));});
+  x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';
+  x.fillText('1. Local or remote? → 2. Default gateway (ARP) → 3. Routing table lookup → 4. Forward to next hop → TTL−1',W/2,H-10);
+  x.textAlign='left';
 }
-
-// ═══════════════════ IPv6 COMPRESS / DECOMPRESS ═══════════════════
-function parseIPv6Full(addr){
-  // expand :: and return 8 groups of 4 hex digits or null
+// MODULE 3b: IPv6
+function expandIpv6(addr){
   addr=addr.trim().toLowerCase();
-  if(addr.includes('/'))addr=addr.split('/')[0];
-  if(addr.includes('::')){
-    const halves=addr.split('::');
-    if(halves.length>2)return null;
-    const left=halves[0]?halves[0].split(':'):[];
-    const right=halves[1]?halves[1].split(':'):[];
-    const missing=8-left.length-right.length;
-    if(missing<0)return null;
-    const middle=Array(missing).fill('0000');
-    const all=[...left,...middle,...right];
-    return all.map(g=>g.padStart(4,'0'));
-  } else {
-    const groups=addr.split(':');
-    if(groups.length!==8)return null;
-    return groups.map(g=>g.padStart(4,'0'));
-  }
+  if(!addr)return null;
+  if((addr.match(/::/g)||[]).length>1)return null;
+  let head,tail;
+  if(addr.includes('::')){const parts=addr.split('::');head=parts[0]?parts[0].split(':'):[];tail=parts[1]?parts[1].split(':'):[];}
+  else{head=addr.split(':');tail=[];}
+  const all=head.concat(tail);
+  for(const g of all){if(g===''||!/^[0-9a-f]{1,4}$/.test(g))return null;}
+  const missing=8-(head.length+tail.length);
+  if(addr.includes('::')){if(missing<0)return null;}
+  else if(all.length!==8)return null;
+  const zeros=addr.includes('::')?Array(missing).fill('0000'):[];
+  const groups=head.map(g=>g.padStart(4,'0')).concat(zeros,tail.map(g=>g.padStart(4,'0')));
+  if(groups.length!==8)return null;
+  return groups;
 }
-
-function ipv6Expand(){
-  const raw=document.getElementById('ipv6-in').value.trim();
-  const groups=parseIPv6Full(raw);
-  if(!groups){
-    document.getElementById('ipv6-result').textContent='Invalid IPv6 address';
-    document.getElementById('ipv6-parts').innerHTML='';
-    return;
-  }
-  const full=groups.join(':');
-  document.getElementById('ipv6-result').innerHTML=`<span style="color:var(--text-dim);font-size:9px;letter-spacing:1px;display:block;margin-bottom:3px">EXPANDED (full notation):</span>${full}`;
-  showIPv6Parts(groups);
+function compressIpv6(groups){
+  // drop leading zeros
+  const g=groups.map(x=>x.replace(/^0+/,'')||'0');
+  // find longest run of '0'
+  let bestStart=-1,bestLen=0,curStart=-1,curLen=0;
+  for(let i=0;i<8;i++){if(g[i]==='0'){if(curStart<0)curStart=i;curLen++;if(curLen>bestLen){bestLen=curLen;bestStart=curStart;}}else{curStart=-1;curLen=0;}}
+  if(bestLen<2){return g.join(':');}
+  const before=g.slice(0,bestStart),after=g.slice(bestStart+bestLen);
+  return before.join(':')+'::'+after.join(':');
 }
-
-function ipv6Compress(){
-  const raw=document.getElementById('ipv6-in').value.trim();
-  const groups=parseIPv6Full(raw);
-  if(!groups){
-    document.getElementById('ipv6-result').textContent='Invalid IPv6 address';
-    document.getElementById('ipv6-parts').innerHTML='';
-    return;
-  }
-  // Strip leading zeros in each group
-  const stripped=groups.map(g=>g.replace(/^0+/,'')||'0');
-  // Find longest run of consecutive all-zero groups
-  let bestStart=-1, bestLen=0, curStart=-1, curLen=0;
-  stripped.forEach((g,i)=>{
-    if(g==='0'){
-      if(curStart<0){curStart=i;curLen=1;}
-      else curLen++;
-      if(curLen>bestLen){bestLen=curLen;bestStart=curStart;}
-    } else {curStart=-1;curLen=0;}
-  });
-  let result;
-  if(bestLen>=2){
-    const before=stripped.slice(0,bestStart).join(':');
-    const after=stripped.slice(bestStart+bestLen).join(':');
-    result=(before?before+'::':'::')+after;
-    if(result.endsWith('::')&&after)result=before+'::'+after;
-  } else {
-    result=stripped.join(':');
-  }
-  // clean up any :::
-  result=result.replace(/:::/g,'::');
-  document.getElementById('ipv6-result').innerHTML=`<span style="color:var(--text-dim);font-size:9px;letter-spacing:1px;display:block;margin-bottom:3px">COMPRESSED (RFC 5952):</span>${result}`;
-  showIPv6Parts(groups);
+function updateIpv6(){
+  const v=document.getElementById('ipv6-input').value;
+  const groups=expandIpv6(v);
+  if(!groups){document.getElementById('r-v6-valid').textContent='No';document.getElementById('r-v6-valid').style.color=col('red');
+    document.getElementById('ipv6-expanded').textContent='invalid';document.getElementById('ipv6-compressed').textContent='—';
+    document.getElementById('r-v6-saved').textContent='—';return;}
+  document.getElementById('r-v6-valid').textContent='Yes';document.getElementById('r-v6-valid').style.color=col('amber');
+  document.getElementById('r-v6-groups').textContent='8';
+  document.getElementById('ipv6-expanded').textContent=groups.join(':');
+  document.getElementById('ipv6-compressed').textContent=compressIpv6(groups);
+  const zeroGroups=groups.filter(g=>g==='0000').length;
+  document.getElementById('r-v6-saved').textContent=zeroGroups;
 }
-
-function ipv6Live(){
-  const raw=document.getElementById('ipv6-in').value.trim();
-  if(!raw)return;
-  const groups=parseIPv6Full(raw);
-  if(groups)showIPv6Parts(groups);
+// MODULE 4: WIFI
+const WIFI=[
+  {n:'802.11 (Legacy)',y:1997,f:'2.4 GHz',r:2,d:'FHSS/DSSS. The original standard, now obsolete. 2 Mbps max.'},
+  {n:'802.11b',y:1999,f:'2.4 GHz',r:11,d:'DSSS, CCK modulation. First widely adopted standard. 11 Mbps.'},
+  {n:'802.11a',y:1999,f:'5 GHz',r:54,d:'OFDM. Less interference but shorter range than 2.4 GHz. 54 Mbps.'},
+  {n:'802.11g',y:2003,f:'2.4 GHz',r:54,d:'OFDM, backward compatible with 802.11b. 54 Mbps.'},
+  {n:'802.11n (Wi-Fi 4)',y:2009,f:'2.4/5 GHz',r:600,d:'Introduced MIMO (Multiple Input, Multiple Output). 600 Mbps.'},
+  {n:'802.11ac (Wi-Fi 5)',y:2013,f:'5 GHz',r:3460,d:'Wider channels, MU-MIMO (Multi-User MIMO). 3.46 Gbps.'},
+  {n:'802.11ad (WiGig)',y:2012,f:'60 GHz',r:7000,d:'Very high speed (7 Gbps) but very short range.'},
+  {n:'802.11af (White-Fi)',y:2014,f:'TV White Space',r:35,d:'Long-range in unused TV channels. ~35 Mbps.'},
+  {n:'802.11ah (HaLow)',y:2016,f:'Sub-1 GHz',r:347,d:'Designed for IoT and large-scale sensor networks. 347 Mbps.'},
+  {n:'802.11ax (Wi-Fi 6/6E)',y:2020,f:'2.4/5/6 GHz',r:9600,d:'OFDMA for efficiency in congested areas. 9.6 Gbps.'},
+  {n:'802.11be (Wi-Fi 7)',y:2024,f:'2.4/5/6 GHz',r:23000,d:'Multi-Link Operation (MLO) for simultaneous band use. 23 Gbps.'},
+  {n:'802.11bn (Wi-Fi 8)',y:2024,f:'TBD',r:23000,d:'Focus on Ultra High Reliability using advanced techniques. ~23 Gbps.'},
+];
+let wifiSel=4;
+function initWifiBtns(){
+  const c=document.getElementById('wifi-btns');if(!c)return;
+  c.innerHTML=WIFI.map((s,i)=>`<button class="cbtn" id="wb-${i}" onclick="selWifi(${i})">${s.n.replace('802.11','.11').split(' ')[0]}</button>`).join('');
+  document.getElementById('wb-'+wifiSel).classList.add('active');
 }
-
-function showIPv6Parts(groups){
-  const labels=['Global Prefix','Global Prefix','Subnet ID','Subnet ID','Interface ID','Interface ID','Interface ID','Interface ID'];
-  const colors=['#00d4ff','#00d4ff','#ffb300','#ffb300','#00ff88','#00ff88','#00ff88','#00ff88'];
-  let html='<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px">';
-  groups.forEach((g,i)=>{
-    html+=`<span style="background:#000;border:1px solid ${colors[i]}44;padding:3px 7px;font-family:var(--mono);font-size:11px;color:${colors[i]}">${g}</span>`;
-  });
-  html+='</div>';
-  html+=`<div style="margin-top:6px;font-size:9px;letter-spacing:1px;color:var(--text-dim)">
-    <span style="color:#00d4ff">■ Routing prefix</span> &nbsp;
-    <span style="color:#ffb300">■ Subnet ID</span> &nbsp;
-    <span style="color:#00ff88">■ Interface ID (EUI-64 from MAC)</span>
-  </div>`;
-  document.getElementById('ipv6-parts').innerHTML=html;
+function selWifi(i){wifiSel=i;document.querySelectorAll('#wifi-btns .cbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('wb-'+i).classList.add('active');updateWifi();}
+function updateWifi(){
+  const i=wifiSel,s=WIFI[i];
+  document.getElementById('r-wifi-year').textContent=s.y;
+  document.getElementById('r-wifi-freq').textContent=s.f;
+  document.getElementById('r-wifi-rate').textContent=s.r>=1000?(s.r/1000)+'G':s.r;
+  document.getElementById('r-wifi-rate').nextElementSibling.textContent=s.r>=1000?'Gbps':'Mbps';
+  document.getElementById('wifi-detail').innerHTML=`<span class="dn" style="color:var(--purple)">${s.n} — ${s.y}</span>Frequency: ${s.f} | Max rate: ${s.r>=1000?(s.r/1000)+' Gbps':s.r+' Mbps'}<br><br>${s.d}`;
+  drawWifi(i);
 }
-
-// ═══════════════════ MODULE 3: SUBNETTING ═══════════════════
-function parseIP(s){const p=s.split('.').map(Number);if(p.length!==4||p.some(x=>isNaN(x)||x<0||x>255))return null;return(p[0]<<24>>>0)|(p[1]<<16)|(p[2]<<8)|p[3]}
-function ipStr(n){return[(n>>>24)&0xff,(n>>>16)&0xff,(n>>>8)&0xff,n&0xff].join('.')}
-
-function updateSubnet(){
-  const ipStr2=document.getElementById('ip-in').value.trim();
-  const cidr=parseInt(document.getElementById('cidr-in').value);
-  const splitB=parseInt(document.getElementById('split-sl').value);
-  if(isNaN(cidr)||cidr<1||cidr>30)return;
-  const ip=parseIP(ipStr2);
-  if(!ip&&ip!==0)return;
-  const mask=cidr===0?0:(~0<<(32-cidr))>>>0;
-  const net=(ip&mask)>>>0;
-  const bcast=(net|(~mask>>>0))>>>0;
-  const hosts=Math.pow(2,32-cidr)-2;
-  document.getElementById('r-net').textContent=ipStr(net);
-  document.getElementById('r-bcast').textContent=ipStr(bcast);
-  document.getElementById('r-mask').textContent=ipStr(mask);
-  document.getElementById('r-hosts').textContent=hosts>0?hosts.toLocaleString():0;
-  document.getElementById('r-hbits').textContent=32-cidr;
-  const f=(ip>>>24)&0xff;
-  document.getElementById('r-class').textContent=f<128?'A':f<192?'B':f<224?'C':f<240?'D':'E';
-
-  // Binary
-  const b=ip.toString(2).padStart(32,'0');
-  let html='<div style="font-size:9px;margin-bottom:4px"><span class="bn">■ Network ('+cidr+'b)</span> &nbsp; <span class="bh">■ Host ('+(32-cidr)+'b)</span></div>';
-  [0,8,16,24].forEach((off,pi)=>{
-    if(pi>0)html+='<span style="color:var(--border-bright)">.</span>';
-    for(let i=0;i<8;i++){
-      const g=off+i;
-      html+=`<span class="${g<cidr?'bn':'bh'}">${b[g]}</span>`;
-    }
-  });
-  document.getElementById('bin-disp').innerHTML=html;
-
-  const effCidr=Math.min(cidr+splitB,30);
-  const numSubs=Math.pow(2,splitB);
-  const subSize=Math.pow(2,32-effCidr);
-  document.getElementById('split-disp').textContent=numSubs+' subnet'+(numSubs>1?'s':'')+' (/'+effCidr+')';
-
-  const tbody=document.getElementById('subnet-tbody');
-  tbody.innerHTML='';
-  for(let i=0;i<Math.min(numSubs,8);i++){
-    const sn=(net+i*subSize)>>>0, sb=(sn+subSize-1)>>>0;
-    tbody.innerHTML+=`<tr><td class="hl">${i+1}</td><td>${ipStr(sn)}/${effCidr}</td><td>${ipStr((sn+1)>>>0)} – ${ipStr((sb-1)>>>0)}</td><td class="wb">${ipStr(sb)}</td><td class="hl">${subSize>2?subSize-2:0}</td></tr>`;
-  }
-  if(numSubs>8)tbody.innerHTML+=`<tr><td colspan="5" style="color:var(--text-dim);font-size:10px">… ${numSubs-8} more not shown</td></tr>`;
-
-  drawSubnetCanvas(net,cidr,splitB,numSubs,subSize);
+function drawWifi(sel){
+  const c=document.getElementById('wifi-canvas');if(!c)return;const W=c.clientWidth||520,H=280;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const dim=dimCol();
+  // spectrum-analyzer style: x axis = frequency (log), bands marked, selected standard's band(s) lit
+  const pad={l:40,r:14,t:24,b:34},gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  x.fillStyle=dim;x.font='9px Share Tech Mono';x.textAlign='center';
+  x.fillText('RF SPECTRUM — WI-FI OPERATING BANDS',W/2,14);
+  // frequency axis 0.9 GHz .. 60 GHz log
+  const fMin=Math.log10(0.9),fMax=Math.log10(60);
+  const fToX=ghz=>pad.l+((Math.log10(ghz)-fMin)/(fMax-fMin))*gW;
+  // baseline
+  x.strokeStyle=gridCol();x.lineWidth=0.5;x.beginPath();x.moveTo(pad.l,pad.t+gH);x.lineTo(pad.l+gW,pad.t+gH);x.stroke();
+  // freq ticks
+  [0.9,2.4,5,6,10,20,60].forEach(f=>{const xx=fToX(f);x.strokeStyle=gridCol();x.lineWidth=0.4;
+    x.beginPath();x.moveTo(xx,pad.t);x.lineTo(xx,pad.t+gH);x.stroke();
+    x.fillStyle=dim;x.font='8px Share Tech Mono';x.textAlign='center';x.fillText(f+'G',xx,pad.t+gH+12);});
+  // define standard bands (GHz center, width factor)
+  const s=WIFI[sel];
+  const bandMap={'2.4 GHz':[[2.4,0.08]],'5 GHz':[[5,0.12]],'2.4/5 GHz':[[2.4,0.08],[5,0.12]],
+    '60 GHz':[[60,0.15]],'TV White Space':[[0.9,0.05]],'Sub-1 GHz':[[0.9,0.05]],
+    '2.4/5/6 GHz':[[2.4,0.08],[5,0.12],[6,0.10]],'TBD':[[2.4,0.08],[5,0.12],[6,0.10]]};
+  // draw faint "all bands" reference
+  [[2.4,'2.4'],[5,'5'],[6,'6'],[60,'60']].forEach(([f])=>{const xx=fToX(f);
+    x.fillStyle=isLight()?'#e0e8f0':'#141c26';x.fillRect(xx-12,pad.t,24,gH);});
+  // active band(s) as spectrum humps
+  const bands=bandMap[s.f]||[[2.4,0.08]];
+  bands.forEach(([fc,wf])=>{const xc=fToX(fc),halfW=gW*wf;
+    const grad=x.createLinearGradient(0,pad.t,0,pad.t+gH);grad.addColorStop(0,col('purple')+'cc');grad.addColorStop(1,col('purple')+'10');
+    x.fillStyle=grad;x.strokeStyle=col('purple');x.lineWidth=2;x.beginPath();
+    for(let d=-halfW;d<=halfW;d+=1){const amp=Math.exp(-(d*d)/(2*(halfW/2.2)*(halfW/2.2)));const xx=xc+d,yy=pad.t+gH-amp*gH*0.88;
+      d===-halfW?x.moveTo(xx,yy):x.lineTo(xx,yy);}
+    x.lineTo(xc+halfW,pad.t+gH);x.lineTo(xc-halfW,pad.t+gH);x.closePath();x.fill();x.stroke();
+    x.fillStyle=col('purple');x.font='9px Share Tech Mono';x.textAlign='center';x.fillText(fc+' GHz',xc,pad.t+gH-gH*0.92);});
+  x.fillStyle=col('purple');x.font='10px Share Tech Mono';x.textAlign='left';
+  x.fillText(s.n+'  ('+s.f+')',pad.l,H-6);
+  x.textAlign='left';
 }
-
-function drawSubnetCanvas(net,cidr,splitB,numSubs,subSize){
-  const canvas=document.getElementById('subnet-canvas');
-  if(!canvas)return;
-  const W=canvas.clientWidth||580,H=110;
-  canvas.width=W; canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-  const total=Math.pow(2,32-cidr);
-  const colors=['#00ff88','#ffb300','#00d4ff','#bb88ff','#ff7700','#ff4444','#00c866','#cc8800'];
-  const bT=40,bH=36;
-  ctx.fillStyle='#1e2530'; ctx.fillRect(20,bT,W-40,bH);
-  const show=Math.min(numSubs,8);
-  for(let i=0;i<show;i++){
-    const x=20+(i*subSize/total)*(W-40);
-    const w=(subSize/total)*(W-40);
-    ctx.fillStyle=colors[i%colors.length]; ctx.globalAlpha=0.25;
-    ctx.fillRect(x+1,bT+1,w-2,bH-2); ctx.globalAlpha=1;
-    ctx.strokeStyle=colors[i%colors.length]; ctx.lineWidth=1;
-    ctx.strokeRect(x+1,bT+1,w-2,bH-2);
-    if(w>25){ctx.fillStyle=colors[i%colors.length];ctx.font='9px Share Tech Mono';ctx.fillText('/'+(cidr+splitB),x+4,bT+bH/2+4);}
-  }
-  ctx.fillStyle='#2a4050'; ctx.font='9px Share Tech Mono';
-  ctx.fillText('Network: '+ipStr(net)+'/'+cidr+'   Subnets: '+numSubs+'   Hosts each: '+(subSize>2?subSize-2:0),20,H-6);
+// MODULE 5: CHANNELS + TOPOLOGY
+let selChans=[1,6,11];
+function initChan(){
+  const c=document.getElementById('chan-btns');
+  c.innerHTML='';for(let ch=1;ch<=11;ch++){const b=document.createElement('button');
+    b.className='cbtn'+(selChans.includes(ch)?' active':'');b.textContent='Ch '+ch;
+    b.onclick=()=>{if(selChans.includes(ch))selChans=selChans.filter(x=>x!==ch);else selChans.push(ch);
+      b.classList.toggle('active');drawChan();};c.appendChild(b);}
 }
-
-// ═══════════════════ MODULE 4: TOPOLOGIES ═══════════════════
-const TOPOS = {
-  bus:{
-    title:'BUS TOPOLOGY',
-    pros:'Simple, cheap, easy to extend.',
-    cons:'Single cable = single point of failure. Collisions on shared medium. Hard to troubleshoot. Obsolete in modern LANs.',
-    use:'Legacy Ethernet (10BASE2 coax). Good teaching model for how early CSMA/CD networks worked.',
-    layer:'L1/L2 — shared medium, no dedicated switching',
-    buildNodes:(W,H)=>{
-      const nodes=[];
-      const n=6, y=H/2, startX=60, endX=W-60;
-      for(let i=0;i<n;i++){
-        const x=startX+i*(endX-startX)/(n-1);
-        nodes.push({x,y:y-50,label:i===0?'SRV':'PC'+(i),color:'#bb88ff'});
-      }
-      // bus line
-      return{nodes,extras:[{type:'hline',y:y,x1:startX,x2:endX,color:'#bb88ff'}]};
-    }
-  },
-  star:{
-    title:'STAR TOPOLOGY',
-    pros:'Single device failure doesn\'t affect others. Easy to add/remove nodes. Centralized management.',
-    cons:'Switch/hub = single point of failure for entire network. More cabling than bus.',
-    use:'Modern Ethernet LANs. Every enterprise and tactical network uses this at the access layer.',
-    layer:'L2 — switch at center. Dominant topology in fielded systems.',
-    buildNodes:(W,H)=>{
-      const cx=W/2, cy=H/2;
-      const nodes=[{x:cx,y:cy,label:'SW',color:'#00d4ff',isHub:true}];
-      const n=6, r=110;
-      for(let i=0;i<n;i++){
-        const a=(i/n)*2*Math.PI-Math.PI/2;
-        nodes.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a),label:'PC'+(i+1),color:'#00ff88'});
-      }
-      return{nodes,edges:nodes.slice(1).map((_,i)=>[0,i+1])};
-    }
-  },
-  mesh:{
-    title:'FULL MESH TOPOLOGY',
-    pros:'Highly redundant. Multiple paths between every node. No single point of failure.',
-    cons:'Expensive. N×(N-1)/2 links needed. Complex management. Scales poorly.',
-    use:'WAN backbone routers, military tactical networks (MANET/HAIPE), core routing infrastructure.',
-    layer:'L3 — routing protocols (OSPF, BGP) required to manage multiple paths.',
-    buildNodes:(W,H)=>{
-      const n=5, cx=W/2, cy=H/2, r=105;
-      const nodes=[];
-      for(let i=0;i<n;i++){
-        const a=(i/n)*2*Math.PI-Math.PI/2;
-        nodes.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a),label:'R'+(i+1),color:'#ffb300'});
-      }
-      const edges=[];
-      for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)edges.push([i,j]);
-      return{nodes,edges};
-    }
-  },
-  p2p:{
-    title:'POINT-TO-POINT TOPOLOGY',
-    pros:'Dedicated bandwidth. Secure (no shared medium). Simple. Predictable latency.',
-    cons:'Only two endpoints. Not scalable by itself.',
-    use:'WAN serial links, satellite links, VPNs, radio relay, /30 subnets on router interfaces. Core building block of larger topologies.',
-    layer:'L1/L2 — HDLC, PPP, or Ethernet depending on medium.',
-    buildNodes:(W,H)=>{
-      return{
-        nodes:[
-          {x:W*0.2,y:H/2,label:'RTR A',color:'#ffb300'},
-          {x:W*0.8,y:H/2,label:'RTR B',color:'#ffb300'},
-        ],
-        edges:[[0,1]],
-        extras:[{type:'label',x:W/2,y:H/2-30,text:'/30 subnet  (2 usable hosts)',color:'#2a4050'}]
-      };
-    }
-  },
-  cs:{
-    title:'CLIENT-SERVER TOPOLOGY',
-    pros:'Centralized resources, authentication, storage. Easy to manage/backup. Scales well.',
-    cons:'Server = single point of failure without redundancy. Requires server infrastructure.',
-    use:'Every enterprise network. Active Directory, file servers, web servers, C2 systems. Standard military garrison network model.',
-    layer:'L3/L4/L7 — TCP connections, DNS, LDAP, HTTP all involved.',
-    buildNodes:(W,H)=>{
-      const cx=W/2, sy=H*0.22;
-      const nodes=[{x:cx,y:sy,label:'SERVER',color:'#ff4444',isHub:true}];
-      const clients=5, r=105, cy2=H*0.65;
-      for(let i=0;i<clients;i++){
-        const a=(i/(clients-1))*Math.PI+Math.PI;
-        nodes.push({x:cx+r*Math.cos(a)*0.9,y:cy2+r*0.35*Math.sin(a*0.5),label:'CL'+(i+1),color:'#00ff88'});
-      }
-      return{nodes,edges:nodes.slice(1).map((_,i)=>[0,i+1])};
-    }
-  },
-  ring:{
-    title:'RING TOPOLOGY',
-    pros:'Equal access, deterministic latency. Token Ring provides guaranteed bandwidth.',
-    cons:'Single break disrupts entire ring. Adding nodes disrupts traffic. Largely obsolete.',
-    use:'Legacy Token Ring (IBM), SONET/SDH fiber rings (with dual counter-rotating ring for fault tolerance). Still used in industrial/SCADA networks.',
-    layer:'L1/L2 — token passing access control.',
-    buildNodes:(W,H)=>{
-      const n=6, cx=W/2, cy=H/2, r=105;
-      const nodes=[];
-      for(let i=0;i<n;i++){
-        const a=(i/n)*2*Math.PI-Math.PI/2;
-        nodes.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a),label:'N'+(i+1),color:'#00d4ff'});
-      }
-      const edges=nodes.map((_,i)=>[i,(i+1)%n]);
-      return{nodes,edges};
-    }
-  },
+function drawChan(){
+  const c=document.getElementById('chan-canvas');if(!c)return;const W=c.clientWidth||520,H=180;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const pad={l:30,r:14,t:14,b:30},gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  x.strokeStyle=gridCol();x.lineWidth=0.5;x.beginPath();x.moveTo(pad.l,pad.t+gH);x.lineTo(pad.l+gW,pad.t+gH);x.stroke();
+  // channel center freqs: ch1=2412, spacing 5MHz, width 22MHz; span 2401..2473
+  const fMin=2401,fMax=2473;
+  const fToX=f=>pad.l+((f-fMin)/(fMax-fMin))*gW;
+  const colors=[col('green'),col('cyan'),col('amber'),col('purple'),col('red')];
+  selChans.sort((a,b)=>a-b).forEach((ch,idx)=>{const fc=2412+(ch-1)*5,clr=colors[idx%colors.length];
+    x.fillStyle=clr+'33';x.strokeStyle=clr;x.lineWidth=1.5;x.beginPath();
+    for(let f=fc-11;f<=fc+11;f+=0.5){const xx=fToX(f),amp=Math.cos((f-fc)/11*Math.PI/2);const yy=pad.t+gH-amp*amp*gH*0.85;
+      f===fc-11?x.moveTo(xx,yy):x.lineTo(xx,yy);}x.lineTo(fToX(fc+11),pad.t+gH);x.lineTo(fToX(fc-11),pad.t+gH);x.closePath();x.fill();x.stroke();
+    x.fillStyle=clr;x.font='9px Share Tech Mono';x.textAlign='center';x.fillText(ch,fToX(fc),pad.t+gH-gH*0.88);});
+  x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';
+  [1,6,11].forEach(ch=>{const fc=2412+(ch-1)*5;x.fillText('ch'+ch,fToX(fc),H-16);});
+  x.fillText('2.4 GHz band — overlapping channels cause adjacent-channel interference',W/2,H-4);
+  x.textAlign='left';
+}
+let curTopo='ibss';
+const TOPO={
+  ibss:{name:'IBSS / Ad-hoc',d:'Independent Basic Service Set. Two or more devices connect directly to each other without an Access Point. Peer-to-peer wireless.'},
+  bss:{name:'BSS',d:'Basic Service Set. A single AP supporting one or more clients in one cell (Basic Service Area / BSA). The most common home/office setup.'},
+  ess:{name:'ESS',d:'Extended Service Set. Two or more BSSs connected by a Distribution System (DS), allowing larger coverage and seamless roaming. All APs share the same SSID.'},
 };
-
-let currentTopo='bus';
-let faultedNodes=new Set();
-let packetAnim=null;
-let packetState=null;
-
-function selectTopo(name, btn){
-  currentTopo=name;
-  faultedNodes.clear();
-  document.querySelectorAll('.topo-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  const t=TOPOS[name];
-  document.getElementById('topo-info').innerHTML=`
-    <span class="ti-title">${t.title}</span>
-    <span style="color:var(--text-dim);font-size:10px;letter-spacing:1px">LAYER: ${t.layer}</span><br><br>
-    <span style="color:var(--green)">✔ PROS:</span> ${t.pros}<br>
-    <span style="color:var(--red)">✘ CONS:</span> ${t.cons}<br>
-    <span style="color:var(--cyan)">⬡ USE CASE:</span> ${t.use}
-  `;
-  topoLog('Topology loaded: '+t.title,'info');
-  if(packetAnim){clearInterval(packetAnim);packetAnim=null;packetState=null;}
-  drawTopo();
-  drawSimTopo();
+function selectTopo(t,btn){curTopo=t;document.querySelectorAll('#tab-chan .btn-row .cbtn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');const d=TOPO[t];
+  document.getElementById('topo-detail').innerHTML=`<span class="dn">${d.name}</span>${d.d}`;drawTopo();}
+function drawTopo(){
+  const c=document.getElementById('topo-canvas');if(!c)return;const W=c.clientWidth||520,H=180;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const cyan=col('cyan'),grn=col('green'),amb=col('amber');
+  function node(nx,ny,r,clr,label){x.fillStyle=isLight()?'#fff':'#000';x.strokeStyle=clr;x.lineWidth=1.5;
+    x.beginPath();x.arc(nx,ny,r,0,Math.PI*2);x.fill();x.stroke();x.fillStyle=clr;x.font='8px Share Tech Mono';x.textAlign='center';x.fillText(label,nx,ny+3);}
+  if(curTopo==='ibss'){const pts=[[W*0.3,H*0.35],[W*0.7,H*0.35],[W*0.5,H*0.72]];
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){x.strokeStyle=grn+'88';x.lineWidth=1;x.setLineDash([4,3]);
+      x.beginPath();x.moveTo(pts[i][0],pts[i][1]);x.lineTo(pts[j][0],pts[j][1]);x.stroke();x.setLineDash([]);}
+    pts.forEach((p,i)=>node(p[0],p[1],18,grn,'C'+(i+1)));
+    x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('Direct peer-to-peer, no AP',W/2,H-8);
+  }else if(curTopo==='bss'){node(W*0.5,H*0.3,20,cyan,'AP');
+    [[W*0.2,H*0.7],[W*0.5,H*0.78],[W*0.8,H*0.7]].forEach((p,i)=>{x.strokeStyle=cyan+'88';x.lineWidth=1;x.setLineDash([4,3]);
+      x.beginPath();x.moveTo(W*0.5,H*0.3);x.lineTo(p[0],p[1]);x.stroke();x.setLineDash([]);node(p[0],p[1],16,grn,'C'+(i+1));});
+    x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('One AP, one cell (BSA), shared SSID',W/2,H-8);
+  }else{const ap1=[W*0.28,H*0.32],ap2=[W*0.72,H*0.32];
+    x.strokeStyle=amb;x.lineWidth=2;x.beginPath();x.moveTo(ap1[0],ap1[1]);x.lineTo(ap2[0],ap2[1]);x.stroke();
+    x.fillStyle=amb;x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('Distribution System (wired)',W/2,H*0.28);
+    node(ap1[0],ap1[1],18,cyan,'AP1');node(ap2[0],ap2[1],18,cyan,'AP2');
+    [[W*0.15,H*0.72],[W*0.4,H*0.72]].forEach((p,i)=>{x.strokeStyle=cyan+'88';x.lineWidth=1;x.setLineDash([4,3]);x.beginPath();x.moveTo(ap1[0],ap1[1]);x.lineTo(p[0],p[1]);x.stroke();x.setLineDash([]);node(p[0],p[1],14,grn,'C'+(i+1));});
+    [[W*0.6,H*0.72],[W*0.85,H*0.72]].forEach((p,i)=>{x.strokeStyle=cyan+'88';x.lineWidth=1;x.setLineDash([4,3]);x.beginPath();x.moveTo(ap2[0],ap2[1]);x.lineTo(p[0],p[1]);x.stroke();x.setLineDash([]);node(p[0],p[1],14,grn,'C'+(i+3));});
+    x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('Multiple BSSs + DS = roaming, same SSID',W/2,H-8);}
+  x.textAlign='left';
 }
-
-function getTopoData(name,W,H){return TOPOS[name].buildNodes(W,H);}
-
-function drawTopoOnCanvas(canvasId, name, highlightPath, animPkt){
-  const canvas=document.getElementById(canvasId);
-  if(!canvas)return null;
-  const W=canvas.clientWidth||520, H=280;
-  canvas.width=W; canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-
-  const data=getTopoData(name,W,H);
-  const {nodes,edges=[],extras=[]}=data;
-
-  // Extras (bus line, labels)
-  extras.forEach(e=>{
-    if(e.type==='hline'){
-      ctx.strokeStyle=e.color; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(e.x1,e.y); ctx.lineTo(e.x2,e.y); ctx.stroke();
-      // vertical drops to nodes
-      nodes.forEach(n=>{
-        ctx.strokeStyle=e.color+'88'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
-        ctx.beginPath(); ctx.moveTo(n.x,e.y); ctx.lineTo(n.x,n.y+14); ctx.stroke();
-        ctx.setLineDash([]);
-      });
-    }
-    if(e.type==='label'){
-      ctx.fillStyle=e.color; ctx.font='10px Share Tech Mono'; ctx.textAlign='center';
-      ctx.fillText(e.text,e.x,e.y); ctx.textAlign='left';
-    }
+// MODULE 6: NETWORK TOPOLOGIES
+const NT={
+  ptp:{name:'Point-to-Point',redun:'None',
+    d:'Exactly two directly connected nodes. Highest bandwidth and speed; simple to maintain. The whole link depends on both nodes and the connection staying up. Use: connecting two networks or sending confidential info.'},
+  bus:{name:'Bus',redun:'None',
+    d:'All nodes connect to one central cable (daisy-chained); traffic travels both directions; terminators stop signal bounce. Inexpensive, but all devices share the medium and must take turns to avoid collisions. Old — not used in modern infrastructure.'},
+  ring:{name:'Ring',redun:'None',
+    d:'Each node connects to its two neighbors; traffic flows unidirectionally. Reduces collisions, but a single cable or node failure brings down the whole network, and data must pass through every node.'},
+  star:{name:'Star',redun:'Node',
+    d:'Every node connects individually to a central device (switch/hub). The most common modern topology. Centralized management, easy to expand, one node failing doesn\'t affect others — but the central device is a single point of failure.'},
+  mesh:{name:'Mesh (Full)',redun:'Full',
+    d:'Every node connects to multiple (full mesh = all) other nodes. Maximum redundancy and adaptive routing; handles high traffic. Most expensive and hardest to build/maintain — lots of cabling and ports. Used for network backbones.'},
+  cs:{name:'Client-Server',redun:'Server',
+    d:'Architecture (not just layout): clients request services/resources, servers provide them. Clients always initiate; servers always listen. Server power must scale to client demand. The server is the central dependency.'},
+  p2p:{name:'Peer-to-Peer',redun:'Distributed',
+    d:'Architecture with no distinct roles — every device acts as both client and server, sharing files/printers directly. Resilience depends on the participating peers, not a central server. Basis for file sharing and some comms apps.'},
+};
+const NT_ORDER=['ptp','bus','ring','star','mesh','cs','p2p'];
+let ntCur='ptp',ntNodes=[],ntEdges=[],ntFailed=-1,ntAnim=null,ntPackets=[];
+function initNt(){
+  const c=document.getElementById('nt-btns');if(!c)return;
+  c.innerHTML=NT_ORDER.map(k=>`<button class="cbtn green" id="ntb-${k}" onclick="ntSelect('${k}',this)">${NT[k].name}</button>`).join('');
+}
+function ntLayout(k,W,H){
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.36;const nodes=[];
+  function ring(n){const a=[];for(let i=0;i<n;i++){const ang=-Math.PI/2+i*2*Math.PI/n;a.push([cx+R*Math.cos(ang),cy+R*Math.sin(ang)]);}return a;}
+  let N=[],E=[],hub=null;
+  if(k==='ptp'){N=[[cx-R,cy],[cx+R,cy]];E=[[0,1]];}
+  else if(k==='bus'){const n=6;for(let i=0;i<n;i++)N.push([W*0.12+i*(W*0.76/(n-1)),cy]);for(let i=0;i<n;i++)E.push(['bus',i]);}
+  else if(k==='ring'){N=ring(7);for(let i=0;i<7;i++)E.push([i,(i+1)%7]);}
+  else if(k==='star'){N=[[cx,cy]];const out=ring(6);out.forEach((p,i)=>{N.push(p);E.push([0,i+1]);});hub=0;}
+  else if(k==='mesh'){N=ring(6);for(let i=0;i<6;i++)for(let j=i+1;j<6;j++)E.push([i,j]);}
+  else if(k==='cs'){N=[[cx,cy*0.5]];const out=[[W*0.2,H*0.78],[W*0.4,H*0.82],[W*0.6,H*0.82],[W*0.8,H*0.78]];out.forEach((p,i)=>{N.push(p);E.push([0,i+1]);});hub=0;}
+  else if(k==='p2p'){N=ring(6);for(let i=0;i<6;i++)for(let j=i+1;j<6;j++)if((i+j)%2===0||j===i+1)E.push([i,j]);}
+  return {N,E,hub};
+}
+function ntSelect(k,btn){
+  ntCur=k;document.querySelectorAll('#nt-btns .cbtn').forEach(b=>b.classList.remove('active'));
+  const b=btn||document.getElementById('ntb-'+k);if(b)b.classList.add('active');
+  ntFailed=-1;ntPackets=[];if(ntAnim){clearInterval(ntAnim);ntAnim=null;}
+  const d=NT[k];
+  document.getElementById('nt-name-disp').textContent=d.name;
+  document.getElementById('nt-detail').innerHTML=`<span class="dn" style="color:var(--green)">${d.name}</span>${d.d}`;
+  document.getElementById('nt-legend').textContent='Click Send Unicast or Broadcast to animate traffic flow';
+  ntDraw();
+}
+function ntDraw(){
+  const c=document.getElementById('nt-canvas');if(!c)return;const W=c.clientWidth||520,H=340;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const lay=ntLayout(ntCur,W,H);ntNodes=lay.N;ntEdges=lay.E;
+  const grn=col('green'),cyan=col('cyan'),amb=col('amber'),red=col('red');
+  document.getElementById('r-nt-nodes').textContent=lay.N.length;
+  let linkCount=lay.E.length;document.getElementById('r-nt-links').textContent=linkCount;
+  document.getElementById('r-nt-redun').textContent=NT[ntCur].redun;
+  // edges
+  lay.E.forEach(([a,b])=>{let p1,p2;
+    if(a==='bus'){const busY=H/2;p1=[lay.N[b][0],busY+40];p2=lay.N[b];
+      // draw bus spine once
+    }else{p1=lay.N[a];p2=lay.N[b];}
+    x.strokeStyle=gridCol();x.lineWidth=1.2;
+    if(a==='bus'){}else{x.beginPath();x.moveTo(p1[0],p1[1]);x.lineTo(p2[0],p2[1]);x.stroke();}
   });
-
-  // Edges
-  (edges||[]).forEach(([a,b])=>{
-    const na=nodes[a], nb=nodes[b];
-    const isFaulted=faultedNodes.has(a)||faultedNodes.has(b);
-    const isHighlit=highlightPath&&((highlightPath.includes(a)&&highlightPath.includes(b)));
-    ctx.strokeStyle=isFaulted?'#330000':isHighlit?'#00ff88':'#1e3040';
-    ctx.lineWidth=isHighlit?2:1;
-    ctx.setLineDash(isFaulted?[4,3]:[]);
-    ctx.beginPath(); ctx.moveTo(na.x,na.y); ctx.lineTo(nb.x,nb.y); ctx.stroke();
-    ctx.setLineDash([]);
-  });
-
-  // Nodes
-  nodes.forEach((n,i)=>{
-    const faulted=faultedNodes.has(i);
-    const color=faulted?'#ff4444':n.color;
-    ctx.fillStyle='#000'; ctx.strokeStyle=color; ctx.lineWidth=faulted?2:1.5;
-    ctx.shadowBlur=faulted?0:4; ctx.shadowColor=color;
-    ctx.beginPath(); ctx.arc(n.x,n.y,16,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.shadowBlur=0;
-    if(faulted){
-      ctx.strokeStyle='#ff4444'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.moveTo(n.x-8,n.y-8); ctx.lineTo(n.x+8,n.y+8); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(n.x+8,n.y-8); ctx.lineTo(n.x-8,n.y+8); ctx.stroke();
+  if(ntCur==='bus'){const busY=H/2+50;x.strokeStyle=amb;x.lineWidth=3;x.beginPath();x.moveTo(W*0.08,busY);x.lineTo(W*0.92,busY);x.stroke();
+    x.fillStyle=amb;x.font='8px Share Tech Mono';x.textAlign='center';x.fillText('||',W*0.06,busY+3);x.fillText('||',W*0.94,busY+3);
+    lay.N.forEach(p=>{x.strokeStyle=gridCol();x.lineWidth=1.2;x.beginPath();x.moveTo(p[0],p[1]+18);x.lineTo(p[0],busY);x.stroke();});}
+  // packets
+  ntPackets.forEach(pk=>{const p1=ntNodes[pk.from],p2=ntNodes[pk.to];if(!p1||!p2)return;
+    const px=p1[0]+(p2[0]-p1[0])*pk.t,py=p1[1]+(p2[1]-p1[1])*pk.t;
+    x.fillStyle=pk.bcast?amb:cyan;x.shadowBlur=isLight()?0:8;x.shadowColor=pk.bcast?amb:cyan;
+    x.beginPath();x.arc(px,py,5,0,Math.PI*2);x.fill();x.shadowBlur=0;});
+  // nodes
+  ntNodes.forEach((p,i)=>{const failed=i===ntFailed,isHub=lay.hub===i;
+    x.fillStyle=isLight()?'#fff':'#000';x.strokeStyle=failed?red:isHub?cyan:grn;x.lineWidth=isHub?2.5:1.5;
+    const r=isHub?20:15;x.beginPath();x.arc(p[0],p[1],r,0,Math.PI*2);x.fill();x.stroke();
+    x.fillStyle=failed?red:isHub?cyan:grn;x.font='8px Share Tech Mono';x.textAlign='center';
+    let lbl=isHub?(ntCur==='cs'?'SRV':ntCur==='star'?'HUB':'C'):(ntCur==='cs'?'CLI':'N'+i);
+    if(failed)lbl='✕';x.fillText(lbl,p[0],p[1]+3);});
+  x.textAlign='left';
+}
+function ntAdjacency(){
+  // bidirectional adjacency excluding the failed node; bus modeled as a linear chain so a break cuts the line
+  const adj={};ntNodes.forEach((_,i)=>adj[i]=[]);
+  if(ntCur==='bus'){
+    for(let i=0;i<ntNodes.length-1;i++){
+      if(i===ntFailed||(i+1)===ntFailed)continue;
+      adj[i].push(i+1);adj[i+1].push(i);
     }
-    ctx.fillStyle=faulted?'#ff4444':color; ctx.font='8px Share Tech Mono'; ctx.textAlign='center';
-    ctx.fillText(n.label,n.x,n.y+3); ctx.textAlign='left';
-  });
-
-  // Animated packet
-  if(animPkt&&animPkt.path&&animPkt.path.length>1){
-    const seg=Math.min(animPkt.seg,animPkt.path.length-2);
-    const na=nodes[animPkt.path[seg]], nb=nodes[animPkt.path[seg+1]];
-    const px=na.x+(nb.x-na.x)*animPkt.p;
-    const py=na.y+(nb.y-na.y)*animPkt.p;
-    ctx.fillStyle=animPkt.color||'#00ff88';
-    ctx.shadowBlur=10; ctx.shadowColor=animPkt.color||'#00ff88';
-    ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
-    ctx.shadowBlur=0;
+    return adj;
   }
-  return data;
+  ntEdges.forEach(([a,b])=>{if(a==='bus')return;if(a===ntFailed||b===ntFailed)return;adj[a].push(b);adj[b].push(a);});
+  return adj;
 }
-
-function drawTopo(){drawTopoOnCanvas('topo-canvas',currentTopo,null,null);}
-function drawSimTopo(){drawTopoOnCanvas('topo-sim-canvas',currentTopo,null,packetState);}
-
-let simHighlight=[];
-function topoLog(msg,cls){
-  const box=document.getElementById('topo-log');
-  if(!box)return;
-  const line=document.createElement('span');
-  line.className='log-'+cls; line.style.display='block';
-  const colors={info:'var(--cyan)',ok:'var(--green)',warn:'var(--amber)',err:'var(--red)'};
-  line.style.color=colors[cls]||'var(--text-dim)';
-  line.textContent='> '+msg;
-  box.appendChild(line);
-  box.scrollTop=box.scrollHeight;
-}
-
-function getPath(){
-  const canvas=document.getElementById('topo-sim-canvas');
-  const W=canvas?canvas.clientWidth||520:520, H=280;
-  const data=getTopoData(currentTopo,W,H);
-  const n=data.nodes.length;
-  if(n<2)return[0,1];
-  const src=0, dst=n-1;
-  if(currentTopo==='bus')return data.nodes.map((_,i)=>i);
-  if(currentTopo==='mesh'){
-    // pick route through intermediary
-    return[0,2,4];
-  }
-  if(currentTopo==='ring'){
-    return[0,1,2,3];
-  }
-  return[src,dst];
-}
-
-function sendPacket(){
-  if(packetAnim){clearInterval(packetAnim);packetAnim=null;}
-  const path=getPath();
-  const avail=path.filter(i=>!faultedNodes.has(i));
-  if(avail.length<2){topoLog('ERROR: No valid path — too many faulted nodes','err');return;}
-  topoLog('Sending unicast packet: Node '+avail[0]+' → Node '+avail[avail.length-1],'info');
-  packetState={path:avail,seg:0,p:0,color:'#00ff88'};
-  packetAnim=setInterval(()=>{
-    packetState.p+=0.05;
-    if(packetState.p>=1){
-      packetState.p=0;
-      packetState.seg++;
-      if(packetState.seg>=avail.length-1){
-        clearInterval(packetAnim);packetAnim=null;
-        topoLog('Packet delivered to Node '+avail[avail.length-1],'ok');
-        packetState=null; drawSimTopo(); return;
+function ntSend(mode){
+  if(!ntNodes.length)ntDraw();
+  ntPackets=[];const src=0;const N=ntNodes.length;
+  if(mode==='broadcast'){
+    if(ntCur==='bus'){
+      // signal travels down the shared cable from the source; a failed node breaks the line, nodes past it get nothing
+      let d=0;let blocked=false;
+      for(let i=1;i<N;i++){
+        if(i===ntFailed){blocked=true;break;}
+        ntPackets.push({from:i-1,to:i,t:0,bcast:true,delay:d++});
       }
-      topoLog('Forwarded: Node '+avail[packetState.seg],'info');
-    }
-    drawSimTopo();
-  },40);
-}
-
-function sendBroadcast(){
-  if(packetAnim){clearInterval(packetAnim);packetAnim=null;}
-  const canvas=document.getElementById('topo-sim-canvas');
-  const W=canvas?canvas.clientWidth||520:520, H=280;
-  const data=getTopoData(currentTopo,W,H);
-  const n=data.nodes.length;
-  topoLog('BROADCAST: FF:FF:FF:FF:FF:FF — flooding all nodes','warn');
-  let step=0;
-  const active=[];
-  packetAnim=setInterval(()=>{
-    step++;
-    if(step<=n){
-      const idx=step-1;
-      if(!faultedNodes.has(idx)){
-        active.push(idx);
-        topoLog('Delivered to Node '+idx+' ('+data.nodes[idx].label+')','ok');
+      document.getElementById('nt-legend').textContent=blocked
+        ? 'BROADCAST: bus break at node '+ntFailed+' — nodes past it receive nothing'
+        : 'BROADCAST: signal propagates down the shared bus cable to every node';
+    } else if(ntCur==='ring'){
+      // unidirectional propagation around the loop; a failed node stops it (ring has no redundancy)
+      let d=0;let blocked=false;
+      for(let i=0;i<N;i++){
+        const from=i,to=(i+1)%N;
+        if(from===ntFailed||to===ntFailed){blocked=true;break;}
+        ntPackets.push({from,to,t:0,bcast:true,delay:d++});
+        if(to===src)break; // completed the loop
       }
-      packetState={path:active.length>1?[...active]:active,seg:0,p:1,color:'#ffb300'};
+      document.getElementById('nt-legend').textContent=blocked
+        ? 'BROADCAST: ring break at node '+ntFailed+' — downstream nodes are cut off'
+        : 'BROADCAST: token passes node-to-node around the ring in one direction';
+    } else if(ntCur==='star'||ntCur==='cs'){
+      // central node relays one copy to each leaf simultaneously
+      for(let i=1;i<N;i++){if(i===ntFailed)continue;ntPackets.push({from:0,to:i,t:0,bcast:true,delay:0});}
+      document.getElementById('nt-legend').textContent=ntCur==='cs'
+        ? 'BROADCAST: server pushes one copy to each client at once'
+        : 'BROADCAST: hub forwards one copy to each node at once';
     } else {
-      clearInterval(packetAnim);packetAnim=null;packetState=null;
-      topoLog('Broadcast complete ('+active.length+' nodes reached)','ok');
+      // mesh / p2p / ptp: flood hop-by-hop outward from source (one packet per tree edge)
+      const adj=ntAdjacency();const seen={};seen[src]=1;const q=[[src,0]];
+      while(q.length){const [node,depth]=q.shift();
+        (adj[node]||[]).forEach(nx=>{if(!seen[nx]){seen[nx]=1;ntPackets.push({from:node,to:nx,t:0,bcast:true,delay:depth});q.push([nx,depth+1]);}});}
+      document.getElementById('nt-legend').textContent='BROADCAST: floods hop-by-hop outward from node 0';
     }
-    drawSimTopo();
-  },180);
-}
-
-function simulateFault(){
-  const canvas=document.getElementById('topo-sim-canvas');
-  const W=canvas?canvas.clientWidth||520:520,H=280;
-  const data=getTopoData(currentTopo,W,H);
-  const n=data.nodes.length;
-  const candidates=Array.from({length:n},(_,i)=>i).filter(i=>!faultedNodes.has(i));
-  if(candidates.length===0){topoLog('All nodes already faulted','err');return;}
-  const victim=candidates[Math.floor(Math.random()*candidates.length)];
-  faultedNodes.add(victim);
-  topoLog('NODE FAULT: '+data.nodes[victim].label+' is DOWN','err');
-  if(currentTopo==='bus'||currentTopo==='ring'){
-    topoLog('⚠ CRITICAL: '+TOPOS[currentTopo].title+' has no redundancy — network partitioned!','err');
-  } else if(currentTopo==='mesh'){
-    topoLog('Mesh rerouting... alternate path available','warn');
-  } else if(currentTopo==='star'&&victim===0){
-    topoLog('⚠ Hub/Switch failed — entire star network is DOWN','err');
+  }else{
+    const dst=N-1;const path=ntPath(src,dst);
+    if(path&&path.length>1){
+      for(let i=0;i<path.length-1;i++)ntPackets.push({from:path[i],to:path[i+1],t:0,bcast:false,delay:i});
+      document.getElementById('nt-legend').textContent='UNICAST: packet routed node 0 → node '+dst+' ('+(path.length-1)+' hop'+(path.length-1>1?'s':'')+')';
+    }else{
+      document.getElementById('nt-legend').textContent='UNICAST: no path to node '+dst+' — blocked by the failed node';
+    }
   }
-  drawTopo(); drawSimTopo();
+  if(ntAnim)clearInterval(ntAnim);
+  let frame=0;
+  ntAnim=setInterval(()=>{frame++;let active=false;
+    ntPackets.forEach(pk=>{if((pk.delay||0)*12>frame)return;pk.t+=0.05;if(pk.t>1)pk.t=1;else active=true;});
+    ntDraw();
+    if(!active){clearInterval(ntAnim);ntAnim=null;}},30);
 }
-
-function clearFaults(){
-  faultedNodes.clear();
-  if(packetAnim){clearInterval(packetAnim);packetAnim=null;}
-  packetState=null;
-  topoLog('Reset complete — all nodes restored','ok');
-  drawTopo(); drawSimTopo();
+function ntPath(src,dst){
+  const adj=ntAdjacency();
+  const q=[[src]],seen={};seen[src]=1;
+  while(q.length){const path=q.shift(),node=path[path.length-1];if(node===dst)return path;
+    (adj[node]||[]).forEach(nx=>{if(!seen[nx]){seen[nx]=1;q.push(path.concat(nx));}});}
+  return null;
 }
-
-// ═══════════════════ INIT ═══════════════════
-window.addEventListener('load',()=>{
-  initOsi();
-  initPktFields();
-  updateHex();
-  selectFrame(0, document.getElementById('fb0'));
-  updateSubnet();
-  ipv6Expand();
-  selectTopo('bus',document.querySelectorAll('.topo-btn')[0]);
-});
-window.addEventListener('resize',()=>{
-  const a=document.querySelector('.tab-content.active');
-  if(!a)return;
-  if(a.id==='tab-osi')initOsi();
-  if(a.id==='tab-pkt'){updateHex();if(FRAMES[currentFrame])drawFrameBar(FRAMES[currentFrame]);}
-  if(a.id==='tab-subnet')updateSubnet();
-  if(a.id==='tab-topo'){drawTopo();drawSimTopo();}
-});
+function ntFault(){
+  if(ntNodes.length<3){document.getElementById('nt-legend').textContent='Not enough nodes to fail one here';return;}
+  if(ntFailed!==-1){ntFailed=-1;ntPackets=[];document.getElementById('nt-legend').textContent='Node restored — network whole again';ntDraw();return;}
+  ntFailed=Math.floor(ntNodes.length/2); // a middle node, never the source
+  let msg;
+  if(ntCur==='bus')msg='Node '+ntFailed+' failed — bus break: nodes past it are cut off. Now click Broadcast.';
+  else if(ntCur==='ring')msg='Node '+ntFailed+' failed — ring break: one node down severs the loop. Now click Broadcast.';
+  else if(ntCur==='ptp')msg='Node failed — point-to-point has no redundancy; the link is down.';
+  else if(ntCur==='star')msg='Leaf node '+ntFailed+' failed — star is node-redundant, others still reach the hub. (The hub itself is the single point of failure.)';
+  else if(ntCur==='cs')msg='Client '+ntFailed+' failed — other clients still reach the server. (The server is the single point of failure.)';
+  else if(ntCur==='mesh')msg='Node '+ntFailed+' failed — full mesh routes around it; no loss of connectivity.';
+  else msg='Peer '+ntFailed+' failed — remaining peers stay connected via alternate links.';
+  document.getElementById('nt-legend').textContent=msg;
+  ntPackets=[];ntDraw();
+}
+function ntReset(){ntFailed=-1;ntPackets=[];if(ntAnim){clearInterval(ntAnim);ntAnim=null;}document.getElementById('nt-legend').textContent='Reset — click Send or Broadcast to animate';ntDraw();}
+window.addEventListener('load',()=>{initOsi();drawOsi();drawTcpip();initOui();updateMac();updateIp();updateIpv6();initWifiBtns();updateWifi();initChan();drawChan();selectTopo('ibss',document.getElementById('topo-ibss'));initNt();ntSelect('ptp',null);});
+window.addEventListener('resize',redrawActive);
 </script>
 </body>
 </html>
