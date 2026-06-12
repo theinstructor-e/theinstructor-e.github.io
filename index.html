@@ -80,6 +80,75 @@ h1 span{color:var(--text-dim);font-weight:400}
   </div>
 </div>
 <script>
+// hrefs/labels match your existing site. Edit "file" if your paths change.
+const TOOLS=[
+  {cat:'Comms',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
+  {cat:'Foundations',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
+  {cat:'Networks',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
+  {cat:'EW',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df',color:'#bb88ff'},
+  {cat:'EW',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
+  {cat:'EW',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electronic attack, J-series',file:'EW Principles',color:'#ff4444'},
+  {cat:'Foundations',nm:'Physics 1',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
+  {cat:'Foundations',nm:'Physics 2',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
+  {cat:'Foundations',nm:'Physics 3',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
+  {cat:'EW',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700'},
+  {cat:'EW',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
+];
+function render(){
+  // grouped launch cards
+  const cats=[...new Set(TOOLS.map(t=>t.cat))];
+  let vh='';
+  cats.forEach(cat=>{
+    vh+=`<div class="section-label">${cat}</div><div class="grid">`;
+    TOOLS.filter(t=>t.cat===cat).forEach(t=>{
+      vh+=`<a class="card" href="${t.file}" style="--accent:${t.color}">
+        <div class="cat">${t.cat}</div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go">LAUNCH \u2192</div></a>`;
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-grid').innerHTML=vh;
+  // download rows
+  document.getElementById('dl-list').innerHTML=TOOLS.map(t=>
+    `<div class="dl-row" style="--accent:${t.color}">
+      <div class="dl-info"><div class="dnm" style="color:${t.color}">${t.nm}</div><div class="dcat">${t.cat} &nbsp;|&nbsp; ${t.file}</div></div>
+      <a class="dl-btn" href="${t.file}" download>\u2193 Download</a>
+    </div>`).join('');
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+render();
+</script>
+</body>
+</html>
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>17E Tools <span>// Interactive Training</span></h1>
+  </div>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+</header>
+<div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electronic Warfare Specialist — Self-Contained Interactive References</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('view',this)"><span class="ic">▶</span> Launch Tools</button>
+  <button class="tab-btn" onclick="switchTab('download',this)"><span class="ic">↓</span> Download</button>
+</nav>
+<div class="wrap">
+  <div id="tab-view" class="tab-content active">
+    <div id="view-grid"></div>
+  </div>
+  <div id="tab-download" class="tab-content">
+    <div class="note">Click any <strong>Download</strong> button to save the tool as a standalone HTML file. Each file is fully self-contained — it runs offline in any browser with no install, no internet, and no dependencies. Ideal for USB distribution, LMS upload, or air-gapped classrooms.</div>
+    <div id="dl-list"></div>
+  </div>
+</div>
+<script>
 // EDIT the "file" field to match your actual filenames in the repo.
 const TOOLS=[
   {cat:'Foundations',nm:'physics1',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'electrical_fundamentals.html',color:'#ffb300'},
