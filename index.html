@@ -1,15 +1,132 @@
-<h1>Obviously we would make this look better</h1>
-
-<ul>
-  <li><a href="cellular">Cellular</a></li>
-  <li><a href="rftheory">Physics</a></li>
-  <li><a href="network"> Network</a></li>
-  <li><a href="df"> DF Trainer</a></li>
-  <li><a href="GPS"> GPS Spoof</a></li>
-  <li><a href="EW Principles"> EW Principles</a></li>
-  <li><a href="physics1"> Physics 1</a></li>
-  <li><a href="Physics2"> Physics 2</a></li>
-  <li><a href="physics3"> Physics 3</a></li>
-  <li><a href="cuas"> C-UAS</a></li>
-  <li><a href="fhop"> Frequency Hop</a></li>
-</ul>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17E Interactive Training Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+h1 span{color:var(--text-dim);font-weight:400}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:6px 12px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.tab-nav{display:flex;gap:2px;padding:14px 28px 0;max-width:1080px;margin:0 auto}
+.tab-btn{font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:8px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-btn .ic{font-family:var(--mono);font-size:11px;opacity:.7}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
+.card:hover{border-color:var(--accent,var(--green));transform:translateY(-2px)}
+.card .cat{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.card .nm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.6}
+.card .go{font-family:var(--mono);font-size:9px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.dl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--border);padding:12px 16px;margin-bottom:8px;transition:border-color .15s}
+.dl-row:hover{border-color:var(--accent,var(--cyan))}
+.dl-info .dnm{font-family:var(--display);font-size:16px;font-weight:600;color:var(--accent,var(--cyan));letter-spacing:1px}
+.dl-info .dcat{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
+.dl-btn{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;background:var(--cyan-dark);border:1px solid var(--cyan-dim);color:var(--cyan);padding:8px 16px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.dl-btn:hover{background:var(--cyan);color:var(--bg)}
+.note{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.7;border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;margin-bottom:18px}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.section-label:first-child{margin-top:0}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>17E Tools <span>// Interactive Training</span></h1>
+  </div>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+</header>
+<div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electronic Warfare Specialist — Self-Contained Interactive References</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('view',this)"><span class="ic">▶</span> Launch Tools</button>
+  <button class="tab-btn" onclick="switchTab('download',this)"><span class="ic">↓</span> Download</button>
+</nav>
+<div class="wrap">
+  <div id="tab-view" class="tab-content active">
+    <div id="view-grid"></div>
+  </div>
+  <div id="tab-download" class="tab-content">
+    <div class="note">Click any <strong>Download</strong> button to save the tool as a standalone HTML file. Each file is fully self-contained — it runs offline in any browser with no install, no internet, and no dependencies. Ideal for USB distribution, LMS upload, or air-gapped classrooms.</div>
+    <div id="dl-list"></div>
+  </div>
+</div>
+<script>
+// EDIT the "file" field to match your actual filenames in the repo.
+const TOOLS=[
+  {cat:'Foundations',nm:'Electrical Fundamentals',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'electrical_fundamentals.html',color:'#ffb300'},
+  {cat:'Foundations',nm:'RF / Physics Theory',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rf_theory_interactive.html',color:'#00ff88'},
+  {cat:'Foundations',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'wave_behavior_propagation.html',color:'#00ff88'},
+  {cat:'Foundations',nm:'Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'link_performance.html',color:'#ff4444'},
+  {cat:'Networks',nm:'Networking',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'networking_interactive.html',color:'#00d4ff'},
+  {cat:'Comms',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular_interactive.html',color:'#00ff88'},
+  {cat:'EW',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electronic attack, J-series',file:'ew_principles.html',color:'#ff4444'},
+  {cat:'EW',nm:'EW Protection',ds:'FHSS/DSSS/LPI/EMCON/nulling + mini spectrum analyzer',file:'ew_protection.html',color:'#ff4444'},
+  {cat:'EW',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df.html',color:'#bb88ff'},
+  {cat:'EW',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'gps.html',color:'#bb88ff'},
+  {cat:'EW',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas.html',color:'#ff7700'},
+  {cat:'EW',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop.html',color:'#00d4ff'},
+];
+function render(){
+  // grouped launch cards
+  const cats=[...new Set(TOOLS.map(t=>t.cat))];
+  let vh='';
+  cats.forEach(cat=>{
+    vh+=`<div class="section-label">${cat}</div><div class="grid">`;
+    TOOLS.filter(t=>t.cat===cat).forEach(t=>{
+      vh+=`<a class="card" href="${t.file}" style="--accent:${t.color}">
+        <div class="cat">${t.cat}</div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go">LAUNCH \u2192</div></a>`;
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-grid').innerHTML=vh;
+  // download rows
+  document.getElementById('dl-list').innerHTML=TOOLS.map(t=>
+    `<div class="dl-row" style="--accent:${t.color}">
+      <div class="dl-info"><div class="dnm" style="color:${t.color}">${t.nm}</div><div class="dcat">${t.cat} &nbsp;|&nbsp; ${t.file}</div></div>
+      <a class="dl-btn" href="${t.file}" download>\u2193 Download</a>
+    </div>`).join('');
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+render();
+</script>
+</body>
+</html>
