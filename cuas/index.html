@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAS RF Signature Trainer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b0d;--panel:#0d1318;--panel2:#111820;--b1:#1a2530;--b2:#223040;
+  --green:#00ff88;--gdim:#00883a;--gfaint:#001a0d;
+  --amber:#ffb830;--adim:#8a6010;
+  --red:#ff4040;--blue:#30aaff;--cyan:#00d4ff;
+  --txt:#7aacbc;--txtd:#2a4a5a;--txtb:#c8e4f0;
+  --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--ui);font-size:14px;padding:14px;line-height:1.4}
+/* ── HEADER ── */
+.hdr{margin-bottom:12px}
+.hdr-title{font-size:20px;font-weight:700;color:var(--txtb);letter-spacing:.07em;text-transform:uppercase}
+.hdr-sub{font-family:var(--mono);font-size:10px;color:var(--txtd);letter-spacing:.08em;margin-top:2px}
+/* ── TABS ── */
+.tab-bar{display:flex;flex-wrap:wrap;gap:2px;border-bottom:2px solid var(--b2)}
+.tbtn{background:var(--panel);border:1px solid var(--b1);border-bottom:none;color:var(--txtd);
+  font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:7px 13px;cursor:pointer;position:relative;top:2px;transition:all .15s;white-space:nowrap}
+.tbtn:hover{color:var(--txt);background:var(--panel2)}
+.tbtn.act{color:var(--green);background:var(--panel2);border-color:var(--b2);border-bottom:2px solid var(--panel2)}
+.tpane{display:none}
+.tpane.act{display:block}
+/* ── INSTRUMENT ── */
+.inst{background:var(--panel2);border:1px solid var(--b2);border-top:none;padding:12px}
+/* ── SA HEADER ROW ── */
+.sa-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--b1)}
+.sa-model{font-family:var(--mono);font-size:10px;color:var(--txtd);letter-spacing:.07em}
+.sa-name{font-size:17px;font-weight:700;color:var(--txtb);letter-spacing:.06em;text-transform:uppercase}
+.sa-ro{font-family:var(--mono);font-size:11px;color:var(--amber);text-align:right;line-height:1.6}
+/* ── SCAN ROW ── */
+.scan-row{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:10px;color:var(--txtd);margin-bottom:6px}
+.sv{color:var(--amber)}
+/* ── DISPLAY ── */
+.disp{background:#030507;border:1px solid var(--b2);margin-bottom:8px;user-select:none}
+.disp-inner{display:flex}
+.yax{width:36px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;
+  padding:2px 4px 2px 0;font-family:var(--mono);font-size:9px;color:var(--txtd);text-align:right}
+.cvcol{flex:1;position:relative;min-width:0}
+canvas{display:block;width:100%;image-rendering:auto}
+.wf-lbl{font-family:var(--mono);font-size:9px;color:var(--txtd);padding:3px 0 2px 36px;
+  border-top:1px solid var(--b1);letter-spacing:.05em}
+.xax{display:flex;justify-content:space-between;padding:2px 0 0 36px;
+  font-family:var(--mono);font-size:9px;color:var(--txtd)}
+/* ── CONTROLS ROW ── */
+.ctl-row{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+/* ── TOGGLE ── */
+.tg-box{background:var(--panel);border:1px solid var(--b1);padding:10px 12px;min-width:200px}
+.tg-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txtd);font-weight:700;margin-bottom:8px}
+.tg-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.tg-lbl{font-size:13px;font-weight:600;color:var(--txt);flex:1}
+.sw{position:relative;width:48px;height:24px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#112010;border:1px solid var(--b2);cursor:pointer;transition:background .2s}
+.sl:before{content:'';position:absolute;height:16px;width:16px;left:3px;top:3px;
+  background:var(--txtd);transition:transform .2s,background .2s}
+input:checked+.sl{background:#051a0a;border-color:var(--gdim)}
+input:checked+.sl:before{transform:translateX(24px);background:var(--green);box-shadow:0 0 6px var(--green)}
+.pill{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:2px}
+.pill.off{color:var(--red);border:1px solid #3a1010;background:#120505}
+.pill.on{color:var(--green);border:1px solid var(--gdim);background:var(--gfaint);text-shadow:0 0 5px var(--green)}
+/* ── DISTANCE SLIDER ── */
+.dist-box{background:var(--panel);border:1px solid var(--b1);padding:10px 12px;min-width:200px;flex:1}
+.dist-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txtd);font-weight:700;margin-bottom:8px}
+.dist-val{font-family:var(--mono);font-size:14px;color:var(--amber);margin-bottom:6px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--b2);border-radius:0;cursor:pointer;margin-bottom:6px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--amber);cursor:pointer;border-radius:0}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--amber);cursor:pointer;border-radius:0;border:none}
+.dist-note{font-size:11px;color:var(--txtd);line-height:1.5}
+/* ── INFO BLOCKS ── */
+.info-box{background:var(--panel);border:1px solid var(--b1);padding:10px 12px;flex:2;min-width:220px}
+.ib-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txtd);font-weight:700;margin-bottom:8px}
+.ir{display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px}
+.ik{color:var(--txtd)}
+.iv{font-family:var(--mono);color:var(--amber)}
+.iv.g{color:var(--green)}
+.iv.r{color:var(--red)}
+.iv.b{color:var(--blue)}
+/* ── IW PANEL ── */
+.iw-box{background:var(--panel);border:1px solid var(--b1);padding:10px 12px;flex:2;min-width:220px}
+.iw-item{display:flex;align-items:flex-start;gap:7px;margin-bottom:6px;font-size:12px;line-height:1.4}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.dot.on{background:var(--green);box-shadow:0 0 5px var(--green)}
+.dot.off{background:var(--txtd)}
+.dot.amb{background:var(--amber);box-shadow:0 0 5px var(--amber)}
+.iw-txt{color:var(--txt)}
+.iw-txt.dim{color:var(--txtd);font-style:italic}
+/* ── CALLOUT ── */
+.callout{display:none;margin-top:10px;background:#050e08;border:1px solid #1a4428;padding:12px 14px}
+.co-hdr{font-size:12px;font-weight:700;color:var(--green);letter-spacing:.04em;margin-bottom:6px}
+.co-body{font-size:12px;color:var(--txt);line-height:1.7}
+.co-body strong{color:var(--amber)}
+.co-body em{color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-title">UAS RF Signature Trainer</div>
+  <div class="hdr-sub">SPECTRUM ANALYZER SIMULATION  ·  112-17E10F09  ·  UNCLASSIFIED  ·  Toggle drones ON/OFF · Adjust distance slider to observe range effects</div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar" id="tabbar"></div>
+
+<!-- TAB CONTENT injected by JS -->
+<div id="tabcontent"></div>
+
+<script>
+'use strict';
+/* =================================================================
+   DRONE DEFINITIONS
+   Each drone: id, label, startGHz, stopGHz, description + signals[]
+   signal: { type:'cw'|'fhss'|'gps'|'noise', freqGHz, bwMHz, peakDbm, label, color }
+================================================================= */
+const DRONES = [
+
+  { id:'cw2463', label:'CW Drone · 2.463 GHz',
+    startGHz:2.38, stopGHz:2.54, bins:512,
+    category:'Generic / ISM',
+    description:'A narrowband analog FM/CW drone operating a fixed C2 link at 2.463 GHz — a common COTS setup. Easy to DF because it never hops.',
+    bgNote:'The three humps visible before the drone is toggled on are <strong>ambient 802.11 WiFi channels 1, 6, and 11</strong> — background RF already present in the environment (other devices in the area). The drone spike appears on top of this clutter. Real operators must distinguish the threat signal from this background noise.',
+    signals:[
+      {type:'cw', freqGHz:2.412, bwMHz:22, peakDbm:-62, label:'WiFi ch1 (ambient)', color:'#334466', bg:true},
+      {type:'cw', freqGHz:2.437, bwMHz:22, peakDbm:-60, label:'WiFi ch6 (ambient)', color:'#334466', bg:true},
+      {type:'cw', freqGHz:2.462, bwMHz:22, peakDbm:-63, label:'WiFi ch11 (ambient)', color:'#334466', bg:true},
+      {type:'cw', freqGHz:2.463, bwMHz:4, peakDbm:-34, label:'C2 Uplink CW', color:'#ffb830'},
+    ],
+    controls:[
+      {id:'main', label:'Drone Power', sigIds:[3]},
+    ],
+    iwOn:[
+      'Narrowband CW spike at 2.463 GHz — +20 dB above noise',
+      'C2 uplink active — operator within LOS range',
+      'Fixed freq → DF LOB achievable with single receiver',
+    ],
+    iwOff:['No anomalous signal in band','Band shows only ambient WiFi traffic','No drone C2 detected'],
+    explainOn:'The bright narrow spike at <strong>2.463 GHz</strong> is the drone\'s C2 uplink — an analog FM or CW signal roughly 2–5 MHz wide. It sits between WiFi Ch.11 (2.462 GHz) and the upper ISM edge. On the waterfall you\'ll see a <em>persistent vertical stripe</em> — the signature of a constant-frequency emitter. This is easy to <strong>direction find (DF)</strong> and jam because it never moves.',
+    explainOff:'Band shows only background WiFi traffic on channels 1, 6, and 11. No drone signature present. The waterfall shows random thermal noise.',
+  },
+
+  { id:'ocusync', label:'DJI OcuSync · FHSS',
+    startGHz:2.3, stopGHz:6.0, bins:640,
+    category:'Commercial — DJI',
+    description:'DJI OcuSync 2.0 (Mavic 2, Mini series etc.) — OFDM/FHSS hopping across 2.4 GHz and 5.8 GHz bands. Typical of modified DJI drones used heavily in Ukraine.',
+    bgNote:'The humps at startup are <strong>ambient 802.11 WiFi channels 1, 6, and 11</strong> in the 2.4 GHz band and a 5 GHz WiFi AP — normal background RF in any urban or semi-urban environment. OcuSync hops deliberately land between and within these bands, making the drone signal blend into existing clutter.',
+    signals:[
+      {type:'cw', freqGHz:2.412, bwMHz:22, peakDbm:-72, label:'WiFi ch1 (ambient)', bg:true},
+      {type:'cw', freqGHz:2.437, bwMHz:22, peakDbm:-70, label:'WiFi ch6 (ambient)', bg:true},
+      {type:'cw', freqGHz:2.462, bwMHz:22, peakDbm:-73, label:'WiFi ch11 (ambient)', bg:true},
+      {type:'cw', freqGHz:5.745, bwMHz:20, peakDbm:-77, label:'5GHz WiFi (ambient)', bg:true},
+      {type:'fhss', freqGHz:2.442, bwMHz:20, peakDbm:-33, label:'OcuSync C2', color:'#ffb830',
+        hopFreqs:[2.412,2.422,2.432,2.442,2.452,2.462,2.472,2.482], hopRate:10},
+      {type:'fhss', freqGHz:5.775, bwMHz:20, peakDbm:-28, label:'OcuSync Video', color:'#30aaff',
+        hopFreqs:[5.735,5.755,5.775,5.795,5.815,5.835], hopRate:8},
+    ],
+    controls:[
+      {id:'main', label:'C2 / Control Link', sigIds:[4]},
+      {id:'video', label:'OcuSync Video Link', sigIds:[5]},
+    ],
+    iwOn:[
+      'FHSS bursts detected 2.4 GHz — OcuSync C2 active',
+      'FHSS bursts detected 5.8 GHz — OcuSync video active',
+      'Scattered waterfall dots — NOT a solid stripe (FHSS)',
+      'Wideband scan & reactive jamming required for defeat',
+    ],
+    iwOff:['No FHSS bursts detected in 2.4/5.8 GHz','Waterfall shows ambient WiFi only','No drone datalink signature'],
+    explainOn:'OcuSync uses <strong>OFDM + FHSS</strong> — each burst is ~20 MHz wide and the drone hops rapidly across the band. Notice the waterfall shows <em>scattered bright dots</em> rather than a solid vertical stripe. You cannot simply park a jammer on one frequency — you need <strong>wideband or reactive jamming</strong>. DF is still possible by correlating burst patterns across multiple sensors.',
+    explainOff:'No OcuSync detected. Background shows only 802.11 WiFi traffic in the 2.4 and 5.8 GHz bands.',
+  },
+
+  { id:'fpv', label:'FPV Combat Drone',
+    startGHz:0.7, stopGHz:6.2, bins:640,
+    category:'Combat FPV — Ukraine/Russia',
+    description:'Standard FPV attack drone (e.g. Lancet-class FPV, Ukrainian Dragon/Baba Yaga class). C2 on 2.4 GHz (ELRS), analog video on 5.8 GHz — most common threat on the 2024–25 Ukraine battlefield.',
+    bgNote:'The small bumps visible at startup are <strong>ambient ISM band noise</strong> — 915 MHz IoT/LoRa devices, WiFi ch6 at 2.437 GHz, and 5.8 GHz WiFi — all part of the normal RF environment. These are the signals a real EW operator must scan through to find a threat.',
+    signals:[
+      {type:'cw', freqGHz:0.915, bwMHz:1.5, peakDbm:-80, label:'915 MHz ISM (ambient)', bg:true},
+      {type:'cw', freqGHz:2.437, bwMHz:22, peakDbm:-72, label:'WiFi ch6 (ambient)', bg:true},
+      {type:'cw', freqGHz:5.800, bwMHz:30, peakDbm:-76, label:'5.8 GHz WiFi (ambient)', bg:true},
+      {type:'fhss', freqGHz:2.440, bwMHz:3, peakDbm:-36, label:'ELRS C2 2.4G', color:'#ffb830',
+        hopFreqs:[2.400,2.410,2.420,2.430,2.440,2.450,2.460,2.470,2.480], hopRate:6},
+      {type:'cw', freqGHz:5.800, bwMHz:27, peakDbm:-28, label:'Analog FPV Video', color:'#30aaff'},
+    ],
+    controls:[
+      {id:'main', label:'FPV Control (ELRS 2.4G)', sigIds:[3]},
+      {id:'video', label:'Analog Video (5.8 GHz)', sigIds:[4]},
+    ],
+    iwOn:[
+      'ELRS C2 hops detected in 2.4 GHz band (~3 MHz bursts)',
+      'Analog FPV video carrier active at 5.8 GHz (fixed)',
+      '5.8 GHz analog video is constant — easy to DF',
+      'ELRS hops fast — wideband scan required for C2',
+    ],
+    iwOff:['No ELRS C2 detected in 2.4 GHz','No FPV analog video at 5.8 GHz','No FPV drone signature'],
+    explainOn:'FPV combat drones use two separate links: <strong>ELRS on 2.4 GHz</strong> for control (fast narrowband FHSS) and <strong>analog FM video on 5.8 GHz</strong> (fixed channel, constant). The 5.8 GHz video feed is a solid stripe on the waterfall — easy to DF. The 2.4 GHz ELRS hops rapidly in narrow bursts. These are the most common drone signals on the Ukraine battlefield in 2024–25.',
+    explainOff:'No FPV drone activity detected. Background shows ambient ISM traffic only.',
+  },
+
+  { id:'orlan10', label:'Orlan-10 · Russia',
+    startGHz:0.15, stopGHz:3.0, bins:640,
+    category:'Military — Russian ISR',
+    description:'Russian Orlan-10 tactical ISR drone. Uses multiple frequency bands for C2 and data relay. Primary ISR and artillery correction platform in Ukraine. Detected by Ukrainian Tsukorok and Chuika EW systems.',
+    bgNote:'The faint bumps at 868 MHz and 915 MHz are <strong>ambient ISM/LoRa background traffic</strong> — commercial IoT, agriculture sensors, etc. This is exactly what makes the Orlan-10 C2 link hard to find: it deliberately operates near this clutter at 870 MHz. Ukrainian EW operators look for the combination of signals (multi-band pattern) not just a single spike.',
+    signals:[
+      {type:'cw', freqGHz:0.868, bwMHz:1, peakDbm:-82, label:'868 MHz ISM (ambient)', bg:true},
+      {type:'cw', freqGHz:0.915, bwMHz:1.5, peakDbm:-80, label:'915 MHz ISM (ambient)', bg:true},
+      {type:'cw', freqGHz:0.870, bwMHz:1, peakDbm:-38, label:'C2 870 MHz', color:'#ffb830'},
+      {type:'cw', freqGHz:2.560, bwMHz:5, peakDbm:-42, label:'Telemetry 2.56G', color:'#00ff88'},
+      {type:'cw', freqGHz:1.130, bwMHz:8, peakDbm:-44, label:'Video 1.13G', color:'#30aaff'},
+    ],
+    controls:[
+      {id:'main', label:'Orlan-10 Power', sigIds:[2,3,4]},
+    ],
+    iwOn:[
+      'C2 uplink detected ~870 MHz — Orlan class I&W',
+      'ISR video downlink active at 1.13 GHz',
+      'Telemetry relay at 2.56 GHz — data returning to GCS',
+      'Multi-band emitter pattern consistent with Orlan-10',
+    ],
+    iwOff:['No Orlan-10 signature detected','Bands 868–920 MHz show only ISM background','No ISR emitter activity'],
+    explainOn:'The Orlan-10 is a multi-band emitter. Its <strong>C2 link sits near 870 MHz</strong> — in the same range as commercial LoRa/IoT devices, which creates potential false-positive problems. The <strong>ISR video link</strong> appears around 1.13 GHz. Telemetry returns at 2.56 GHz. Ukrainian EW systems like <em>Tsukorok</em> are specifically designed to detect this multi-band signature pattern.',
+    explainOff:'No Orlan-10 signature. Background shows typical ISM band noise across 868–915 MHz.',
+  },
+
+  { id:'shahed', label:'Shahed-136 · Iran/Russia',
+    startGHz:1.0, stopGHz:2.0, bins:512,
+    category:'Loitering Munition — Iranian/Russian',
+    description:'Shahed-136 (Geran-2) one-way attack drone. Primarily GPS/INS guided — minimal RF emissions during flight. EW detection window is narrow: GPS jamming visible, and in some variants 4G/LTE modem activity.',
+    bgNote:'The faint lines at <strong>1227 MHz (L2)</strong> and <strong>1575 MHz (L1)</strong> you see at startup are <strong>ambient GPS satellite signals</strong> — the background GNSS transmissions always present from orbit. When the Shahed\'s GPS receiver is actively navigating, these elevate slightly. The drone itself emits virtually nothing — this is the fundamental challenge.',
+    signals:[
+      {type:'cw', freqGHz:1.227, bwMHz:2, peakDbm:-84, label:'GPS L2 satellite (ambient)', bg:true},
+      {type:'cw', freqGHz:1.575, bwMHz:2, peakDbm:-83, label:'GPS L1 satellite (ambient)', bg:true},
+      {type:'cw', freqGHz:1.575, bwMHz:2, peakDbm:-46, label:'GPS L1 (active nav)', color:'#00d4ff'},
+      {type:'cw', freqGHz:1.227, bwMHz:2, peakDbm:-50, label:'GPS L2 (active nav)', color:'#00aaff'},
+      {type:'cw', freqGHz:1.800, bwMHz:10, peakDbm:-52, label:'LTE 4G modem', color:'#ff8800'},
+    ],
+    controls:[
+      {id:'main', label:'Shahed Flight Mode', sigIds:[2,3]},
+      {id:'video', label:'4G LTE Modem (late variant)', sigIds:[4]},
+    ],
+    iwOn:[
+      'GPS L1/L2 reception elevated — active navigation ongoing',
+      'CAUTION: No C2 uplink — autonomous/pre-programmed',
+      'VERY LOW RF signature — detection window is short',
+      'GPS jamming is primary countermeasure (L1 1575 MHz)',
+    ],
+    iwOff:['No GPS navigation signature','No LTE modem activity','Shahed in transit / not detected'],
+    explainOn:'The Shahed-136 is the hardest drone to detect via RF. It relies on <strong>GPS + INS</strong> — there is no active C2 uplink during flight. The only RF signatures are GPS receiver activity (visible as a slight noise floor elevation near <em>1575.42 MHz L1</em> and <em>1227.60 MHz L2</em>) and in later variants, a <strong>4G LTE modem</strong> around 1.8 GHz for route updates. This is why <em>launch detection</em> (catching RF emissions before flight) and radar are the primary methods against Shaheds.',
+    explainOff:'No Shahed signatures. Note: GPS signals are passive receive-only — a Shahed in transit may produce almost no detectable RF at typical detection ranges.',
+  },
+
+  { id:'lancet', label:'Lancet · Russia',
+    startGHz:0.8, stopGHz:3.0, bins:512,
+    category:'Loitering Munition — Russian',
+    description:'Russian Lancet loitering munition (Lancet-1/3). Used heavily to destroy Ukrainian artillery and AFVs. C2 on 868/902–928 MHz. Seeker guidance active near target.',
+    bgNote:'The faint bump at <strong>915 MHz</strong> is ambient ISM band clutter — LoRa sensors, agricultural IoT, etc. The Lancet deliberately uses these same frequencies to blend into background noise. Ukrainian Tsukorok detectors are specifically tuned to distinguish Lancet signatures from this clutter.',
+    signals:[
+      {type:'cw', freqGHz:0.915, bwMHz:1.5, peakDbm:-81, label:'915 MHz ISM (ambient)', bg:true},
+      {type:'cw', freqGHz:0.868, bwMHz:1, peakDbm:-36, label:'C2 868 MHz', color:'#ffb830'},
+      {type:'cw', freqGHz:0.920, bwMHz:1.5, peakDbm:-40, label:'C2 alt 920 MHz', color:'#ff8800'},
+      {type:'cw', freqGHz:1.575, bwMHz:2, peakDbm:-48, label:'GPS L1', color:'#00d4ff'},
+      {type:'fhss', freqGHz:2.440, bwMHz:5, peakDbm:-44, label:'Telemetry 2.4G', color:'#00ff88',
+        hopFreqs:[2.400,2.420,2.440,2.460,2.480], hopRate:14},
+    ],
+    controls:[
+      {id:'main', label:'Lancet Power', sigIds:[1,2,3,4]},
+    ],
+    iwOn:[
+      'C2 detected at 868 MHz — Lancet/Zala class signature',
+      'GPS L1 active at 1575 MHz — navigating to target',
+      'Telemetry hops in 2.4 GHz — data link to operator',
+      'Pattern consistent with Lancet loitering munition',
+    ],
+    iwOff:['No Lancet signature detected','868/915 MHz bands show ISM background only','No loitering munition activity'],
+    explainOn:'The Lancet primarily uses <strong>868 MHz / 915 MHz LoRa-type links</strong> for C2 — the same bands as commercial IoT devices. This is intentional camouflage in the noise floor. GPS reception is visible near <em>1575 MHz</em>. Ukrainian detector systems like <em>Tsukorok</em> look for this specific multi-band pattern to distinguish Lancet from commercial devices. The 2.4 GHz hops carry telemetry.',
+    explainOff:'No Lancet/Zala signature detected. The 868/915 MHz band shows only ambient ISM traffic.',
+  },
+
+  { id:'bayraktar', label:'Bayraktar TB2',
+    startGHz:0.8, stopGHz:3.0, bins:512,
+    category:'Military MALE — Turkish',
+    description:'Bayraktar TB2 — Medium Altitude Long Endurance (MALE) drone. Used extensively by Ukraine in early war. Strong multi-band emitter with TCDL datalink and SATCOM uplink.',
+    bgNote:'The very faint line near <strong>1030 MHz</strong> is ambient IFF/Mode-S transponder traffic from civil aviation — always present as background. Notice how even this weak background signal sits well above the -95 dBm noise floor, illustrating how a busy RF environment adds clutter.',
+    signals:[
+      {type:'cw', freqGHz:1.030, bwMHz:1, peakDbm:-83, label:'IFF Mode-S aviation (ambient)', bg:true},
+      {type:'cw', freqGHz:1.765, bwMHz:15, peakDbm:-34, label:'TCDL Datalink', color:'#ffb830'},
+      {type:'cw', freqGHz:1.032, bwMHz:2, peakDbm:-40, label:'IFF/C2 L-band', color:'#00ff88'},
+      {type:'cw', freqGHz:1.575, bwMHz:2, peakDbm:-44, label:'GPS L1', color:'#00d4ff'},
+      {type:'cw', freqGHz:2.400, bwMHz:20, peakDbm:-38, label:'Video S-band', color:'#30aaff'},
+    ],
+    controls:[
+      {id:'main', label:'TB2 Systems On', sigIds:[1,2,3,4]},
+    ],
+    iwOn:[
+      'Strong multi-band emitter — MALE drone signature',
+      'TCDL datalink at 1.765 GHz — strong LOS link',
+      'IFF/C2 at 1.03 GHz — military mode active',
+      'S-band video 2.4 GHz — sensor payload transmitting',
+    ],
+    iwOff:['No TB2 signature detected','L-band and S-band clear','No MALE drone datalinks'],
+    explainOn:'The Bayraktar TB2 is a <strong>strong, easy-to-detect emitter</strong> compared to FPV or autonomous drones. Its <em>TCDL datalink</em> near 1.7 GHz is a prominent wideband signal. The IFF transponder and C2 link appear in the L-band. This is why Ukraine shifted <em>away</em> from TB2s in 2023–24 as Russian EW improved — its RF footprint makes it easy to target. The TB2 is best used in low-EW environments.',
+    explainOff:'No TB2 signature. This MALE drone has a large RF footprint when active — its absence is notable.',
+  },
+
+];
+
+/* =================================================================
+   STATE
+================================================================= */
+const STATE = {};
+DRONES.forEach(d => {
+  STATE[d.id] = {
+    on:{}, // control states keyed by ctrl id
+    distKm: 1.0,
+    hopIdx: {},
+    wfRows: [],
+    frameCount: 0,
+  };
+  d.controls.forEach(c => STATE[d.id].on[c.id] = false);
+  d.signals.forEach((s,i) => {
+    if(s.type === 'fhss') STATE[d.id].hopIdx[i] = 0;
+  });
+});
+
+const WF_MAX = 80;
+
+/* =================================================================
+   BUILD HTML
+================================================================= */
+(function buildUI(){
+  const bar = document.getElementById('tabbar');
+  const content = document.getElementById('tabcontent');
+
+  DRONES.forEach((d, di) => {
+    // Tab button
+    const btn = document.createElement('button');
+    btn.className = 'tbtn' + (di===0?' act':'');
+    btn.textContent = d.label;
+    btn.onclick = () => switchTab(d.id);
+    bar.appendChild(btn);
+
+    // Pane
+    const xLabels = makeXLabels(d.startGHz, d.stopGHz, 9);
+
+    const pane = document.createElement('div');
+    pane.id = 'pane-'+d.id;
+    pane.className = 'tpane' + (di===0?' act':'');
+    pane.innerHTML = `
+<div class="inst">
+  <div class="sa-hdr">
+    <div>
+      <div class="sa-model">RSA306B · TEKTRONIX  ·  ${d.category}</div>
+      <div class="sa-name">${d.label}</div>
+    </div>
+    <div class="sa-ro" id="ro-${d.id}">
+      CF: ${((d.startGHz+d.stopGHz)/2).toFixed(3)} GHz<br>
+      SPAN: ${(d.stopGHz-d.startGHz).toFixed(2)} GHz<br>
+      RBW: ${d.bins>=640 ? '1 MHz' : '300 kHz'}
+    </div>
+  </div>
+  <div class="scan-row">
+    <span>START: <span class="sv">${d.startGHz.toFixed(3)} GHz</span></span>
+    <span>STOP: <span class="sv">${d.stopGHz.toFixed(3)} GHz</span></span>
+    <span>RBW: <span class="sv">${d.bins>=640?'1 MHz':'300 kHz'}</span></span>
+    <span>REF: <span class="sv">-20 dBm</span></span>
+    <span>NOISE FLOOR: <span class="sv">~-95 dBm</span></span>
+    <span>PEAK: <span class="sv" id="peak-${d.id}">— dBm</span></span>
+  </div>
+  ${d.bgNote ? `<div style="background:#0a1218;border:1px solid #1a3040;border-bottom:none;padding:7px 14px;font-size:12px;color:#7aacbc;line-height:1.5"><span style="color:#30aaff;font-weight:700;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.06em;margin-right:8px">ℹ BACKGROUND SIGNALS</span>${d.bgNote}</div>` : ''}
+  <div class="disp">
+    <div class="disp-inner">
+      <div class="yax">
+        <span>-20</span><span>-30</span><span>-40</span><span>-50</span><span>-60</span>
+        <span>-70</span><span>-80</span><span>-90</span><span>-95</span><span>-100</span>
+      </div>
+      <div class="cvcol" id="col-${d.id}">
+        <canvas id="trace-${d.id}" height="220"></canvas>
+        <canvas id="annot-${d.id}" height="220" style="position:absolute;top:0;left:0;width:100%;pointer-events:none"></canvas>
+      </div>
+    </div>
+    <div class="wf-lbl">WATERFALL · Time ↓ (newest top) · Colour: blue=noise floor → green → yellow → red=strong signal</div>
+    <div class="disp-inner">
+      <div style="width:36px;flex-shrink:0"></div>
+      <div class="cvcol" id="wfcol-${d.id}">
+        <canvas id="wfall-${d.id}" height="160"></canvas>
+      </div>
+    </div>
+    <div class="xax">${xLabels.map(l=>`<span>${l}</span>`).join('')}</div>
+  </div>
+  <div class="ctl-row">
+    <div class="tg-box">
+      <div class="tg-title">Drone Controls</div>
+      ${d.controls.map(c=>`
+      <div class="tg-row">
+        <label class="sw"><input type="checkbox" id="sw-${d.id}-${c.id}" onchange="ctrlToggle('${d.id}','${c.id}',this.checked)"><span class="sl"></span></label>
+        <span class="tg-lbl">${c.label}</span>
+        <span class="pill off" id="pill-${d.id}-${c.id}">OFF</span>
+      </div>`).join('')}
+    </div>
+    <div class="dist-box">
+      <div class="dist-title">Sensor Distance</div>
+      <div class="dist-val" id="dist-val-${d.id}">1.0 km</div>
+      <input type="range" min="0.1" max="20" step="0.1" value="1.0" id="dist-${d.id}"
+        oninput="distChange('${d.id}',this.value)">
+      <div class="dist-note" id="dist-note-${d.id}">Signal loss: 0 dB above 1 km reference</div>
+    </div>
+    <div class="info-box">
+      <div class="ib-title">Signal Info</div>
+      ${d.signals.filter(s=>!s.bg).map((s,i)=>`
+      <div class="ir">
+        <span class="ik">${s.label}</span>
+        <span class="iv" style="color:${s.color||'var(--amber)'}">${s.freqGHz.toFixed(3)} GHz</span>
+      </div>`).join('')}
+      <div class="ir" style="margin-top:6px"><span class="ik">Description</span><span class="iv b" style="font-size:10px;line-height:1.3;max-width:200px;text-align:right;font-family:var(--ui)">${d.description}</span></div>
+    </div>
+    <div class="iw-box">
+      <div class="ib-title">EW Indicators &amp; Warnings</div>
+      <div id="iw-${d.id}"></div>
+    </div>
+  </div>
+  <div class="callout" id="co-${d.id}">
+    <div class="co-hdr">▶ WHAT YOU'RE SEEING</div>
+    <div class="co-body" id="cobody-${d.id}"></div>
+  </div>
+</div>`;
+    content.appendChild(pane);
+    updateIW(d.id);
+  });
+})();
+
+function makeXLabels(start, stop, n) {
+  const labels = [];
+  for(let i=0;i<n;i++){
+    const v = start + (stop-start)*i/(n-1);
+    labels.push(v.toFixed(v>=10?2:3));
+  }
+  return labels;
+}
+
+/* =================================================================
+   CONTROLS
+================================================================= */
+function switchTab(id) {
+  document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('act'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('act'));
+  document.getElementById('pane-'+id).classList.add('act');
+  // find button by content match
+  document.querySelectorAll('.tbtn').forEach(b=>{
+    const d = DRONES.find(x=>x.id===id);
+    if(d && b.textContent===d.label) b.classList.add('act');
+  });
+}
+
+function ctrlToggle(did, cid, val) {
+  STATE[did].on[cid] = val;
+  const pill = document.getElementById('pill-'+did+'-'+cid);
+  if(pill){ pill.textContent=val?'ON':'OFF'; pill.className='pill '+(val?'on':'off'); }
+  updateIW(did);
+  updateCallout(did);
+}
+
+function distChange(did, val) {
+  STATE[did].distKm = parseFloat(val);
+  const km = parseFloat(val);
+  const loss = km <= 1 ? 0 : -(20 * Math.log10(km)).toFixed(1);
+  document.getElementById('dist-val-'+did).textContent = km.toFixed(1) + ' km';
+  document.getElementById('dist-note-'+did).textContent =
+    km <= 1 ? 'Max signal — drone within 1 km' :
+    `Path loss: ~${Math.abs(loss).toFixed(1)} dB vs 1 km ref · Signals weaker`;
+}
+
+function anyOn(did) {
+  return Object.values(STATE[did].on).some(v=>v);
+}
+
+function isSigActive(did, sigIdx) {
+  const d = DRONES.find(x=>x.id===did);
+  const sig = d.signals[sigIdx];
+  if(!sig || sig.bg || sig.always) return false;
+  for(const c of d.controls){
+    if(c.sigIds.includes(sigIdx) && STATE[did].on[c.id]) return true;
+  }
+  return false;
+}
+
+function updateIW(did) {
+  const d = DRONES.find(x=>x.id===did);
+  const on = anyOn(did);
+  const el = document.getElementById('iw-'+did);
+  const items = on ? d.iwOn : d.iwOff;
+  el.innerHTML = items.map((txt,i)=>`
+    <div class="iw-item">
+      <div class="dot ${on ? (i===0?'on':'amb') : 'off'}"></div>
+      <div class="iw-txt ${on?'':'dim'}">${txt}</div>
+    </div>`).join('');
+}
+
+function updateCallout(did) {
+  const d = DRONES.find(x=>x.id===did);
+  const on = anyOn(did);
+  const co = document.getElementById('co-'+did);
+  const body = document.getElementById('cobody-'+did);
+  co.style.display = on ? 'block' : 'none';
+  body.innerHTML = on ? d.explainOn : d.explainOff;
+}
+
+/* =================================================================
+   CANVAS SIZING — ResizeObserver ensures correct pixel width
+================================================================= */
+const canvasMap = {}; // id → {trace, annot, wfall}
+DRONES.forEach(d => {
+  canvasMap[d.id] = {
+    trace: document.getElementById('trace-'+d.id),
+    annot: document.getElementById('annot-'+d.id),
+    wfall: document.getElementById('wfall-'+d.id),
+    col:   document.getElementById('col-'+d.id),
+    wfcol: document.getElementById('wfcol-'+d.id),
+  };
+});
+
+function syncSize(did) {
+  const m = canvasMap[did];
+  const w = m.col.clientWidth;
+  if(w < 10) return;
+  [m.trace, m.annot].forEach(c => { if(c.width !== w) c.width = w; });
+  const ww = m.wfcol.clientWidth;
+  if(m.wfall.width !== ww) m.wfall.width = ww;
+}
+
+DRONES.forEach(d => {
+  const ro = new ResizeObserver(() => syncSize(d.id));
+  ro.observe(canvasMap[d.id].col);
+});
+// Initial size pass
+setTimeout(() => DRONES.forEach(d => syncSize(d.id)), 50);
+
+/* =================================================================
+   DRAWING ENGINE
+================================================================= */
+function freqToX(ghz, startGHz, stopGHz, w) {
+  return ((ghz - startGHz) / (stopGHz - startGHz)) * w;
+}
+function freqToBin(ghz, startGHz, stopGHz, bins) {
+  return Math.round(((ghz - startGHz) / (stopGHz - startGHz)) * bins);
+}
+// Display runs -20 dBm (top) → -100 dBm (bottom)
+const SA_REF = -20;   // top of display
+const SA_RANGE = 80;  // dB span shown (down to -100 dBm)
+function dbToY(db, h) {
+  return Math.max(0, Math.min(h, ((SA_REF - db) / SA_RANGE) * h));
+}
+function nz(amp) { return (Math.random()-0.5)*2*amp; }
+
+function distLoss(km) {
+  if(km <= 1) return 0;
+  return 20 * Math.log10(km);
+}
+
+function buildTrace(d, did, frame) {
+  const st = STATE[did];
+  const bins = d.bins;
+  const arr = new Float32Array(bins);
+  const loss = distLoss(st.distKm);
+
+  // Noise floor ~-95 dBm with small thermal jitter
+  for(let i=0;i<bins;i++) arr[i] = -95 + nz(2);
+
+  d.signals.forEach((sig, si) => {
+    const active = sig.always || sig.bg || isSigActive(did, si);
+    if(!active) return;
+
+    const peakAdj = sig.bg ? sig.peakDbm : sig.peakDbm - loss;
+    if(peakAdj < -100) return; // too far, below noise
+
+    if(sig.type === 'fhss') {
+      const hops = sig.hopFreqs;
+      const rate = sig.hopRate || 10;
+      if(frame % rate === 0) {
+        st.hopIdx[si] = (st.hopIdx[si]+1) % hops.length;
+      }
+      const cf = hops[st.hopIdx[si]];
+      addBump(arr, d, cf, sig.bwMHz, peakAdj, bins, 3);
+
+    } else { // cw
+      addBump(arr, d, sig.freqGHz, sig.bwMHz, peakAdj, bins, sig.bg ? 4 : 2);
+    }
+  });
+
+  // smooth
+  for(let p=0;p<2;p++){
+    for(let i=1;i<bins-1;i++) arr[i]=(arr[i-1]+arr[i]*2+arr[i+1])/4;
+  }
+  return arr;
+}
+
+function addBump(arr, d, cf, bwMHz, peakDbm, bins, noiseAmp) {
+  const center = freqToBin(cf, d.startGHz, d.stopGHz, bins);
+  const spanGHz = d.stopGHz - d.startGHz;
+  const bwBins = Math.max(1, Math.round((bwMHz / 1000) / spanGHz * bins));
+  const noiseFloor = -95;
+
+  for(let i = 0; i < bins; i++){
+    const dist = Math.abs(i - center);
+    if(dist < bwBins * 5){
+      // Gaussian shape: at center = peakDbm, falls off toward noise floor
+      const falloff = (peakDbm - noiseFloor) * Math.exp(-(dist * dist) / (2 * bwBins * bwBins));
+      const v = noiseFloor + falloff + nz(noiseAmp);
+      if(v > arr[i]) arr[i] = v;
+    }
+  }
+}
+
+function drawTrace(ctx, w, h, arr) {
+  ctx.clearRect(0,0,w,h);
+  // Grid
+  ctx.strokeStyle='#0c1c28'; ctx.lineWidth=1;
+  for(let i=1;i<10;i++){
+    const y=(i/10)*h;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();
+  }
+  const steps=8;
+  for(let i=1;i<steps;i++){
+    const x=(i/steps)*w;
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();
+  }
+  // Fill
+  const step=w/arr.length;
+  ctx.beginPath();
+  ctx.moveTo(0,h);
+  for(let i=0;i<arr.length;i++){
+    const x=i*step, y=dbToY(arr[i],h);
+    i===0 ? ctx.lineTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.lineTo(w,h);
+  ctx.closePath();
+  const g=ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,'rgba(0,255,136,0.22)');
+  g.addColorStop(1,'rgba(0,255,136,0.02)');
+  ctx.fillStyle=g; ctx.fill();
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle='#00ff88'; ctx.lineWidth=1.5;
+  ctx.shadowBlur=3; ctx.shadowColor='#00ff88';
+  for(let i=0;i<arr.length;i++){
+    const x=i*step, y=dbToY(arr[i],h);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke(); ctx.shadowBlur=0;
+}
+
+function drawAnnotations(ctx, d, did, arr, w, h) {
+  ctx.clearRect(0,0,w,h);
+  const st = STATE[did];
+  const loss = distLoss(st.distKm);
+
+  d.signals.forEach((sig, si) => {
+    if(sig.bg || sig.always) return;
+    if(!isSigActive(did, si)) return;
+
+    const peakAdj = sig.peakDbm - loss;
+    if(peakAdj < -94) return; // at noise floor, not worth annotating
+
+    let cf = sig.freqGHz;
+    if(sig.type==='fhss') cf = sig.hopFreqs[st.hopIdx[si]];
+
+    const x = freqToX(cf, d.startGHz, d.stopGHz, w);
+    const y = dbToY(peakAdj - loss, h);
+
+    ctx.strokeStyle = (sig.color||'var(--amber)') + 'aa';
+    ctx.lineWidth=1; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(x,y-4); ctx.lineTo(x,h); ctx.stroke();
+    ctx.setLineDash([]);
+
+    const lw=130, lh=28;
+    const lx=Math.min(x+5, w-lw-4);
+    const ly=Math.max(y-32, 2);
+
+    ctx.fillStyle='#0a0e12'; ctx.lineWidth=1;
+    ctx.strokeStyle=(sig.color||'#ffb830')+'cc';
+    ctx.fillRect(lx,ly,lw,lh);
+    ctx.strokeRect(lx,ly,lw,lh);
+
+    ctx.fillStyle=sig.color||'#ffb830';
+    ctx.font='bold 10px Share Tech Mono';
+    ctx.fillText(sig.label, lx+4, ly+12);
+
+    ctx.fillStyle='#7aacbc';
+    ctx.font='10px Share Tech Mono';
+    const dispDb = (sig.peakDbm - loss).toFixed(1);
+    ctx.fillText(cf.toFixed(3)+' GHz  '+dispDb+' dBm', lx+4, ly+23);
+  });
+}
+
+function dbmToColor(db) {
+  // Map -100 dBm (noise) → 0.0, -20 dBm (strong signal) → 1.0
+  const t = Math.max(0, Math.min(1, (db - (-100)) / 80));
+  if(t < 0.2)  return [0,   Math.round(t/0.2*30),  Math.round(t/0.2*120)];
+  if(t < 0.45) return [0,   Math.round(30+(t-0.2)/0.25*225), Math.round(120-(t-0.2)/0.25*120)];
+  if(t < 0.7)  return [Math.round((t-0.45)/0.25*255), 255, 0];
+  return [255, Math.round(255-(t-0.7)/0.3*255), 0];
+}
+
+function drawWaterfall(ctx, w, h, rows, bins) {
+  if(!rows.length) return;
+  const rowH = h / WF_MAX;
+  rows.forEach((row, ri) => {
+    const img = ctx.createImageData(w, 1);
+    const bpp = bins/w;
+    for(let px=0;px<w;px++){
+      const bin = Math.min(bins-1, Math.floor(px*bpp));
+      const [r,g,b] = row[bin];
+      const idx=px*4;
+      img.data[idx]=r; img.data[idx+1]=g; img.data[idx+2]=b; img.data[idx+3]=255;
+    }
+    ctx.putImageData(img, 0, ri*rowH);
+  });
+}
+
+/* =================================================================
+   MAIN LOOP
+================================================================= */
+let frame = 0;
+function loop() {
+  frame++;
+  DRONES.forEach(d => {
+    const m = canvasMap[d.id];
+    if(!m.trace.width || m.trace.width<10) return;
+
+    const w=m.trace.width, h=m.trace.height;
+    const ww=m.wfall.width, wh=m.wfall.height;
+    const st=STATE[d.id];
+    st.frameCount++;
+
+    const arr = buildTrace(d, d.id, frame);
+
+    // Trace
+    drawTrace(m.trace.getContext('2d'), w, h, arr);
+    m.annot.width=w; m.annot.height=h;
+    drawAnnotations(m.annot.getContext('2d'), d, d.id, arr, w, h);
+
+    // Peak readout
+    let peak=-120;
+    d.signals.forEach((sig,si)=>{
+      if(sig.bg) return;
+      if(!isSigActive(d.id,si)) return;
+      let cf=sig.freqGHz;
+      if(sig.type==='fhss') cf=sig.hopFreqs[st.hopIdx[si]];
+      const ci=freqToBin(cf,d.startGHz,d.stopGHz,d.bins);
+      for(let i=Math.max(0,ci-8);i<Math.min(d.bins,ci+8);i++){
+        if(arr[i]>peak) peak=arr[i];
+      }
+    });
+    if(peak>-120){
+      document.getElementById('peak-'+d.id).textContent=peak.toFixed(1)+' dBm';
+    } else {
+      document.getElementById('peak-'+d.id).textContent='— dBm';
+    }
+
+    // Waterfall
+    const row = Array.from({length:d.bins},(_,i)=>dbmToColor(arr[i]));
+    st.wfRows.unshift(row);
+    if(st.wfRows.length>WF_MAX) st.wfRows.length=WF_MAX;
+    drawWaterfall(m.wfall.getContext('2d'), ww, wh, st.wfRows, d.bins);
+  });
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
