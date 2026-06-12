@@ -82,18 +82,18 @@ h1 span{color:var(--text-dim);font-weight:400}
 <script>
 // EDIT the "file" field to match your actual filenames in the repo.
 const TOOLS=[
-  {cat:'Foundations',nm:'Electrical Fundamentals',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'electrical_fundamentals.html',color:'#ffb300'},
-  {cat:'Foundations',nm:'RF / Physics Theory',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rf_theory_interactive.html',color:'#00ff88'},
-  {cat:'Foundations',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'wave_behavior_propagation.html',color:'#00ff88'},
-  {cat:'Foundations',nm:'Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'link_performance.html',color:'#ff4444'},
-  {cat:'Networks',nm:'Networking',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'networking_interactive.html',color:'#00d4ff'},
-  {cat:'Comms',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular_interactive.html',color:'#00ff88'},
+  {cat:'Foundations',nm:'physics1',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'electrical_fundamentals.html',color:'#ffb300'},
+  {cat:'Foundations',nm:'rftheory',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rf_theory_interactive.html',color:'#00ff88'},
+  {cat:'Foundations',nm:'physics2',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'wave_behavior_propagation.html',color:'#00ff88'},
+  {cat:'Foundations',nm:'physics3',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'link_performance.html',color:'#ff4444'},
+  {cat:'Networks',nm:'network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'networking_interactive.html',color:'#00d4ff'},
+  {cat:'Comms',nm:'cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular_interactive.html',color:'#00ff88'},
   {cat:'EW',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electronic attack, J-series',file:'ew_principles.html',color:'#ff4444'},
-  {cat:'EW',nm:'EW Protection',ds:'FHSS/DSSS/LPI/EMCON/nulling + mini spectrum analyzer',file:'ew_protection.html',color:'#ff4444'},
-  {cat:'EW',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df.html',color:'#bb88ff'},
-  {cat:'EW',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'gps.html',color:'#bb88ff'},
-  {cat:'EW',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas.html',color:'#ff7700'},
-  {cat:'EW',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop.html',color:'#00d4ff'},
+
+  {cat:'EW',nm:'df',ds:'Direction-finding practice & bearing intersection',file:'df.html',color:'#bb88ff'},
+  {cat:'EW',nm:'GPS',ds:'GPS spoofing & meaconing concepts',file:'gps.html',color:'#bb88ff'},
+  {cat:'EW',nm:'cuas',ds:'Counter-unmanned aircraft systems',file:'cuas.html',color:'#ff7700'},
+  {cat:'EW',nm:'fhop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop.html',color:'#00d4ff'},
 ];
 function render(){
   // grouped launch cards
