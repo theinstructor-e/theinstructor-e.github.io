@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced FHSS & EW Spectrum Trainer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b0d;--panel:#0d1318;--panel2:#111820;--b1:#1a2530;--b2:#223040;
+  --green:#00ff88;--gdim:#00883a;--gfaint:#001a0d;
+  --amber:#ffb830;--adim:#8a6010;
+  --red:#ff4040;--blue:#30aaff;--cyan:#00d4ff;
+  --txt:#7aacbc;--txtd:#2a4a5a;--txtb:#c8e4f0;
+  --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--ui);font-size:14px;padding:14px;line-height:1.4}
+.hdr{margin-bottom:12px}
+.hdr-title{font-size:20px;font-weight:700;color:var(--txtb);letter-spacing:.07em;text-transform:uppercase}
+.hdr-sub{font-family:var(--mono);font-size:10px;color:var(--txtd);letter-spacing:.08em;margin-top:2px}
+.tab-bar{display:flex;flex-wrap:wrap;gap:2px;border-bottom:2px solid var(--b2)}
+.tbtn{background:var(--panel);border:1px solid var(--b1);border-bottom:none;color:var(--txtd);
+  font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:7px 13px;cursor:pointer;position:relative;top:2px;transition:all .15s;white-space:nowrap}
+.tbtn:hover{color:var(--txt);background:var(--panel2)}
+.tbtn.act{color:var(--green);background:var(--panel2);border-color:var(--b2);border-bottom:2px solid var(--panel2)}
+.tpane{display:none}
+.tpane.act{display:block}
+.inst{background:var(--panel2);border:1px solid var(--b2);border-top:none;padding:12px}
+.sa-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--b1)}
+.sa-name{font-size:17px;font-weight:700;color:var(--txtb);letter-spacing:.06em;text-transform:uppercase}
+.sa-ro{font-family:var(--mono);font-size:11px;color:var(--amber);text-align:right;line-height:1.6}
+.disp{background:#030507;border:1px solid var(--b2);margin-bottom:8px;user-select:none}
+.disp-inner{display:flex}
+.yax{width:36px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;
+  padding:2px 4px 2px 0;font-family:var(--mono);font-size:9px;color:var(--txtd);text-align:right}
+.cvcol{flex:1;position:relative;min-width:0}
+canvas{display:block;width:100%;image-rendering:pixelated}
+.wf-lbl{font-family:var(--mono);font-size:9px;color:var(--txtd);padding:3px 0 2px 36px;
+  border-top:1px solid var(--b1);letter-spacing:.05em}
+.xax{display:flex;justify-content:space-between;padding:2px 0 0 36px;
+  font-family:var(--mono);font-size:9px;color:var(--txtd)}
+.ctl-row{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+.tg-box{background:var(--panel);border:1px solid var(--b1);padding:10px 12px;min-width:185px}
+.tg-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txtd);font-weight:700;margin-bottom:8px}
+.tg-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.tg-lbl{font-size:12px;font-weight:600;color:var(--txt);flex:1}
+.sw{position:relative;width:36px;height:18px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#112010;border:1px solid var(--b2);cursor:pointer;transition:background .2s}
+.sl:before{content:'';position:absolute;height:12px;width:12px;left:2px;top:2px;
+  background:var(--txtd);transition:transform .2s,background .2s}
+input:checked+.sl{background:#051a0a;border-color:var(--gdim)}
+input:checked+.sl:before{transform:translateX(18px);background:var(--green);box-shadow:0 0 6px var(--green)}
+input.jam-spot-sw:checked+.sl, input.jam-barrage-sw:checked+.sl, input.jam-sweep-sw:checked+.sl{border-color:var(--red)}
+input.jam-spot-sw:checked+.sl:before, input.jam-barrage-sw:checked+.sl:before, input.jam-sweep-sw:checked+.sl:before{background:var(--red);box-shadow:0 0 6px var(--red)}
+.pill{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:2px}
+.pill.off{color:var(--red);border:1px solid #3a1010;background:#120505}
+.pill.on{color:var(--green);border:1px solid var(--gdim);background:var(--gfaint);text-shadow:0 0 5px var(--green)}
+.pill.jam-on{color:var(--red);border:1px solid var(--red);background:#200a0a;text-shadow:0 0 5px var(--red)}
+.slider-container{display:flex;flex-direction:column;gap:10px;flex:1}
+.slider-lbl{display:flex;justify-content:space-between;font-size:10px;font-family:var(--mono);color:var(--txtd)}
+.slider-val{color:var(--amber);font-weight:700}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--b2);outline:none;border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;background:var(--amber);cursor:pointer}
+.info-box{background:var(--panel);border:1px solid var(--b1);padding:10px 12px;flex:2;min-width:220px}
+.ib-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txtd);font-weight:700;margin-bottom:8px}
+.callout{margin-top:10px;background:#050e08;border:1px solid #1a4428;padding:12px 14px}
+.co-hdr{font-size:12px;font-weight:700;color:var(--green);letter-spacing:.04em;margin-bottom:6px}
+.co-body{font-size:12px;color:var(--txt);line-height:1.7}
+.co-body strong{color:var(--amber)}
+.co-body em{color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-title">Advanced FHSS & EW Spectrum Trainer</div>
+  <div class="hdr-sub">SPECTRUM ANALYZER & TIME DOMAIN SIMULATION · EW FEATURES ENABLED</div>
+</div>
+
+<div class="tab-bar" id="tabbar"></div>
+<div id="tabcontent"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    'use strict';
+    
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    const HOP_FREQS = [2.405, 2.410, 2.415, 2.420, 2.425, 2.430, 2.435, 2.440, 2.445, 2.450, 2.455, 2.460, 2.465, 2.470, 2.475];
+    let shuffledHopFreqs = shuffle([...HOP_FREQS]);
+
+    const SCENARIOS = [
+        { 
+            id: 'fixed', label: 'Fixed Frequency Signal', startGHz: 2.40, stopGHz: 2.48, bins: 512, 
+            description: 'A simple, non-hopping Continuous Wave (CW) signal. Provides a baseline for why spread spectrum is necessary.', 
+            explain: '<strong>Constant Wave (CW) Signal:</strong> Transmitting steadily at <em>2.440 GHz</em>. Try toggling the jammers. The <strong style="color:var(--red)">Spot Jammer</strong> blocks it constantly, and the <strong style="color:var(--red)">Barrage Jammer</strong> floods the whole band. The <strong style="color:var(--red)">Sweep Jammer</strong> sweeps back and forth, knocking it out periodically every time it crosses 2.440 GHz.'
+        },
+        { 
+            id: 'fasthop', label: 'Frequency Hopper (FHSS)', startGHz: 2.40, stopGHz: 2.48, bins: 512, 
+            description: 'An FHSS signal using a pseudo-random sequence across the 2.4 GHz band to bypass detection and jamming.', 
+            explain: '<strong>FHSS Signal:</strong> Hopping in a pseudo-random pattern. Turn on the <strong style="color:var(--red)">Sweep Jammer</strong>. Notice how it creates a beautiful, diagonal zigzag trace on the waterfall. Because the sweep jammer is moving, it only disrupts the FHSS signal for a microsecond when their frequencies collide. This makes FHSS incredibly resilient against swept jamming!'
+        },
+        { 
+            id: 'timedomain', label: 'Time Domain / Zero Span', startGHz: 2.40, stopGHz: 2.48, bins: 512, timeDomain: true, centerFreq: 2.440, 
+            description: 'Zero-Span view fixed on 2.440 GHz plotting amplitude over time. Reveals channel dwell time.', 
+            explain: '<strong>Time Domain (Zero-Span):</strong> Centered on <em>2.440 GHz</em>. You see a spike when the hopper lands on this channel. <em>(Jammer controls are disabled in this view to focus on pulse timing)</em>.'
+        }
+    ];
+
+    // Global State handles settings across all tabs
+    const GLOBAL_STATE = { 
+        signalOn: false, 
+        jammerSpot: false,
+        jammerBarrage: false,
+        jammerSweep: false,
+        txPower: -40,
+        rxGain: 0,
+        hopRate: 10 // Lower is faster (frames per hop)
+    };
+    
+    const canvasMap = {};
+
+    function buildUI() {
+        const bar = document.getElementById('tabbar');
+        const content = document.getElementById('tabcontent');
+        if (!bar || !content) return;
+
+        SCENARIOS.forEach((d, di) => {
+            const btn = document.createElement('button');
+            btn.className = 'tbtn' + (di === 0 ? ' act' : '');
+            btn.textContent = d.label; 
+            btn.dataset.id = d.id;
+            btn.onclick = () => switchTab(d.id);
+            bar.appendChild(btn);
+
+            const xLabels = d.timeDomain ? ['-500ms', '-250ms', 'NOW'] : makeFreqLabels(d.startGHz, d.stopGHz, 9);
+            const sa_info = d.timeDomain ? `CF: ${d.centerFreq.toFixed(3)} GHz | SPAN: 0 Hz (Zero-Span)` : `CF: ${((d.startGHz + d.stopGHz) / 2).toFixed(3)} GHz | SPAN: ${(d.stopGHz - d.startGHz).toFixed(2)} GHz`;
+            
+            // Render Jammers only if NOT time domain
+            const jammerUI = !d.timeDomain ? `
+              <div class="tg-row">
+                <label class="sw"><input type="checkbox" class="jam-spot-sw" onchange="updateState('jammerSpot', this.checked)"><span class="sl"></span></label>
+                <span class="tg-lbl" style="color:var(--red)">Spot Jammer</span>
+                <span class="pill val-jam-spot-pill off">OFF</span>
+              </div>
+              <div class="tg-row">
+                <label class="sw"><input type="checkbox" class="jam-barrage-sw" onchange="updateState('jammerBarrage', this.checked)"><span class="sl"></span></label>
+                <span class="tg-lbl" style="color:var(--red)">Barrage Jammer</span>
+                <span class="pill val-jam-barrage-pill off">OFF</span>
+              </div>
+              <div class="tg-row">
+                <label class="sw"><input type="checkbox" class="jam-sweep-sw" onchange="updateState('jammerSweep', this.checked)"><span class="sl"></span></label>
+                <span class="tg-lbl" style="color:var(--red)">Sweep Jammer</span>
+                <span class="pill val-jam-sweep-pill off">OFF</span>
+              </div>
+            ` : `
+              <div class="tg-row" style="opacity: 0.4; pointer-events: none;">
+                <span class="tg-lbl" style="color:var(--txtd); font-style:italic;">Jammers disabled in Time Domain</span>
+              </div>
+            `;
+
+            const pane = document.createElement('div');
+            pane.id = 'pane-' + d.id; 
+            pane.className = 'tpane' + (di === 0 ? ' act' : '');
+            pane.innerHTML = `
+                <div class="inst">
+                  <div class="sa-hdr">
+                    <div><div class="sa-name">${d.label}</div></div>
+                    <div class="sa-ro">${sa_info}</div>
+                  </div>
+                  <div class="disp">
+                    <div class="disp-inner">
+                      <div class="yax"><span>-20</span><span>-40</span><span>-60</span><span>-80</span><span>-100</span></div>
+                      <div class="cvcol" id="col-${d.id}"><canvas id="trace-${d.id}" height="220"></canvas></div>
+                    </div>
+                    <div class="wf-lbl">${d.timeDomain ? 'TIME DOMAIN VIEW · Time → (newest right)' : 'WATERFALL · Time ↓ (newest top)'}</div>
+                    <div class="disp-inner" style="${d.timeDomain ? 'display:none;' : ''}">
+                      <div style="width:36px;flex-shrink:0"></div>
+                      <div class="cvcol" id="wfcol-${d.id}"><canvas id="wfall-${d.id}" height="160"></canvas></div>
+                    </div>
+                    <div class="xax">${xLabels.map(l => `<span>${l}</span>`).join('')}</div>
+                  </div>
+                  
+                  <div class="ctl-row">
+                    <!-- Toggles -->
+                    <div class="tg-box">
+                      <div class="tg-title">Transmitters</div>
+                      <div class="tg-row">
+                        <label class="sw"><input type="checkbox" onchange="updateState('signalOn', this.checked)"><span class="sl"></span></label>
+                        <span class="tg-lbl">Comms Signal</span>
+                        <span class="pill val-sig-pill off">OFF</span>
+                      </div>
+                      ${jammerUI}
+                    </div>
+
+                    <!-- Sliders -->
+                    <div class="tg-box" style="flex:1.5; display:flex; gap:15px;">
+                        <div class="slider-container">
+                            <div class="slider-lbl"><span>TX AMPLITUDE</span><span class="slider-val val-tx">-40 dBm</span></div>
+                            <input type="range" min="-90" max="-10" value="-40" oninput="updateState('txPower', this.value)">
+                            
+                            <div class="slider-lbl" style="margin-top:5px"><span>RX GAIN</span><span class="slider-val val-rx">0 dB</span></div>
+                            <input type="range" min="0" max="40" value="0" oninput="updateState('rxGain', this.value)">
+                        </div>
+                        <div class="slider-container" style="${d.id === 'fixed' ? 'opacity:0.3;pointer-events:none;' : ''}">
+                            <div class="slider-lbl"><span>HOP RATE</span><span class="slider-val val-rate">Med</span></div>
+                            <input type="range" min="2" max="40" value="10" dir="rtl" oninput="updateState('hopRate', this.value)">
+                            <div style="font-size:9px; color:var(--txtd); text-align:right">Fast ← → Slow</div>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="info-box">
+                      <div class="ib-title">Educational Focus</div>
+                      <div style="font-size:12px;color:var(--txt);line-height:1.5;">${d.description}</div>
+                    </div>
+                  </div>
+                  
+                  <!-- Dynamic Explanation -->
+                  <div class="callout" style="display:block;">
+                    <div class="co-hdr">▶ EW TACTICAL ANALYSIS</div>
+                    <div class="co-body">${d.explain}</div>
+                  </div>
+                </div>`;
+            content.appendChild(pane);
+        });
+    }
+
+    function makeFreqLabels(start, stop, n) { 
+        const labels = []; 
+        for (let i = 0; i < n; i++) {
+            labels.push((start + (stop - start) * i / (n - 1)).toFixed(3));
+        } 
+        return labels; 
+    }
+    
+    function switchTab(id) {
+        document.querySelectorAll('.tpane').forEach(p => p.classList.remove('act'));
+        document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('act'));
+        const pane = document.getElementById('pane-' + id);
+        if (pane) pane.classList.add('act');
+        const tabBtn = document.querySelector(`.tbtn[data-id='${id}']`);
+        if (tabBtn) tabBtn.classList.add('act');
+    }
+
+    window.updateState = function(key, val) {
+        GLOBAL_STATE[key] = val;
+        
+        if (key === 'signalOn') {
+            document.querySelectorAll('.val-sig-pill').forEach(el => {
+                el.textContent = val ? 'ON' : 'OFF';
+                el.className = 'pill val-sig-pill ' + (val ? 'on' : 'off');
+            });
+            document.querySelectorAll('input[type="checkbox"]:not(.jam-spot-sw):not(.jam-barrage-sw):not(.jam-sweep-sw)').forEach(el => el.checked = val);
+        }
+        if (key === 'jammerSpot') {
+            document.querySelectorAll('.val-jam-spot-pill').forEach(el => {
+                el.textContent = val ? 'ON' : 'OFF';
+                el.className = 'pill val-jam-spot-pill ' + (val ? 'jam-on' : 'off');
+            });
+            document.querySelectorAll('.jam-spot-sw').forEach(el => el.checked = val);
+        }
+        if (key === 'jammerBarrage') {
+            document.querySelectorAll('.val-jam-barrage-pill').forEach(el => {
+                el.textContent = val ? 'ON' : 'OFF';
+                el.className = 'pill val-jam-barrage-pill ' + (val ? 'jam-on' : 'off');
+            });
+            document.querySelectorAll('.jam-barrage-sw').forEach(el => el.checked = val);
+        }
+        if (key === 'jammerSweep') {
+            document.querySelectorAll('.val-jam-sweep-pill').forEach(el => {
+                el.textContent = val ? 'ON' : 'OFF';
+                el.className = 'pill val-jam-sweep-pill ' + (val ? 'jam-on' : 'off');
+            });
+            document.querySelectorAll('.jam-sweep-sw').forEach(el => el.checked = val);
+        }
+        if (key === 'txPower') {
+            document.querySelectorAll('.val-tx').forEach(el => el.textContent = `${val} dBm`);
+            document.querySelectorAll('input[type="range"][min="-90"]').forEach(el => el.value = val);
+        }
+        if (key === 'rxGain') {
+            document.querySelectorAll('.val-rx').forEach(el => el.textContent = `+${val} dB`);
+            document.querySelectorAll('input[type="range"][min="0"]').forEach(el => el.value = val);
+        }
+        if (key === 'hopRate') {
+            let label = "Med";
+            if (val < 8) label = "Fast";
+            else if (val > 25) label = "Slow";
+            document.querySelectorAll('.val-rate').forEach(el => el.textContent = label);
+            document.querySelectorAll('input[type="range"][max="40"]').forEach(el => el.value = val);
+        }
+    };
+
+    function setupCanvases() {
+        SCENARIOS.forEach(d => {
+            const col = document.getElementById('col-' + d.id);
+            const trace = document.getElementById('trace-' + d.id);
+            const wfall = document.getElementById('wfall-' + d.id);
+            const wfcol = document.getElementById('wfcol-' + d.id);
+            
+            canvasMap[d.id] = { trace, wfall, col, wfcol, timeDomainData: d.timeDomain ? new Float32Array(d.bins).fill(-95) : null };
+            
+            const ro = new ResizeObserver(() => {
+                if (!col.isConnected) return;
+                const w = col.clientWidth; 
+                if (w < 10) return;
+                if (trace.width !== w) trace.width = w;
+                if (wfall && wfcol) { 
+                    const ww = wfcol.clientWidth; 
+                    if (wfall.width !== ww) wfall.width = ww; 
+                }
+            });
+            ro.observe(col);
+        });
+    }
+
+    const SA_REF = -20, SA_RANGE = 80;
+    const dbToY = (db, h) => Math.max(0, Math.min(h, ((SA_REF - db) / SA_RANGE) * h));
+    const nz = amp => (Math.random() - 0.5) * 2 * amp;
+
+    let currentHopFreq = shuffledHopFreqs[0];
+    let hopIdx = 0;
+
+    function updateHoppingSignal(frame) {
+        if (frame % GLOBAL_STATE.hopRate === 0) {
+            hopIdx = (hopIdx + 1) % shuffledHopFreqs.length;
+            if(hopIdx === 0) shuffle(shuffledHopFreqs);
+            currentHopFreq = shuffledHopFreqs[hopIdx];
+        }
+    }
+
+    function addBump(arr, d, cf, peakDbm, widthMultiplier = 3) {
+        const bins = d.bins;
+        const centerBin = Math.round(((cf - d.startGHz) / (d.stopGHz - d.startGHz)) * bins);
+        const bwBins = widthMultiplier;
+        
+        for (let i = centerBin - bwBins * 3; i <= centerBin + bwBins * 3; i++) {
+            if (i >= 0 && i < bins) {
+                const dist = Math.abs(i - centerBin);
+                const falloff = (peakDbm - -95) * Math.exp(-(dist * dist) / (2 * bwBins * bwBins));
+                const finalVal = -95 + falloff + nz(1.5) + parseFloat(GLOBAL_STATE.rxGain);
+                arr[i] = Math.max(arr[i], finalVal);
+            }
+        }
+    }
+
+    function drawTrace(ctx, w, h, data) {
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = '#0c1c28'; ctx.lineWidth = 1;
+        for (let i = 1; i < 5; i++) { 
+            ctx.beginPath(); ctx.moveTo(0, i * h / 5); ctx.lineTo(w, i * h / 5); ctx.stroke(); 
+        }
+        for (let i = 1; i < 8; i++) { 
+            ctx.beginPath(); ctx.moveTo(i * w / 8, 0); ctx.lineTo(i * w / 8, h); ctx.stroke(); 
+        }
+        const step = w / data.length;
+        const g = ctx.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, 'rgba(0,255,136,0.15)'); g.addColorStop(1, 'rgba(0,255,136,0.01)');
+        ctx.fillStyle = g;
+        
+        ctx.beginPath(); ctx.moveTo(0, h);
+        for (let i = 0; i < data.length; i++) {
+            ctx.lineTo(i * step, dbToY(data[i], h));
+        }
+        ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+
+        ctx.beginPath(); ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 1.5; ctx.shadowBlur = 4; ctx.shadowColor = '#00ff88';
+        for (let i = 0; i < data.length; i++) {
+            const y = dbToY(data[i], h);
+            if (i === 0) ctx.moveTo(i * step, y); else ctx.lineTo(i * step, y);
+        }
+        ctx.stroke(); ctx.shadowBlur = 0;
+    }
+    
+    function drawWaterfall(ctx, w, h, data) {
+        if (!ctx.canvas || w === 0 || h === 0) return;
+        ctx.drawImage(ctx.canvas, 0, 0, w, h, 0, 1, w, h);
+        const imgData = ctx.createImageData(w, 1);
+        const step = w / data.length;
+        for (let i = 0; i < w; i++) {
+            const bin = Math.floor(i / step); 
+            const db = data[bin] || -95;
+            const t = Math.max(0, Math.min(1, (db + 100) / 80));
+            let r=0, g=0, b=0;
+            if (t < 0.2) { b = Math.round(t/0.2*120); } 
+            else if (t < 0.45) { g = Math.round((t-0.2)/0.25*255); b = Math.round(120-(t-0.2)/0.25*120); } 
+            else if (t < 0.7) { r = Math.round((t-0.45)/0.25*255); g = 255; } 
+            else { r = 255; g = Math.round(255-(t-0.7)/0.3*255); }
+            
+            const idx = i*4; 
+            imgData.data[idx] = r; imgData.data[idx+1] = g; imgData.data[idx+2] = b; imgData.data[idx+3] = 255;
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
+    
+    let frame = 0;
+    function loop() {
+        frame++; 
+        updateHoppingSignal(frame);
+        
+        const currentNoiseFloor = -95 + parseFloat(GLOBAL_STATE.rxGain);
+        const currentTxPower = parseFloat(GLOBAL_STATE.txPower);
+
+        // Generate the dynamic sweep frequency (triangle wave back and forth)
+        const sweepPeriod = 240; // Frames for a full sweep cycle
+        const sweepProgress = (frame % sweepPeriod) / sweepPeriod;
+        const sweepTri = sweepProgress < 0.5 ? sweepProgress * 2 : 2 - (sweepProgress * 2);
+        const sweepFreq = 2.405 + (2.475 - 2.405) * sweepTri;
+
+        SCENARIOS.forEach(d => {
+            const m = canvasMap[d.id];
+            if (!m || !m.trace.isConnected) return;
+            const ctx = m.trace.getContext('2d');
+            const w = m.trace.width, h = m.trace.height;
+
+            if (d.timeDomain) {
+                // TIME DOMAIN
+                for(let i=0; i < m.timeDomainData.length - 1; i++) {
+                    m.timeDomainData[i] = m.timeDomainData[i+1];
+                }
+                
+                let newVal = currentNoiseFloor + nz(1.5);
+                
+                // Sweep jammer crosses 2.440 GHz
+                if (GLOBAL_STATE.jammerSweep && Math.abs(sweepFreq - d.centerFreq) < 0.003) {
+                    newVal = Math.max(newVal, -25 + parseFloat(GLOBAL_STATE.rxGain) + nz(1));
+                }
+
+                // Spot Jammer is active at 2.440 GHz
+                if (GLOBAL_STATE.jammerSpot && Math.abs(2.440 - d.centerFreq) < 0.001) {
+                    newVal = Math.max(newVal, -25 + parseFloat(GLOBAL_STATE.rxGain) + nz(1));
+                }
+
+                // Barrage jammer hits 2.440 GHz (it covers 2.420 to 2.460)
+                if (GLOBAL_STATE.jammerBarrage && d.centerFreq >= 2.420 && d.centerFreq <= 2.460) {
+                    newVal = Math.max(newVal, -35 + parseFloat(GLOBAL_STATE.rxGain) + nz(4));
+                }
+                
+                // Comms Signal lands on channel
+                if(GLOBAL_STATE.signalOn && Math.abs(currentHopFreq - d.centerFreq) < 0.001) {
+                    newVal = Math.max(newVal, currentTxPower + parseFloat(GLOBAL_STATE.rxGain) + nz(2));
+                }
+                
+                m.timeDomainData[m.timeDomainData.length - 1] = newVal;
+                drawTrace(ctx, w, h, m.timeDomainData);
+                
+            } else {
+                // SPECTRUM
+                const arr = new Float32Array(d.bins).fill(currentNoiseFloor).map(v => v + nz(1.5));
+                
+                // Add Barrage Jammer (40 MHz block in center)
+                if (GLOBAL_STATE.jammerBarrage) {
+                    const barrageFloor = -35 + parseFloat(GLOBAL_STATE.rxGain);
+                    const startJamBin = Math.round(((2.420 - d.startGHz) / (d.stopGHz - d.startGHz)) * d.bins);
+                    const stopJamBin = Math.round(((2.460 - d.startGHz) / (d.stopGHz - d.startGHz)) * d.bins);
+                    const rollOff = 12;
+                    
+                    for(let i=0; i < d.bins; i++) {
+                        if (i >= startJamBin && i <= stopJamBin) {
+                            arr[i] = Math.max(arr[i], barrageFloor + nz(4));
+                        } else if (i < startJamBin && i > startJamBin - rollOff) {
+                            const dist = startJamBin - i;
+                            const falloff = (barrageFloor - currentNoiseFloor) * Math.exp(-(dist * dist) / 40);
+                            arr[i] = Math.max(arr[i], currentNoiseFloor + falloff + nz(3));
+                        } else if (i > stopJamBin && i < stopJamBin + rollOff) {
+                            const dist = i - stopJamBin;
+                            const falloff = (barrageFloor - currentNoiseFloor) * Math.exp(-(dist * dist) / 40);
+                            arr[i] = Math.max(arr[i], currentNoiseFloor + falloff + nz(3));
+                        }
+                    }
+                }
+
+                // Add Spot Jammer (2.440 GHz)
+                if (GLOBAL_STATE.jammerSpot) {
+                    addBump(arr, d, 2.440, -25 + parseFloat(GLOBAL_STATE.rxGain), 5);
+                }
+
+                // Add Sweep Jammer (Moving peak)
+                if (GLOBAL_STATE.jammerSweep) {
+                    addBump(arr, d, sweepFreq, -25 + parseFloat(GLOBAL_STATE.rxGain), 4);
+                }
+                
+                // Add Comms Signal
+                if(GLOBAL_STATE.signalOn) {
+                    if (d.id === 'fixed') {
+                        addBump(arr, d, 2.440, currentTxPower);
+                    } else {
+                        addBump(arr, d, currentHopFreq, currentTxPower);
+                    }
+                }
+                
+                drawTrace(ctx, w, h, arr);
+                if (m.wfall) {
+                    drawWaterfall(m.wfall.getContext('2d'), m.wfall.width, m.wfall.height, arr);
+                }
+            }
+        });
+        requestAnimationFrame(loop);
+    }
+
+    buildUI();
+    setupCanvases();
+    requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>
