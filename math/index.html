@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fraction Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #111827;
+    font-family: system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 60px;
+    color: #f9fafb;
+  }
+  #app { width: 100%; max-width: 520px; padding-top: 24px; }
+
+  h1 { font-family: Georgia, serif; font-weight: normal; font-size: 32px; color: #f9fafb; }
+  .subtitle { color: #6b7280; font-size: 14px; margin-top: 6px; }
+  .subtitle strong { color: #9ca3af; }
+
+  /* Mode toggle */
+  .toggle-bar {
+    display: flex; background: #1f2937; border-radius: 14px;
+    padding: 4px; margin: 24px 0; gap: 4px;
+  }
+  .toggle-btn {
+    flex: 1; padding: 10px 0; border-radius: 10px; border: none;
+    background: transparent; color: #6b7280;
+    font-size: 13px; font-weight: 400; cursor: pointer; transition: all 0.2s;
+  }
+  .toggle-btn.active {
+    background: linear-gradient(135deg,#7c3aed,#a78bfa);
+    color: #fff; font-weight: 600;
+  }
+
+  /* Mode description banner */
+  .mode-desc {
+    background: #1f2937; border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 20px;
+    font-size: 13px; color: #9ca3af;
+  }
+  .mode-desc strong { color: #d1d5db; }
+
+  /* Card */
+  .card {
+    background: #1f2937; border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  /* Fraction inputs row */
+  .inputs-row {
+    display: flex; align-items: center;
+    justify-content: center; gap: 16px; margin-bottom: 24px;
+  }
+  .frac-group { display: flex; flex-direction: column; align-items: center; }
+  .frac-label {
+    font-family: 'Courier New', monospace; font-size: 11px;
+    color: #9ca3af; letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .frac-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .input-sublabel {
+    display: flex; align-items: center; gap: 4px;
+    color: #6b7280; font-size: 11px; margin-bottom: 2px;
+  }
+  .frac-input {
+    width: 72px; text-align: center; background: transparent;
+    border: none; border-bottom: 2px solid #4b5563;
+    color: #f9fafb; font-size: 28px; font-family: Georgia, serif;
+    outline: none; padding: 4px 0; transition: border-color 0.2s;
+  }
+  .frac-input:focus { border-color: #a78bfa; }
+  .frac-bar { width: 72px; height: 2px; background: #6b7280; }
+
+  /* Op buttons column */
+  .op-col { display: flex; flex-direction: column; gap: 5px; padding-top: 24px; }
+  .op-btn {
+    width: 42px; height: 42px; border-radius: 10px;
+    border: 2px solid #374151; background: transparent;
+    color: #9ca3af; font-size: 18px; cursor: pointer;
+    font-family: Georgia, serif; transition: all 0.15s;
+  }
+  .op-btn.active { border-color: #a78bfa; background: rgba(167,139,250,0.13); color: #a78bfa; }
+
+  /* Action buttons */
+  .btn-row { display: flex; gap: 10px; }
+  .btn-calc {
+    flex: 1; padding: 14px 0; border-radius: 12px; border: none;
+    background: linear-gradient(135deg,#7c3aed,#a78bfa);
+    color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-calc:hover { opacity: 0.88; }
+  .btn-clear {
+    padding: 14px 20px; border-radius: 12px;
+    border: 2px solid #374151; background: transparent;
+    color: #9ca3af; font-size: 14px; cursor: pointer; transition: border-color 0.2s;
+  }
+  .btn-clear:hover { border-color: #6b7280; }
+
+  /* Error */
+  .error-box {
+    margin-top: 20px; padding: 12px 16px;
+    background: #450a0a; border-radius: 10px;
+    color: #fca5a5; font-size: 14px; display: none;
+  }
+
+  /* Result */
+  .result-box {
+    margin-top: 24px; padding: 20px 24px;
+    background: #111827; border-radius: 14px;
+    text-align: center; display: none;
+  }
+  .result-label {
+    color: #6b7280; font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; font-family: 'Courier New', monospace;
+    margin-bottom: 14px;
+  }
+  .result-whole { font-size: 56px; font-family: Georgia, serif; color: #a78bfa; }
+  .result-frac { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; }
+  .result-frac span { font-size: 48px; font-family: Georgia, serif; color: #a78bfa; }
+  .result-frac-bar { width: 64px; height: 3px; background: #7c3aed; border-radius: 2px; }
+  .result-decimal { margin-top: 12px; color: #6b7280; font-size: 15px; font-family: 'Courier New', monospace; }
+
+  /* Steps */
+  .steps-box {
+    margin-top: 20px; background: #0f172a;
+    border-radius: 14px; padding: 6px 20px 4px; display: none;
+  }
+  .steps-title {
+    color: #6b7280; font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; font-family: 'Courier New', monospace;
+    padding: 12px 0 4px;
+  }
+  .step-row {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid #1f2937;
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-num {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+    background: #1e293b; border: 2px solid #374151;
+    display: flex; align-items: center; justify-content: center;
+    color: #6b7280; font-size: 13px; font-weight: bold;
+    font-family: monospace; margin-top: 2px;
+  }
+  .step-num.last { background: #7c3aed; border-color: #a78bfa; color: #fff; }
+  .step-content { flex: 1; min-width: 0; }
+  .step-label-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+  .step-label {
+    color: #9ca3af; font-size: 12px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .step-label.last { color: #a78bfa; font-weight: bold; }
+  .step-expr { color: #d1d5db; font-size: 15px; font-family: Georgia, serif; word-break: break-word; }
+  .step-expr.last { color: #f9fafb; font-size: 17px; font-weight: bold; }
+
+  /* Tooltip */
+  .tip-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #374151; color: #9ca3af;
+    font-size: 11px; font-weight: bold; cursor: pointer;
+    border: 1px solid #4b5563; flex-shrink: 0;
+    transition: all 0.15s; user-select: none;
+    position: relative;
+  }
+  .tip-btn.open { background: #7c3aed; color: #fff; border-color: #a78bfa; }
+  .tip-popup {
+    display: none; position: absolute; left: 0; top: 24px; z-index: 20;
+    background: #1e293b; border: 1px solid #4b5563;
+    border-radius: 10px; padding: 10px 14px;
+    color: #d1d5db; font-size: 13px; line-height: 1.55;
+    width: 270px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    font-family: system-ui, sans-serif; font-weight: normal;
+    text-transform: none; letter-spacing: 0;
+  }
+  .tip-popup.open { display: block; }
+  .tip-close { display: block; margin-top: 8px; color: #6b7280; font-size: 11px; cursor: pointer; }
+
+  /* PEMDAS strip */
+  .pemdas-strip { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .pemdas-chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 8px;
+    background: #111827; cursor: help;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .pemdas-letter { font-weight: bold; font-size: 15px; font-family: Georgia, serif; }
+  .pemdas-word { color: #6b7280; font-size: 11px; }
+
+  /* PEMDAS expression input */
+  .expr-input-wrap { margin-bottom: 14px; }
+  .expr-input-label { display: flex; align-items: center; gap:4px; margin-bottom: 6px; color: #9ca3af; font-size: 13px; }
+  .expr-input {
+    width: 100%; background: #111827; border: 2px solid #374151;
+    border-radius: 10px; color: #f9fafb;
+    font-size: 20px; font-family: Georgia, serif;
+    padding: 12px 14px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .expr-input:focus { border-color: #a78bfa; }
+
+  /* Quick-insert buttons */
+  .insert-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .insert-btn {
+    padding: 6px 12px; border-radius: 8px;
+    border: 1px solid #374151; background: #111827;
+    color: #d1d5db; font-size: 16px; cursor: pointer;
+    font-family: Georgia, serif;
+  }
+  .insert-btn.del { color: #f87171; font-size: 13px; }
+
+  /* Panels hidden by default */
+  #two-frac-panel, #pemdas-panel { display: none; }
+  #two-frac-panel.active, #pemdas-panel.active { display: block; }
+
+  /* Paste box */
+  .paste-section {
+    margin-bottom: 20px;
+    border: 2px dashed #374151; border-radius: 14px;
+    padding: 16px 18px; background: #0f172a;
+    transition: border-color 0.2s;
+  }
+  .paste-section:focus-within { border-color: #a78bfa; }
+  .paste-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .paste-title {
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    font-family: 'Courier New', monospace; color: #6b7280;
+  }
+  .paste-hint { font-size: 12px; color: #4b5563; }
+  .paste-textarea {
+    width: 100%; background: transparent; border: none;
+    color: #d1d5db; font-size: 16px; font-family: Georgia, serif;
+    outline: none; resize: none; min-height: 52px;
+    line-height: 1.5; caret-color: #a78bfa;
+  }
+  .paste-textarea::placeholder { color: #374151; }
+  .paste-actions {
+    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  }
+  .paste-use-btn {
+    padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+    background: linear-gradient(135deg,#7c3aed,#a78bfa); color: #fff;
+    transition: opacity 0.2s;
+  }
+  .paste-use-btn:hover { opacity: 0.88; }
+  .paste-clear-btn {
+    padding: 7px 14px; border-radius: 8px; cursor: pointer;
+    border: 1px solid #374151; background: transparent;
+    color: #6b7280; font-size: 13px;
+  }
+  .paste-clear-btn:hover { border-color: #6b7280; color: #9ca3af; }
+  .paste-status {
+    font-size: 12px; color: #6b7280; align-self: center;
+    font-family: 'Courier New', monospace;
+  }
+  .paste-status.ok { color: #34d399; }
+  .paste-status.warn { color: #fbbf24; }
+
+  @media (max-width: 400px) {
+    .frac-input { width: 58px; font-size: 22px; }
+    .inputs-row { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:28px">
+    <h1>Fraction Calculator</h1>
+    <p class="subtitle">Tap <strong>?</strong> on any step for a plain-English explanation.</p>
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="toggle-bar">
+    <button class="toggle-btn active" id="btn-mode-frac" onclick="setMode('fraction')">🔢 Two Fractions</button>
+    <button class="toggle-btn" id="btn-mode-pemdas" onclick="setMode('pemdas')">📐 PEMDAS / Full Expression</button>
+  </div>
+
+  <!-- Mode description -->
+  <div class="mode-desc" id="mode-desc">
+    👉 <strong>Two Fractions mode:</strong> Pick two fractions and one operation (+, −, ×, ÷). Great for single fraction problems.
+  </div>
+
+  <!-- Paste box -->
+  <div class="paste-section">
+    <div class="paste-header">
+      <span class="paste-title">📋 Paste an equation</span>
+      <span class="paste-hint">from Google Docs, Word, notes, etc.</span>
+    </div>
+    <textarea class="paste-textarea" id="paste-box" rows="2"
+      placeholder="Paste or type your equation here, e.g.  (3/4 + 1/2) × 2  or  1/3 − 1/6"
+      oninput="onPasteInput()"></textarea>
+    <div class="paste-actions">
+      <button class="paste-use-btn" onclick="usePasted()">Use this equation →</button>
+      <button class="paste-clear-btn" onclick="clearPasted()">Clear</button>
+      <span class="paste-status" id="paste-status"></span>
+    </div>
+  </div>
+
+  <!-- Main card -->
+  <div class="card">
+
+    <!-- ── TWO FRACTION PANEL ── -->
+    <div id="two-frac-panel" class="active">
+      <div class="inputs-row">
+        <!-- First fraction -->
+        <div class="frac-group">
+          <div class="frac-label">First fraction</div>
+          <div class="frac-inner">
+            <div class="input-sublabel">
+              numerator
+              <span class="tip-btn" onclick="toggleTip(this)" data-tip="The numerator is the TOP number. It tells you how many pieces you have. In 3/4, the numerator is 3.">?
+                <span class="tip-popup">The numerator is the TOP number. It tells you how many pieces you have. In 3/4, the numerator is 3.<span class="tip-close" onclick="closeTip(event,this)">tap to close ✕</span></span>
+              </span>
+            </div>
+            <input class="frac-input" id="n1" type="number" placeholder="0"/>
+            <div class="frac-bar"></div>
+            <input class="frac-input" id="d1" type="number" placeholder="1"/>
+            <div class="input-sublabel">
+              denominator
+              <span class="tip-btn" onclick="toggleTip(this)" data-tip="The denominator is the BOTTOM number. It tells you how many equal parts the whole is split into. In 3/4, the denominator is 4 — meaning it's cut into 4 equal pieces.">?
+                <span class="tip-popup">The denominator is the BOTTOM number. It tells you how many equal parts the whole is split into. In 3/4, the denominator is 4 — meaning it's cut into 4 equal pieces.<span class="tip-close" onclick="closeTip(event,this)">tap to close ✕</span></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Op column -->
+        <div class="op-col">
+          <button class="op-btn active" onclick="setOp(this,'+')">+</button>
+          <button class="op-btn" onclick="setOp(this,'−')">−</button>
+          <button class="op-btn" onclick="setOp(this,'×')">×</button>
+          <button class="op-btn" onclick="setOp(this,'÷')">÷</button>
+        </div>
+
+        <!-- Second fraction -->
+        <div class="frac-group">
+          <div class="frac-label">Second fraction</div>
+          <div class="frac-inner">
+            <div class="input-sublabel">
+              numerator
+              <span class="tip-btn" onclick="toggleTip(this)" data-tip="The numerator is the TOP number. It tells you how many pieces you have. In 3/4, the numerator is 3.">?
+                <span class="tip-popup">The numerator is the TOP number. It tells you how many pieces you have. In 3/4, the numerator is 3.<span class="tip-close" onclick="closeTip(event,this)">tap to close ✕</span></span>
+              </span>
+            </div>
+            <input class="frac-input" id="n2" type="number" placeholder="0"/>
+            <div class="frac-bar"></div>
+            <input class="frac-input" id="d2" type="number" placeholder="1"/>
+            <div class="input-sublabel">
+              denominator
+              <span class="tip-btn" onclick="toggleTip(this)" data-tip="The denominator is the BOTTOM number. It tells you how many equal parts the whole is split into. In 3/4, the denominator is 4 — meaning it's cut into 4 equal pieces.">?
+                <span class="tip-popup">The denominator is the BOTTOM number. It tells you how many equal parts the whole is split into. In 3/4, the denominator is 4 — meaning it's cut into 4 equal pieces.<span class="tip-close" onclick="closeTip(event,this)">tap to close ✕</span></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div><!-- end inputs-row -->
+
+      <div class="btn-row">
+        <button class="btn-calc" onclick="calcFraction()">Calculate</button>
+        <button class="btn-clear" onclick="clearFraction()">Clear</button>
+      </div>
+      <div class="error-box" id="frac-error"></div>
+      <div class="result-box" id="frac-result">
+        <div class="result-label">answer</div>
+        <div id="frac-result-display"></div>
+        <div class="result-decimal" id="frac-decimal"></div>
+      </div>
+      <div class="steps-box" id="frac-steps">
+        <div class="steps-title">📐 how it's solved — tap ? for explanations</div>
+        <div id="frac-steps-list"></div>
+      </div>
+    </div><!-- end two-frac-panel -->
+
+    <!-- ── PEMDAS PANEL ── -->
+    <div id="pemdas-panel">
+      <!-- PEMDAS strip -->
+      <div class="pemdas-strip" id="pemdas-strip"></div>
+
+      <!-- Expression input -->
+      <div class="expr-input-wrap">
+        <div class="expr-input-label">
+          Type your expression
+          <span class="tip-btn" onclick="toggleTip(this)">?
+            <span class="tip-popup">Type numbers, fractions (like 1/2 or 3/4), and operators. Use ( ) for grouping.<br><br>Examples:<br>• (1/2 + 1/3) × 2<br>• 3 + 2/5 − 1/10<br>• (2 + 1/4)^2<span class="tip-close" onclick="closeTip(event,this)">tap to close ✕</span></span>
+          </span>
+        </div>
+        <input class="expr-input" id="expr-input" placeholder="e.g.  (1/2 + 1/3) × 2"
+          oninput="syncExpr()" onkeydown="if(event.key==='Enter')calcPemdas()"/>
+      </div>
+
+      <!-- Quick insert -->
+      <div class="insert-row" id="insert-row"></div>
+
+      <div class="btn-row">
+        <button class="btn-calc" onclick="calcPemdas()">Calculate</button>
+        <button class="btn-clear" onclick="clearPemdas()">Clear</button>
+      </div>
+      <div class="error-box" id="pemdas-error"></div>
+      <div class="result-box" id="pemdas-result">
+        <div class="result-label">answer</div>
+        <div id="pemdas-result-display"></div>
+        <div class="result-decimal" id="pemdas-decimal"></div>
+      </div>
+      <div class="steps-box" id="pemdas-steps">
+        <div class="steps-title">📐 order of operations — tap ? for explanations</div>
+        <div id="pemdas-steps-list"></div>
+      </div>
+    </div><!-- end pemdas-panel -->
+
+  </div><!-- end card -->
+</div><!-- end app -->
+
+<script>
+// ── Math helpers ──────────────────────────────────────────────────────────────
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){let t=b;b=a%b;a=t;} return a; }
+function lcm(a,b){ return (a*b)/gcd(a,b); }
+function simplify(n,d){
+  if(d===0) return {n:NaN,d:0};
+  const sign=(n<0)!==(d<0)?-1:1;
+  const g=gcd(Math.abs(n),Math.abs(d));
+  return {n:sign*Math.abs(n)/g, d:Math.abs(d)/g};
+}
+function frac(n,d=1){ return simplify(n,d); }
+function fadd(a,b){ return frac(a.n*b.d+b.n*a.d, a.d*b.d); }
+function fsub(a,b){ return frac(a.n*b.d-b.n*a.d, a.d*b.d); }
+function fmul(a,b){ return frac(a.n*b.n, a.d*b.d); }
+function fdiv(a,b){ return frac(a.n*b.d, a.d*b.n); }
+function feq(a,b){ return a.n===b.n && a.d===b.d; }
+function fStr(f){ return f.d===1?`${f.n}`:`${f.n}/${f.d}`; }
+
+// ── Two-fraction step generator ───────────────────────────────────────────────
+function getSteps2(pn1,pd1,pn2,pd2,op){
+  if(op==='+'||op==='−'){
+    const L=lcm(pd1,pd2), adj1=pn1*(L/pd1), adj2=pn2*(L/pd2);
+    const rawN=op==='+'?adj1+adj2:adj1-adj2;
+    const fin=simplify(rawN,L), needsLCD=pd1!==pd2;
+    const verb=op==='+'?'add':'subtract', Verb=op==='+'?'Add':'Subtract';
+    return [
+      needsLCD?{label:'Find the LCD',expr:`LCD(${pd1}, ${pd2}) = ${L}`,tip:`The LCD (Lowest Common Denominator) is the smallest number both ${pd1} and ${pd2} divide into evenly. You need it so both fractions share the same-size pieces before you can ${verb} them.`}:null,
+      needsLCD?{label:'Convert to same denominator',expr:`${pn1}/${pd1} → ${adj1}/${L}   and   ${pn2}/${pd2} → ${adj2}/${L}`,tip:`Multiply top AND bottom of each fraction so they both show ${L} on the bottom. The value stays the same — like trading quarters for nickels.`}:null,
+      {label:`${Verb} the numerators (top numbers)`,expr:`${adj1} ${op} ${adj2} = ${rawN}`,tip:`Now that the denominators match, just ${verb} the top numbers. The bottom (${L}) stays the same — like ${verb}ing pizza slices already cut into ${L} equal pieces.`},
+      {label:'Write the result',expr:`${rawN}/${L}`,tip:'Top answer over the shared denominator.'},
+      (fin.n!==rawN||fin.d!==L)?{label:'Simplify (reduce to lowest terms)',expr:`GCD is ${gcd(Math.abs(rawN),L)}, so ${rawN}/${L} → ${fin.n}/${fin.d}`,tip:'The GCD (Greatest Common Divisor) is the biggest number that divides evenly into both top and bottom. Dividing shrinks the fraction without changing its value.'}:null,
+    ].filter(Boolean);
+  }
+  if(op==='×'){
+    const rawN=pn1*pn2, rawD=pd1*pd2, fin=simplify(rawN,rawD);
+    return [
+      {label:'Multiply the numerators (top numbers)',expr:`${pn1} × ${pn2} = ${rawN}`,tip:'When multiplying fractions, multiply straight across — start with the tops.'},
+      {label:'Multiply the denominators (bottom numbers)',expr:`${pd1} × ${pd2} = ${rawD}`,tip:'Then multiply the bottoms. Taking half of a third gives a sixth — the denominators multiply together.'},
+      {label:'Write the result',expr:`${rawN}/${rawD}`,tip:'Put the two products together as a fraction.'},
+      (fin.n!==rawN||fin.d!==rawD)?{label:'Simplify (reduce to lowest terms)',expr:`GCD is ${gcd(Math.abs(rawN),rawD)}, so ${rawN}/${rawD} → ${fin.n}/${fin.d}`,tip:'Divide both by their GCD to get the simplest form.'}:null,
+    ].filter(Boolean);
+  }
+  if(op==='÷'){
+    const fN=pd2, fD=pn2, rawN=pn1*fN, rawD=pd1*fD, fin=simplify(rawN,rawD);
+    return [
+      {label:'Flip the second fraction (reciprocal)',expr:`${pn2}/${pd2}  →  ${fN}/${fD}`,tip:'Dividing by a fraction = multiplying by its flip (reciprocal). Dividing by ½ is the same as multiplying by 2 — you\'re asking "how many halves fit?"'},
+      {label:'Multiply the numerators (top numbers)',expr:`${pn1} × ${fN} = ${rawN}`,tip:'Now it\'s just multiplication. Multiply the tops.'},
+      {label:'Multiply the denominators (bottom numbers)',expr:`${pd1} × ${fD} = ${rawD}`,tip:'Multiply the bottoms.'},
+      {label:'Write the result',expr:`${rawN}/${rawD}`,tip:'Combine into a fraction.'},
+      (fin.n!==rawN||fin.d!==rawD)?{label:'Simplify (reduce to lowest terms)',expr:`GCD is ${gcd(Math.abs(rawN),rawD)}, so ${rawN}/${rawD} → ${fin.n}/${fin.d}`,tip:'Divide both by their GCD for simplest form.'}:null,
+    ].filter(Boolean);
+  }
+  return [];
+}
+
+// ── PEMDAS tokenizer ──────────────────────────────────────────────────────────
+function tokenize(expr){
+  const tokens=[]; let i=0;
+  const str=expr.replace(/\s/g,'').replace(/x/gi,'×');
+  while(i<str.length){
+    const ch=str[i];
+    if(/\d/.test(ch)||ch==='.'){
+      let num='';
+      while(i<str.length&&(/\d/.test(str[i])||str[i]==='.')) num+=str[i++];
+      if(str[i]==='/'&&/\d/.test(str[i+1])){
+        i++;
+        let den='';
+        while(i<str.length&&/\d/.test(str[i])) den+=str[i++];
+        tokens.push({type:'frac',n:parseFloat(num),d:parseFloat(den)});
+      } else {
+        tokens.push({type:'num',val:parseFloat(num)});
+      }
+    } else if(['+','-','−','×','÷','*'].includes(ch)){
+      const opMap={'-':'−','*':'×'};
+      tokens.push({type:'op',val:opMap[ch]||ch}); i++;
+    } else if(ch==='('){ tokens.push({type:'lparen'}); i++; }
+    else if(ch===')'){ tokens.push({type:'rparen'}); i++; }
+    else if(ch==='^'){ tokens.push({type:'op',val:'^'}); i++; }
+    else i++;
+  }
+  return tokens;
+}
+
+function parseExpr(tokens){
+  let pos=0; const steps=[];
+  const peek=()=>tokens[pos];
+  const consume=()=>tokens[pos++];
+
+  function parsePrimary(){
+    const t=peek();
+    if(!t) return frac(0);
+    if(t.type==='lparen'){ consume(); const v=parseAddSub(); if(peek()&&peek().type==='rparen') consume(); return v; }
+    if(t.type==='op'&&t.val==='−'){ consume(); const v=parsePrimary(); return frac(-v.n,v.d); }
+    consume();
+    if(t.type==='frac') return simplify(t.n,t.d);
+    if(t.type==='num') return frac(t.val);
+    return frac(0);
+  }
+  function parseExp(){
+    let base=parsePrimary();
+    while(peek()&&peek().type==='op'&&peek().val==='^'){
+      consume(); const exp=parsePrimary();
+      const result=Math.pow(base.n/base.d, exp.n/exp.d);
+      const newBase=simplify(Math.round(result*1000),1000);
+      steps.push({label:'Exponent',expr:`${fStr(base)}^${fStr(exp)} = ${fStr(newBase)}`,tip:`Exponents mean repeated multiplication. ${fStr(base)} to the power of ${fStr(exp)} means multiplying ${fStr(base)} by itself ${fStr(exp)} time(s).`});
+      base=newBase;
+    }
+    return base;
+  }
+  function parseMulDiv(){
+    let left=parseExp();
+    while(peek()&&peek().type==='op'&&(peek().val==='×'||peek().val==='÷')){
+      const op=consume().val; const right=parseExp();
+      const bl={...left}, br={...right};
+      if(op==='×'){
+        const raw=frac(bl.n*br.n,bl.d*br.d), res=simplify(raw.n,raw.d);
+        steps.push({label:`Multiply: ${fStr(bl)} × ${fStr(br)}`,expr:`= ${fStr(raw)}${!feq(raw,res)?` → simplified: ${fStr(res)}`:''}`,tip:'Multiplication: multiply tops together and bottoms together.'});
+        left=res;
+      } else {
+        const raw=frac(bl.n*br.d,bl.d*br.n), res=simplify(raw.n,raw.d);
+        steps.push({label:`Divide: ${fStr(bl)} ÷ ${fStr(br)}`,expr:`Flip ${fStr(br)} → ${fStr({n:br.d,d:br.n})}, then multiply = ${fStr(raw)}${!feq(raw,res)?` → simplified: ${fStr(res)}`:''}`,tip:'Dividing by a fraction = multiplying by its reciprocal (flip).'});
+        left=res;
+      }
+    }
+    return left;
+  }
+  function parseAddSub(){
+    let left=parseMulDiv();
+    while(peek()&&peek().type==='op'&&(peek().val==='+'||peek().val==='−')){
+      const op=consume().val; const right=parseMulDiv();
+      const bl={...left}, br={...right};
+      const L=lcm(bl.d,br.d);
+      const adj1=bl.n*(L/bl.d), adj2=br.n*(L/br.d);
+      const rawN=op==='+'?adj1+adj2:adj1-adj2;
+      const raw=frac(rawN,L), res=simplify(rawN,L);
+      const needsLCD=bl.d!==br.d;
+      steps.push({
+        label:`${op==='+'?'Add':'Subtract'}: ${fStr(bl)} ${op} ${fStr(br)}`,
+        expr: needsLCD
+          ?`LCD = ${L}, convert: ${adj1}/${L} ${op} ${adj2}/${L} = ${fStr(raw)}${!feq(raw,res)?` → ${fStr(res)}`:''}`
+          :`${adj1} ${op} ${adj2} = ${fStr(res)}`,
+        tip: needsLCD
+          ?`The LCD is ${L}. Convert both fractions to have ${L} on the bottom, then ${op==='+'?'add':'subtract'} the tops.`
+          :`Same denominator — just ${op==='+'?'add':'subtract'} the top numbers.`
+      });
+      left=res;
+    }
+    return left;
+  }
+
+  const value=parseAddSub();
+  return {value, steps};
+}
+
+// ── UI state ──────────────────────────────────────────────────────────────────
+let currentOp='+';
+let currentMode='fraction';
+let exprValue='';
+
+// ── Mode switching ────────────────────────────────────────────────────────────
+function setMode(mode){
+  currentMode=mode;
+  document.getElementById('two-frac-panel').classList.toggle('active',mode==='fraction');
+  document.getElementById('pemdas-panel').classList.toggle('active',mode==='pemdas');
+  document.getElementById('btn-mode-frac').classList.toggle('active',mode==='fraction');
+  document.getElementById('btn-mode-pemdas').classList.toggle('active',mode==='pemdas');
+  const desc=document.getElementById('mode-desc');
+  desc.innerHTML=mode==='fraction'
+    ?'👉 <strong>Two Fractions mode:</strong> Pick two fractions and one operation (+, −, ×, ÷). Great for single fraction problems.'
+    :'👉 <strong>PEMDAS mode:</strong> Type any expression with multiple numbers and fractions. The calculator follows the correct order of operations automatically — great for multi-step problems!';
+}
+
+// ── Op button ─────────────────────────────────────────────────────────────────
+function setOp(btn,op){
+  currentOp=op;
+  document.querySelectorAll('.op-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+function toggleTip(btn){
+  const popup=btn.querySelector('.tip-popup');
+  const isOpen=popup.classList.contains('open');
+  // close all
+  document.querySelectorAll('.tip-popup.open').forEach(p=>{ p.classList.remove('open'); p.parentElement.classList.remove('open'); });
+  if(!isOpen){ popup.classList.add('open'); btn.classList.add('open'); }
+}
+function closeTip(e,closeBtn){
+  e.stopPropagation();
+  const popup=closeBtn.closest('.tip-popup');
+  popup.classList.remove('open');
+  popup.parentElement.classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.tip-btn')){
+    document.querySelectorAll('.tip-popup.open').forEach(p=>{ p.classList.remove('open'); p.parentElement.classList.remove('open'); });
+  }
+});
+
+// ── Result display helpers ────────────────────────────────────────────────────
+function showResult(displayEl, decimalEl, resultBox, f){
+  resultBox.style.display='block';
+  const isWhole=f.d===1;
+  if(isWhole){
+    displayEl.innerHTML=`<div class="result-whole">${f.n}</div>`;
+  } else {
+    displayEl.innerHTML=`<div class="result-frac"><span>${f.n}</span><div class="result-frac-bar"></div><span>${f.d}</span></div>`;
+  }
+  if(!isWhole && f.d!==0){
+    const dec=(f.n/f.d).toFixed(8).replace(/\.?0+$/,'');
+    decimalEl.textContent=`as a decimal ≈ ${dec}`;
+    decimalEl.style.display='block';
+  } else {
+    decimalEl.style.display='none';
+  }
+}
+
+function showSteps(listEl, stepsBox, steps){
+  listEl.innerHTML='';
+  steps.forEach((s,i)=>{
+    const isLast=i===steps.length-1;
+    const row=document.createElement('div');
+    row.className='step-row';
+    // number circle
+    const numDiv=document.createElement('div');
+    numDiv.className='step-num'+(isLast?' last':'');
+    numDiv.textContent=i+1;
+    // content
+    const content=document.createElement('div');
+    content.className='step-content';
+    // label row
+    const labelRow=document.createElement('div');
+    labelRow.className='step-label-row';
+    const labelSpan=document.createElement('span');
+    labelSpan.className='step-label'+(isLast?' last':'');
+    labelSpan.textContent=s.label;
+    labelRow.appendChild(labelSpan);
+    if(s.tip){
+      const tipBtn=document.createElement('span');
+      tipBtn.className='tip-btn';
+      tipBtn.innerHTML=`?<span class="tip-popup">${s.tip}<span class="tip-close" onclick="closeTip(event,this)">tap to close ✕</span></span>`;
+      tipBtn.addEventListener('click',function(){ toggleTip(this); });
+      labelRow.appendChild(tipBtn);
+    }
+    // expr
+    const exprDiv=document.createElement('div');
+    exprDiv.className='step-expr'+(isLast?' last':'');
+    exprDiv.textContent=s.expr;
+
+    content.appendChild(labelRow);
+    content.appendChild(exprDiv);
+    row.appendChild(numDiv);
+    row.appendChild(content);
+    listEl.appendChild(row);
+  });
+  stepsBox.style.display='block';
+}
+
+// ── Two-fraction calculate ────────────────────────────────────────────────────
+function calcFraction(){
+  const pn1=parseInt(document.getElementById('n1').value)||0;
+  const pd1=parseInt(document.getElementById('d1').value)||1;
+  const pn2=parseInt(document.getElementById('n2').value)||0;
+  const pd2=parseInt(document.getElementById('d2').value)||1;
+  const errEl=document.getElementById('frac-error');
+  const resBox=document.getElementById('frac-result');
+  const stepsBox=document.getElementById('frac-steps');
+
+  errEl.style.display='none'; resBox.style.display='none'; stepsBox.style.display='none';
+
+  if(pd1===0||pd2===0){ errEl.textContent="⚠️ The bottom number (denominator) can't be zero — that's undefined in math!"; errEl.style.display='block'; return; }
+  if(currentOp==='÷'&&pn2===0){ errEl.textContent="⚠️ You can't divide by zero — that's undefined in math!"; errEl.style.display='block'; return; }
+
+  const a=frac(pn1,pd1), b=frac(pn2,pd2);
+  let res;
+  if(currentOp==='+') res=fadd(a,b);
+  else if(currentOp==='−') res=fsub(a,b);
+  else if(currentOp==='×') res=fmul(a,b);
+  else res=fdiv(a,b);
+
+  showResult(document.getElementById('frac-result-display'), document.getElementById('frac-decimal'), resBox, res);
+  showSteps(document.getElementById('frac-steps-list'), stepsBox, getSteps2(pn1,pd1,pn2,pd2,currentOp));
+}
+
+function clearFraction(){
+  ['n1','d1','n2','d2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('frac-error').style.display='none';
+  document.getElementById('frac-result').style.display='none';
+  document.getElementById('frac-steps').style.display='none';
+}
+
+// ── PEMDAS calculate ──────────────────────────────────────────────────────────
+function syncExpr(){ exprValue=document.getElementById('expr-input').value; }
+
+function insertChar(ch){
+  const inp=document.getElementById('expr-input');
+  const start=inp.selectionStart, end=inp.selectionEnd;
+  if(ch==='⌫'){
+    if(start===end&&start>0){
+      inp.value=inp.value.slice(0,start-1)+inp.value.slice(end);
+      inp.setSelectionRange(start-1,start-1);
+    } else if(start!==end){
+      inp.value=inp.value.slice(0,start)+inp.value.slice(end);
+      inp.setSelectionRange(start,start);
+    }
+  } else {
+    inp.value=inp.value.slice(0,start)+ch+inp.value.slice(end);
+    inp.setSelectionRange(start+ch.length,start+ch.length);
+  }
+  exprValue=inp.value;
+  inp.focus();
+}
+
+function calcPemdas(){
+  exprValue=document.getElementById('expr-input').value;
+  const errEl=document.getElementById('pemdas-error');
+  const resBox=document.getElementById('pemdas-result');
+  const stepsBox=document.getElementById('pemdas-steps');
+  errEl.style.display='none'; resBox.style.display='none'; stepsBox.style.display='none';
+
+  if(!exprValue.trim()){ errEl.textContent='⚠️ Type an expression first!'; errEl.style.display='block'; return; }
+  let out;
+  try { out=parseExpr(tokenize(exprValue)); } catch(e){ errEl.textContent="⚠️ Couldn't parse that. Check your input!"; errEl.style.display='block'; return; }
+
+  if(!out||!out.value||isNaN(out.value.n)){ errEl.textContent='⚠️ Something went wrong. Check your expression.'; errEl.style.display='block'; return; }
+
+  showResult(document.getElementById('pemdas-result-display'), document.getElementById('pemdas-decimal'), resBox, out.value);
+  if(out.steps.length>0) showSteps(document.getElementById('pemdas-steps-list'), stepsBox, out.steps);
+}
+
+function clearPemdas(){
+  document.getElementById('expr-input').value=''; exprValue='';
+  document.getElementById('pemdas-error').style.display='none';
+  document.getElementById('pemdas-result').style.display='none';
+  document.getElementById('pemdas-steps').style.display='none';
+}
+
+// ── Build PEMDAS strip ────────────────────────────────────────────────────────
+const PEMDAS_TIPS=[
+  {letter:'P',word:'Parentheses',color:'#f59e0b',tip:'Do what\'s inside ( ) first.'},
+  {letter:'E',word:'Exponents',color:'#f97316',tip:'Powers/roots next, like 2³.'},
+  {letter:'M',word:'Multiply',color:'#10b981',tip:'Left to right, same priority as division.'},
+  {letter:'D',word:'Divide',color:'#10b981',tip:'Left to right, same priority as multiply.'},
+  {letter:'A',word:'Add',color:'#60a5fa',tip:'Left to right, same priority as subtraction.'},
+  {letter:'S',word:'Subtract',color:'#60a5fa',tip:'Left to right, same priority as add.'},
+];
+const strip=document.getElementById('pemdas-strip');
+PEMDAS_TIPS.forEach(({letter,word,color,tip})=>{
+  const chip=document.createElement('div');
+  chip.className='pemdas-chip';
+  chip.title=tip;
+  chip.style.borderColor=color+'44';
+  chip.innerHTML=`<span class="pemdas-letter" style="color:${color}">${letter}</span><span class="pemdas-word">${word}</span>`;
+  strip.appendChild(chip);
+});
+
+// ── Paste box ─────────────────────────────────────────────────────────────────
+// Normalize common symbols people copy from docs
+function normalizePasted(raw){
+  return raw
+    .replace(/[\u00D7]/g,'×')   // × (multiplication sign)
+    .replace(/[\u00F7]/g,'÷')   // ÷
+    .replace(/\*/g,'×')
+    .replace(/÷/g,'÷')
+    .replace(/–|—/g,'−')        // en/em dash → minus
+    .replace(/\u2212/g,'−')     // unicode minus
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+// Detect if pasted text looks like a simple "a/b OP c/d" (two-fraction)
+function looksLikeTwoFraction(expr){
+  // e.g. "3/4 + 1/2" or "3/4+1/2"
+  const twoFrac=/^(-?\d+\/\d+|-?\d+)\s*([+−\-×÷])\s*(-?\d+\/\d+|-?\d+)$/;
+  return twoFrac.test(expr.trim());
+}
+
+function parseTwoFrac(expr){
+  const twoFrac=/^(-?\d+\/\d+|-?\d+)\s*([+−\-×÷])\s*(-?\d+\/\d+|-?\d+)$/;
+  const m=expr.trim().match(twoFrac);
+  if(!m) return null;
+  const parseVal=(s)=>{ const p=s.split('/'); return p.length===2?{n:parseInt(p[0]),d:parseInt(p[1])}:{n:parseInt(p[0]),d:1}; };
+  const opMap={'-':'−'};
+  return { a:parseVal(m[1]), op:opMap[m[2]]||m[2], b:parseVal(m[3]) };
+}
+
+function onPasteInput(){
+  const raw=document.getElementById('paste-box').value;
+  const status=document.getElementById('paste-status');
+  if(!raw.trim()){ status.textContent=''; status.className='paste-status'; return; }
+  const norm=normalizePasted(raw);
+  if(looksLikeTwoFraction(norm)){
+    status.textContent='✓ Looks like a two-fraction problem';
+    status.className='paste-status ok';
+  } else {
+    // try tokenizing for PEMDAS
+    try {
+      const toks=tokenize(norm);
+      if(toks.length>0){
+        status.textContent='✓ Will open in PEMDAS mode';
+        status.className='paste-status ok';
+      }
+    } catch(e){
+      status.textContent='⚠ Couldn\'t read — try editing it below';
+      status.className='paste-status warn';
+    }
+  }
+}
+
+function usePasted(){
+  const raw=document.getElementById('paste-box').value;
+  if(!raw.trim()) return;
+  const norm=normalizePasted(raw);
+  const status=document.getElementById('paste-status');
+
+  if(looksLikeTwoFraction(norm)){
+    const parsed=parseTwoFrac(norm);
+    if(parsed){
+      setMode('fraction');
+      document.getElementById('n1').value=parsed.a.n;
+      document.getElementById('d1').value=parsed.a.d;
+      document.getElementById('n2').value=parsed.b.n;
+      document.getElementById('d2').value=parsed.b.d;
+      // set op button
+      currentOp=parsed.op;
+      document.querySelectorAll('.op-btn').forEach(b=>{
+        b.classList.toggle('active', b.textContent===parsed.op);
+      });
+      status.textContent='✓ Loaded into Two Fractions mode!';
+      status.className='paste-status ok';
+      // auto-calculate
+      calcFraction();
+      return;
+    }
+  }
+
+  // Fall back to PEMDAS mode
+  setMode('pemdas');
+  document.getElementById('expr-input').value=norm;
+  exprValue=norm;
+  status.textContent='✓ Loaded into PEMDAS mode!';
+  status.className='paste-status ok';
+  // auto-calculate
+  calcPemdas();
+}
+
+function clearPasted(){
+  document.getElementById('paste-box').value='';
+  document.getElementById('paste-status').textContent='';
+  document.getElementById('paste-status').className='paste-status';
+}
+
+const INSERT_CHARS=['+','−','×','÷','(',')','/','^','⌫'];
+const insertRow=document.getElementById('insert-row');
+INSERT_CHARS.forEach(ch=>{
+  const btn=document.createElement('button');
+  btn.className='insert-btn'+(ch==='⌫'?' del':'');
+  btn.textContent=ch;
+  btn.addEventListener('click',()=>insertChar(ch));
+  insertRow.appendChild(btn);
+});
+</script>
+</body>
+</html>
