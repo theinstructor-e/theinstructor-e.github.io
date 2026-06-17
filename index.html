@@ -55,6 +55,126 @@ h1 span{color:var(--text-dim);font-weight:400}
 .note{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.7;border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;margin-bottom:18px}
 .section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .section-label:first-child{margin-top:0}
+.empty-cat{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>17E Tools <span>// Interactive Training</span></h1>
+  </div>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+</header>
+<div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electronic Warfare Specialist — Self-Contained Interactive References</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('view',this)"><span class="ic">▶</span> Launch Tools</button>
+  <button class="tab-btn" onclick="switchTab('download',this)"><span class="ic">↓</span> Download</button>
+</nav>
+<div class="wrap">
+  <div id="tab-view" class="tab-content active">
+    <div id="view-grid"></div>
+  </div>
+  <div id="tab-download" class="tab-content">
+    <div class="note">Click any <strong>Download</strong> button to save the tool as a standalone HTML file. Each file is fully self-contained — it runs offline in any browser with no install, no internet, and no dependencies. Ideal for USB distribution, LMS upload, or air-gapped classrooms.</div>
+    <div id="dl-list"></div>
+  </div>
+</div>
+<script>
+// Section order. Empty sections still render (placeholder shown) so you can fill them later.
+const CATEGORIES=['B1 Math','B2 Physics','C BET','D EW Theory','E Networking','F Systems','G Planning'];
+// hrefs/labels match your existing site. Edit "file" if your paths change.
+const TOOLS=[
+  // B1 Math
+  {cat:'B1 Math',nm:'Math',ds:'Core math refresher for EW calculations',file:'math',color:'#ffb300'},
+  // B2 Physics
+  {cat:'B2 Physics',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'Physics 1',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
+  {cat:'B2 Physics',nm:'Physics 2',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'Physics 3',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
+  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff'},
+  // C BET  (no tools yet)
+  // D EW Theory
+  {cat:'D EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electronic attack, J-series',file:'EW Principles',color:'#ff4444'},
+  {cat:'D EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff'},
+  {cat:'D EW Theory',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df',color:'#bb88ff'},
+  {cat:'D EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
+  {cat:'D EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
+  // E Networking
+  {cat:'E Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
+  {cat:'E Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
+  {cat:'E Networking',nm:'WiFi Guide',ds:'Wi-Fi standards, bands & deployment guide',file:'wifiguide',color:'#00d4ff'},
+  {cat:'E Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
+  // F Systems
+  {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
+  {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700'},
+  // G Planning  (no tools yet)
+];
+function render(){
+  // grouped launch cards — iterate CATEGORIES so empty sections still appear
+  let vh='';
+  CATEGORIES.forEach(cat=>{
+    const items=TOOLS.filter(t=>t.cat===cat);
+    vh+=`<div class="section-label">${cat}</div>`;
+    if(items.length===0){vh+=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;return;}
+    vh+='<div class="grid">';
+    items.forEach(t=>{
+      vh+=`<a class="card" href="${t.file}" style="--accent:${t.color}">
+        <div class="cat">${t.cat}</div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go">LAUNCH \u2192</div></a>`;
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-grid').innerHTML=vh;
+  // download rows — grouped by the same category order, skipping empty sections
+  let dh='';
+  CATEGORIES.forEach(cat=>{
+    const items=TOOLS.filter(t=>t.cat===cat);if(items.length===0)return;
+    dh+=`<div class="section-label">${cat}</div>`;
+    items.forEach(t=>{
+      dh+=`<div class="dl-row" style="--accent:${t.color}">
+        <div class="dl-info"><div class="dnm" style="color:${t.color}">${t.nm}</div><div class="dcat">${t.cat} &nbsp;|&nbsp; ${t.file}</div></div>
+        <a class="dl-btn" href="${t.file}" download>\u2193 Download</a>
+      </div>`;
+    });
+  });
+  document.getElementById('dl-list').innerHTML=dh;
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+render();
+</script>
+</body>
+</html>
+.tab-btn .ic{font-family:var(--mono);font-size:11px;opacity:.7}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
+.card:hover{border-color:var(--accent,var(--green));transform:translateY(-2px)}
+.card .cat{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.card .nm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.6}
+.card .go{font-family:var(--mono);font-size:9px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.dl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--border);padding:12px 16px;margin-bottom:8px;transition:border-color .15s}
+.dl-row:hover{border-color:var(--accent,var(--cyan))}
+.dl-info .dnm{font-family:var(--display);font-size:16px;font-weight:600;color:var(--accent,var(--cyan));letter-spacing:1px}
+.dl-info .dcat{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
+.dl-btn{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;background:var(--cyan-dark);border:1px solid var(--cyan-dim);color:var(--cyan);padding:8px 16px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.dl-btn:hover{background:var(--cyan);color:var(--bg)}
+.note{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.7;border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;margin-bottom:18px}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.section-label:first-child{margin-top:0}
 </style>
 </head>
 <body>
