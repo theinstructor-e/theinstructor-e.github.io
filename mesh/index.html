@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesh Radio Programming &amp; Simulator — 17E Interactive</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dark:#1a0033;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --canvas-bg:#000000;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+  --canvas-bg:#f4f7fa;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
+.header-left{display:flex;align-items:center;gap:16px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:19px;font-weight:700;color:var(--green);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.live{color:var(--green);animation:blink 1.4s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 24px 60px}
+.scenario-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-right:4px}
+.main-grid{display:grid;grid-template-columns:320px 1fr;gap:18px}
+@media(max-width:860px){.main-grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);padding:16px;position:relative;overflow:hidden;transition:background .2s;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);opacity:.4}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}.panel.red::before{background:var(--red)}.panel.purple::before{background:var(--purple)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'▶';color:var(--green);font-size:8px}
+.panel.cyan .panel-title::before{color:var(--cyan)}.panel.amber .panel-title::before{color:var(--amber)}.panel.red .panel-title::before{color:var(--red)}.panel.purple .panel-title::before{color:var(--purple)}
+canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);display:block;transition:background .2s;touch-action:none;cursor:grab}
+canvas.dragging{cursor:grabbing}
+.field-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:8px}
+.field-label .name{font-family:var(--display);font-size:12px;font-weight:600;color:var(--text);letter-spacing:.5px}
+.field-label .hint{font-family:var(--mono);font-size:9px;color:var(--text-dim)}
+.ctrl{margin-bottom:12px}
+.txt-input,.sel-input{font-family:var(--mono);font-size:13px;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--green);padding:6px 8px;width:100%;outline:none;transition:border-color .15s}
+.txt-input:focus,.sel-input:focus{border-color:var(--green)}
+.txt-input.bad{border-color:var(--red);color:var(--red)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border-bright);outline:none;cursor:pointer;margin-top:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--green);border:2px solid var(--bg);cursor:pointer}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:6px 11px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover,.cbtn.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.cyan:hover,.cbtn.cyan.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.cbtn.amber:hover,.cbtn.amber.active{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.cbtn.red:hover,.cbtn.red.active{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.cbtn.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.off{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.readout-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.readout{background:var(--canvas-bg);border:1px solid var(--border);padding:7px 9px;transition:background .2s}
+.readout .label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:3px}
+.readout .val{font-family:var(--mono);font-size:12px;color:var(--cyan);line-height:1.2;word-break:break-all}
+.callout{border:1px solid var(--border);border-left:3px solid var(--green);background:var(--green-dark);padding:9px 12px;font-size:12px;color:var(--text);line-height:1.55;margin-top:12px;transition:background .2s}
+.callout.cyan{border-left-color:var(--cyan);background:var(--cyan-dark)}.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.red{border-left-color:var(--red);background:var(--red-dark)}
+.callout .key{color:var(--green);font-weight:700}.callout.cyan .key{color:var(--cyan)}.callout.amber .key{color:var(--amber)}.callout.red .key{color:var(--red)}
+.lesson-box{border:1px solid var(--cyan-dim);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:9px 12px;margin-top:12px;transition:background .2s}
+.lesson-box .lb-head{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--cyan);text-transform:uppercase;margin-bottom:4px}
+.lesson-box .lb-body{font-size:12px;line-height:1.55;color:var(--text)}
+.diag-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:6px}
+.diag-table th{background:var(--border);color:var(--text-dim);padding:5px 7px;text-align:left;letter-spacing:1px;font-size:8px;text-transform:uppercase}
+.diag-table td{padding:5px 7px;border-bottom:1px solid var(--border);vertical-align:middle}
+.pill{font-family:var(--mono);font-size:9px;padding:2px 6px;border:1px solid;border-radius:2px;white-space:nowrap}
+.pill.ok{color:var(--green);border-color:var(--green-dim);background:var(--green-dark)}
+.pill.bad{color:var(--red);border-color:var(--red-dim);background:var(--red-dark)}
+.pill.relay{color:var(--amber);border-color:var(--amber-dim);background:var(--amber-dark)}
+.comm-result{font-family:var(--mono);font-size:12px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-top:10px;line-height:1.6;min-height:44px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:8px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:16px;height:0;border-top:2px solid;display:inline-block}
+.node-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Mesh Radio Programming &amp; Simulator <span>// 17E</span></h1>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-btn" id="mr-theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED // FOUO</div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="scenario-bar">
+    <span class="sb-label">Load Scenario:</span>
+    <button class="cbtn active" id="sc-good" onclick="loadScenario('good',this)">All Correct</button>
+    <button class="cbtn red" id="sc-subnet" onclick="loadScenario('subnet',this)">Subnet Mismatch</button>
+    <button class="cbtn amber" id="sc-range" onclick="loadScenario('range',this)">Out of Range</button>
+    <button class="cbtn amber" id="sc-relay" onclick="loadScenario('relay',this)">Missing Relay</button>
+    <button class="cbtn cyan" id="sc-chan" onclick="loadScenario('chan',this)">Wrong Channel</button>
+    <span style="flex:1"></span>
+    <button class="cbtn" onclick="addRadio()">+ Add Radio</button>
+    <button class="cbtn" onclick="toggleRanges()" id="range-btn">Ranges: ON</button>
+  </div>
+
+  <div class="main-grid">
+    <div>
+      <!-- CONFIG -->
+      <div class="panel">
+        <div class="panel-title">Radio Programming — <span id="cfg-node" style="color:var(--green)">R1</span></div>
+        <div class="ctrl">
+          <div class="field-label"><span class="name">Callsign / Node ID</span></div>
+          <input class="txt-input" id="cfg-name" oninput="editField('name',this.value)">
+        </div>
+        <div class="ctrl">
+          <div class="field-label"><span class="name">IP Address</span><span class="hint">a.b.c.d</span></div>
+          <input class="txt-input" id="cfg-ip" oninput="editField('ip',this.value)">
+        </div>
+        <div class="row2">
+          <div class="ctrl">
+            <div class="field-label"><span class="name">Subnet (CIDR)</span></div>
+            <select class="sel-input" id="cfg-cidr" onchange="editField('cidr',parseInt(this.value))"></select>
+          </div>
+          <div class="ctrl">
+            <div class="field-label"><span class="name">Channel</span></div>
+            <select class="sel-input" id="cfg-ch" onchange="editField('ch',parseInt(this.value))"></select>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="field-label"><span class="name">TX Range / Power</span><span class="hint" id="cfg-range-v">300</span></div>
+          <input type="range" id="cfg-range" min="120" max="520" value="300" step="10" oninput="editField('range',parseInt(this.value))">
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="cbtn" id="cfg-power" onclick="togglePower()">Power: ON</button>
+          <button class="cbtn red" onclick="removeRadio()">Remove</button>
+        </div>
+        <div class="readout-grid">
+          <div class="readout"><div class="label">Subnet Mask</div><div class="val" id="ro-mask">255.255.255.0</div></div>
+          <div class="readout"><div class="label">Network ID</div><div class="val" id="ro-net">192.168.1.0</div></div>
+          <div class="readout"><div class="label">Broadcast</div><div class="val" id="ro-bcast">192.168.1.255</div></div>
+          <div class="readout"><div class="label">Usable Hosts</div><div class="val" id="ro-hosts">254</div></div>
+        </div>
+        <div class="callout cyan"><span class="key">TIP:</span> Two radios only link if they share the <strong>same subnet</strong> (same network ID + mask), the <strong>same channel</strong>, are both <strong>powered on</strong>, and are <strong>within range</strong>. Break any one and the link drops.</div>
+      </div>
+    </div>
+
+    <div>
+      <!-- MAP -->
+      <div class="panel green">
+        <div class="panel-title">Tactical Map — drag radios to reposition</div>
+        <canvas id="map-canvas" height="440"></canvas>
+        <div class="legend">
+          <span><i style="border-color:var(--green)"></i> Active link</span>
+          <span><i style="border-color:var(--red);border-top-style:dashed"></i> In range but blocked</span>
+          <span><i style="border-color:var(--cyan)"></i> Comms path</span>
+          <span><span class="node-dot" style="background:var(--green)"></span> Powered</span>
+          <span><span class="node-dot" style="background:var(--red)"></span> Off / isolated</span>
+        </div>
+      </div>
+
+      <!-- COMMS TEST -->
+      <div class="panel cyan">
+        <div class="panel-title">Communications Test — can node A reach node B?</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim)">FROM</span>
+          <select class="sel-input" id="comm-src" style="width:auto" onchange="drawAll()"></select>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim)">TO</span>
+          <select class="sel-input" id="comm-dst" style="width:auto" onchange="drawAll()"></select>
+          <button class="cbtn cyan" onclick="testComms()">▶ Send Packet</button>
+        </div>
+        <div class="comm-result" id="comm-result">Select two radios and press Send Packet to route a message through the mesh.</div>
+      </div>
+
+      <!-- DIAGNOSTICS -->
+      <div class="panel amber">
+        <div class="panel-title">Link Diagnostics — from <span id="diag-src" style="color:var(--amber)">R1</span></div>
+        <table class="diag-table"><thead><tr><th>Node</th><th>Direct Link</th><th>Reason</th><th>Reachable</th></tr></thead><tbody id="diag-body"></tbody></table>
+      </div>
+
+      <div class="lesson-box">
+        <div class="lb-head">◆ Teaching Points</div>
+        <div class="lb-body"><strong>Subnetting:</strong> radios on different networks (e.g. 192.168.1.x vs 192.168.2.x, or mismatched masks) can't talk even sitting side by side — Layer 3 blocks them. <strong>Placement:</strong> mesh links only form within range; a node placed too far is isolated, but an in-range relay can bridge the gap. <strong>Missing nodes:</strong> in a chain, powering off the middle relay partitions the network — nodes on each side keep local links but lose the far side unless an alternate path exists. Redundant placement (multiple paths) survives a lost node; a single-path chain does not.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('mr-theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  setTimeout(drawAll,20);
+}
+function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
+function cbg(){return isLight()?'#f4f7fa':'#000000';}
+function col(k){return getComputedStyle(document.documentElement).getPropertyValue('--'+k).trim();}
+function gridCol(){return isLight()?'#dbe4ee':'#141c26';}
+function dimCol(){return isLight()?'#4a6070':'#6a8090';}
+
+// ===== IP MATH =====
+function ipToInt(ip){const p=(ip||'').trim().split('.');if(p.length!==4)return null;
+  const o=p.map(n=>parseInt(n,10));if(o.some(n=>isNaN(n)||n<0||n>255))return null;
+  return ((o[0]*16777216)+(o[1]*65536)+(o[2]*256)+o[3])>>>0;}
+function intToIp(n){return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.');}
+function maskInt(c){return c<=0?0:(c>=32?0xFFFFFFFF:((0xFFFFFFFF<<(32-c))>>>0));}
+function netId(ip,c){const i=ipToInt(ip);if(i===null)return null;return (i&maskInt(c))>>>0;}
+function bcastId(ip,c){const i=ipToInt(ip);if(i===null)return null;return (i|(~maskInt(c)>>>0))>>>0;}
+
+// ===== STATE =====
+const FIELD={w:1000,h:620};
+const PALETTE=['#00ff88','#00d4ff','#ffb300','#bb88ff','#ff7788','#66ddaa','#ffaa44','#88bbff'];
+let nodes=[],selId=null,dragId=null,dragMoved=false,showRanges=true;
+let commPath=null,commAnim=null;
+let nextId=1;
+
+function mkNode(name,ip,cidr,ch,vx,vy,range){return {id:nextId++,name,ip,cidr,ch,vx,vy,range:range||300,on:true};}
+function byId(id){return nodes.find(n=>n.id==id);}
+
+const SCENARIOS={
+  good:()=>[mkNode('R1','192.168.1.10',24,1,200,150,320),mkNode('R2','192.168.1.20',24,1,420,240,320),
+    mkNode('R3','192.168.1.30',24,1,640,150,320),mkNode('R4','192.168.1.40',24,1,540,420,320),
+    mkNode('R5','192.168.1.50',24,1,300,420,320)],
+  subnet:()=>[mkNode('R1','192.168.1.10',24,1,200,150,320),mkNode('R2','192.168.1.20',24,1,420,240,320),
+    mkNode('R3','192.168.2.30',24,1,640,150,320),mkNode('R4','192.168.1.40',24,1,540,420,320),
+    mkNode('R5','192.168.1.50',24,1,300,420,320)],
+  range:()=>[mkNode('R1','192.168.1.10',24,1,180,160,300),mkNode('R2','192.168.1.20',24,1,400,240,300),
+    mkNode('R3','192.168.1.30',24,1,930,90,260),mkNode('R4','192.168.1.40',24,1,540,430,300),
+    mkNode('R5','192.168.1.50',24,1,300,430,300)],
+  relay:()=>[mkNode('R1','192.168.1.10',24,1,120,310,250),mkNode('R2','192.168.1.20',24,1,330,310,250),
+    mkNode('R3','192.168.1.30',24,1,540,310,250),mkNode('R4','192.168.1.40',24,1,750,310,250),
+    mkNode('R5','192.168.1.50',24,1,930,310,250)],
+  chan:()=>[mkNode('R1','192.168.1.10',24,1,200,150,320),mkNode('R2','192.168.1.20',24,1,420,240,320),
+    mkNode('R3','192.168.1.30',24,1,640,150,320),mkNode('R4','192.168.1.40',24,3,540,420,320),
+    mkNode('R5','192.168.1.50',24,1,300,420,320)],
+};
+function loadScenario(k,btn){
+  document.querySelectorAll('.scenario-bar .cbtn').forEach(b=>{if(b.id&&b.id.startsWith('sc-'))b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  nextId=1;nodes=SCENARIOS[k]();selId=nodes[0].id;commPath=null;
+  if(k==='relay')setTimeout(()=>{const r3=nodes.find(n=>n.name==='R3');if(r3)r3.on=false;refreshAll();},0);
+  refreshAll();
+  document.getElementById('comm-result').textContent=
+    k==='good'?'All radios share subnet 192.168.1.0/24, channel 1, and overlap in range — full mesh. Try Send Packet R1 → R3.':
+    k==='subnet'?'R3 is on 192.168.2.0/24 — a different network. Watch it sit isolated despite being in range. Fix its IP to 192.168.1.x.':
+    k==='range'?'R3 is parked out of range in the corner. Drag it back toward the others, or add a relay between them.':
+    k==='relay'?'R3 (the middle relay) is powered OFF — the chain is cut. R1/R2 cannot reach R4/R5. Power R3 back on.':
+    'R4 is set to channel 3 while everyone else is on channel 1 — it cannot join the mesh. Set it back to channel 1.';
+}
+
+// ===== EDIT =====
+function selectNode(id){selId=id;syncConfig();drawAll();updateDiag();}
+function syncConfig(){
+  const n=byId(selId);if(!n)return;
+  document.getElementById('cfg-node').textContent=n.name;
+  document.getElementById('cfg-name').value=n.name;
+  const ipEl=document.getElementById('cfg-ip');ipEl.value=n.ip;ipEl.classList.toggle('bad',ipToInt(n.ip)===null);
+  document.getElementById('cfg-cidr').value=n.cidr;
+  document.getElementById('cfg-ch').value=n.ch;
+  document.getElementById('cfg-range').value=n.range;
+  document.getElementById('cfg-range-v').textContent=n.range;
+  const pw=document.getElementById('cfg-power');pw.textContent='Power: '+(n.on?'ON':'OFF');pw.className='cbtn '+(n.on?'on':'off');
+  // subnet readout
+  const valid=ipToInt(n.ip)!==null;
+  document.getElementById('ro-mask').textContent=valid?intToIp(maskInt(n.cidr)):'—';
+  document.getElementById('ro-net').textContent=valid?intToIp(netId(n.ip,n.cidr)):'invalid IP';
+  document.getElementById('ro-bcast').textContent=valid?intToIp(bcastId(n.ip,n.cidr)):'—';
+  const h=n.cidr>=31?0:Math.pow(2,32-n.cidr)-2;document.getElementById('ro-hosts').textContent=valid?h.toLocaleString():'—';
+}
+function editField(f,v){const n=byId(selId);if(!n)return;n[f]=v;
+  if(f==='range')document.getElementById('cfg-range-v').textContent=v;
+  if(f==='ip')document.getElementById('cfg-ip').classList.toggle('bad',ipToInt(v)===null);
+  if(f==='name'){populateSelectors();}
+  syncConfig();drawAll();updateDiag();}
+function togglePower(){const n=byId(selId);if(!n)return;n.on=!n.on;syncConfig();refreshAll();}
+function addRadio(){const n=mkNode('R'+nextId,'192.168.1.'+(100+nodes.length),24,1,150+Math.random()*300,150+Math.random()*250,300);
+  nodes.push(n);selId=n.id;refreshAll();}
+function removeRadio(){if(nodes.length<=1)return;nodes=nodes.filter(n=>n.id!=selId);selId=nodes[0].id;refreshAll();}
+function toggleRanges(){showRanges=!showRanges;document.getElementById('range-btn').textContent='Ranges: '+(showRanges?'ON':'OFF');drawAll();}
+
+// ===== LINK LOGIC =====
+function dist(a,b){return Math.hypot(a.vx-b.vx,a.vy-b.vy);}
+function linkStatus(a,b){
+  if(!a.on||!b.on)return {ok:false,inRange:false,r:'node off'};
+  const ia=ipToInt(a.ip),ib=ipToInt(b.ip);
+  if(ia===null||ib===null)return {ok:false,inRange:false,r:'invalid IP'};
+  const d=dist(a,b),inRange=d<=Math.min(a.range,b.range);
+  if(a.ch!==b.ch)return {ok:false,inRange,r:'channel mismatch'};
+  if(a.cidr!==b.cidr||netId(a.ip,a.cidr)!==netId(b.ip,b.cidr))return {ok:false,inRange,r:'subnet mismatch'};
+  if(!inRange)return {ok:false,inRange:false,r:'out of range'};
+  return {ok:true,inRange:true,r:'link ok'};
+}
+function neighbors(n){return nodes.filter(m=>m.id!==n.id&&linkStatus(n,m).ok);}
+function bfs(srcId,dstId){
+  const src=byId(srcId),dst=byId(dstId);if(!src||!dst)return null;
+  const q=[[src]],seen={};seen[src.id]=1;
+  while(q.length){const path=q.shift(),last=path[path.length-1];
+    if(last.id===dst.id)return path;
+    neighbors(last).forEach(nb=>{if(!seen[nb.id]){seen[nb.id]=1;q.push(path.concat(nb));}});}
+  return null;
+}
+function reachableSet(srcId){
+  const src=byId(srcId);if(!src)return new Set();
+  const seen=new Set([src.id]),q=[src];
+  while(q.length){const c=q.shift();neighbors(c).forEach(nb=>{if(!seen.has(nb.id)){seen.add(nb.id);q.push(nb);}});}
+  return seen;
+}
+
+// ===== DRAW =====
+function mapCtx(){const c=document.getElementById('map-canvas');const W=c.clientWidth||700;const H=Math.round(W*0.6);
+  c.width=W;c.height=H;return {c,x:c.getContext('2d'),W,H,s:W/FIELD.w,sy:H/FIELD.h};}
+function vx2px(v,g){return v*g.s;}function vy2px(v,g){return v*g.sy;}
+function drawAll(){
+  const g=mapCtx();if(!g)return;const x=g.x;x.fillStyle=cbg();x.fillRect(0,0,g.W,g.H);
+  // grid
+  x.strokeStyle=gridCol();x.lineWidth=0.5;
+  for(let i=1;i<10;i++){x.beginPath();x.moveTo(g.W*i/10,0);x.lineTo(g.W*i/10,g.H);x.stroke();
+    x.beginPath();x.moveTo(0,g.H*i/10);x.lineTo(g.W,g.H*i/10);x.stroke();}
+  // range circles
+  if(showRanges)nodes.forEach(n=>{if(!n.on)return;const px=vx2px(n.vx,g),py=vy2px(n.vy,g);
+    x.strokeStyle=(n.id==selId?col('green'):dimCol())+ (isLight()?'55':'44');x.lineWidth=1;x.setLineDash([3,4]);
+    x.beginPath();x.ellipse(px,py,n.range*g.s,n.range*g.sy,0,0,Math.PI*2);x.stroke();x.setLineDash([]);});
+  // links
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+    const a=nodes[i],b=nodes[j],st=linkStatus(a,b);
+    const ax=vx2px(a.vx,g),ay=vy2px(a.vy,g),bx=vx2px(b.vx,g),by=vy2px(b.vy,g);
+    if(st.ok){x.strokeStyle=col('green');x.lineWidth=2;x.setLineDash([]);x.globalAlpha=0.85;
+      x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();x.globalAlpha=1;}
+    else if(st.inRange){x.strokeStyle=col('red');x.lineWidth=1.3;x.setLineDash([5,4]);x.globalAlpha=0.7;
+      x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();x.setLineDash([]);x.globalAlpha=1;
+      // reason tag at midpoint
+      x.fillStyle=col('red');x.font='8px Share Tech Mono';x.textAlign='center';
+      x.fillText(st.r,(ax+bx)/2,(ay+by)/2-3);}
+  }
+  // comm path highlight
+  if(commPath&&commPath.length>1){x.strokeStyle=col('cyan');x.lineWidth=3.5;x.globalAlpha=0.9;x.setLineDash([]);
+    x.beginPath();commPath.forEach((n,i)=>{const px=vx2px(n.vx,g),py=vy2px(n.vy,g);i===0?x.moveTo(px,py):x.lineTo(px,py);});x.stroke();x.globalAlpha=1;}
+  // moving packet
+  if(commPath&&commAnim&&commAnim.t!=null){const seg=commAnim.seg,t=commAnim.t;
+    if(seg<commPath.length-1){const a=commPath[seg],b=commPath[seg+1];
+      const px=vx2px(a.vx+(b.vx-a.vx)*t,g),py=vy2px(a.vy+(b.vy-a.vy)*t,g);
+      x.fillStyle=col('cyan');x.shadowBlur=isLight()?0:10;x.shadowColor=col('cyan');
+      x.beginPath();x.arc(px,py,6,0,Math.PI*2);x.fill();x.shadowBlur=0;}}
+  // nodes
+  nodes.forEach(n=>{const px=vx2px(n.vx,g),py=vy2px(n.vy,g),r=15;
+    const reach=n.id==selId;
+    x.fillStyle=cbg();x.strokeStyle=n.on?col('green'):col('red');x.lineWidth=n.id==selId?3:1.8;
+    x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fill();x.stroke();
+    // antenna glyph
+    x.strokeStyle=n.on?col('green'):col('red');x.lineWidth=1.5;
+    x.beginPath();x.moveTo(px,py-4);x.lineTo(px,py-r-6);x.stroke();
+    x.beginPath();x.arc(px,py-r-6,3,Math.PI*1.1,Math.PI*1.9);x.stroke();
+    if(n.id==selId){x.strokeStyle=col('amber');x.lineWidth=1;x.setLineDash([2,2]);x.beginPath();x.arc(px,py,r+5,0,Math.PI*2);x.stroke();x.setLineDash([]);}
+    x.fillStyle=n.on?col('green'):col('red');x.font='bold 10px Share Tech Mono';x.textAlign='center';x.fillText(n.name,px,py+3);
+    x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.fillText(n.ip,px,py+r+12);
+    x.fillText('ch'+n.ch,px,py+r+22);});
+  x.textAlign='left';
+}
+
+// ===== DIAGNOSTICS =====
+function updateDiag(){
+  const src=byId(selId);if(!src)return;
+  document.getElementById('diag-src').textContent=src.name;
+  const reach=reachableSet(selId);
+  let rows='';
+  nodes.filter(n=>n.id!==selId).forEach(n=>{
+    const st=linkStatus(src,n);
+    const direct=st.ok?'<span class="pill ok">DIRECT</span>':'<span class="pill bad">NO</span>';
+    const reachable=reach.has(n.id)?(st.ok?'<span class="pill ok">YES</span>':'<span class="pill relay">VIA RELAY</span>'):'<span class="pill bad">UNREACHABLE</span>';
+    rows+=`<tr><td class="hl">${n.name}</td><td>${direct}</td><td style="color:var(--text-dim)">${st.ok?'—':st.r}</td><td>${reachable}</td></tr>`;
+  });
+  document.getElementById('diag-body').innerHTML=rows||'<tr><td colspan="4" style="color:var(--text-dim)">No other radios</td></tr>';
+}
+
+// ===== COMMS TEST =====
+function testComms(){
+  const s=parseInt(document.getElementById('comm-src').value),d=parseInt(document.getElementById('comm-dst').value);
+  const src=byId(s),dst=byId(d);const res=document.getElementById('comm-result');
+  if(!src||!dst){res.textContent='Select two radios.';return;}
+  if(s===d){res.innerHTML='<span style="color:var(--amber)">Source and destination are the same radio.</span>';return;}
+  const path=bfs(s,d);
+  if(!path){
+    let why;
+    if(!dst.on)why=dst.name+' is powered OFF.';
+    else if(!src.on)why=src.name+' is powered OFF.';
+    else if(neighbors(src).length===0)why=src.name+' has no working neighbors (check subnet, channel, range).';
+    else why='no complete route exists — the network is partitioned (a relay is missing/out of range, or a subnet/channel island blocks the path).';
+    res.innerHTML='<span style="color:var(--red)">✕ FAILED:</span> '+src.name+' cannot reach '+dst.name+' — '+why;
+    commPath=null;drawAll();return;
+  }
+  commPath=path;
+  res.innerHTML='<span style="color:var(--green)">✓ CONNECTED:</span> '+path.map(n=>n.name).join(' → ')+
+    '  ('+(path.length-1)+' hop'+(path.length-1>1?'s':'')+(path.length>2?', relayed through the mesh':', direct')+')';
+  // animate
+  if(commAnim&&commAnim.timer)clearInterval(commAnim.timer);
+  commAnim={seg:0,t:0,timer:null};
+  commAnim.timer=setInterval(()=>{
+    commAnim.t+=0.06;if(commAnim.t>=1){commAnim.t=0;commAnim.seg++;if(commAnim.seg>=path.length-1){clearInterval(commAnim.timer);commAnim=null;drawAll();return;}}
+    drawAll();
+  },28);
+  drawAll();
+}
+
+// ===== SELECTORS =====
+function populateSelectors(){
+  const cidr=document.getElementById('cfg-cidr');
+  if(!cidr.options.length){for(let c=8;c<=30;c++){const o=document.createElement('option');o.value=c;o.textContent='/'+c+'  ('+intToIp(maskInt(c))+')';cidr.appendChild(o);}}
+  const ch=document.getElementById('cfg-ch');
+  if(!ch.options.length){for(let c=1;c<=8;c++){const o=document.createElement('option');o.value=c;o.textContent='Channel '+c;ch.appendChild(o);}}
+  ['comm-src','comm-dst'].forEach(id=>{const sel=document.getElementById(id);const cur=sel.value;
+    sel.innerHTML=nodes.map(n=>`<option value="${n.id}">${n.name}</option>`).join('');
+    if(cur&&byId(cur))sel.value=cur;});
+  const cs=document.getElementById('comm-src'),cd=document.getElementById('comm-dst');
+  if(nodes.length){if(!byId(cs.value))cs.value=nodes[0].id;if(!byId(cd.value))cd.value=nodes[nodes.length-1].id;}
+}
+function refreshAll(){populateSelectors();syncConfig();drawAll();updateDiag();}
+
+// ===== CANVAS DRAG =====
+function setupCanvas(){
+  const c=document.getElementById('map-canvas');
+  function toV(e){const rect=c.getBoundingClientRect();const cx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    const cy=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;return {vx:cx/rect.width*FIELD.w,vy:cy/rect.height*FIELD.h};}
+  function hit(p){let best=null,bd=999;nodes.forEach(n=>{const d=Math.hypot(n.vx-p.vx,n.vy-p.vy);if(d<40&&d<bd){bd=d;best=n;}});return best;}
+  function down(e){const p=toV(e);const n=hit(p);if(n){dragId=n.id;dragMoved=false;selectNode(n.id);c.classList.add('dragging');e.preventDefault();}}
+  function move(e){if(dragId==null)return;const p=toV(e);const n=byId(dragId);if(!n)return;
+    n.vx=Math.max(20,Math.min(FIELD.w-20,p.vx));n.vy=Math.max(20,Math.min(FIELD.h-20,p.vy));dragMoved=true;drawAll();e.preventDefault();}
+  function up(){if(dragId!=null){dragId=null;c.classList.remove('dragging');updateDiag();}}
+  c.addEventListener('mousedown',down);window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+  c.addEventListener('touchstart',down,{passive:false});c.addEventListener('touchmove',move,{passive:false});c.addEventListener('touchend',up);
+}
+
+window.addEventListener('load',()=>{populateSelectors();loadScenario('good',document.getElementById('sc-good'));setupCanvas();});
+window.addEventListener('resize',()=>{drawAll();});
+</script>
+</body>
+</html>
