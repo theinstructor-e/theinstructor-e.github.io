@@ -30,14 +30,7 @@ h1 span{color:var(--text-dim);font-weight:400}
 .theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:6px 12px;cursor:pointer;letter-spacing:1px;transition:all .15s}
 .theme-btn:hover{border-color:var(--amber);color:var(--amber)}
 .sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
-.tab-nav{display:flex;gap:2px;padding:14px 28px 0;max-width:1080px;margin:0 auto}
-.tab-btn{font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:8px}
-.tab-btn:hover{color:var(--text)}
-.tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
-.tab-btn .ic{font-family:var(--mono);font-size:11px;opacity:.7}
 .wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
-.tab-content{display:none}
-.tab-content.active{display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
@@ -46,13 +39,6 @@ h1 span{color:var(--text-dim);font-weight:400}
 .card .nm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
 .card .ds{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.6}
 .card .go{font-family:var(--mono);font-size:9px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
-.dl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--border);padding:12px 16px;margin-bottom:8px;transition:border-color .15s}
-.dl-row:hover{border-color:var(--accent,var(--cyan))}
-.dl-info .dnm{font-family:var(--display);font-size:16px;font-weight:600;color:var(--accent,var(--cyan));letter-spacing:1px}
-.dl-info .dcat{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
-.dl-btn{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;background:var(--cyan-dark);border:1px solid var(--cyan-dim);color:var(--cyan);padding:8px 16px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .15s;flex-shrink:0}
-.dl-btn:hover{background:var(--cyan);color:var(--bg)}
-.note{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.7;border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;margin-bottom:18px}
 .section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .section-label:first-child{margin-top:0}
 .empty-cat{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
@@ -67,18 +53,8 @@ h1 span{color:var(--text-dim);font-weight:400}
   <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
 </header>
 <div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electronic Warfare Specialist — Self-Contained Interactive References</div>
-<nav class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('view',this)"><span class="ic">▶</span> Launch Tools</button>
-  <button class="tab-btn" onclick="switchTab('download',this)"><span class="ic">↓</span> Download</button>
-</nav>
 <div class="wrap">
-  <div id="tab-view" class="tab-content active">
-    <div id="view-grid"></div>
-  </div>
-  <div id="tab-download" class="tab-content">
-    <div class="note">Click any <strong>Download</strong> button to save the tool as a standalone HTML file. Each file is fully self-contained — it runs offline in any browser with no install, no internet, and no dependencies. Ideal for USB distribution, LMS upload, or air-gapped classrooms.</div>
-    <div id="dl-list"></div>
-  </div>
+  <div id="view-grid"></div>
 </div>
 <script>
 // Section order. Empty sections still render (placeholder shown) so you can fill them later.
@@ -104,6 +80,7 @@ const TOOLS=[
   {cat:'E Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
   {cat:'E Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
   {cat:'E Networking',nm:'WiFi Guide',ds:'Wi-Fi standards, bands & deployment guide',file:'wifiguide',color:'#00d4ff'},
+  {cat:'E Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
   {cat:'E Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
   // F Systems
   {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
@@ -126,24 +103,6 @@ function render(){
     vh+='</div>';
   });
   document.getElementById('view-grid').innerHTML=vh;
-  // download rows — grouped by the same category order, skipping empty sections
-  let dh='';
-  CATEGORIES.forEach(cat=>{
-    const items=TOOLS.filter(t=>t.cat===cat);if(items.length===0)return;
-    dh+=`<div class="section-label">${cat}</div>`;
-    items.forEach(t=>{
-      dh+=`<div class="dl-row" style="--accent:${t.color}">
-        <div class="dl-info"><div class="dnm" style="color:${t.color}">${t.nm}</div><div class="dcat">${t.cat} &nbsp;|&nbsp; ${t.file}</div></div>
-        <a class="dl-btn" href="${t.file}" download>\u2193 Download</a>
-      </div>`;
-    });
-  });
-  document.getElementById('dl-list').innerHTML=dh;
-}
-function switchTab(id,btn){
-  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
 }
 function toggleTheme(){
   const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
