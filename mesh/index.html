@@ -93,6 +93,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
 .legend span{display:flex;align-items:center;gap:5px}
 .legend i{width:16px;height:0;border-top:2px solid;display:inline-block}
 .node-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.quiz-score{margin-left:auto;color:var(--purple);font-family:var(--mono);font-size:11px}
+.quiz-progress{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
+.quiz-q{font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:14px;line-height:1.4}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{font-family:var(--display);font-size:14px;font-weight:500;text-align:left;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:10px 14px;cursor:pointer;transition:all .14s}
+.quiz-opt:hover:not(:disabled){border-color:var(--purple);color:var(--purple)}
+.quiz-opt.correct{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.quiz-opt.wrong{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.quiz-opt:disabled{cursor:default;opacity:.85}
+.quiz-instr{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.6;margin-bottom:12px;padding:10px 12px;border-left:3px solid var(--amber);background:var(--amber-dark)}
+.quiz-instr .k{color:var(--amber);font-weight:700}
+.quiz-feedback{font-family:var(--mono);font-size:12px;line-height:1.6;margin-top:12px;padding:10px 12px;border-left:3px solid var(--purple);background:var(--purple-dark);display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.good{border-left-color:var(--green);background:var(--green-dark)}
+.quiz-feedback.bad{border-left-color:var(--red);background:var(--red-dark)}
+.quiz-nav{margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quiz-final{text-align:center;padding:16px 10px}
+.quiz-final .big{font-family:var(--mono);font-size:34px;color:var(--purple);line-height:1.1}
+.quiz-final .msg{font-family:var(--mono);font-size:12px;color:var(--text-dim);margin:8px 0 16px}
 </style>
 </head>
 <body>
@@ -114,6 +133,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
     <button class="cbtn amber" id="sc-range" onclick="loadScenario('range',this)">Out of Range</button>
     <button class="cbtn amber" id="sc-relay" onclick="loadScenario('relay',this)">Missing Relay</button>
     <button class="cbtn cyan" id="sc-chan" onclick="loadScenario('chan',this)">Wrong Channel</button>
+    <button class="cbtn purple" id="sc-mystery" onclick="startMystery(this)">❓ Mystery Fault</button>
     <span style="flex:1"></span>
     <button class="cbtn" onclick="addRadio()">+ Add Radio</button>
     <button class="cbtn" onclick="toggleRanges()" id="range-btn">Ranges: ON</button>
@@ -148,6 +168,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
         </div>
         <div style="display:flex;gap:8px">
           <button class="cbtn" id="cfg-power" onclick="togglePower()">Power: ON</button>
+          <button class="cbtn" id="cfg-grp" onclick="toggleGrp()">MCAST Grp: IN</button>
           <button class="cbtn red" onclick="removeRadio()">Remove</button>
         </div>
         <div class="readout-grid">
@@ -182,9 +203,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
           <select class="sel-input" id="comm-src" style="width:auto" onchange="drawAll()"></select>
           <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim)">TO</span>
           <select class="sel-input" id="comm-dst" style="width:auto" onchange="drawAll()"></select>
-          <button class="cbtn cyan" onclick="testComms()">▶ Send Packet</button>
+          <button class="cbtn cyan" onclick="testComms()">▶ Unicast</button>
+          <button class="cbtn amber" onclick="sendFlood('multicast')">◆ Multicast</button>
+          <button class="cbtn red" onclick="sendFlood('broadcast')">✸ Broadcast</button>
         </div>
-        <div class="comm-result" id="comm-result">Select two radios and press Send Packet to route a message through the mesh.</div>
+        <div class="comm-result" id="comm-result">Pick a FROM radio. <span style="color:var(--cyan)">Unicast</span> routes to the TO radio; <span style="color:var(--amber)">Multicast</span> floods to group members (MCAST IN); <span style="color:var(--red)">Broadcast</span> floods to every radio on the subnet.</div>
       </div>
 
       <!-- DIAGNOSTICS -->
@@ -198,6 +221,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
         <div class="lb-body"><strong>Subnetting:</strong> radios on different networks (e.g. 192.168.1.x vs 192.168.2.x, or mismatched masks) can't talk even sitting side by side — Layer 3 blocks them. <strong>Placement:</strong> mesh links only form within range; a node placed too far is isolated, but an in-range relay can bridge the gap. <strong>Missing nodes:</strong> in a chain, powering off the middle relay partitions the network — nodes on each side keep local links but lose the far side unless an alternate path exists. Redundant placement (multiple paths) survives a lost node; a single-path chain does not.</div>
       </div>
     </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="panel purple" id="quiz-panel">
+    <div class="panel-title">Practical Exercise — Fault Isolation <span class="quiz-score" id="quiz-score">Solved: 0</span></div>
+    <div id="quiz-body"></div>
   </div>
 </div>
 
@@ -227,10 +256,10 @@ function bcastId(ip,c){const i=ipToInt(ip);if(i===null)return null;return (i|(~m
 const FIELD={w:1000,h:620};
 const PALETTE=['#00ff88','#00d4ff','#ffb300','#bb88ff','#ff7788','#66ddaa','#ffaa44','#88bbff'];
 let nodes=[],selId=null,dragId=null,dragMoved=false,showRanges=true;
-let commPath=null,commAnim=null;
+let commPath=null,commAnim=null,commMode=null,commEdges=null,commTargets=new Set(),commTimer=null;
 let nextId=1;
 
-function mkNode(name,ip,cidr,ch,vx,vy,range){return {id:nextId++,name,ip,cidr,ch,vx,vy,range:range||300,on:true};}
+function mkNode(name,ip,cidr,ch,vx,vy,range){return {id:nextId++,name,ip,cidr,ch,vx,vy,range:range||300,on:true,grp:true};}
 function byId(id){return nodes.find(n=>n.id==id);}
 
 const SCENARIOS={
@@ -253,7 +282,8 @@ const SCENARIOS={
 function loadScenario(k,btn){
   document.querySelectorAll('.scenario-bar .cbtn').forEach(b=>{if(b.id&&b.id.startsWith('sc-'))b.classList.remove('active');});
   if(btn)btn.classList.add('active');
-  nextId=1;nodes=SCENARIOS[k]();selId=nodes[0].id;commPath=null;
+  nextId=1;nodes=SCENARIOS[k]();selId=nodes[0].id;commPath=null;commEdges=null;commTargets=new Set();commMode=null;
+  nodes.forEach((n,i)=>n.grp=(i%2===0));
   if(k==='relay')setTimeout(()=>{const r3=nodes.find(n=>n.name==='R3');if(r3)r3.on=false;refreshAll();},0);
   refreshAll();
   document.getElementById('comm-result').textContent=
@@ -276,6 +306,7 @@ function syncConfig(){
   document.getElementById('cfg-range').value=n.range;
   document.getElementById('cfg-range-v').textContent=n.range;
   const pw=document.getElementById('cfg-power');pw.textContent='Power: '+(n.on?'ON':'OFF');pw.className='cbtn '+(n.on?'on':'off');
+  const gp=document.getElementById('cfg-grp');gp.textContent='MCAST Grp: '+(n.grp?'IN':'OUT');gp.className='cbtn '+(n.grp?'on':'');
   // subnet readout
   const valid=ipToInt(n.ip)!==null;
   document.getElementById('ro-mask').textContent=valid?intToIp(maskInt(n.cidr)):'—';
@@ -289,6 +320,7 @@ function editField(f,v){const n=byId(selId);if(!n)return;n[f]=v;
   if(f==='name'){populateSelectors();}
   syncConfig();drawAll();updateDiag();}
 function togglePower(){const n=byId(selId);if(!n)return;n.on=!n.on;syncConfig();refreshAll();}
+function toggleGrp(){const n=byId(selId);if(!n)return;n.grp=!n.grp;syncConfig();drawAll();}
 function addRadio(){const n=mkNode('R'+nextId,'192.168.1.'+(100+nodes.length),24,1,150+Math.random()*300,150+Math.random()*250,300);
   nodes.push(n);selId=n.id;refreshAll();}
 function removeRadio(){if(nodes.length<=1)return;nodes=nodes.filter(n=>n.id!=selId);selId=nodes[0].id;refreshAll();}
@@ -334,7 +366,10 @@ function drawAll(){
     x.beginPath();x.moveTo(0,g.H*i/10);x.lineTo(g.W,g.H*i/10);x.stroke();}
   // range circles
   if(showRanges)nodes.forEach(n=>{if(!n.on)return;const px=vx2px(n.vx,g),py=vy2px(n.vy,g);
-    x.strokeStyle=(n.id==selId?col('green'):dimCol())+ (isLight()?'55':'44');x.lineWidth=1;x.setLineDash([3,4]);
+    const sel=n.id==selId;const base=sel?col('green'):col('cyan');
+    x.fillStyle=base+(isLight()?'12':'14');
+    x.beginPath();x.ellipse(px,py,n.range*g.s,n.range*g.sy,0,0,Math.PI*2);x.fill();
+    x.strokeStyle=base+(sel?(isLight()?'aa':'cc'):(isLight()?'66':'88'));x.lineWidth=sel?1.8:1.2;x.setLineDash([5,5]);
     x.beginPath();x.ellipse(px,py,n.range*g.s,n.range*g.sy,0,0,Math.PI*2);x.stroke();x.setLineDash([]);});
   // links
   for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
@@ -348,15 +383,19 @@ function drawAll(){
       x.fillStyle=col('red');x.font='8px Share Tech Mono';x.textAlign='center';
       x.fillText(st.r,(ax+bx)/2,(ay+by)/2-3);}
   }
-  // comm path highlight
-  if(commPath&&commPath.length>1){x.strokeStyle=col('cyan');x.lineWidth=3.5;x.globalAlpha=0.9;x.setLineDash([]);
-    x.beginPath();commPath.forEach((n,i)=>{const px=vx2px(n.vx,g),py=vy2px(n.vy,g);i===0?x.moveTo(px,py):x.lineTo(px,py);});x.stroke();x.globalAlpha=1;}
-  // moving packet
-  if(commPath&&commAnim&&commAnim.t!=null){const seg=commAnim.seg,t=commAnim.t;
-    if(seg<commPath.length-1){const a=commPath[seg],b=commPath[seg+1];
-      const px=vx2px(a.vx+(b.vx-a.vx)*t,g),py=vy2px(a.vy+(b.vy-a.vy)*t,g);
-      x.fillStyle=col('cyan');x.shadowBlur=isLight()?0:10;x.shadowColor=col('cyan');
-      x.beginPath();x.arc(px,py,6,0,Math.PI*2);x.fill();x.shadowBlur=0;}}
+  // comm visualization (unicast path or multicast/broadcast flood tree)
+  if(commEdges){
+    const clr=commMode==='broadcast'?col('red'):commMode==='multicast'?col('amber'):col('cyan');
+    commEdges.forEach(e=>{const ax=vx2px(e.from.vx,g),ay=vy2px(e.from.vy,g),bx=vx2px(e.to.vx,g),by=vy2px(e.to.vy,g);
+      x.strokeStyle=clr;x.lineWidth=3;x.globalAlpha=0.85;x.setLineDash([]);x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();x.globalAlpha=1;});
+    // moving packets on active edges
+    commEdges.forEach(e=>{if(e.t>0&&e.t<1){const px=vx2px(e.from.vx+(e.to.vx-e.from.vx)*e.t,g),py=vy2px(e.from.vy+(e.to.vy-e.from.vy)*e.t,g);
+      x.fillStyle=clr;x.shadowBlur=isLight()?0:10;x.shadowColor=clr;x.beginPath();x.arc(px,py,6,0,Math.PI*2);x.fill();x.shadowBlur=0;}});
+  }
+  // delivered target flash
+  if(commTargets.size){nodes.forEach(n=>{if(commTargets.has(n.id)){const px=vx2px(n.vx,g),py=vy2px(n.vy,g);
+    x.strokeStyle=col('green');x.lineWidth=2;x.setLineDash([]);x.beginPath();x.arc(px,py,20,0,Math.PI*2);x.stroke();
+    x.fillStyle=col('green');x.font='7px Share Tech Mono';x.textAlign='center';x.fillText('RX',px+18,py-14);}});}
   // nodes
   nodes.forEach(n=>{const px=vx2px(n.vx,g),py=vy2px(n.vy,g),r=15;
     const reach=n.id==selId;
@@ -389,11 +428,28 @@ function updateDiag(){
 }
 
 // ===== COMMS TEST =====
+function clearComm(){if(commTimer){clearInterval(commTimer);commTimer=null;}commEdges=null;commTargets=new Set();commMode=null;commPath=null;}
+function animateComm(){
+  if(commTimer)clearInterval(commTimer);
+  commEdges.forEach(e=>e.t=0);
+  let frame=0;
+  commTimer=setInterval(()=>{frame++;let active=false;
+    commEdges.forEach(e=>{if(frame>=e.delay*7){e.t+=0.10;if(e.t<1)active=true;else e.t=1;}else active=true;});
+    drawAll();
+    if(!active){clearInterval(commTimer);commTimer=null;drawAll();}
+  },30);
+}
+function buildTree(src){ // BFS tree of good links from src; returns {edges:[{from,to,delay}], depth:{id:d}}
+  const depth={};depth[src.id]=0;const q=[src],edges=[];
+  while(q.length){const c=q.shift();neighbors(c).forEach(nb=>{if(depth[nb.id]===undefined){depth[nb.id]=depth[c.id]+1;edges.push({from:c,to:nb,delay:depth[c.id]});q.push(nb);}});}
+  return {edges,depth};
+}
 function testComms(){
   const s=parseInt(document.getElementById('comm-src').value),d=parseInt(document.getElementById('comm-dst').value);
   const src=byId(s),dst=byId(d);const res=document.getElementById('comm-result');
+  clearComm();
   if(!src||!dst){res.textContent='Select two radios.';return;}
-  if(s===d){res.innerHTML='<span style="color:var(--amber)">Source and destination are the same radio.</span>';return;}
+  if(s===d){res.innerHTML='<span style="color:var(--amber)">Source and destination are the same radio.</span>';drawAll();return;}
   const path=bfs(s,d);
   if(!path){
     let why;
@@ -401,20 +457,52 @@ function testComms(){
     else if(!src.on)why=src.name+' is powered OFF.';
     else if(neighbors(src).length===0)why=src.name+' has no working neighbors (check subnet, channel, range).';
     else why='no complete route exists — the network is partitioned (a relay is missing/out of range, or a subnet/channel island blocks the path).';
-    res.innerHTML='<span style="color:var(--red)">✕ FAILED:</span> '+src.name+' cannot reach '+dst.name+' — '+why;
-    commPath=null;drawAll();return;
+    res.innerHTML='<span style="color:var(--red)">✕ UNICAST FAILED:</span> '+src.name+' cannot reach '+dst.name+' — '+why;
+    drawAll();return;
   }
-  commPath=path;
-  res.innerHTML='<span style="color:var(--green)">✓ CONNECTED:</span> '+path.map(n=>n.name).join(' → ')+
+  commMode='unicast';commPath=path;commTargets=new Set([dst.id]);
+  commEdges=[];for(let i=0;i<path.length-1;i++)commEdges.push({from:path[i],to:path[i+1],delay:i,t:0});
+  res.innerHTML='<span style="color:var(--cyan)">✓ UNICAST:</span> '+path.map(n=>n.name).join(' → ')+
     '  ('+(path.length-1)+' hop'+(path.length-1>1?'s':'')+(path.length>2?', relayed through the mesh':', direct')+')';
-  // animate
-  if(commAnim&&commAnim.timer)clearInterval(commAnim.timer);
-  commAnim={seg:0,t:0,timer:null};
-  commAnim.timer=setInterval(()=>{
-    commAnim.t+=0.06;if(commAnim.t>=1){commAnim.t=0;commAnim.seg++;if(commAnim.seg>=path.length-1){clearInterval(commAnim.timer);commAnim=null;drawAll();return;}}
-    drawAll();
-  },28);
-  drawAll();
+  animateComm();
+}
+function sendFlood(mode){
+  const s=parseInt(document.getElementById('comm-src').value);
+  const src=byId(s),res=document.getElementById('comm-result');
+  clearComm();
+  if(!src){res.textContent='Select a FROM radio.';return;}
+  if(!src.on){res.innerHTML='<span style="color:var(--red)">✕ '+src.name+' is powered OFF — it cannot originate traffic.</span>';drawAll();return;}
+  const {edges,depth}=buildTree(src);
+  const reachable=new Set(Object.keys(depth).map(Number));
+  commMode=mode;commEdges=edges.map(e=>({...e,t:0}));
+  if(mode==='broadcast'){
+    const targets=nodes.filter(n=>n.id!==src.id&&reachable.has(n.id));
+    commTargets=new Set(targets.map(n=>n.id));
+    const others=nodes.filter(n=>n.id!==src.id);
+    const missed=others.filter(n=>!reachable.has(n.id));
+    let msg='<span style="color:var(--red)">✸ BROADCAST</span> from '+src.name+' flooded the subnet — reached <strong>'+targets.length+' of '+others.length+'</strong> radio(s)';
+    if(targets.length)msg+=': '+targets.map(n=>n.name).join(', ')+'.';
+    if(missed.length)msg+=' <span style="color:var(--red)">Not reached: '+missed.map(n=>n.name+' ('+floodReason(src,n)+')').join(', ')+'.</span>';
+    msg+=' <span style="color:var(--text-dim)">(A broadcast stays inside the source\u2019s subnet — it never crosses to another network.)</span>';
+    res.innerHTML=msg;
+  }else{ // multicast
+    const members=nodes.filter(n=>n.id!==src.id&&n.grp);
+    const delivered=members.filter(n=>reachable.has(n.id));
+    commTargets=new Set(delivered.map(n=>n.id));
+    const missed=members.filter(n=>!reachable.has(n.id));
+    let msg='<span style="color:var(--amber)">◆ MULTICAST</span> from '+src.name+' to the group (MCAST IN) — delivered to <strong>'+delivered.length+' of '+members.length+'</strong> member(s)';
+    if(delivered.length)msg+=': '+delivered.map(n=>n.name).join(', ')+'.';
+    if(missed.length)msg+=' <span style="color:var(--red)">Missed members: '+missed.map(n=>n.name+' ('+floodReason(src,n)+')').join(', ')+'.</span>';
+    msg+=' <span style="color:var(--text-dim)">(Non-member radios relay the packets but ignore the content.)</span>';
+    res.innerHTML=msg;
+  }
+  if(commEdges.length)animateComm();else drawAll();
+}
+function floodReason(src,n){
+  if(!n.on)return 'off';
+  const st=linkStatus(src,n);
+  if(!st.ok&&st.inRange&&st.r!=='out of range')return st.r;
+  return 'no route';
 }
 
 // ===== SELECTORS =====
@@ -445,7 +533,96 @@ function setupCanvas(){
   c.addEventListener('touchstart',down,{passive:false});c.addEventListener('touchmove',move,{passive:false});c.addEventListener('touchend',up);
 }
 
-window.addEventListener('load',()=>{populateSelectors();loadScenario('good',document.getElementById('sc-good'));setupCanvas();});
+// ===== QUIZ =====
+function componentOf(startId){const seen=new Set([startId]),q=[byId(startId)];
+  while(q.length){const c=q.shift();neighbors(c).forEach(nb=>{if(nb.on&&!seen.has(nb.id)){seen.add(nb.id);q.push(nb);}});}return seen;}
+function allOnConnected(){const on=nodes.filter(n=>n.on);if(on.length<=1)return true;const comp=componentOf(on[0].id);return on.every(n=>comp.has(n.id));}
+function nodeByName(nm){return nodes.find(n=>n.name===nm);}
+
+const FAULT_TYPES=['subnet-ip','subnet-mask','channel','power','range'];
+let exNum=0,exSolved=false,exSolvedTotal=0,exFaults=[],exActive=false;
+function exBaseline(){ // known-good, fully-connected layout with slight jitter
+  nextId=1;const j=()=>Math.round((Math.random()-0.5)*40);
+  const n=[mkNode('R1','192.168.1.10',24,1,220+j(),160+j(),330),mkNode('R2','192.168.1.20',24,1,430+j(),250+j(),330),
+    mkNode('R3','192.168.1.30',24,1,650+j(),160+j(),330),mkNode('R4','192.168.1.40',24,1,540+j(),420+j(),330),
+    mkNode('R5','192.168.1.50',24,1,300+j(),420+j(),330)];
+  if(Math.random()<0.5)n.push(mkNode('R6','192.168.1.60',24,1,460+j(),330+j(),330));
+  n.forEach((nd,i)=>nd.grp=(i%2===0));
+  return n;
+}
+function injectFault(n){
+  const type=FAULT_TYPES[Math.floor(Math.random()*FAULT_TYPES.length)];
+  if(type==='subnet-ip'){const net=2+Math.floor(Math.random()*7);n.ip='192.168.'+net+'.'+(10+Math.floor(Math.random()*40));
+    return {node:n.name,type:'Subnet mismatch',desc:n.name+' is on the wrong network ('+n.ip+' — different network ID).'};}
+  if(type==='subnet-mask'){n.cidr=25+Math.floor(Math.random()*2);
+    return {node:n.name,type:'Wrong subnet mask',desc:n.name+' has the wrong mask (/'+n.cidr+' instead of /24) — mask must match to link.'};}
+  if(type==='channel'){n.ch=2+Math.floor(Math.random()*7);
+    return {node:n.name,type:'Wrong channel',desc:n.name+' is on channel '+n.ch+' instead of channel 1.'};}
+  if(type==='power'){n.on=false;
+    return {node:n.name,type:'Powered off',desc:n.name+' is powered OFF.'};}
+  // range/placement: shove into a corner and cut power
+  const corners=[[930,70],[930,540],[70,540],[70,70]];const c=corners[Math.floor(Math.random()*corners.length)];
+  n.vx=c[0];n.vy=c[1];n.range=Math.min(n.range,260);
+  return {node:n.name,type:'Out of range',desc:n.name+' is placed out of range in a corner (poor placement / low power).'};
+}
+function startMystery(btn){
+  document.querySelectorAll('.scenario-bar .cbtn').forEach(b=>{if(b.id&&b.id.startsWith('sc-'))b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  newExercise();
+  document.getElementById('quiz-panel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function newExercise(){
+  exNum++;exSolved=false;exActive=true;clearComm();
+  nodes=exBaseline();
+  const count=1+Math.floor(Math.random()*3); // 1-3 faults
+  const pool=nodes.slice();exFaults=[];
+  for(let i=0;i<count&&pool.length;i++){const idx=Math.floor(Math.random()*pool.length);const n=pool.splice(idx,1)[0];exFaults.push(injectFault(n));}
+  // guarantee it's actually broken; if somehow still connected, add one more fault
+  let guard=0;while(allOnConnected()&&nodes.every(n=>n.on)&&pool.length&&guard<4){const n=pool.splice(Math.floor(Math.random()*pool.length),1)[0];exFaults.push(injectFault(n));guard++;}
+  selId=nodes[0].id;refreshAll();renderExercise();
+}
+function renderExercise(){
+  const body=document.getElementById('quiz-body');
+  document.getElementById('quiz-score').textContent='Solved: '+exSolvedTotal;
+  if(!exActive){
+    body.innerHTML='<div class="quiz-q">Fault-Isolation Practical Exercise</div>'+
+      '<div class="quiz-instr">A tactical mesh will be handed to you with <span class="k">1\u20133 hidden faults</span> \u2014 wrong subnet, wrong mask, wrong channel, a powered-off radio, or bad placement. Your job: diagnose and repair every fault using the map, the radio programming panel, and the Link Diagnostics table, until all radios form one connected network. You are NOT told what or where the faults are.</div>'+
+      '<div class="quiz-nav"><button class="cbtn purple" onclick="newExercise()">\u25b6 Generate Exercise</button></div>';
+    return;
+  }
+  body.innerHTML='<div class="quiz-progress">Exercise #'+exNum+' \u00b7 '+exFaults.length+' fault(s) injected \u00b7 unknown</div>'+
+    '<div class="quiz-q">Diagnose and repair the network</div>'+
+    '<div class="quiz-instr">This mesh has <span class="k">'+exFaults.length+' fault(s)</span> somewhere. Inspect each radio (IP, mask, channel, power, placement) and use the <span class="k">Link Diagnostics</span> table above to see what\u2019s blocking. Fix every fault so all radios connect, then press <span class="k">Verify</span>.</div>'+
+    '<div class="quiz-nav"><button class="cbtn purple" onclick="verifyExercise()">\u2713 Verify Repairs</button>'+
+    '<button class="cbtn" onclick="newExercise()">\u21bb New Exercise</button>'+
+    '<button class="cbtn" onclick="revealFaults()">\u{1F441} Reveal (instructor)</button></div>'+
+    '<div class="quiz-feedback" id="exfb"></div>';
+}
+function verifyExercise(){
+  const fb=document.getElementById('exfb');
+  if(allOnConnected()&&nodes.every(n=>n.on)){
+    if(!exSolved){exSolved=true;exSolvedTotal++;}
+    document.getElementById('quiz-score').textContent='Solved: '+exSolvedTotal;
+    fb.className='quiz-feedback good show';
+    fb.innerHTML='\u2713 <strong>NETWORK RESTORED.</strong> Every radio is powered on and connected in one mesh. All '+exFaults.length+' fault(s) repaired. Press New Exercise for another.';
+    return;
+  }
+  // hints
+  const off=nodes.filter(n=>!n.on).map(n=>n.name);
+  let best=new Set();nodes.filter(n=>n.on).forEach(n=>{const c=componentOf(n.id);if(c.size>best.size)best=c;});
+  const isolated=nodes.filter(n=>n.on&&!best.has(n.id)).map(n=>n.name);
+  const parts=[];
+  if(off.length)parts.push('<span style="color:var(--red)">'+off.join(', ')+' still powered off</span>');
+  if(isolated.length)parts.push('<span style="color:var(--red)">'+isolated.join(', ')+' still isolated</span> — check their subnet, mask, channel, range and placement');
+  fb.className='quiz-feedback bad show';
+  fb.innerHTML='\u2717 Not restored yet. '+(parts.length?parts.join('; ')+'.':'The network is still partitioned \u2014 check the diagnostics table for the blocking reason.');
+}
+function revealFaults(){
+  const fb=document.getElementById('exfb');fb.className='quiz-feedback show';
+  fb.innerHTML='<strong>Injected faults (instructor view):</strong><br>'+exFaults.map((f,i)=>(i+1)+'. '+f.desc).join('<br>');
+}
+
+window.addEventListener('load',()=>{populateSelectors();loadScenario('good',document.getElementById('sc-good'));setupCanvas();renderExercise();});
 window.addEventListener('resize',()=>{drawAll();});
 </script>
 </body>
