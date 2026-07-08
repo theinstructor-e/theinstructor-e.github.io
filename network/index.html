@@ -314,19 +314,22 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <div class="section-head"><span>MODULE 06 — WI-FI TOPOLOGY, CHANNELS &amp; ACCESS</span><span class="lesson-tag">Aligns: E09 Wi-Fi Topology &amp; Channels (112-17E10E09)</span></div>
   <div class="two-col">
     <div class="panel">
-      <div class="panel-title">2.4 GHz Channel Overlap — select channels</div>
-      <div class="btn-row" id="chan-btns"></div>
-      <canvas id="chan-canvas" height="180"></canvas>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">Only channels 1, 6, 11 are non-overlapping in the US</div>
-      <div class="formula-box">
-        <div class="eq">2.4 GHz: 14 channels, each 22 MHz wide</div>
-        Channels 1-11 authorized in US | 1, 6, 11 non-overlapping<br>
-        Adjacent channel interference if overlapping channels used<br>
-        Channel bonding combines adjacent channels for more bandwidth
+      <div class="panel-title">Wi-Fi Channels — All Bands</div>
+      <div class="btn-row">
+        <button class="cbtn active" id="b-24" onclick="selectBand('24',this)">2.4 GHz</button>
+        <button class="cbtn" id="b-5" onclick="selectBand('5',this)">5 GHz</button>
+        <button class="cbtn" id="b-6" onclick="selectBand('6',this)">6 GHz</button>
+      </div>
+      <div id="chan-selector"></div>
+      <canvas id="chan-canvas" height="200"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:8px" id="chan-note"></div>
+      <div class="formula-box" id="chan-formula">
+        <div class="eq" id="chan-eq">2.4 GHz: 14 channels, 22 MHz wide</div>
+        <span id="chan-detail">Channels 1-11 authorized in US | 1, 6, 11 non-overlapping</span>
       </div>
       <div class="lesson-box">
         <div class="lb-head">◆ Lesson Alignment — E09 Wi-Fi Topology &amp; Channels</div>
-        <div class="lb-body">The FCC divides spectrum into licensed (auction, high power) and unlicensed (public, low power — Wi-Fi/Bluetooth) bands. In 2.4 GHz, the 22 MHz channels overlap, so only 1/6/11 avoid adjacent-channel interference. Collision management: wired uses CSMA/CD (detection), wireless uses CSMA/CA (avoidance) with optional RTS/CTS.</div>
+        <div class="lb-body">The FCC divides spectrum into licensed (auction, high power) and unlicensed (public, low power — Wi-Fi/Bluetooth) bands. 2.4 GHz channels overlap (only 1, 6, 11, and 14 are non-overlapping; the US authorizes only 1-11, and channel 14 is Japan-only) causing adjacent-channel interference. 5 GHz channels don't overlap. 6 GHz (Wi-Fi 6E) adds 1200 MHz of new spectrum with 320 MHz channels for high-capacity networks. Collision management: wired uses CSMA/CD (detection), wireless uses CSMA/CA (avoidance) with optional RTS/CTS.</div>
       </div>
     </div>
     <div class="panel">
@@ -674,31 +677,61 @@ function drawWifi(sel){
   x.textAlign='left';
 }
 // MODULE 5: CHANNELS + TOPOLOGY
-let selChans=[1,6,11];
+let curBand='24',selChans={'24':[],'5':[],'6':[]};
+const BANDS={
+  '24':{name:'2.4 GHz',chans:[1,2,3,4,5,6,7,8,9,10,11,12,13,14],fMin:2401,fMax:2473,fc:(ch)=>2412+(ch-1)*5,width:22,label:'2.4 GHz (22 MHz channels, 5 MHz spacing)'},
+  '5':{name:'5 GHz',chans:[36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140,144,149,153,157,161,165],fMin:5150,fMax:5900,fc:(ch)=>5000+ch*5,width:20,label:'5 GHz (20/40/80/160 MHz channels)'},
+  '6':{name:'6 GHz',chans:[1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,129,133,137,141,145,149,153,157,161,165,169,173,177,181,185,189,193,197,201,205,209,213],fMin:5925,fMax:7125,fc:(ch)=>5950+ch*5,width:20,label:'6 GHz (Wi-Fi 6E, 320 MHz channels available)'},
+};
+function selectBand(b,btn){curBand=b;selChans[curBand]=selChans[curBand]||[];
+  document.querySelectorAll('#tab-chan .tab-chan-band .cbtn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');initChan();}
 function initChan(){
-  const c=document.getElementById('chan-btns');
-  c.innerHTML='';for(let ch=1;ch<=11;ch++){const b=document.createElement('button');
-    b.className='cbtn'+(selChans.includes(ch)?' active':'');b.textContent='Ch '+ch;
-    b.onclick=()=>{if(selChans.includes(ch))selChans=selChans.filter(x=>x!==ch);else selChans.push(ch);
-      b.classList.toggle('active');drawChan();};c.appendChild(b);}
+  const c=document.getElementById('chan-selector'),b=BANDS[curBand];selChans[curBand]=selChans[curBand]||[];
+  c.innerHTML='<div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px">SELECT CHANNELS:</div><div class="btn-row">';
+  b.chans.forEach(ch=>{const btn=document.createElement('button');
+    btn.className='cbtn'+(selChans[curBand].includes(ch)?' active':'');btn.textContent='Ch '+ch;btn.style.fontSize='9px';
+    btn.onclick=()=>{if(selChans[curBand].includes(ch))selChans[curBand]=selChans[curBand].filter(x=>x!==ch);else selChans[curBand].push(ch);
+      btn.classList.toggle('active');drawChan();};c.querySelector('.btn-row').appendChild(btn);});
+  c.querySelector('.btn-row').innerHTML+='</div>';
+  updateChanFormula();drawChan();
+}
+function updateChanFormula(){
+  const b=BANDS[curBand];
+  document.getElementById('chan-eq').textContent=b.name+': '+b.chans.length+' channels, '+b.width+' MHz wide';
+  let detail='';
+  if(curBand==='24')detail='Channels 1-11 authorized in US (14 Japan-only) | 1, 6, 11, 14 are non-overlapping | Adjacent channels interfere if both used';
+  else if(curBand==='5')detail='Non-overlapping channels (20 MHz). Can bond for 40/80/160 MHz. UNII-1 (36-48), UNII-2 (52-144), UNII-3 (149-165)';
+  else detail='Wi-Fi 6E (2021+). Non-overlapping. Can bond to 320 MHz. Adds 1200 MHz of new unlicensed spectrum.';
+  document.getElementById('chan-detail').textContent=detail;
 }
 function drawChan(){
-  const c=document.getElementById('chan-canvas');if(!c)return;const W=c.clientWidth||520,H=180;c.width=W;c.height=H;
+  const c=document.getElementById('chan-canvas');if(!c)return;const W=c.clientWidth||520,H=200;c.width=W;c.height=H;
   const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
-  const pad={l:30,r:14,t:14,b:30},gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  const b=BANDS[curBand],pad={l:38,r:14,t:16,b:32},gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
   x.strokeStyle=gridCol();x.lineWidth=0.5;x.beginPath();x.moveTo(pad.l,pad.t+gH);x.lineTo(pad.l+gW,pad.t+gH);x.stroke();
-  // channel center freqs: ch1=2412, spacing 5MHz, width 22MHz; span 2401..2473
-  const fMin=2401,fMax=2473;
-  const fToX=f=>pad.l+((f-fMin)/(fMax-fMin))*gW;
+  const fToX=f=>pad.l+((f-b.fMin)/(b.fMax-b.fMin))*gW;
   const colors=[col('green'),col('cyan'),col('amber'),col('purple'),col('red')];
-  selChans.sort((a,b)=>a-b).forEach((ch,idx)=>{const fc=2412+(ch-1)*5,clr=colors[idx%colors.length];
-    x.fillStyle=clr+'33';x.strokeStyle=clr;x.lineWidth=1.5;x.beginPath();
-    for(let f=fc-11;f<=fc+11;f+=0.5){const xx=fToX(f),amp=Math.cos((f-fc)/11*Math.PI/2);const yy=pad.t+gH-amp*amp*gH*0.85;
-      f===fc-11?x.moveTo(xx,yy):x.lineTo(xx,yy);}x.lineTo(fToX(fc+11),pad.t+gH);x.lineTo(fToX(fc-11),pad.t+gH);x.closePath();x.fill();x.stroke();
-    x.fillStyle=clr;x.font='9px Share Tech Mono';x.textAlign='center';x.fillText(ch,fToX(fc),pad.t+gH-gH*0.88);});
+  // draw all channels as light background
+  b.chans.forEach(ch=>{const fc=b.fc(ch),xx=fToX(fc);x.strokeStyle=gridCol()+'33';x.lineWidth=0.5;
+    x.beginPath();x.moveTo(xx,pad.t);x.lineTo(xx,pad.t+gH);x.stroke();});
+  // highlight selected channels
+  selChans[curBand].sort((a,b)=>a-b).forEach((ch,idx)=>{const fc=b.fc(ch),clr=colors[idx%colors.length];
+    x.fillStyle=clr+'33';x.strokeStyle=clr;x.lineWidth=1.8;x.beginPath();
+    for(let f=fc-b.width/2;f<=fc+b.width/2;f+=0.5){const xx=fToX(f),amp=Math.cos((f-fc)/(b.width/2)*Math.PI/2);
+      const yy=pad.t+gH-amp*amp*gH*0.85;f===fc-b.width/2?x.moveTo(xx,yy):x.lineTo(xx,yy);}
+    x.lineTo(fToX(fc+b.width/2),pad.t+gH);x.lineTo(fToX(fc-b.width/2),pad.t+gH);x.closePath();x.fill();x.stroke();
+    x.fillStyle=clr;x.font='8px Share Tech Mono';x.textAlign='center';x.fillText(ch,fToX(fc),pad.t+gH-gH*0.88);});
+  // freq labels
   x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';
-  [1,6,11].forEach(ch=>{const fc=2412+(ch-1)*5;x.fillText('ch'+ch,fToX(fc),H-16);});
-  x.fillText('2.4 GHz band — overlapping channels cause adjacent-channel interference',W/2,H-4);
+  let chSample;if(curBand==='24')chSample=[1,6,11];else if(curBand==='5')chSample=[36,100,149];else chSample=[1,97,193];
+  chSample.forEach(ch=>{const fc=b.fc(ch);x.fillText('ch'+ch,fToX(fc),H-18);});
+  x.fillText(b.fMin+' MHz',pad.l,H-4);x.textAlign='right';x.fillText(b.fMax+' MHz',pad.l+gW,H-4);
+  x.fillStyle=dimCol();x.font='8px Share Tech Mono';x.textAlign='center';
+  let msg;if(selChans[curBand].length===0)msg='Select a channel to highlight';
+  else if(curBand==='24'){const overlaps=selChans[curBand].filter(ch=>![1,6,11].includes(ch));
+    msg=overlaps.length>0?'Warning: channels '+overlaps.join(',')+' overlap with neighbors':'Non-overlapping selection';}
+  else msg='Non-overlapping band';
+  x.fillText(msg,W/2,16);
   x.textAlign='left';
 }
 let curTopo='ibss';
@@ -909,3 +942,4 @@ window.addEventListener('resize',redrawActive);
 </script>
 </body>
 </html>
+
