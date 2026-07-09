@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Networking / Wireless / Cellular Quiz — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dark:#1a0033;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;
+  --amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
+.header-left{display:flex;align-items:center;gap:16px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--cyan);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.live{color:var(--cyan);animation:blink 1.4s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.setup-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 28px;border-bottom:1px solid var(--border);background:var(--panel);max-width:900px;margin:0 auto}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-right:2px}
+.wrap{max-width:820px;margin:0 auto;padding:26px 24px 60px}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg,#070b10);border:1px solid var(--border);color:var(--text-dim);padding:7px 12px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+[data-theme="light"] .cbtn{background:#fff}
+.cbtn:hover,.cbtn.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.cbtn.net:hover,.cbtn.net.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.cbtn.wifi:hover,.cbtn.wifi.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.cell:hover,.cbtn.cell.active{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.panel{background:var(--panel);border:1px solid var(--border);padding:22px;position:relative;overflow:hidden;transition:background .2s}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cyan);opacity:.5}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.progress-wrap{flex:1;min-width:140px}
+.progress-txt{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px}
+.progress-bar{height:5px;background:var(--border-bright);overflow:hidden}
+.progress-fill{height:100%;background:var(--cyan);transition:width .3s}
+.score-badge{font-family:var(--mono);font-size:12px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:5px 12px;background:var(--cyan-dark);white-space:nowrap}
+.cat-tag{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border:1px solid;display:inline-block;margin-bottom:14px}
+.cat-tag.net{color:var(--cyan);border-color:var(--cyan-dim);background:var(--cyan-dark)}
+.cat-tag.wifi{color:var(--green);border-color:var(--green-dim);background:var(--green-dark)}
+.cat-tag.cell{color:var(--amber);border-color:var(--amber-dim);background:var(--amber-dark)}
+.q-text{font-size:19px;font-weight:600;color:var(--text-bright);line-height:1.4;margin-bottom:20px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{font-family:var(--display);font-size:15px;font-weight:500;text-align:left;background:var(--canvas-bg,#070b10);border:1px solid var(--border-bright);color:var(--text);padding:13px 16px;cursor:pointer;transition:all .14s;display:flex;align-items:center;gap:12px}
+[data-theme="light"] .opt{background:#f7fafc}
+.opt .key{font-family:var(--mono);font-size:12px;color:var(--text-dim);border:1px solid var(--border-bright);width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.opt:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.opt:hover:not(:disabled) .key{border-color:var(--cyan);color:var(--cyan)}
+.opt.correct{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.opt.correct .key{border-color:var(--green);color:var(--green)}
+.opt.wrong{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.opt.wrong .key{border-color:var(--red);color:var(--red)}
+.opt:disabled{cursor:default}
+.feedback{font-family:var(--mono);font-size:13px;line-height:1.65;margin-top:18px;padding:13px 16px;border-left:3px solid var(--cyan);background:var(--cyan-dark);display:none}
+.feedback.show{display:block}
+.feedback.good{border-left-color:var(--green);background:var(--green-dark)}
+.feedback.bad{border-left-color:var(--red);background:var(--red-dark)}
+.nav-row{margin-top:20px;display:flex;justify-content:flex-end;gap:10px}
+.bigbtn{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;background:var(--cyan-dark);border:1px solid var(--cyan);color:var(--cyan);padding:11px 22px;cursor:pointer;transition:all .14s}
+.bigbtn:hover{background:var(--cyan);color:var(--bg)}
+.bigbtn[disabled]{opacity:.35;cursor:default}
+.results{text-align:center;padding:14px 10px}
+.results .big{font-family:var(--mono);font-size:46px;color:var(--cyan);line-height:1}
+.results .pct{font-family:var(--mono);font-size:13px;color:var(--text-dim);margin:8px 0 20px;letter-spacing:1px}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 auto 22px;max-width:520px}
+.bd-cell{background:var(--canvas-bg,#070b10);border:1px solid var(--border);padding:12px}
+[data-theme="light"] .bd-cell{background:#f7fafc}
+.bd-cell .bl{font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px}
+.bd-cell .bv{font-family:var(--mono);font-size:20px}
+.hint-line{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-top:16px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Knowledge Check <span>// Networking · Wireless · Cellular — 17E</span></h1>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-btn" id="qz-theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED // FOUO</div>
+  </div>
+</header>
+<div class="setup-bar">
+  <span class="sb-label">Topic:</span>
+  <button class="cbtn active" id="cat-all" onclick="setCat('all',this)">All</button>
+  <button class="cbtn net" id="cat-net" onclick="setCat('net',this)">Networking</button>
+  <button class="cbtn wifi" id="cat-wifi" onclick="setCat('wifi',this)">Wireless / Wi-Fi</button>
+  <button class="cbtn cell" id="cat-cell" onclick="setCat('cell',this)">Cellular</button>
+  <span style="flex:1"></span>
+  <span class="sb-label">Length:</span>
+  <button class="cbtn" id="len-10" onclick="setLen(10,this)">10</button>
+  <button class="cbtn active" id="len-15" onclick="setLen(15,this)">15</button>
+  <button class="cbtn" id="len-all" onclick="setLen(999,this)">All</button>
+</div>
+<div class="wrap">
+  <div class="panel" id="quiz-panel"></div>
+</div>
+ 
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('qz-theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+// ===== QUESTION BANK (grounded in E02-E10 slides + cellular reference) =====
+const Q=[
+// ---------- NETWORKING (E02 OSI, E03 MAC, E04 topo, E06 IP, E07 sec) ----------
+{c:'net',q:'How many layers are in the OSI model?',o:['5','6','7','4'],a:2,e:'The OSI model has 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application.',r:'E02, LSA 1'},
+{c:'net',q:'At which OSI layer do MAC addresses and switching operate?',o:['Layer 1 (Physical)','Layer 2 (Data Link)','Layer 3 (Network)','Layer 4 (Transport)'],a:1,e:'MAC addressing and switching are Layer 2 (Data Link) functions. CSMA/CD and CSMA/CA also operate at Layer 2.',r:'E02 / E03'},
+{c:'net',q:'What is the Protocol Data Unit (PDU) at the Transport layer?',o:['Frame','Packet','Segment','Bit'],a:2,e:'Transport = Segment. Network = Packet, Data Link = Frame, Physical = Bit.',r:'E02, LSA 2'},
+{c:'net',q:'How many bits is a MAC address?',o:['32 bits','48 bits','64 bits','128 bits'],a:1,e:'A MAC address is a 48-bit address, written as 12 hexadecimal digits (e.g. C8:5B:76:62:35:37).',r:'E03, LSA 1'},
+{c:'net',q:'What does the first half (first 24 bits) of a MAC address identify?',o:['The device serial number','The Organizationally Unique Identifier (manufacturer)','The IP subnet','The VLAN ID'],a:1,e:'The first 24 bits are the OUI (Organizationally Unique Identifier), assigned to the manufacturer. The last 24 bits identify the specific device.',r:'E03, LSA 1'},
+{c:'net',q:'What is the broadcast MAC address?',o:['00:00:00:00:00:00','FF:FF:FF:FF:FF:FF','127:0:0:0:0:1','AA:AA:AA:AA:AA:AA'],a:1,e:'FF:FF:FF:FF:FF:FF (all ones) is the Layer 2 broadcast address — delivered to every device on the segment.',r:'E03, LSA 2'},
+{c:'net',q:'Which of these is a private IPv4 address range?',o:['8.8.8.0/24','172.16.0.0/12','1.1.1.0/24','200.100.50.0/24'],a:1,e:'The private ranges are 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16. They are not routable on the public Internet.',r:'E06, LSA 2'},
+{c:'net',q:'What is the IPv4 loopback address?',o:['192.168.0.1','10.0.0.1','127.0.0.1','255.255.255.255'],a:2,e:'127.0.0.1 (from the 127.0.0.0/8 block) is loopback — it identifies "this computer" and is used to test the local network stack.',r:'E06, LSA 2'},
+{c:'net',q:'How many usable host addresses are in a /24 subnet?',o:['256','254','128','512'],a:1,e:'A /24 has 2^(32-24)=256 addresses, minus 2 (network + broadcast) = 254 usable hosts.',r:'E06, LSA 2'},
+{c:'net',q:'A host is 172.19.22.140 with mask 255.255.0.0 (/16). How many usable hosts on that subnet?',o:['254','510','65,534','16,777,214'],a:2,e:'/16 = 16 host bits → 2^16 − 2 = 65,534 usable hosts. Network 172.19.0.0, broadcast 172.19.255.255.',r:'E06, LSA 2 (worked example)'},
+{c:'net',q:'What is the purpose of the Time-to-Live (TTL) field in an IP packet?',o:['Encrypt the payload','Prevent packets from looping forever','Assign the IP address','Set the Wi-Fi channel'],a:1,e:'TTL sets the maximum number of routers (hops) a packet can pass through; each hop decrements it. At 0 the packet is dropped, preventing infinite forwarding loops.',r:'E06, LSA 1'},
+{c:'net',q:'Which protocol automatically assigns IP addresses to hosts on a subnet?',o:['DNS','DHCP','ARP','BGP'],a:1,e:'DHCP (Dynamic Host Configuration Protocol) configures client IP addresses on a subnet automatically.',r:'E06, LSA 1'},
+{c:'net',q:'How many bits is an IPv6 address?',o:['32','64','128','256'],a:2,e:'IPv6 is 128 bits (written in hexadecimal), versus IPv4\u2019s 32 bits — created largely to solve IPv4 address exhaustion.',r:'E06, LSA 3'},
+{c:'net',q:'CSMA/CD is associated with which standard, and CSMA/CA with which?',o:['CD = 802.11, CA = 802.3','CD = 802.3 (wired), CA = 802.11 (wireless)','Both are 802.3','Both are 802.11'],a:1,e:'CSMA/CD (Collision Detection) is the 802.3 wired Ethernet method; CSMA/CA (Collision Avoidance) is the 802.11 wireless method — wireless nodes can\u2019t reliably detect collisions, so they avoid them.',r:'E04 / E09'},
+{c:'net',q:'Order these networks from smallest to largest coverage.',o:['WAN, MAN, LAN, PAN','PAN, LAN, MAN, WAN','LAN, PAN, WAN, MAN','MAN, WAN, PAN, LAN'],a:1,e:'PAN (personal) < LAN (building) < MAN (metropolitan) < WAN (regional/global).',r:'E04, LSA 1'},
+{c:'net',q:'When a host sends to a destination on a different (remote) network, where does it send the packet first?',o:['Directly to the destination host','To its default gateway (router)','To the DHCP server','To the broadcast address'],a:1,e:'If the destination is on a remote network, the host forwards the packet to its default gateway (router), which routes it onward using its routing table.',r:'E06, LSA 1'},
+ 
+// ---------- WIRELESS / WI-FI (E08 standards, E09 topology/channels, E10) ----------
+{c:'wifi',q:'In what year was the original 802.11 standard introduced?',o:['1985','1997','1999','2003'],a:1,e:'The original IEEE 802.11 was introduced in 1997 (2.4 GHz, FHSS/DSSS, 1\u20132 Mbps) and is now obsolete.',r:'E08, LSA 1'},
+{c:'wifi',q:'Which band does 802.11a operate in?',o:['2.4 GHz','5 GHz','900 MHz','60 GHz'],a:1,e:'802.11a (released Oct 1999) operates in the 5 GHz band at up to 54 Mbps using OFDM. 802.11b was the 2.4 GHz standard.',r:'E08, LSA 1'},
+{c:'wifi',q:'Which 802.11 amendment first added MIMO (multiple antennas)?',o:['802.11g','802.11n','802.11ac','802.11b'],a:1,e:'802.11n (2009, Wi-Fi 4) added MIMO and operates on 2.4 and 5 GHz.',r:'E08, LSA 1'},
+{c:'wifi',q:'Wi-Fi 5 corresponds to which 802.11 amendment?',o:['802.11n','802.11ac','802.11ax','802.11ad'],a:1,e:'Wi-Fi 5 = 802.11ac (approved Dec 2013), 5 GHz, introduced multi-user MIMO (MU-MIMO).',r:'E08, LSA 1'},
+{c:'wifi',q:'What does Wi-Fi 6E add compared to Wi-Fi 6?',o:['The 900 MHz band','The 6 GHz band','60 GHz operation','TV white space'],a:1,e:'802.11ax is Wi-Fi 6; the "E" (6E) extension adds the 6 GHz band (~1200 MHz of contiguous spectrum).',r:'E08, LSA 1'},
+{c:'wifi',q:'How many channels exist in the 2.4 GHz band, and how wide is each?',o:['11 channels, 20 MHz','14 channels, 22 MHz','13 channels, 40 MHz','24 channels, 20 MHz'],a:1,e:'The 2.4 GHz band has 14 channels, each 22 MHz wide, offset by 5 MHz (channel 14 is offset by 12 MHz).',r:'E09, LSA 2'},
+{c:'wifi',q:'Which 2.4 GHz channels are non-overlapping?',o:['1, 5, 9','1, 6, 11 (and 14)','2, 7, 12','All of them'],a:1,e:'Because channels are 22 MHz wide but only 5 MHz apart, the non-overlapping set is 1, 6, 11, and 14. In the US only 1\u201311 are authorized.',r:'E09, LSA 2'},
+{c:'wifi',q:'Channel 14 in the 2.4 GHz band is authorized where?',o:['United States only','Japan only','Europe only','Everywhere'],a:1,e:'The US authorizes only channels 1\u201311. Channel 14 is available only in Japan.',r:'E09, LSA 2'},
+{c:'wifi',q:'What is the maximum bonded channel width in the 5/6 GHz bands?',o:['40 MHz','80 MHz','160 MHz','320 MHz'],a:2,e:'5 and 6 GHz can bond two, four, or eight contiguous 20 MHz channels for a maximum of 160 MHz. (2.4 GHz maxes at 40 MHz.)',r:'E09, LSA 2'},
+{c:'wifi',q:'Why does Wi-Fi use CSMA/CA instead of CSMA/CD?',o:['It is faster','Wireless devices cannot reliably sense collisions','It uses less power','It is required by the FCC'],a:1,e:'A wireless node can\u2019t reliably detect a collision while transmitting, so 802.11 avoids collisions (CA) rather than detecting them (CD).',r:'E09, LSA 1'},
+{c:'wifi',q:'What is the BSSID?',o:['The human-readable network name','The MAC address of the access point','The IP address of the router','The Wi-Fi password'],a:1,e:'BSSID = the MAC address of the AP. The SSID is the human-readable name; the ESSID is the SSID of an entire Extended Service Set.',r:'E09, LSA 1'},
+{c:'wifi',q:'Which topology has two or more wireless devices connected directly to each other with no access point?',o:['BSS','ESS','IBSS (ad-hoc)','DS'],a:2,e:'IBSS (Independent Basic Service Set) is ad-hoc — devices connect directly. A BSS uses one AP; an ESS joins multiple BSSs through a Distribution System.',r:'E09, LSA 1'},
+{c:'wifi',q:'In the 802.11 association process, what is State 3?',o:['Unauthenticated, Unassociated','Authenticated, Unassociated','Authenticated, Associated','Encrypted, Roaming'],a:2,e:'State 1 = Unauthenticated/Unassociated, State 2 = Authenticated/Unassociated, State 3 = Authenticated/Associated (fully joined, with an AID assigned).',r:'E09, LSA 3'},
+{c:'wifi',q:'What frame does an access point broadcast at regular intervals to advertise the network?',o:['Probe request','Beacon','Association request','ARP reply'],a:1,e:'The AP transmits Beacon frames containing SSID, supported rates, and other info. A "hidden SSID" simply means the AP does not transmit a beacon.',r:'E09, LSA 3'},
+{c:'wifi',q:'In what year did the FCC release the ISM band for unlicensed use?',o:['1974','1985','1991','1999'],a:1,e:'The FCC released the Industrial, Scientific, and Medical (ISM) band for unlicensed use in 1985 — a key enabler of Wi-Fi.',r:'E08, LSA 1'},
+{c:'wifi',q:'The 802.11ad (WiGig) standard operates in which band?',o:['2.4 GHz','5 GHz','60 GHz','Sub-1 GHz'],a:2,e:'802.11ad (WiGig, 2012) operates in the 60 GHz band with peak rates up to ~7 Gbps at very short range (~11 ft).',r:'E08, LSA 1'},
+{c:'wifi',q:'802.11ah (Wi-Fi HaLow) operates in what part of the spectrum?',o:['Sub-1 GHz','2.4 GHz','5 GHz','60 GHz'],a:0,e:'802.11ah (HaLow, 2016) operates in sub-1 GHz license-exempt bands — longer range, lower power, good for IoT.',r:'E08, LSA 1'},
+{c:'wifi',q:'Adjacent-channel interference predominantly affects which band, and why?',o:['5 GHz, because channels are narrow','2.4 GHz, because its channels heavily overlap','6 GHz, because of DFS','60 GHz, because of rain fade'],a:1,e:'Adjacent-channel interference mainly hits 2.4 GHz because its 22 MHz channels overlap so much (only 1/6/11/14 don\u2019t). 5 and 6 GHz channels don\u2019t overlap.',r:'E09, LSA 2'},
+ 
+// ---------- CELLULAR (E13 Basics of Cellular Tech, E14 Cell Networks & Coverages) ----------
+{c:'cell',q:'What was the security profile of 1G cellular?',o:['Encrypted digital voice','Analog and in the clear \u2014 anyone on the same frequency could listen','Frequency-hopping spread spectrum','TMSI-protected'],a:1,e:'1G was analog with voice carried in the clear \u2014 essentially no security. Anyone tuned to the same frequency could hear the conversation.',r:'E13, Slide 5'},
+{c:'cell',q:'Which generation first went digital and encrypted, and on what standard?',o:['1G, on AMPS','2G, on GSM','3G, on UMTS','4G, on LTE'],a:1,e:'2G launched in Finland in 1991 on GSM \u2014 the shift to digital, encrypted communications made plain over-the-air interception much harder.',r:'E13, Slide 6'},
+{c:'cell',q:'Widespread GPS in handsets arrived with which generation?',o:['1G','2G','3G','5G'],a:2,e:'GPS functionality became widespread in handsets with 3G, which opened GPS-based attack vectors against the device.',r:'E13, Slides 10\u201311'},
+{c:'cell',q:'What are the three GPS attacks taught in this lesson?',o:['Geofencing, Spoofing, Jamming','Cloning, Paging, Handoff','Meaconing, Nulling, Masking','Sniffing, Flooding, Replay'],a:0,e:'The three are Geofencing (virtual boundary/collection), GPS Spoofing (false coordinates), and GPS Jamming (overwhelming the receiver).',r:'E13, Slide 11 (Check on Learning)'},
+{c:'cell',q:'A rogue base station that imitates a legitimate cell to attract nearby handsets is also called what?',o:['A femtocell','An IMSI catcher','A picocell','A repeater'],a:1,e:'Rogue base stations \u2014 the illicit "Sim-Cell" form \u2014 are known as IMSI catchers. They imitate a legitimate cell to attract nearby handsets.',r:'E13, Slide 9'},
+{c:'cell',q:'What made 4G different to deploy compared to 2G and 3G?',o:['It only needed a SIM swap','It required new device hardware \u2014 a SIM swap was no longer enough','It ran on analog carriers','It removed the need for towers'],a:1,e:'Unlike 2G/3G, which a SIM change could enable on existing hardware, 4G (commercial launch Norway, 2009) required new device hardware.',r:'E13, Slide 12'},
+{c:'cell',q:'Which of these is one of the five defining 5G technologies?',o:['FHSS','Beamforming','POTS','Time-division duplex only'],a:1,e:'The five 5G technologies are mmWave, Massive MIMO, Small Cells, Beamforming, and Dynamic Spectrum Sharing.',r:'E13, Slide 15'},
+{c:'cell',q:'Per the lesson\u2019s Check on Learning, what are the three parts of a cell phone?',o:['Battery, Screen, SIM','Modulator, Processor, Antenna','Antenna, Amplifier, Speaker','SIM, IMEI, IMSI'],a:1,e:'The official Check on Learning answer lists the three parts as Modulator, Processor, and Antenna.',r:'E13, Slide 26 (Check on Learning)'},
+{c:'cell',q:'The Numeric Assignment Module (NAM) in a handset stores which three identifiers?',o:['IMSI, IMEI, TMSI','MIN, ESN, SID','HLR, VLR, EIR','MCC, MNC, LAC'],a:1,e:'The NAM stores the MIN (Mobile Identification Number \u2014 the phone number), ESN (Electronic Serial Number \u2014 the hardware), and SID (System Identification Number \u2014 the home system).',r:'E13, Slide 20'},
+{c:'cell',q:'Why is cellular described as "full duplex"?',o:['It uses one shared frequency for talk and listen','It transmits and receives simultaneously on two different frequencies','It can only talk or listen, not both','It hops frequencies to avoid jamming'],a:1,e:'Full duplex means one frequency for transmitting and a separate frequency for receiving, so both parties can speak at once.',r:'E14, Slide 10 / E13, Slide 18'},
+{c:'cell',q:'What is the difference between the IMSI and the IMEI?',o:['IMSI = the device; IMEI = the subscriber','IMSI = the subscriber; IMEI = the physical equipment','Both identify the SIM card','Both identify the tower'],a:1,e:'IMSI (International Mobile Subscriber Identity) identifies the subscriber; IMEI (International Mobile Equipment Identity) identifies the physical device. Both are sent at registration.',r:'E14, Slide 4 / E13, Slide 21'},
+{c:'cell',q:'What is the purpose of the TMSI, and who assigns it?',o:['Permanent device ID assigned by the manufacturer','A temporary, encrypted ID assigned by the VLR to protect the IMSI','The dialable phone number assigned by the HLR','The tower\u2019s broadcast identity'],a:1,e:'TMSI (Temporary Mobile Subscriber Identity) is an encrypted ID assigned by the VLR to protect the IMSI during registration in a visited network.',r:'E14, Slide 4'},
+{c:'cell',q:'In GSM, which interface is the "air" (radio) interface between the mobile and the BTS?',o:['Abis','A','E','Um'],a:3,e:'Um is the air/radio interface (Mobile \u2194 BTS). Abis is BSC\u2194BTS, A is BSC\u2194MSC, and E is MSC\u2194MSC \u2014 all wired.',r:'E14, Slide 5'},
+{c:'cell',q:'Which register is the permanent master database of subscriber data?',o:['VLR','HLR','EIR','AuC'],a:1,e:'HLR (Home Location Register) is the permanent master subscriber database. VLR is temporary (roaming), EIR tracks equipment, AuC handles authentication.',r:'E14, Slides 7 & 19'},
+{c:'cell',q:'What does the Equipment Identity Register (EIR) do?',o:['Stores the permanent home subscriber record','Maintains a color-coded list of equipment (white=authorized, gray=flagged, black=banned)','Generates the RAND challenge','Routes calls to the PSTN'],a:1,e:'The EIR is a color-coded equipment list \u2014 white = authorized, gray = authorized but flagged, black = banned \u2014 used to validate the IMEI.',r:'E14, Slides 19 & 29'},
+{c:'cell',q:'GSM authentication in the AuC combines which two values?',o:['IMSI and MSISDN','RAND and Ki','MCC and MNC','ESN and SID'],a:1,e:'The AuC uses the A3 algorithm: a 128-bit random challenge (RAND) is combined with the 128-bit per-SIM Authentication Key (Ki), and the result must match on both sides.',r:'E14, Slides 6 & 19'},
+{c:'cell',q:'How many digits are the MCC and MNC in a PLMN?',o:['MCC = 2, MNC = 4','MCC = 3 (country), MNC = 2\u20133 (network)','MCC = 5, MNC = 5','MCC = 1, MNC = 1'],a:1,e:'MCC (Mobile Country Code) is 3 digits; MNC (Mobile Network Code) is 2\u20133 digits. Together they form the PLMN.',r:'E14, Slide 7'},
+{c:'cell',q:'Because of frequency reuse, what does an EW jammer only have to deny to affect one user?',o:['The entire cellular band nationwide','That user\u2019s local cell \u2014 not the whole band','Every tower in the country','The GPS band'],a:1,e:'Frequency reuse means the same frequencies repeat across distant cells, so to jam one user you only deny that user\u2019s local cell \u2014 a single jammer is surprisingly effective.',r:'E14, Slide 15'},
+{c:'cell',q:'Does a soft handoff require a full break in communications?',o:['Yes \u2014 the call always drops momentarily','No \u2014 it uses overlapping coverage (make-before-break), common in CDMA','Only on GSM networks','Only when roaming'],a:1,e:'Per the Check on Learning, soft handoff does NOT require a full break \u2014 it uses overlapping coverage (make-before-break), characteristic of CDMA. Hard handoff breaks first.',r:'E14, Slides 26 & 29'},
+{c:'cell',q:'What kind of channel is the BCCH?',o:['An uplink-only traffic channel','A point-to-multipoint, downlink-only control channel on Um that broadcasts cell identity','An encrypted voice channel','A dedicated point-to-point channel for one handset'],a:1,e:'The BCCH (Broadcast Control Channel) is point-to-multipoint and downlink-only on the Um interface, broadcasting the cell\u2019s identity and configuration \u2014 which is exactly why it is valuable for passive collection.',r:'E14, Slide 6 / E13, Slide 23'},
+{"c": "net", "q": "Which OSI layer converts binary data into signals (electrical, optical) on the physical medium?", "o": ["Data Link", "Network", "Physical", "Transport"], "a": 2, "e": "Layer 1 (Physical) transmits raw bits as electrical impulses, optical pulses, etc. across the medium.", "r": "E02, S10-11"},
+{"c": "net", "q": "Which OSI layer encapsulates packets into frames and handles node-to-node delivery?", "o": ["Physical", "Data Link", "Network", "Session"], "a": 1, "e": "Layer 2 (Data Link) encapsulates packets into frames, manages error-free node-to-node transfer, and does error detection.", "r": "E03, S9"},
+{"c": "net", "q": "What is the PDU (Protocol Data Unit) at the Network layer?", "o": ["Frame", "Packet", "Segment", "Bit"], "a": 1, "e": "Network = Packet. (Transport = Segment, Data Link = Frame, Physical = Bit.)", "r": "E02, LSA 1"},
+{"c": "net", "q": "What is the PDU at the Data Link layer?", "o": ["Packet", "Frame", "Segment", "Bit"], "a": 1, "e": "Data Link = Frame. Frames encapsulate the Network-layer packet.", "r": "E02, LSA 1"},
+{"c": "net", "q": "What is data encapsulation in the OSI model?", "o": ["Encrypting the payload", "Adding header/control information as data moves down the layers", "Compressing the data", "Removing headers"], "a": 1, "e": "Encapsulation is the process of taking network traffic and adding more information (headers) as it passes down the layers.", "r": "E02, S12"},
+{"c": "net", "q": "The mnemonic \"Please Do Not Throw Sausage Pizza Away\" represents the OSI layers in which order?", "o": ["Application to Physical (7→1)", "Physical to Application (1→7)", "Random order", "Transport outward"], "a": 1, "e": "\"Please Do Not Throw Sausage Pizza Away\" runs Physical→Application (Layers 1→7).", "r": "E02, S11"},
+{"c": "net", "q": "The mnemonic \"All People Seem To Need Data Processing\" lists the OSI layers in which order?", "o": ["1→7", "7→1 (Application to Physical)", "Alphabetical", "By speed"], "a": 1, "e": "\"All People Seem To Need Data Processing\" runs Application→Physical (Layers 7→1).", "r": "E02, S11"},
+{"c": "net", "q": "What is a primary purpose of standardizing communication with the OSI model?", "o": ["To slow the network", "Long-term compatibility of hardware from multiple manufacturers, and troubleshooting", "To encrypt all traffic", "To assign IP addresses"], "a": 1, "e": "Standardizing ensures long-term multi-vendor compatibility and gives a framework for troubleshooting by layer.", "r": "E02, S8"},
+{"c": "net", "q": "In the OSI teaching model, the user is imagined at which \"layer\"?", "o": ["Layer 0", "Layer 8", "Layer 4", "Layer 1"], "a": 1, "e": "The lesson imagines the user at \"Layer 8,\" above the 7 formal layers.", "r": "E02, S9"},
+{"c": "net", "q": "Which OSI layer is Layer 5?", "o": ["Transport", "Session", "Presentation", "Network"], "a": 1, "e": "Layer 5 is the Session layer (between Transport at 4 and Presentation at 6).", "r": "E02, S11"},
+{"c": "net", "q": "A MAC address is written using which numbering format?", "o": ["Binary", "Decimal", "Hexadecimal (12 digits)", "Octal"], "a": 2, "e": "A 48-bit MAC address is written as 12 hexadecimal digits, e.g. C8:5B:76:62:35:37.", "r": "E03, S1"},
+{"c": "net", "q": "Where does a device get its MAC address from?", "o": ["Assigned by DHCP", "Generated from / burned into the hardware (NIC)", "Set by the user", "Pulled from DNS"], "a": 1, "e": "The MAC is generated from the hardware — burned into the network interface by the manufacturer.", "r": "E03, S10"},
+{"c": "net", "q": "What are the two 24-bit halves of a MAC address?", "o": ["Network + Host", "OUI (manufacturer) + device identifier", "Source + Destination", "IP + Port"], "a": 1, "e": "First 24 bits = OUI (manufacturer), last 24 bits = the specific device identifier.", "r": "E03, S1"},
+{"c": "net", "q": "Which layer performs error detection and error-free transfer between two adjacent nodes?", "o": ["Physical", "Data Link", "Network", "Application"], "a": 1, "e": "The Data Link layer (L2) manages error-free node-to-node transfer between adjacent nodes and does error detection.", "r": "E03, S9"},
+{"c": "net", "q": "Approximately what distance does a Personal Area Network (PAN) cover?", "o": ["0–30 ft", "1–2 miles", "City-wide", "Nationwide"], "a": 0, "e": "A PAN is the smallest network, roughly 0–30 ft — a home, single office, or barracks room.", "r": "E04, S8"},
+{"c": "net", "q": "A Local Area Network (LAN) primarily uses which type of connection?", "o": ["Mostly wireless", "Mostly wired (for speed and security)", "Satellite", "Cellular"], "a": 1, "e": "LANs connect devices within a building and consist mostly of wired connections, which offer speed and security.", "r": "E04, S9"},
+{"c": "net", "q": "What defines a WLAN?", "o": ["A wired LAN", "A LAN consisting primarily of wireless technology (Wi-Fi, Bluetooth, hotspots)", "A nationwide network", "A point-to-point link"], "a": 1, "e": "A WLAN is a LAN built primarily on wireless technology such as Wi-Fi, Bluetooth, and hotspots.", "r": "E04, S10"},
+{"c": "net", "q": "A Metropolitan Area Network (MAN) is best described as:", "o": ["The smallest network", "A subset of WAN that spans a city by joining multiple LANs", "A single point-to-point link", "A personal network"], "a": 1, "e": "A MAN is a subset of WAN incorporating multiple LANs to span a medium-sized area like a city.", "r": "E04, S11"},
+{"c": "net", "q": "What does a Wide Area Network (WAN) connect?", "o": ["Devices in one room", "Multiple LANs or MANs over regions, countries, or globally", "Only two nodes", "A single building"], "a": 1, "e": "A WAN connects multiple LANs/MANs over varying distances — regions, countries, or the whole world.", "r": "E04, S12"},
+{"c": "net", "q": "What are the two network architectures described in the lesson?", "o": ["Star and Bus", "Peer-to-Peer and Client-Server", "TCP and UDP", "Wired and Wireless"], "a": 1, "e": "The two architectures are Peer-to-Peer and Client-Server.", "r": "E04, S13"},
+{"c": "net", "q": "In Client-Server architecture, who initiates communication?", "o": ["The server", "The client (servers listen for requests)", "Both simultaneously", "Neither"], "a": 1, "e": "Clients always initiate communication requesting services; servers constantly listen for incoming requests.", "r": "E04, S14"},
+{"c": "net", "q": "What characterizes Peer-to-Peer architecture?", "o": ["A central server provides all resources", "No distinct roles — each device acts as client and/or server", "Only one device can transmit", "It requires a mainframe"], "a": 1, "e": "In P2P there are no distinct roles; every device can act as client and/or server, and resources depend on the members rather than a central server.", "r": "E04, S15"},
+{"c": "net", "q": "A Point-to-Point (PtP) topology contains how many directly connected nodes?", "o": ["Exactly 2", "3 to 5", "Unlimited", "1"], "a": 0, "e": "Point-to-Point contains exactly 2 directly connected nodes — every 1-to-1 connection is a PtP link.", "r": "E04, S16"},
+{"c": "net", "q": "In a Bus topology, what removes the signal at the end of the cable so it does not bounce back?", "o": ["A router", "A terminator", "A switch", "A repeater"], "a": 1, "e": "A terminator at the end of the bus cable dissipates the signal, removing the data so it does not reflect back.", "r": "E04, S19"},
+{"c": "net", "q": "What is a \"collision\" in a Bus topology?", "o": ["Two cables physically touching", "Two signals sent down the cable crash, so both drop and are not delivered", "A node losing power", "A packet reaching the wrong host"], "a": 1, "e": "A collision is when two signals sent on the shared cable crash into each other; both signals drop and are not properly sent.", "r": "E04, S21"},
+{"c": "net", "q": "In a Ring topology, each node connects to how many neighbors, and traffic flows how?", "o": ["One neighbor; broadcast", "Two neighboring nodes; unidirectional", "All nodes; bidirectional", "A central hub; star"], "a": 1, "e": "In a Ring, each node connects to its two neighbors and traffic flows unidirectionally node to node.", "r": "E04, S22"},
+{"c": "net", "q": "Which topology is described as the oldest and not seen in modern infrastructure?", "o": ["Star", "Bus", "Mesh", "Point-to-Point"], "a": 1, "e": "The Bus topology is among the oldest and is not seen in modern infrastructure.", "r": "E04, S19"},
+{"c": "net", "q": "The origins of the Internet are tied to what historical context?", "o": ["The dot-com boom", "Cold War fears of a Soviet nuclear/bomber threat", "The invention of the smartphone", "Commercial television"], "a": 1, "e": "Early internet development grew out of Cold War concerns — the Soviet atomic bomb and bomber threat drove the need for networked early warning and resilient communication.", "r": "E05, S8-10"},
+{"c": "net", "q": "What 1949 event heightened U.S. concerns that helped drive early networked-defense efforts?", "o": ["Sputnik launch", "The Soviet \"Joe-1\" atomic test", "The moon landing", "ARPANET going online"], "a": 1, "e": "In September 1949 the U.S. detected the Soviet \"Joe-1\" atomic test, ending the U.S. nuclear monopoly and spurring air-defense/networking efforts.", "r": "E05, S8"},
+{"c": "net", "q": "An IPv4 address is made up of how many octets?", "o": ["2", "4", "6", "8"], "a": 1, "e": "IPv4 is 32 bits arranged as four 8-bit octets (e.g. 192.168.1.50).", "r": "E06, LSA 1"},
+{"c": "net", "q": "A host is 56.2.20.7 with mask 255.255.254.0 (/23). How many usable hosts?", "o": ["254", "510", "1022", "65,534"], "a": 1, "e": "/23 = 9 host bits → 2^9 − 2 = 510 usable hosts (broadcast 56.2.21.255).", "r": "E06, LSA 2 (worked example)"},
+{"c": "net", "q": "Moving from a /24 to a /23 subnet does what to the subnet size?", "o": ["Halves it", "Doubles it", "Leaves it the same", "Removes the broadcast address"], "a": 1, "e": "Each 1-bit decrease in the prefix (/24→/23) doubles the number of addresses in the subnet.", "r": "E06, LSA 2"},
+{"c": "net", "q": "In a subnet, which address is the network ID and which is the broadcast?", "o": ["Last / first", "First address is the network ID, last address is the broadcast", "Both are the first", "Both are the last"], "a": 1, "e": "The first address of a subnet is the network ID; the last is the broadcast address. Neither is usable by a host.", "r": "E06, LSA 2"},
+{"c": "net", "q": "Why do you subtract 2 in the usable-hosts formula 2^(32−CIDR) − 2?", "o": ["For the router and switch", "The network ID and broadcast address are reserved", "For DNS and DHCP", "For IPv6 compatibility"], "a": 1, "e": "You subtract the network ID and the broadcast address, which cannot be assigned to hosts.", "r": "E06, LSA 2"},
+{"c": "net", "q": "What is the broadcast address of 192.168.1.0/24?", "o": ["192.168.1.0", "192.168.1.1", "192.168.1.255", "192.168.0.255"], "a": 2, "e": "For 192.168.1.0/24 the broadcast (last address) is 192.168.1.255.", "r": "E06, LSA 2"},
+{"c": "net", "q": "What are the three types of access described in the network security lesson?", "o": ["Read, Write, Execute", "Physical, Technical/Logical, Administrative", "Local, Remote, Cloud", "Public, Private, Hybrid"], "a": 1, "e": "Access comes in three forms: Physical, Technical/Logical, and Administrative.", "r": "E07, S13"},
+{"c": "net", "q": "Physical access is commonly secured by which of the following?", "o": ["ACLs and IDS/IPS", "Gates, guards, locks, and cameras", "Antivirus software", "Information classification"], "a": 1, "e": "Physical access (rooms, equipment, documents) is secured by gates/fences, guards, locks, and cameras.", "r": "E07, S14"},
+{"c": "net", "q": "Technical/Logical access is commonly secured by:", "o": ["Locks and fences", "Access Control Lists, IDS/IPS, and antivirus", "Security guards", "Auditing personnel"], "a": 1, "e": "Technical access to systems and data is secured with ACLs, Intrusion Detection/Prevention Systems, and antivirus.", "r": "E07, S15"},
+{"c": "net", "q": "Which lists the U.S. classification levels from lowest to highest?", "o": ["Secret, Confidential, Top Secret", "Unclassified, Confidential, Secret, Top Secret", "Confidential, Secret, Top Secret, Unclassified", "Restricted, Secret, Cosmic"], "a": 1, "e": "From lowest: Unclassified, Confidential, Secret, Top Secret.", "r": "E07, S18"},
+{"c": "net", "q": "\"Exceptionally grave damage\" to national security corresponds to which classification?", "o": ["Confidential", "Secret", "Top Secret", "Unclassified"], "a": 2, "e": "Confidential = \"damage,\" Secret = \"serious damage,\" Top Secret = \"exceptionally grave damage.\"", "r": "E07, S18"},
+{"c": "net", "q": "How many main forms of malware does the lesson list?", "o": ["3", "5", "7", "10"], "a": 2, "e": "Seven: Virus, Worm, Trojan, Spyware, Ransomware, Fileless malware, and Rootkit.", "r": "E07, S20"},
+{"c": "net", "q": "What key trait distinguishes a worm from a virus?", "o": ["A worm needs a host file; a virus does not", "A worm self-replicates without needing a host program", "A worm cannot spread over the internet", "A worm is not malicious"], "a": 1, "e": "Unlike a virus (which needs a host file), a worm self-replicates and spreads on its own, needing only network access. Stuxnet is a famous worm.", "r": "E07, S22"},
+{"c": "net", "q": "Which malware disguises itself as a harmless application and does NOT self-replicate?", "o": ["Worm", "Trojan", "Virus", "Rootkit"], "a": 1, "e": "A Trojan disguises itself as a harmless app and, unlike viruses/worms, is not designed to replicate — making it more contained. \"Zeus\" is an example.", "r": "E07, S23"},
+{"c": "net", "q": "Which malware encrypts or blocks access to data and then demands payment?", "o": ["Spyware", "Ransomware", "Rootkit", "Worm"], "a": 1, "e": "Ransomware encrypts/blocks access and demands a ransom — often without restoring access even when paid.", "r": "E07, S25"},
+{"c": "net", "q": "Which malware lives in memory and is not associated with files, helping it evade antivirus?", "o": ["Fileless malware", "Trojan", "Virus", "Spyware"], "a": 0, "e": "Fileless malware lives in the computer’s memory (often volatile), is not tied to files, and evades most antivirus.", "r": "E07, S26"},
+{"c": "net", "q": "What is the purpose of a rootkit?", "o": ["To display ads", "To provide persistent, hidden, privileged access (often via backdoors)", "To speed up the computer", "To back up files"], "a": 1, "e": "A rootkit provides persistent privileged access while hiding itself, commonly setting up backdoors for later remote access.", "r": "E07, S28"},
+{"c": "net", "q": "Which malware secretly reports information (like passwords) to a remote user while appearing legitimate?", "o": ["Ransomware", "Spyware", "Worm", "Rootkit"], "a": 1, "e": "Spyware appears to have a purpose but secretly captures sensitive information and reports it to a remote user.", "r": "E07, S24"},
+{"c": "net", "q": "What is social engineering?", "o": ["A network cabling standard", "Using manipulation, personability, or ignorance to gain information or unauthorized access", "A type of encryption", "A routing protocol"], "a": 1, "e": "Social engineering leverages emotional manipulation, personability, and ignorance to obtain information or unauthorized access.", "r": "E07, S30"},
+{"c": "net", "q": "Most hardware failures and outages can be mitigated with what?", "o": ["Faster CPUs", "Redundancy and a backup plan (backup devices, generators, extra drives)", "More users", "Higher classification"], "a": 1, "e": "Redundancy — backup devices, power generators, multiple drives — plus a response/recovery plan mitigates most outages.", "r": "E07, S10-11"},
+{"c": "wifi", "q": "802.11b (1999) operates in which band and at what max rate?", "o": ["5 GHz, 54 Mbps", "2.4 GHz, 11 Mbps", "60 GHz, 7 Gbps", "Sub-1 GHz, 347 Mbps"], "a": 1, "e": "802.11b (1999) runs in 2.4 GHz at up to 11 Mbps.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "802.11g (2003) operates in which band?", "o": ["5 GHz", "2.4 GHz", "6 GHz", "60 GHz"], "a": 1, "e": "802.11g (2003) runs at 2.4 GHz up to 54 Mbps using OFDM, and is backward compatible with 802.11b.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "Which amendment is Wi-Fi 4?", "o": ["802.11ac", "802.11n", "802.11ax", "802.11g"], "a": 1, "e": "802.11n = Wi-Fi 4 (2009), the first with MIMO, on 2.4 and 5 GHz.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "Which amendment is Wi-Fi 6?", "o": ["802.11ac", "802.11ax", "802.11be", "802.11n"], "a": 1, "e": "802.11ax = Wi-Fi 6 (2020), up to 9.6 Gbps, adding OFDMA and (as 6E) the 6 GHz band.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "Which amendment is Wi-Fi 7?", "o": ["802.11ax", "802.11be", "802.11ad", "802.11ac"], "a": 1, "e": "802.11be = Wi-Fi 7 (2024), with a theoretical maximum around 23 Gbps.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "802.11af is also known as what?", "o": ["WiGig", "White-Fi (TV white space)", "HaLow", "Wi-Fi 6E"], "a": 1, "e": "802.11af (White-Fi, 2014) operates in unused TV white-space spectrum.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "Which modulation did 802.11a/g introduce (versus legacy FHSS/DSSS)?", "o": ["QAM only", "OFDM", "AM", "FSK"], "a": 1, "e": "802.11a and 802.11g use OFDM (Orthogonal Frequency-Division Multiplexing); the original 802.11 used FHSS/DSSS.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "In what year was the Wi-Fi Alliance (originally WECA) formed?", "o": ["1985", "1997", "1999", "2009"], "a": 2, "e": "The Wi-Fi Alliance formed in 1999 to certify interoperability.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "The original 802.11 (1997) supported what data rate?", "o": ["11 Mbps", "1–2 Mbps", "54 Mbps", "600 Mbps"], "a": 1, "e": "The original 802.11 (1997) supported only 1–2 Mbps.", "r": "E08, LSA 1"},
+{"c": "wifi", "q": "The 6 GHz band adds roughly how much contiguous spectrum?", "o": ["~80 MHz", "~1200 MHz", "~2400 MHz", "~100 MHz"], "a": 1, "e": "The 6 GHz band (Wi-Fi 6E) adds about 1200 MHz of contiguous spectrum.", "r": "E09, LSA 2"},
+{"c": "wifi", "q": "2.4 GHz Wi-Fi channels are offset from each other by how much?", "o": ["1 MHz", "5 MHz (channel 14 by 12 MHz)", "22 MHz", "20 MHz"], "a": 1, "e": "The 22 MHz-wide 2.4 GHz channels are offset by only 5 MHz (channel 14 is offset by 12 MHz), which is why most overlap.", "r": "E09, LSA 2"},
+{"c": "wifi", "q": "How wide is each channel in the 5 GHz band?", "o": ["22 MHz", "20 MHz (non-overlapping)", "5 MHz", "40 MHz"], "a": 1, "e": "5 GHz channels are 20 MHz wide and do not overlap.", "r": "E09, LSA 2"},
+{"c": "wifi", "q": "What is a BSS?", "o": ["Two devices with no AP", "A single access point serving clients", "Multiple APs joined by a distribution system", "A wired backbone"], "a": 1, "e": "A BSS (Basic Service Set) is one AP and its clients. An IBSS is ad-hoc (no AP); an ESS joins multiple BSSs via a distribution system.", "r": "E09, LSA 1"},
+{"c": "wifi", "q": "What is an ESS?", "o": ["A single AP", "Two or more BSSs connected by a distribution system", "An ad-hoc network", "A hidden network"], "a": 1, "e": "An ESS (Extended Service Set) joins multiple BSSs through a distribution system so clients can roam under one network name.", "r": "E09, LSA 1"},
+{"c": "wifi", "q": "What is the SSID?", "o": ["The AP’s MAC address", "The human-readable network name", "The encryption key", "The channel number"], "a": 1, "e": "The SSID is the human-readable network name; the BSSID is the AP’s MAC address.", "r": "E09, LSA 1"},
+{"c": "wifi", "q": "In the 802.11 association process, what is State 1?", "o": ["Authenticated, Associated", "Unauthenticated, Unassociated", "Authenticated, Unassociated", "Encrypted"], "a": 1, "e": "State 1 = Unauthenticated/Unassociated, State 2 = Authenticated/Unassociated, State 3 = Authenticated/Associated.", "r": "E09, LSA 3"},
+{"c": "wifi", "q": "What is a probe request?", "o": ["A beacon from the AP", "A frame from a client searching for available APs", "An encryption handshake", "A deauth frame"], "a": 1, "e": "A probe request is sent by a client looking for APs; the AP answers with a probe response.", "r": "E09, LSA 3"},
+{"c": "wifi", "q": "What does an AP assign a client upon successful association?", "o": ["An IP address", "An Association ID (AID)", "A MAC address", "An SSID"], "a": 1, "e": "On successful association the AP assigns an AID (Association ID) to the client.", "r": "E09, LSA 3"},
+{"c": "wifi", "q": "What does a \"hidden SSID\" mean?", "o": ["The SSID is encrypted", "The AP does not broadcast its beacon/SSID", "The network has no password", "The AP is off"], "a": 1, "e": "A hidden SSID simply means the AP does not transmit a beacon advertising the network name.", "r": "E09, LSA 3"},
+{"c": "wifi", "q": "What is the maximum channel width when bonding in the 2.4 GHz band?", "o": ["20 MHz", "40 MHz", "80 MHz", "160 MHz"], "a": 1, "e": "2.4 GHz bonding maxes out at 40 MHz (two channels two apart); 5/6 GHz reach 160 MHz.", "r": "E09, LSA 2"},
+{"c": "wifi", "q": "CSMA/CA stands for what?", "o": ["Carrier Sense Multiple Access / Collision Detection", "Carrier Sense Multiple Access / Collision Avoidance", "Channel Sharing Multiple Access", "Coded Signal Multiple Access"], "a": 1, "e": "CSMA/CA = Carrier Sense Multiple Access with Collision Avoidance — the wireless (802.11) method.", "r": "E09, LSA 1"},
+{"c": "wifi", "q": "Wi-Fi’s three main RF bands are:", "o": ["0.9, 2.4, 5 GHz", "2.4, 5, 6 GHz", "2.4, 5, 60 GHz", "5, 6, 60 GHz"], "a": 1, "e": "The three main Wi-Fi bands are 2.4, 5, and 6 GHz.", "r": "E09, LSA 2"},
+{"c": "wifi", "q": "During a wireless survey, collection focuses on which frames, and why?", "o": ["Data frames, for speed", "Management frames, transmitted at the lowest data rates for fewer errors", "Control frames only", "Encrypted frames"], "a": 1, "e": "Intel gathering focuses on management frames — sent at the lowest data rates for fewer errors — and requires scanning all 2.4/5 GHz channels.", "r": "E10, S8"},
+{"c": "wifi", "q": "What distinguishes jamming from interference?", "o": ["Jamming is accidental", "Jamming is the intentional use of RF energy to deny/degrade comms; interference is unintentional", "They are identical", "Interference is always stronger"], "a": 1, "e": "Jamming is the intentional use of RF energy to deny or degrade communication; interference is unintentional degradation by other RF-emitting devices.", "r": "E10, S12"},
+{"c": "wifi", "q": "WEP (the original 802.11 encryption, 1997) used which cipher, and when was it decommissioned?", "o": ["AES, 2010", "RC4 with CRC-32, decommissioned 2004", "TKIP, 2006", "CCMP, 2008"], "a": 1, "e": "WEP (1997) used the RC4 cipher with a CRC-32 checksum and a 24-bit IV; it was decommissioned in 2004 and succeeded by WPA.", "r": "E10, S28"},
+{"c": "wifi", "q": "WPA improved on WEP by introducing which protocol (still using the RC4 cipher)?", "o": ["CCMP", "TKIP", "AES", "EAP"], "a": 1, "e": "WPA introduced TKIP (Temporal Key Integrity Protocol) as an interim fix; it still used RC4 but with 128-bit per-packet keys.", "r": "E10, S30"},
+{"c": "wifi", "q": "WPA2 replaced RC4/TKIP with which protocol and cipher?", "o": ["WEP with DES", "CCMP with the AES block cipher", "TKIP with RC4", "EAP with 3DES"], "a": 1, "e": "WPA2 requires CCMP, which uses the AES block cipher (per FIPS-197), replacing RC4.", "r": "E10, S31"},
+{"c": "wifi", "q": "Regarding WPA2, which statement is correct?", "o": ["AES is a protocol and CCMP is a standard", "AES is a standard (not a protocol); CCMP is the security protocol that uses AES", "Both AES and CCMP are ciphers", "Neither is used in WPA2"], "a": 1, "e": "AES is a standard, not a protocol; CCMP is the security protocol that uses the AES algorithm to encrypt data.", "r": "E10, S31"},
+{"c": "wifi", "q": "WPA2 defines which two security modes?", "o": ["WEP and TKIP", "Passphrase (SOHO) and 802.1X/EAP (enterprise)", "Open and Shared", "RC4 and AES"], "a": 1, "e": "WPA2 defines passphrase authentication for SOHO networks and 802.1X/EAP security for enterprise networks.", "r": "E10, S31"},
+{"c": "wifi", "q": "What is an Evil Twin (rogue AP) attack?", "o": ["A duplicate IP address", "A fake Wi-Fi network mimicking a legitimate AP to steal victim details", "A jamming technique", "A DNS cache error"], "a": 1, "e": "An Evil Twin is a fake AP that looks like a legitimate one to capture sensitive details; attackers often deauth victims to force them onto the rogue AP.", "r": "E10, S20"},
+{"c": "wifi", "q": "The KARMA tool sets up rogue APs by doing what — and against which networks does it work?", "o": ["Cracking WPA2; encrypted networks", "Answering probe requests immediately; only unencrypted networks", "Jamming beacons; all networks", "Spoofing DNS; wired networks"], "a": 1, "e": "KARMA monitors for probe requests and replies immediately as the requested AP. It only works for unencrypted preferred networks.", "r": "E10, S20"},
+{"c": "wifi", "q": "A deauthentication attack is used to do what?", "o": ["Encrypt traffic", "Force victims to disassociate (often to push them onto a rogue AP)", "Assign IP addresses", "Speed up the network"], "a": 1, "e": "Deauth frames force clients off an AP; attackers use this to get victims to re-associate with a rogue AP.", "r": "E10, S20"},
+{"c": "wifi", "q": "A Man-in-the-Middle attack places the attacker where?", "o": ["Behind a firewall", "In the flow of communications, able to view, modify, or drop frames in real time", "On a separate network", "At the DNS root"], "a": 1, "e": "MITM places the attacker in the communications flow with the ability to view, modify, or drop frames in real time.", "r": "E10, S19"},
+{"c": "wifi", "q": "ARP spoofing accomplishes what on a LAN?", "o": ["Alters DNS records", "Links the attacker’s MAC to a legitimate user’s IP so traffic is redirected to the attacker", "Forges the source IP for DDoS", "Cracks WPA2"], "a": 1, "e": "ARP spoofing links the attacker’s MAC address with a legitimate IP via fake ARP messages, so data meant for that IP goes to the attacker.", "r": "E10, S22"},
+{"c": "wifi", "q": "DNS spoofing (cache poisoning) does what?", "o": ["Floods the AP with CTS frames", "Alters a DNS record so users are redirected to the attacker’s site", "Spoofs a MAC address", "Deauthenticates clients"], "a": 1, "e": "DNS spoofing infiltrates a DNS server and alters a site’s address record so users are sent to the attacker’s site.", "r": "E10, S23"},
+{"c": "wifi", "q": "IP spoofing forges what, and is often used for what?", "o": ["MAC address; ARP poisoning", "The source IP address; to hide identity/impersonate and launch DDoS", "The SSID; evil twin", "The DNS record; phishing"], "a": 1, "e": "IP spoofing creates packets with a modified source IP to hide identity or impersonate a system, often to invoke DDoS attacks.", "r": "E10, S21"},
+{"c": "wifi", "q": "Computer Network Attack (CNA) operations are designed to do what?", "o": ["Detect, Track, Identify, Defeat", "Deny, Degrade, Disrupt, or Destroy a target’s ability to transmit data", "Encrypt, Route, Forward, Deliver", "Scan, Map, Report"], "a": 1, "e": "CNA operations are designed to Deny, Degrade, Disrupt, or Destroy a target’s ability to transmit data on a network.", "r": "E10, S18"},
+{"c": "wifi", "q": "A CTS attack exploits which 802.11 mechanism, and what is the effect?", "o": ["Beacon timing; hides the SSID", "The RTS/CTS protocol; forces devices on a channel to hold off, affecting all devices on that channel", "WPA2 handshake; cracks the key", "DHCP; exhausts addresses"], "a": 1, "e": "A CTS attack abuses RTS/CTS (spoofed CTS or repeated RTS), making all devices on that channel — even other networks in range — hold off transmitting.", "r": "E10, S25"},
+{"c": "wifi", "q": "An antenna array that finds the direction of the strongest RF energy produces what?", "o": ["A fix with distance", "Lines of Bearing (LOBs) — direction only, no distance", "An MGRS grid", "A subnet mask"], "a": 1, "e": "An antenna array yields Lines of Bearing (LOBs): direction only, no distance. Multiple LOBs from different angles create a \"fix.\"", "r": "E10, S14"},
+{"c": "wifi", "q": "Geolocation systems compute an emitter location using which measurements?", "o": ["SSID and channel", "Time of Arrival, Time Difference of Arrival, and/or Frequency Difference of Arrival", "MAC and IP", "Beacon interval"], "a": 1, "e": "Geolocation uses TOA, TDOA, and/or FDOA against the system’s GPS/clock reference, typically expressed in 10-digit MGRS — more accurate than LOBs/fixes alone.", "r": "E10, S15"},
+{"c": "wifi", "q": "What is passive 802.11 exploitation?", "o": ["Actively injecting frames", "Exploiting information collected from signals naturally sent, without transmitting into the network", "Jamming a channel", "Deauthenticating clients"], "a": 1, "e": "Passive exploitation collects signals naturally present without transmitting any frames — the goal is covert. Keylogging is an example.", "r": "E10, S29"},
+{"c": "cell", "q": "1G was developed in 1976 by whom, and introduced in the U.S. when?", "o": ["Bell Labs; 1969", "Nippon Telegraph; 1983", "Motorola; 1990", "Ericsson; 1979"], "a": 1, "e": "1G’s standard was developed by Nippon Telegraph in 1976 and introduced in the United States in 1983.", "r": "E13, S5"},
+{"c": "cell", "q": "When did the final 1G network close, and where?", "o": ["1999, USA", "2017, Russia", "2005, Japan", "2012, UK"], "a": 1, "e": "The last 1G network closed in 2017 in Russia.", "r": "E13, S5"},
+{"c": "cell", "q": "Which 2G data service rides on the signaling channel and remains the most-used feature 2G shipped?", "o": ["MMS", "SMS", "Data downloads", "Voicemail"], "a": 1, "e": "SMS (Short Message Service) rides on the signaling channel and was the single most-used feature 2G shipped.", "r": "E13, S7"},
+{"c": "cell", "q": "3G’s central contribution was what?", "o": ["Analog voice", "Standardizing vendor network protocols and enabling international roaming", "Removing encryption", "Introducing 1G hardware"], "a": 1, "e": "3G (developed in Japan, 2001) enforced interoperable standards across vendors and enabled practical international roaming.", "r": "E13, S8"},
+{"c": "cell", "q": "As of 2024, approximately what share of networks still run 2G?", "o": ["~2%", "~25%", "~54%", "~90%"], "a": 0, "e": "As of 2024 roughly 2% of cellular networks still run 2G — persisting in industrial telemetry, legacy alarms, and some IoT.", "r": "E13, S7"},
+{"c": "cell", "q": "What was the ITU baseline speed set for 4G?", "o": ["1 Mbps", "12.5 Mbps", "100 Mbps", "1 Gbps"], "a": 1, "e": "The ITU set 4G’s baseline at 12.5 Mbps — aspirational at launch, trivially exceeded today.", "r": "E13, S12"},
+{"c": "cell", "q": "LTE is sometimes called what, reflecting its transitional nature?", "o": ["2.5G", "3.75G", "5.5G", "0G"], "a": 1, "e": "LTE is a transitional technology sometimes called 3.75G that adapted 3G systems toward 4G capability.", "r": "E13, S13"},
+{"c": "cell", "q": "Which 4G-era technology was fixed wireless broadband (802.16m) that coexisted with LTE?", "o": ["WiMAX", "GSM", "EDGE", "mmWave"], "a": 0, "e": "WiMAX (802.16m) was fixed wireless broadband intended to mimic Wi-Fi access; LTE ultimately won the market.", "r": "E13, S13"},
+{"c": "cell", "q": "5G was commercially introduced in 2019 where, with what claimed speed gain over 4G?", "o": ["USA; 50%", "South Korea; ~200%", "Japan; 400%", "Norway; 100%"], "a": 1, "e": "5G launched commercially in South Korea in 2019 with a claimed ~200% speed gain over 4G (achievable under good conditions).", "r": "E13, S14"},
+{"c": "cell", "q": "Which describes 5G mmWave?", "o": ["Sub-1 GHz, long range", "Millimeter-wave (EHF) frequencies — huge bandwidth but very short range", "900 MHz voice band", "TV white space"], "a": 1, "e": "5G mmWave uses millimeter-wave (EHF) frequencies for huge bandwidth but very short range.", "r": "E13, S15"},
+{"c": "cell", "q": "6G is projected for release around what year, and adds what defining capability?", "o": ["2025; analog voice", "~2030; integrated sensing (the network itself becomes a sensor)", "2040; 1G compatibility", "2027; TV broadcast"], "a": 1, "e": "6G is projected around 2030 and proposes Integrated Sensing — the network detects objects/motion using the same waveforms it uses to communicate — plus deep AI and wider spectrum.", "r": "E13, S16"},
+{"c": "cell", "q": "The cellular concept solved the capacity problem by doing what?", "o": ["Using one giant high-power antenna", "Using many small cells with low-power transceivers and reusing frequencies across distant cells", "Encrypting all traffic", "Switching to analog"], "a": 1, "e": "The cellular concept divides the area into many small cells, each with a low-power transceiver, and reuses frequencies across distant cells — solving the capacity limit of a few big antennas.", "r": "E13, S18"},
+{"c": "cell", "q": "Registration transmits which two numbers, received by the VLR?", "o": ["MIN and SID", "IMSI (the subscriber) and IMEI (the equipment)", "MCC and MNC", "LAC and CI"], "a": 1, "e": "On power-up the unit transmits IMSI (the customer) and IMEI (the equipment); the Visitor Location Register receives them.", "r": "E13, S21"},
+{"c": "cell", "q": "What does the LAI (Location Area Identity) provide?", "o": ["The device serial number", "Roughly where a handset is, for paging and call delivery", "The encryption key", "The phone number"], "a": 1, "e": "Each handset is associated with its current LAI so the network knows roughly where it is for paging and call delivery.", "r": "E13, S22"},
+{"c": "cell", "q": "What is the difference between the BCC and the DCC control channels?", "o": ["BCC is dedicated; DCC is broadcast", "BCC is broadcast (one-to-many, base identity/status); DCC is dedicated (point-to-point: location updates, registration, call setup)", "Both are broadcast", "Both are encrypted voice"], "a": 1, "e": "BCC = broadcast (one-to-many: base station identity and status). DCC = dedicated (point-to-point: location updates, registration, call setup).", "r": "E13, S23"},
+{"c": "cell", "q": "What is the CGSA?", "o": ["A single cell", "The Cellular Geographic Service Area — the entire mosaic of cells covering the service area", "A control channel", "A SIM identifier"], "a": 1, "e": "The CGSA (Cellular Geographic Service Area) is the entire service area blanketed by all the cells together.", "r": "E13, S24"},
+{"c": "cell", "q": "Geofencing uses which data sources to create a virtual boundary?", "o": ["Only GPS", "GPS, Wi-Fi, cellular, and RFID data", "Only cellular", "Only Bluetooth"], "a": 1, "e": "Geofencing uses GPS, Wi-Fi, cellular, and RFID data to create a virtual boundary and collect data on devices entering/leaving it.", "r": "E13, S11"},
+{"c": "cell", "q": "What is the MSISDN?", "o": ["The device serial number", "The Mobile Station ISDN Number — the phone number dialed to reach the subscriber", "The tower identity", "The SIM key"], "a": 1, "e": "MSISDN (Mobile Station ISDN Number) is the phone number used internationally to reach the subscriber.", "r": "E14, S4"},
+{"c": "cell", "q": "The SIM stores which of the following?", "o": ["Only the phone number", "IMSI, Ki, Kc, the BCCH list, PIN/PUK, and Forbidden PLMNs", "Only the IMEI", "The HLR database"], "a": 1, "e": "The SIM is a removable token storing IMSI, Ki, Kc, the BCCH list, PIN/PUK, language preference, and Forbidden PLMNs.", "r": "E14, S4"},
+{"c": "cell", "q": "Roughly what fraction of IMEIs are NOT unique, and what code displays the IMEI?", "o": ["50%; #900#", "~10%; *#06#", "0%; *#21#", "~25%; *#33#"], "a": 1, "e": "About 10% of IMEIs are not unique, and dialing *#06# displays the IMEI on most phones.", "r": "E14, S4 & S9"},
+{"c": "cell", "q": "An IMEI consists of how many digits?", "o": ["8 digits", "14 digits plus a check digit", "20 digits", "4 digits"], "a": 1, "e": "An IMEI is 14 digits plus a 1-digit check digit, validated at the EIR on registration.", "r": "E14, S9"},
+{"c": "cell", "q": "What is the BTS?", "o": ["Base Station Controller", "Base Transceiver Station — the radio equipment in the tower", "Base Switching Terminal", "Broadcast Timing Signal"], "a": 1, "e": "The BTS (Base Transceiver Station) is the radio equipment in a cell tower that handles wireless communication with user equipment.", "r": "E14, S5"},
+{"c": "cell", "q": "What is the BSC?", "o": ["The air interface", "The Base Station Controller — controls multiple BTSs and interfaces to the MSC", "A subscriber database", "The traffic channel"], "a": 1, "e": "The BSC (Base Station Controller) controls and monitors multiple BTSs and provides the interface between cell sites and the MSC.", "r": "E14, S5"},
+{"c": "cell", "q": "A BSS (Base Station Sub-System) consists of what?", "o": ["HLR + VLR", "A group of BTSs plus their controlling BSC", "MSC + PSTN", "Only the SIM"], "a": 1, "e": "A BSS is a group of BTSs plus their controlling BSC, handling traffic and signaling between mobiles and the network switching subsystem.", "r": "E14, S5 & S22"},
+{"c": "cell", "q": "Match the GSM interface: which one is Abis?", "o": ["Mobile ↔ BTS", "BSC ↔ BTS", "BSC ↔ MSC", "MSC ↔ MSC"], "a": 1, "e": "Abis = BSC ↔ BTS. (Um = Mobile↔BTS, A = BSC↔MSC, E = MSC↔MSC.)", "r": "E14, S5"},
+{"c": "cell", "q": "Which channel lets a handset lock onto the correct carrier frequency?", "o": ["BCCH", "FCCH (Frequency Correction Channel)", "PCH", "TCH"], "a": 1, "e": "The FCCH (Frequency Correction Channel) is a downlink-only control channel that lets handsets lock to the correct carrier frequency.", "r": "E14, S6"},
+{"c": "cell", "q": "What is the PCH used for?", "o": ["Carrying voice", "Alerting a mobile that a call or text is waiting (paging)", "Authentication", "Frequency correction"], "a": 1, "e": "The PCH (Paging Channel) alerts a mobile that there is a call or text waiting for it.", "r": "E14, S6"},
+{"c": "cell", "q": "What does the TCH carry?", "o": ["Only signaling", "The actual voice/data traffic (uplink and downlink), in Full or Half Rate", "Only paging", "Cell identity"], "a": 1, "e": "The TCH (Traffic Channel) carries the actual voice/data once the mobile has joined the cell, in Full Rate (TCH/FS) or Half Rate (TCH/HS).", "r": "E14, S6"},
+{"c": "cell", "q": "How large are the RAND challenge and the Ki authentication key in GSM?", "o": ["64-bit each", "128-bit each", "256-bit each", "32-bit each"], "a": 1, "e": "RAND (the random challenge) and Ki (the per-SIM authentication key) are each 128 bits.", "r": "E14, S6"},
+{"c": "cell", "q": "What does the VLR hold?", "o": ["Permanent home subscriber data", "Temporary data about subscribers roaming outside their home HLR", "Equipment blacklists", "Encryption standards"], "a": 1, "e": "The VLR (Visitor Location Register) holds temporary data about subscribers currently being served (roaming outside their home HLR).", "r": "E14, S7 & S19"},
+{"c": "cell", "q": "What algorithm does the AuC use for authentication?", "o": ["A5", "A3 (RAND + Ki must match on both sides)", "AES", "RSA"], "a": 1, "e": "The AuC uses the A3 algorithm: RAND combined with Ki must match the values stored in both the AuC and the SIM.", "r": "E14, S19"},
+{"c": "cell", "q": "The EIR color-codes equipment how?", "o": ["Red/Yellow/Green", "White = authorized, Gray = authorized but flagged, Black = banned", "Blue/Purple/Orange", "Pass/Fail"], "a": 1, "e": "The EIR (Equipment Identity Register) list is color-coded: White = authorized, Gray = authorized but flagged, Black = banned.", "r": "E14, S19"},
+{"c": "cell", "q": "What does ARFCN specify?", "o": ["The subscriber identity", "The Absolute Radio Frequency Channel Number — the uplink/downlink frequency pair in use", "The paging group", "The encryption key"], "a": 1, "e": "ARFCN (Absolute Radio Frequency Channel Number) specifies the uplink/downlink frequency pair in use.", "r": "E14, S7"},
+{"c": "cell", "q": "EDGE stands for what?", "o": ["Enhanced Data Rates for GSM Evolution (a backward-compatible pre-3G data layer)", "Encrypted Digital GSM Extension", "Emergency Data Gateway Endpoint", "Extended Duplex GSM Equipment"], "a": 0, "e": "EDGE = Enhanced Data Rates for GSM Evolution, a backward-compatible pre-3G data layer.", "r": "E14, S7"},
+{"c": "cell", "q": "In 2G/GSM the handset is called the Mobile Station (MS); what do 3G+ generations call it?", "o": ["Base Station", "User Equipment (UE)", "Node B", "Access Point"], "a": 1, "e": "The MS (with parts MT, TE, TA, SIM) is called User Equipment (UE) in 3G and later generations.", "r": "E14, S8"},
+{"c": "cell", "q": "Define uplink versus downlink.", "o": ["Uplink = cell→phone; downlink = phone→cell", "Uplink = phone→cell site; downlink = cell site→phone", "Both are phone→cell", "Both are cell→phone"], "a": 1, "e": "Uplink is the phone→cell-site path; downlink is the cell-site→phone path.", "r": "E14, S10"},
+{"c": "cell", "q": "What are microcells characterized by?", "o": ["Antennas above roof level covering whole cities", "Antennas typically below roof level, signal contained by surrounding buildings", "Satellite-only coverage", "No antennas"], "a": 1, "e": "Microcells use antennas typically below roof level, with signal contained by surrounding buildings — used where a 500 m cell radius is still too large.", "r": "E14, S12"},
+{"c": "cell", "q": "What is the effect of sectored (directional) cell antennas?", "o": ["They reduce capacity", "They divide an area into sectors, each acting like its own cell with its own frequency reuse", "They remove the need for a BSC", "They only work at night"], "a": 1, "e": "Directional antennas concentrate gain and divide a geographic area into sectors, each acting like its own cell with its own frequency reuse — multiplying capacity.", "r": "E14, S13"},
+{"c": "cell", "q": "What is the IWF in the Network Subsystem (NSS)?", "o": ["Internal Wi-Fi", "Interworking Functions — the PSTN/data network bridge", "International Wireless Frequency", "IMEI Whitelist Filter"], "a": 1, "e": "The IWF (Interworking Functions) bridges the cellular network to the PSTN and data networks. The NSS also includes MSC, HLR, VLR, AuC, and EIR.", "r": "E14, S23"},
+{"c": "cell", "q": "In digital cellular, how is voice handled?", "o": ["Modulated directly as continuous voltage", "Audio is sampled thousands of times/sec and quantized into binary", "Sent as analog FM only", "Not transmitted"], "a": 1, "e": "Digital systems sample audio thousands of times per second and quantize the samples into binary before sending them over the carrier.", "r": "E14, S16"},
+{"c": "cell", "q": "Which two antenna types are common in fielded cellular installations?", "o": ["Dish and whip", "Yagi (signal boosters) and Panel (base stations)", "Horn and loop", "Dipole and rhombic"], "a": 1, "e": "Yagi antennas are used in cell-signal boosters; panel antennas (dipole + flat-panel reflector) are used at base stations.", "r": "E14, S21"},
+{"c": "cell", "q": "Broadcast-channel surveying is primarily used to do what?", "o": ["Encrypt the network", "Detect rogue cellular systems / IMSI catchers by scanning and comparing identity broadcasts", "Assign phone numbers", "Increase data rates"], "a": 1, "e": "Surveying scans the RF environment, logs tower identity broadcasts, and compares them to known-good towers — flagging discrepancies that indicate a rogue cell or IMSI catcher.", "r": "E14, S24"},
+{"c": "cell", "q": "Which best summarizes hard versus soft handoff?", "o": ["Hard = make-before-break; soft = break-before-make", "Hard = break-before-make (drops under denial); soft = make-before-break using overlapping coverage (CDMA)", "Both break the call", "Both are identical"], "a": 1, "e": "Hard handoff breaks the old link before making the new one; soft handoff uses overlapping coverage (make-before-break), characteristic of CDMA, so it does not require a full break.", "r": "E14, S26 & S29"},
+{"c": "cell", "q": "Which databases make up the four the MSC consults?", "o": ["DNS, DHCP, ARP, NAT", "HLR, VLR, EIR, AuC", "BTS, BSC, MSC, PSTN", "SIM, IMEI, IMSI, TMSI"], "a": 1, "e": "The MSC consults four databases: HLR (home), VLR (visitor), EIR (equipment), and AuC (authentication).", "r": "E14, S17 & S19"},
+{"c": "net", "q": "How many layers does the TCP/IP model have?", "o": ["7", "4", "5", "3"], "a": 1, "e": "The TCP/IP model condenses the OSI 7 layers into 4.", "r": "E02, LSA 2"},
+{"c": "net", "q": "At which OSI layer does IP addressing and routing operate?", "o": ["Layer 2", "Layer 3 (Network)", "Layer 4", "Layer 1"], "a": 1, "e": "IP addressing and routing are Layer 3 (Network) functions; the PDU there is the packet.", "r": "E02, LSA 1"},
+{"c": "net", "q": "For 172.19.22.140 /16, what is the network ID?", "o": ["172.19.22.0", "172.19.0.0", "172.0.0.0", "172.19.22.140"], "a": 1, "e": "With /16 the first two octets are the network: 172.19.0.0 (broadcast 172.19.255.255).", "r": "E06, LSA 2"},
+{"c": "net", "q": "Administrative access is commonly secured by:", "o": ["Locks and guards", "Information classification, training, auditing, and testing", "Antivirus only", "ACLs and IDS"], "a": 1, "e": "Administrative access is built around policies/procedures, secured via information classification, training, auditing, and testing.", "r": "E07, S16"},
+{"c": "wifi", "q": "What were the two modes of operation for original WPA?", "o": ["WEP and TKIP", "WPA Enterprise and WPA Pre-Shared Key", "Open and Shared", "AES and RC4"], "a": 1, "e": "WPA operated in two modes: WPA Enterprise and WPA Pre-Shared Key (PSK).", "r": "E10, S30"},
+{"c": "wifi", "q": "In packet capture, which filter isolates 802.11 management frames?", "o": ["wlan.fc.type eq 2", "wlan.fc.type eq 0", "ip.addr", "tcp.port eq 80"], "a": 1, "e": "Management frames are wlan.fc.type eq 0; e.g. deauthentication is subtype 12, probe request is subtype 4.", "r": "E10, S10"},
+{"c": "wifi", "q": "Find/Fix operations are conducted in support of what?", "o": ["Network maintenance", "A Kill/Capture operation", "Billing", "DHCP assignment"], "a": 1, "e": "Find/Fix is conducted in support of a Kill/Capture operation, refining a survey’s general location to a specific one.", "r": "E10, S13"},
+{"c": "wifi", "q": "802.11ah (HaLow) was introduced in what year?", "o": ["2009", "2016", "2020", "1999"], "a": 1, "e": "802.11ah (Wi-Fi HaLow) was introduced in 2016, operating in sub-1 GHz bands.", "r": "E08, LSA 1"},
+{"c": "cell", "q": "In the NAM, what does the MIN represent?", "o": ["The hardware serial number", "The Mobile Identification Number — the phone number the network calls", "The home system ID", "The tower identity"], "a": 1, "e": "MIN (Mobile Identification Number) is the telephone number of the cellular phone — what the network calls to route to the device.", "r": "E13, S20"},
+{"c": "cell", "q": "In the NAM, what does the ESN identify?", "o": ["The subscriber", "The physical hardware (unique manufacturer serial), regardless of subscriber", "The home system", "The current cell"], "a": 1, "e": "ESN (Electronic Serial Number) is a unique manufacturer-assigned number identifying the physical hardware, independent of the subscriber.", "r": "E13, S20"},
+{"c": "cell", "q": "In the NAM, what does the SID identify?", "o": ["The phone number", "The home cellular system (used to determine roaming vs. home behavior)", "The equipment serial", "The encryption key"], "a": 1, "e": "SID (System Identification Number) identifies the phone’s home cellular system, used to determine roaming versus home-network behavior.", "r": "E13, S20"},
+{"c": "cell", "q": "As of 2024, roughly what share of networks are on 4G and 5G respectively?", "o": ["~10% and ~2%", "~40% and ~54%", "~80% and ~90%", "~5% and ~1%"], "a": 1, "e": "As of 2024 roughly 40% of networks are on 4G and ~54% on 5G (with ~4% still 3G and ~2% still 2G).", "r": "E13, S12 & S14"}
+];
+ 
+// ===== STATE =====
+let cat='all',len=15,pool=[],idx=0,score=0,answered=false,perCat={};
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function setCat(c,btn){cat=c;document.querySelectorAll('.setup-bar .cbtn').forEach(b=>{if(b.id&&b.id.startsWith('cat-'))b.classList.remove('active');});btn.classList.add('active');start();}
+function setLen(n,btn){len=n;document.querySelectorAll('.setup-bar .cbtn').forEach(b=>{if(b.id&&b.id.startsWith('len-'))b.classList.remove('active');});btn.classList.add('active');start();}
+function catName(c){return c==='net'?'Networking':c==='wifi'?'Wireless / Wi-Fi':'Cellular';}
+function catClass(c){return c;}
+ 
+function start(){
+  let src=Q.filter(q=>cat==='all'||q.c===cat);
+  pool=shuffle(src.slice()).slice(0,Math.min(len,src.length));
+  idx=0;score=0;answered=false;perCat={net:{c:0,t:0},wifi:{c:0,t:0},cell:{c:0,t:0}};
+  render();
+}
+function render(){
+  const p=document.getElementById('quiz-panel');
+  if(idx>=pool.length){renderResults();return;}
+  const q=pool[idx];
+  // shuffle options, track correct value
+  const opts=q.o.map((t,i)=>({t,correct:i===q.a}));shuffle(opts);
+  const letters=['A','B','C','D','E'];
+  const pct=Math.round(idx/pool.length*100);
+  p.innerHTML=
+    `<div class="topbar">
+       <div class="progress-wrap"><div class="progress-txt">Question ${idx+1} of ${pool.length}</div>
+         <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+       <div class="score-badge">Score ${score} / ${idx}${answered?'':''}</div>
+     </div>
+     <div class="cat-tag ${catClass(q.c)}">${catName(q.c)}</div>
+     <div class="q-text">${q.q}</div>
+     <div class="opts" id="opts">${opts.map((o,i)=>`<button class="opt" onclick="answer(this,${o.correct})"><span class="key">${letters[i]}</span>${o.t}</button>`).join('')}</div>
+     <div class="feedback" id="fb"></div>
+     <div class="nav-row"><button class="bigbtn" id="nextb" onclick="next()" disabled>Next \u2192</button></div>`;
+  answered=false;
+}
+function refHTML(q){return q.r?('<div style="margin-top:8px;font-size:10px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase">\u25c8 Reference: '+q.r+'</div>'):'';}
+function answer(btn,isCorrect){
+  if(answered)return;answered=true;
+  const q=pool[idx];perCat[q.c].t++;
+  document.querySelectorAll('#opts .opt').forEach(b=>{b.disabled=true;});
+  const fb=document.getElementById('fb');
+  if(isCorrect){btn.classList.add('correct');score++;perCat[q.c].c++;fb.className='feedback good show';fb.innerHTML='\u2713 Correct. '+q.e+refHTML(q);}
+  else{btn.classList.add('wrong');
+    // reveal correct one
+    document.querySelectorAll('#opts .opt').forEach(b=>{if(b.getAttribute('onclick').includes('true'))b.classList.add('correct');});
+    fb.className='feedback bad show';fb.innerHTML='\u2717 Not quite. '+q.e+refHTML(q);}
+  document.querySelector('.score-badge').textContent='Score '+score+' / '+(idx+1);
+  document.getElementById('nextb').disabled=false;
+}
+function next(){idx++;render();}
+function renderResults(){
+  const p=document.getElementById('quiz-panel');
+  const pct=Math.round(score/pool.length*100);
+  const msg=pct>=90?'Outstanding — mission-ready on this material.':pct>=75?'Solid. Review the few you missed.':pct>=60?'Passing, but revisit the weak areas below.':'Keep studying — run it again by topic.';
+  let bd='';['net','wifi','cell'].forEach(c=>{if(perCat[c].t>0){const cp=Math.round(perCat[c].c/perCat[c].t*100);
+    bd+=`<div class="bd-cell"><div class="bl" style="color:var(--${c==='net'?'cyan':c==='wifi'?'green':'amber'})">${catName(c)}</div><div class="bv" style="color:var(--${c==='net'?'cyan':c==='wifi'?'green':'amber'})">${perCat[c].c}/${perCat[c].t}</div></div>`;}});
+  p.innerHTML=
+    `<div class="results">
+       <div class="big">${score} / ${pool.length}</div>
+       <div class="pct">${pct}% — ${msg}</div>
+       <div class="breakdown">${bd}</div>
+       <button class="bigbtn" onclick="start()">\u21ba Retake</button>
+       <div class="hint-line">Change Topic or Length above to focus your next run.</div>
+     </div>`;
+}
+window.addEventListener('load',start);
+</script>
+</body>
+</html>
