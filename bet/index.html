@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basic Electronics Trainer — Components (17E)</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dark:#1a0033;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;
+  --amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
+.header-left{display:flex;align-items:center;gap:16px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--amber);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.live{color:var(--amber);animation:blink 1.4s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 20px;gap:2px}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.tab-btn .tnum{font-family:var(--mono);font-size:10px;color:inherit;opacity:.6}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--amber);border-bottom-color:var(--amber)}
+.tab-content{display:none;padding:24px 28px;max-width:1120px;margin:0 auto}
+.tab-content.active{display:block}
+.two-col{display:grid;grid-template-columns:320px 1fr;gap:20px}
+@media(max-width:820px){.two-col{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;transition:background .2s;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--amber);opacity:.4}
+.panel.green::before{background:var(--green)}.panel.cyan::before{background:var(--cyan)}.panel.red::before{background:var(--red)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'▶';color:var(--amber);font-size:8px}
+.section-head{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lesson-tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:3px 8px;background:var(--cyan-dark);text-transform:none;white-space:nowrap}
+canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);display:block;transition:background .2s}
+.field-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:8px}
+.field-label .name{font-family:var(--display);font-size:12px;font-weight:600;color:var(--text)}
+.field-label .hint{font-family:var(--mono);font-size:9px;color:var(--text-dim)}
+.ctrl{margin-bottom:13px}
+.sel-input{font-family:var(--mono);font-size:12px;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--amber);padding:7px 9px;width:100%;outline:none;transition:border-color .15s}
+.sel-input:focus{border-color:var(--amber)}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border-bright);outline:none;cursor:pointer;margin-top:6px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--amber);border:2px solid var(--bg);cursor:pointer}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:7px 11px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover,.cbtn.active{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.cbtn.green:hover,.cbtn.green.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.cyan:hover,.cbtn.cyan.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px}
+.readout{background:var(--canvas-bg);border:1px solid var(--border);padding:9px 11px;text-align:center;transition:background .2s}
+.readout .label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px}
+.readout .val{font-family:var(--mono);font-size:15px;color:var(--amber);line-height:1.1}
+.readout.green .val{color:var(--green)}.readout.cyan .val{color:var(--cyan)}.readout.red .val{color:var(--red)}
+.formula-box{background:var(--canvas-bg);border-left:3px solid var(--amber);padding:12px 16px;margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.9;transition:background .2s}
+.formula-box .eq{color:var(--amber);font-size:13px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--amber);background:var(--amber-dark);padding:10px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px;transition:background .2s}
+.callout.red{border-left-color:var(--red);background:var(--red-dark)}.callout.green{border-left-color:var(--green);background:var(--green-dark)}
+.callout .key{color:var(--amber);font-weight:700}.callout.red .key{color:var(--red)}.callout.green .key{color:var(--green)}
+.lesson-box{border:1px solid var(--cyan-dim);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:10px 14px;margin-top:14px;transition:background .2s}
+.lesson-box .lb-head{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--cyan);text-transform:uppercase;margin-bottom:5px}
+.lesson-box .lb-body{font-size:13px;line-height:1.6;color:var(--text)}
+.rtable{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:8px}
+.rtable th{background:var(--border);color:var(--text-dim);padding:5px 7px;text-align:left;letter-spacing:1px;font-size:9px;text-transform:uppercase}
+.rtable td{padding:5px 7px;border-bottom:1px solid var(--border)}
+.pill{font-family:var(--mono);font-size:10px;padding:3px 9px;border:1px solid;border-radius:2px;display:inline-block}
+.pill.on{color:var(--green);border-color:var(--green-dim);background:var(--green-dark)}
+.pill.off{color:var(--red);border-color:var(--red-dim);background:var(--red-dark)}
+.pill.warn{color:var(--amber);border-color:var(--amber-dim);background:var(--amber-dark)}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Basic Electronics Trainer <span>// Components — 17E</span></h1>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-btn" id="bc-theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED // FOUO</div>
+  </div>
+</header>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('diode',this)"><span class="tnum">01</span> Diodes</button>
+  <button class="tab-btn" onclick="switchTab('led',this)"><span class="tnum">02</span> LED Circuit</button>
+  <button class="tab-btn" onclick="switchTab('rect',this)"><span class="tnum">03</span> Rectifiers</button>
+  <button class="tab-btn" onclick="switchTab('bjt',this)"><span class="tnum">04</span> Transistor (BJT)</button>
+</nav>
+ 
+<!-- TAB 1: DIODES -->
+<div id="tab-diode" class="tab-content active">
+  <div class="section-head"><span>MODULE 01 — DIODES: THE ONE-WAY VALVE</span><span class="lesson-tag">forward bias conducts, reverse blocks</span></div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">Diode &amp; bias</div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Diode type</span></div>
+        <select class="sel-input" id="d-type" onchange="calcDiode()"></select>
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Applied voltage</span><span class="hint" id="d-vb-v">0.70 V</span></div>
+        <input type="range" id="d-vb" min="-5" max="3.6" value="0.7" step="0.02" oninput="calcDiode()">
+      </div>
+      <div class="readout-grid">
+        <div class="readout"><div class="label">Bias</div><div class="val" id="r-d-bias" style="font-size:12px">FORWARD</div></div>
+        <div class="readout cyan"><div class="label">Diode current</div><div class="val" id="r-d-cur">\u2014</div></div>
+        <div class="readout green"><div class="label">V(forward)</div><div class="val" id="r-d-vf">0.7 V</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">I-V characteristic curve</div>
+      <canvas id="diode-canvas" height="240"></canvas>
+      <table class="rtable"><thead><tr><th>Type</th><th>Forward Voltage (Vf)</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td>Silicon</td><td>~0.7 V</td><td>General rectification/signal</td></tr>
+          <tr><td>Germanium</td><td>~0.3 V</td><td>Low-drop, older/RF detectors</td></tr>
+          <tr><td>Schottky</td><td>~0.2 V</td><td>Fast switching, low loss</td></tr>
+          <tr><td>LED</td><td>~1.8\u20133.4 V</td><td>Indication / light</td></tr>
+        </tbody></table>
+      <div class="lesson-box"><div class="lb-head">◆ How a diode works</div><div class="lb-body">A diode is a one-way valve for current. <strong>Forward biased</strong> (anode positive) it conducts once the voltage exceeds its forward drop V<sub>f</sub> \u2014 above that, current rises very steeply (the "knee"). <strong>Reverse biased</strong> it blocks, passing only a tiny leakage current until reverse breakdown. That one-way behavior is what makes rectification possible.</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- TAB 2: LED CIRCUIT -->
+<div id="tab-led" class="tab-content">
+  <div class="section-head"><span>MODULE 02 — LED CURRENT-LIMITING RESISTOR</span><span class="lesson-tag">R = (V<sub>S</sub> \u2212 V<sub>f</sub>) / I</span></div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">Design the LED circuit</div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Supply voltage</span><span class="hint" id="l-vs-v">5 V</span></div>
+        <input type="range" id="l-vs" min="1.5" max="24" value="5" step="0.5" oninput="calcLed()">
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">LED color (sets V<sub>f</sub>)</span></div>
+        <select class="sel-input" id="l-color" onchange="calcLed()"></select>
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Series resistor</span><span class="hint" id="l-r-v">150 &Omega;</span></div>
+        <input type="range" id="l-r" min="10" max="2200" value="150" step="10" oninput="calcLed()">
+      </div>
+      <div class="btn-row"><button class="cbtn green" onclick="setSafe()">Auto-size for 20 mA</button></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Circuit &amp; result</div>
+      <canvas id="led-canvas" height="200"></canvas>
+      <div class="readout-grid">
+        <div class="readout cyan"><div class="label">LED current</div><div class="val" id="r-l-i">\u2014</div></div>
+        <div class="readout"><div class="label">V across R</div><div class="val" id="r-l-vr">\u2014</div></div>
+        <div class="readout green"><div class="label">R power</div><div class="val" id="r-l-p">\u2014</div></div>
+        <div class="readout"><div class="label">Status</div><div class="val" id="r-l-stat" style="font-size:11px">\u2014</div></div>
+      </div>
+      <div class="formula-box"><div class="eq">R = (V<sub>S</sub> \u2212 V<sub>f</sub>) / I<sub>LED</sub></div>The resistor drops the leftover voltage so the LED gets its safe current (typically ~20 mA max for a standard 5 mm LED).</div>
+      <div class="callout red"><span class="key">WITHOUT the resistor</span> the LED behaves like a diode past its knee \u2014 current runs away and it burns out. The series resistor is what keeps the current safe.</div>
+    </div>
+  </div>
+</div>
+ 
+<!-- TAB 3: RECTIFIERS -->
+<div id="tab-rect" class="tab-content">
+  <div class="section-head"><span>MODULE 03 — RECTIFIERS: AC \u2192 DC</span><span class="lesson-tag">diodes steer current one way</span></div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">Rectifier controls</div>
+      <div class="btn-row">
+        <button class="cbtn active" id="rc-half" onclick="setRect('half',this)">Half-Wave</button>
+        <button class="cbtn" id="rc-full" onclick="setRect('full',this)">Full-Wave (Bridge)</button>
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Peak input voltage</span><span class="hint" id="rc-vp-v">10 V</span></div>
+        <input type="range" id="rc-vp" min="2" max="24" value="10" step="1" oninput="rectReadout()">
+      </div>
+      <div class="btn-row"><button class="cbtn cyan" id="rc-cap" onclick="toggleCap()">Smoothing Cap: OFF</button></div>
+      <div class="readout-grid">
+        <div class="readout cyan"><div class="label">Type</div><div class="val" id="r-rc-type" style="font-size:11px">HALF-WAVE</div></div>
+        <div class="readout green"><div class="label">Avg DC out</div><div class="val" id="r-rc-avg">\u2014</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Oscilloscope</div>
+      <canvas id="rect-canvas" height="260"></canvas>
+      <div class="lesson-box"><div class="lb-head">◆ Rectification</div><div class="lb-body"><strong>Half-wave</strong> uses one diode and passes only the positive halves \u2014 simple but wastes half the cycle (avg \u2248 0.318 &times; V<sub>peak</sub>). <strong>Full-wave bridge</strong> uses four diodes to flip the negative halves up too (avg \u2248 0.637 &times; V<sub>peak</sub>). A <strong>smoothing capacitor</strong> charges on the peaks and discharges between them, filling the gaps to produce steadier DC with some ripple.</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- TAB 4: TRANSISTOR -->
+<div id="tab-bjt" class="tab-content">
+  <div class="section-head"><span>MODULE 04 — TRANSISTOR (NPN BJT)</span><span class="lesson-tag">a small base current controls a large collector current</span></div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">Bias the transistor</div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Supply (V<sub>CC</sub>)</span><span class="hint" id="t-vcc-v">9 V</span></div>
+        <input type="range" id="t-vcc" min="3" max="24" value="9" step="1" oninput="calcBjt()">
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Collector resistor (R<sub>C</sub>)</span><span class="hint" id="t-rc-v">470 &Omega;</span></div>
+        <input type="range" id="t-rc" min="100" max="4700" value="470" step="10" oninput="calcBjt()">
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Current gain (\u03b2 / hFE)</span><span class="hint" id="t-beta-v">100</span></div>
+        <input type="range" id="t-beta" min="20" max="400" value="100" step="10" oninput="calcBjt()">
+      </div>
+      <div class="ctrl">
+        <div class="field-label"><span class="name">Base current (I<sub>B</sub>)</span><span class="hint" id="t-ib-v">0 \u00b5A</span></div>
+        <input type="range" id="t-ib" min="0" max="500" value="0" step="5" oninput="calcBjt()">
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">NPN as a switch/amplifier</div>
+      <canvas id="bjt-canvas" height="240"></canvas>
+      <div class="readout-grid">
+        <div class="readout"><div class="label">Region</div><div class="val" id="r-t-region" style="font-size:11px">CUTOFF</div></div>
+        <div class="readout cyan"><div class="label">Collector I</div><div class="val" id="r-t-ic">0 mA</div></div>
+        <div class="readout amber"><div class="label">V(CE)</div><div class="val" id="r-t-vce">\u2014</div></div>
+        <div class="readout green"><div class="label">LED</div><div class="val" id="r-t-led" style="font-size:11px">OFF</div></div>
+      </div>
+      <div class="formula-box"><div class="eq">I<sub>C</sub> = \u03b2 &times; I<sub>B</sub> &nbsp;(active region)</div><div class="eq">V<sub>CE</sub> = V<sub>CC</sub> \u2212 I<sub>C</sub> &times; R<sub>C</sub></div></div>
+      <div class="lesson-box"><div class="lb-head">◆ Cutoff \u2192 Active \u2192 Saturation</div><div class="lb-body">With <strong>no base current</strong> the transistor is in <strong>cutoff</strong> \u2014 off, no collector current. Add base current and it enters the <strong>active</strong> region where I<sub>C</sub> = \u03b2\u00d7I<sub>B</sub> (amplifier behavior). Push enough base current and it <strong>saturates</strong> \u2014 fully on, like a closed switch, with V<sub>CE</sub> near zero. Switch and amplifier are the same device in different regions.</div></div>
+    </div>
+  </div>
+</div>
+ 
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('bc-theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  setTimeout(redrawActive,20);
+}
+function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
+function cbg(){return isLight()?'#eaf0f6':'#070b10';}
+function col(k){return getComputedStyle(document.documentElement).getPropertyValue('--'+k).trim();}
+function gridCol(){return isLight()?'#d6e0ea':'#141c26';}
+function dimCol(){return isLight()?'#4a6070':'#6a8090';}
+function redrawActive(){const a=document.querySelector('.tab-content.active');if(!a)return;
+  if(a.id==='tab-diode')drawDiode();if(a.id==='tab-led')drawLed();if(a.id==='tab-rect')drawRect();if(a.id==='tab-bjt')drawBjt();}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+  setTimeout(redrawActive,10);
+}
+function fmtA(a){if(a<1e-3)return (a*1e6).toFixed(1)+' \u00b5A';if(a<1)return (a*1e3).toFixed(1)+' mA';return a.toFixed(2)+' A';}
+function fmtW(w){if(w<1e-3)return (w*1e6).toFixed(1)+' \u00b5W';if(w<1)return (w*1e3).toFixed(0)+' mW';return w.toFixed(2)+' W';}
+function fmtR(r){if(r>=1e3)return (r/1e3).toFixed(r%1e3?2:0)+' k\u03a9';return r.toFixed(0)+' \u03a9';}
+ 
+// ===== DIODES =====
+const DIODES=[['Silicon',0.7],['Germanium',0.3],['Schottky',0.2],['LED (red)',1.8],['LED (green)',2.2],['LED (blue/white)',3.2]];
+const VT=0.02585;
+function diodeCurrent(V,Vf){ // knee at Vf = ~1mA reference
+  const Is=1e-3/Math.exp(Vf/VT);
+  if(V<=0)return -Is*(1-Math.exp(V/VT)); // tiny reverse leakage (negative)
+  const arg=Math.min(V/VT,60);return Is*(Math.exp(arg)-1);
+}
+function calcDiode(){
+  const Vf=DIODES[+document.getElementById('d-type').value][1];
+  const Vb=parseFloat(document.getElementById('d-vb').value);
+  document.getElementById('d-vb-v').textContent=Vb.toFixed(2)+' V';
+  document.getElementById('r-d-vf').textContent=Vf+' V';
+  let I=diodeCurrent(Vb,Vf);
+  const bias=Vb>=0?'FORWARD':'REVERSE';
+  document.getElementById('r-d-bias').textContent=bias;
+  document.getElementById('r-d-bias').style.color=Vb>=0?col('green'):col('red');
+  document.getElementById('r-d-cur').textContent=(Vb<0)?'~0 (leakage)':(I>0.06?'>60 mA':fmtA(I));
+  drawDiode();
+}
+function drawDiode(){
+  const c=document.getElementById('diode-canvas');if(!c)return;const W=c.clientWidth||520,H=240;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const Vf=DIODES[+document.getElementById('d-type').value][1],Vb=parseFloat(document.getElementById('d-vb').value);
+  const pad={l:44,r:16,t:16,b:30},gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  const vMin=-5,vMax=3.6,iMax=0.06,iMin=-0.008;
+  const vx=v=>pad.l+((v-vMin)/(vMax-vMin))*gW, iy=i=>pad.t+gH-((i-iMin)/(iMax-iMin))*gH;
+  // axes
+  x.strokeStyle=gridCol();x.lineWidth=1;
+  x.beginPath();x.moveTo(pad.l,iy(0));x.lineTo(pad.l+gW,iy(0));x.stroke();
+  x.beginPath();x.moveTo(vx(0),pad.t);x.lineTo(vx(0),pad.t+gH);x.stroke();
+  x.fillStyle=dimCol();x.font='9px Share Tech Mono';x.textAlign='center';
+  x.fillText('V',pad.l+gW-6,iy(0)-6);x.fillText('I',vx(0)+10,pad.t+8);
+  for(let v=-4;v<=3;v++){if(v===0)continue;x.fillText(v+'V',vx(v),iy(0)+14);}
+  x.textAlign='right';for(let mA=20;mA<=60;mA+=20){x.fillText(mA+'mA',pad.l-4,iy(mA/1000)+3);}x.textAlign='left';
+  // curve
+  x.strokeStyle=col('amber');x.lineWidth=2.5;x.beginPath();let started=false;
+  for(let px=0;px<=gW;px++){const v=vMin+(px/gW)*(vMax-vMin);let i=diodeCurrent(v,Vf);i=Math.max(iMin,Math.min(iMax,i));
+    const X=pad.l+px,Y=iy(i);started?x.lineTo(X,Y):(x.moveTo(X,Y),started=true);}
+  x.stroke();
+  // knee marker
+  x.strokeStyle=col('green')+'99';x.setLineDash([4,4]);x.beginPath();x.moveTo(vx(Vf),pad.t);x.lineTo(vx(Vf),pad.t+gH);x.stroke();x.setLineDash([]);
+  x.fillStyle=col('green');x.font='9px Share Tech Mono';x.textAlign='center';x.fillText('Vf='+Vf+'V',vx(Vf),pad.t+10);
+  // operating point
+  let iop=Math.max(iMin,Math.min(iMax,diodeCurrent(Vb,Vf)));
+  x.fillStyle=col('cyan');x.beginPath();x.arc(vx(Vb),iy(iop),5,0,Math.PI*2);x.fill();
+  x.textAlign='left';
+}
+ 
+// ===== LED =====
+const LEDCOLORS=[['Red',1.8,'#ff4444'],['Yellow',2.0,'#ffd21a'],['Green',2.2,'#00ff88'],['Blue',3.2,'#4da6ff'],['White',3.4,'#eaf4ff']];
+function calcLed(){
+  const Vs=parseFloat(document.getElementById('l-vs').value);
+  const cidx=+document.getElementById('l-color').value,Vf=LEDCOLORS[cidx][1];
+  const R=parseFloat(document.getElementById('l-r').value);
+  document.getElementById('l-vs-v').textContent=Vs+' V';document.getElementById('l-r-v').textContent=fmtR(R);
+  let I=(Vs-Vf)/R; if(I<0)I=0;
+  const Vr=I*R,P=I*I*R;
+  document.getElementById('r-l-i').textContent=(Vs<=Vf)?'0 (won\u2019t light)':fmtA(I);
+  document.getElementById('r-l-vr').textContent=Vr.toFixed(2)+' V';
+  document.getElementById('r-l-p').textContent=fmtW(P);
+  const stat=document.getElementById('r-l-stat');
+  if(Vs<=Vf){stat.textContent='NO LIGHT';stat.style.color=col('text-dim');}
+  else if(I>0.025){stat.textContent='OVER-CURRENT';stat.style.color=col('red');}
+  else if(I<0.002){stat.textContent='DIM';stat.style.color=col('amber');}
+  else {stat.textContent='OK';stat.style.color=col('green');}
+  drawLed();
+}
+function setSafe(){const Vs=parseFloat(document.getElementById('l-vs').value),Vf=LEDCOLORS[+document.getElementById('l-color').value][1];
+  let R=Math.max(10,Math.round((Vs-Vf)/0.02/10)*10);if(R>2200)R=2200;document.getElementById('l-r').value=R;calcLed();}
+function drawLed(){
+  const c=document.getElementById('led-canvas');if(!c)return;const W=c.clientWidth||520,H=200;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const Vs=parseFloat(document.getElementById('l-vs').value),cidx=+document.getElementById('l-color').value,Vf=LEDCOLORS[cidx][1],R=parseFloat(document.getElementById('l-r').value);
+  let I=Math.max(0,(Vs-Vf)/R);const bright=Math.min(1,I/0.02);
+  const midY=H/2,lx=60,rx=W-60;
+  x.strokeStyle=col('amber');x.lineWidth=2;
+  drawBattery(x,lx,midY,Vs);
+  x.beginPath();x.moveTo(lx,midY-18);x.lineTo(lx,60);x.lineTo(W*0.35,60);x.stroke();
+  drawZigResistor(x,W*0.35,60,W*0.6,60);x.strokeStyle=col('amber');x.lineWidth=2;
+  x.beginPath();x.moveTo(W*0.6,60);x.lineTo(rx,60);x.lineTo(rx,midY-14);x.stroke();
+  // LED (triangle + bar) with glow
+  const lyc=midY+6,clr=LEDCOLORS[cidx][2];
+  if(bright>0.02){x.fillStyle=clr;x.globalAlpha=0.15+0.5*bright;x.beginPath();x.arc(rx,lyc,20+18*bright,0,Math.PI*2);x.fill();x.globalAlpha=1;}
+  x.strokeStyle=bright>0.02?clr:dimCol();x.fillStyle=bright>0.02?clr:cbg();x.lineWidth=2;
+  x.beginPath();x.moveTo(rx-9,lyc-9);x.lineTo(rx+9,lyc);x.lineTo(rx-9,lyc+9);x.closePath();x.fill();x.stroke();
+  x.beginPath();x.moveTo(rx+9,lyc-9);x.lineTo(rx+9,lyc+9);x.stroke();
+  x.strokeStyle=col('amber');x.lineWidth=2;x.beginPath();x.moveTo(rx,lyc+9);x.lineTo(rx,midY+40);x.lineTo(lx,midY+40);x.lineTo(lx,midY+18);x.stroke();
+  x.fillStyle=col('green');x.font='9px Share Tech Mono';x.textAlign='center';x.fillText('R',W*0.475,48);x.fillText(fmtR(R),W*0.475,80);
+  x.fillStyle=col('text-dim');x.fillText('LED '+LEDCOLORS[cidx][0]+' ('+Vf+'V)',rx,H-8);x.textAlign='left';
+}
+ 
+// ===== RECTIFIER =====
+let rectType='half',rectCap=false,rectPhase=0;
+function setRect(t,btn){rectType=t;document.getElementById('rc-half').classList.toggle('active',t==='half');document.getElementById('rc-full').classList.toggle('active',t==='full');rectReadout();}
+function toggleCap(){rectCap=!rectCap;document.getElementById('rc-cap').textContent='Smoothing Cap: '+(rectCap?'ON':'OFF');document.getElementById('rc-cap').classList.toggle('active',rectCap);rectReadout();}
+function rectReadout(){
+  const Vp=parseFloat(document.getElementById('rc-vp').value);document.getElementById('rc-vp-v').textContent=Vp+' V';
+  document.getElementById('r-rc-type').textContent=rectType==='half'?'HALF-WAVE':'FULL-WAVE';
+  const avg=rectType==='half'?Vp/Math.PI:2*Vp/Math.PI;
+  document.getElementById('r-rc-avg').textContent=avg.toFixed(2)+' V';
+}
+function drawRect(){
+  const c=document.getElementById('rect-canvas');if(!c)return;const W=c.clientWidth||520,H=260;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const Vp=parseFloat(document.getElementById('rc-vp').value);
+  const pad={l:36,r:14,t:16,b:24},gW=W-pad.l-pad.r,gH=H-pad.t-pad.b,midY=pad.t+gH/2;
+  x.strokeStyle=gridCol();x.lineWidth=0.5;x.beginPath();x.moveTo(pad.l,midY);x.lineTo(pad.l+gW,midY);x.stroke();
+  x.beginPath();x.moveTo(pad.l,pad.t);x.lineTo(pad.l,pad.t+gH);x.stroke();
+  const amp=gH*0.42;const cycles=3;
+  const yv=v=>midY-(v/Vp)*amp;
+  // input sine (dim)
+  x.strokeStyle=dimCol();x.lineWidth=1.2;x.beginPath();
+  for(let px=0;px<=gW;px++){const t=(px/gW)*cycles*2*Math.PI+rectPhase;const v=Vp*Math.sin(t);px===0?x.moveTo(pad.l+px,yv(v)):x.lineTo(pad.l+px,yv(v));}
+  x.stroke();
+  x.fillStyle=dimCol();x.font='9px Share Tech Mono';x.fillText('AC input',pad.l+4,pad.t+10);
+  // rectified output
+  let capV=0;const dt=1/gW*cycles*2*Math.PI;
+  x.strokeStyle=col('amber');x.lineWidth=2.5;x.beginPath();
+  for(let px=0;px<=gW;px++){const t=(px/gW)*cycles*2*Math.PI+rectPhase;let raw=Vp*Math.sin(t);
+    let out=rectType==='half'?Math.max(0,raw):Math.abs(raw);
+    if(rectCap){ if(out>capV)capV=out; else capV-=capV*0.06; out=capV; }
+    px===0?x.moveTo(pad.l+px,yv(out)):x.lineTo(pad.l+px,yv(out));}
+  x.stroke();
+  // avg line
+  const avg=rectType==='half'?Vp/Math.PI:2*Vp/Math.PI;
+  x.strokeStyle=col('green')+'aa';x.setLineDash([5,4]);x.lineWidth=1.2;x.beginPath();x.moveTo(pad.l,yv(avg));x.lineTo(pad.l+gW,yv(avg));x.stroke();x.setLineDash([]);
+  x.fillStyle=col('green');x.fillText('avg DC '+avg.toFixed(1)+'V',pad.l+gW-70,yv(avg)-4);
+  x.fillStyle=col('amber');x.fillText((rectType==='half'?'half-wave':'full-wave')+(rectCap?' + cap':'')+' output',pad.l+4,pad.t+gH-4);
+}
+ 
+// ===== BJT =====
+function calcBjt(){
+  const Vcc=parseFloat(document.getElementById('t-vcc').value),Rc=parseFloat(document.getElementById('t-rc').value),beta=parseFloat(document.getElementById('t-beta').value),Ib=parseFloat(document.getElementById('t-ib').value)*1e-6;
+  document.getElementById('t-vcc-v').textContent=Vcc+' V';document.getElementById('t-rc-v').textContent=fmtR(Rc);document.getElementById('t-beta-v').textContent=beta;document.getElementById('t-ib-v').textContent=(Ib*1e6).toFixed(0)+' \u00b5A';
+  const IcActive=beta*Ib;const IcSat=(Vcc-0.2)/Rc;
+  let Ic,region;
+  if(Ib<=0){Ic=0;region='CUTOFF';}
+  else if(IcActive>=IcSat){Ic=IcSat;region='SATURATION';}
+  else {Ic=IcActive;region='ACTIVE';}
+  let Vce=Vcc-Ic*Rc;if(Vce<0.2)Vce=0.2;
+  document.getElementById('r-t-region').textContent=region;
+  document.getElementById('r-t-region').style.color=region==='CUTOFF'?col('red'):region==='SATURATION'?col('green'):col('amber');
+  document.getElementById('r-t-ic').textContent=fmtA(Ic);
+  document.getElementById('r-t-vce').textContent=Vce.toFixed(2)+' V';
+  const led=document.getElementById('r-t-led');const on=Ic>0.001;
+  led.textContent=on?(Ic>0.01?'BRIGHT':'DIM'):'OFF';led.style.color=on?col('green'):col('red');
+  drawBjt(Ic,IcSat,region,Vce);
+}
+function drawBjt(Ic,IcSat,region,Vce){
+  const c=document.getElementById('bjt-canvas');if(!c)return;const W=c.clientWidth||520,H=240;c.width=W;c.height=H;
+  const x=c.getContext('2d');x.fillStyle=cbg();x.fillRect(0,0,W,H);
+  const cx=W*0.55,cy=H*0.5;
+  // transistor symbol (NPN): vertical base bar, collector up, emitter down with arrow out
+  x.strokeStyle=col('amber');x.lineWidth=2.5;
+  x.beginPath();x.moveTo(cx,cy-26);x.lineTo(cx,cy+26);x.stroke(); // base bar
+  x.beginPath();x.moveTo(cx-30,cy);x.lineTo(cx,cy-8);x.stroke(); // base lead
+  x.beginPath();x.moveTo(cx,cy-16);x.lineTo(cx+26,cy-34);x.stroke(); // collector
+  x.beginPath();x.moveTo(cx,cy+16);x.lineTo(cx+26,cy+34);x.stroke(); // emitter
+  // emitter arrow (NPN points out)
+  x.fillStyle=col('amber');x.beginPath();x.moveTo(cx+26,cy+34);x.lineTo(cx+16,cy+30);x.lineTo(cx+20,cy+22);x.closePath();x.fill();
+  x.fillStyle=col('text-dim');x.font='9px Share Tech Mono';
+  x.fillText('B',cx-40,cy+3);x.fillText('C',cx+30,cy-34);x.fillText('E',cx+30,cy+40);
+  // collector path up to Vcc through Rc + LED
+  const topY=28;x.strokeStyle=col('amber');x.lineWidth=2;
+  x.beginPath();x.moveTo(cx+26,cy-34);x.lineTo(cx+52,cy-34);x.lineTo(cx+52,topY);x.lineTo(W-40,topY);x.stroke();
+  // LED on collector
+  const on=Ic>0.001,bright=Math.min(1,Ic/0.02);
+  const lx=cx+90,lyy=topY;
+  if(bright>0.02){x.fillStyle=col('green');x.globalAlpha=0.1+0.5*bright;x.beginPath();x.arc(lx,lyy,10+14*bright,0,Math.PI*2);x.fill();x.globalAlpha=1;}
+  x.fillStyle=on?col('green'):cbg();x.strokeStyle=on?col('green'):dimCol();x.lineWidth=2;
+  x.beginPath();x.moveTo(lx-7,lyy-7);x.lineTo(lx+7,lyy);x.lineTo(lx-7,lyy+7);x.closePath();x.fill();x.stroke();
+  x.beginPath();x.moveTo(lx+7,lyy-7);x.lineTo(lx+7,lyy+7);x.stroke();
+  // Vcc + emitter ground
+  x.fillStyle=col('red');x.font='bold 10px Share Tech Mono';x.textAlign='left';x.fillText('+Vcc',W-38,topY+3);
+  x.strokeStyle=col('amber');x.lineWidth=2;x.beginPath();x.moveTo(cx+26,cy+34);x.lineTo(cx+26,H-24);x.lineTo(cx+2,H-24);x.stroke();
+  x.strokeStyle=dimCol();x.beginPath();x.moveTo(cx+26-12,H-24);x.lineTo(cx+26+12,H-24);x.moveTo(cx+26-8,H-19);x.lineTo(cx+26+8,H-19);x.moveTo(cx+26-4,H-14);x.lineTo(cx+26+4,H-14);x.stroke();
+  // base source
+  x.strokeStyle=on?col('cyan'):dimCol();x.lineWidth=2;x.beginPath();x.moveTo(40,cy);x.lineTo(cx-30,cy);x.stroke();
+  x.fillStyle=on?col('cyan'):dimCol();x.font='9px Share Tech Mono';x.fillText('IB',44,cy-6);
+  // region label
+  x.fillStyle=region==='SATURATION'?col('green'):region==='ACTIVE'?col('amber'):col('red');
+  x.font='bold 11px Share Tech Mono';x.textAlign='center';x.fillText(region,cx,H-6);x.textAlign='left';
+}
+ 
+// ===== SHARED =====
+function drawBattery(x,bx,by,V){
+  x.strokeStyle=col('amber');x.lineWidth=2;
+  x.beginPath();x.moveTo(bx-10,by-14);x.lineTo(bx+10,by-14);x.stroke();
+  x.beginPath();x.moveTo(bx-6,by-6);x.lineTo(bx+6,by-6);x.stroke();
+  x.beginPath();x.moveTo(bx-10,by+4);x.lineTo(bx+10,by+4);x.stroke();
+  x.beginPath();x.moveTo(bx-6,by+12);x.lineTo(bx+6,by+12);x.stroke();
+  x.fillStyle=col('amber');x.font='bold 10px Share Tech Mono';x.textAlign='center';x.fillText(V+'V',bx,by+26);x.textAlign='left';
+}
+function drawZigResistor(x,x1,y,x2,yy){x.strokeStyle=col('green');x.lineWidth=2;const zx=x2-x1,zc=6,seg=zx/(zc*2);x.beginPath();x.moveTo(x1,y);for(let i=0;i<zc*2;i++){x.lineTo(x1+seg*(i+1),y+((i%2===0)?-7:7));}x.lineTo(x2,yy);x.stroke();}
+ 
+// animation loop for rectifier
+function loop(){rectPhase-=0.05;const a=document.querySelector('.tab-content.active');if(a&&a.id==='tab-rect')drawRect();requestAnimationFrame(loop);}
+ 
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  document.getElementById('d-type').innerHTML=DIODES.map((d,i)=>`<option value="${i}">${d[0]} (${d[1]} V)</option>`).join('');
+  document.getElementById('l-color').innerHTML=LEDCOLORS.map((d,i)=>`<option value="${i}">${d[0]} (${d[1]} V)</option>`).join('');
+  calcDiode();calcLed();rectReadout();calcBjt();
+  loop();
+});
+window.addEventListener('resize',redrawActive);
+</script>
+</body>
+</html>
