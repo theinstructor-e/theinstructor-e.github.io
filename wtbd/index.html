@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warrior Tasks &amp; Battle Drills — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px}
+.header-left{display:flex;align-items:center;gap:16px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:17px;font-weight:700;color:var(--purple);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.live{color:var(--purple);animation:blink 1.4s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 20px;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 60px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--purple);opacity:.5}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}.panel.red::before{background:var(--red)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'▶';color:var(--purple);font-size:8px}
+.area{border:1px solid var(--border-bright);margin-bottom:10px}
+.area-h{font-family:var(--mono);font-size:12px;letter-spacing:1px;color:var(--purple);background:var(--purple-dark);padding:9px 13px;text-transform:uppercase;font-weight:700}
+.area-b{padding:11px 14px;font-size:13px;line-height:1.7;color:var(--text)}
+.area-b li{margin-left:16px;margin-bottom:3px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.mnem{border:1px solid var(--border-bright);background:var(--canvas-bg);padding:13px;margin-bottom:12px}
+.mnem .mt{font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.mnem table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+.mnem td{padding:4px 6px;border-bottom:1px solid var(--border);vertical-align:top}
+.mnem td.k{color:var(--purple);font-weight:700;width:34px}
+.drill{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--text);border:1px solid var(--border-bright);background:var(--canvas-bg);padding:6px 10px;margin:3px}
+/* quiz */
+.quiz-q{font-size:16px;font-weight:600;color:var(--text-bright);line-height:1.4;margin-bottom:16px}
+.opt{display:block;width:100%;text-align:left;font-family:var(--display);font-size:14px;font-weight:500;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:11px 14px;margin-bottom:8px;cursor:pointer;transition:all .14s}
+.opt:hover:not(:disabled){border-color:var(--purple);color:var(--purple)}
+.opt.correct{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.opt.wrong{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.opt:disabled{cursor:default}
+.qfb{font-family:var(--mono);font-size:12px;line-height:1.6;margin-top:12px;padding:11px 13px;border-left:3px solid var(--purple);background:var(--purple-dark);display:none}
+.qfb.show{display:block}.qfb.good{border-left-color:var(--green);background:var(--green-dark)}.qfb.bad{border-left-color:var(--red);background:var(--red-dark)}
+.qnav{margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--purple);color:var(--purple);padding:9px 16px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover{background:var(--purple);color:var(--bg)}
+.cbtn[disabled]{opacity:.35;cursor:default}
+.score{font-family:var(--mono);font-size:12px;color:var(--purple)}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>Warrior Tasks &amp; Battle Drills <span>// 17E</span></h1></div>
+  <div class="hdr-right"><button class="theme-btn" id="wt-theme" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED // FOUO</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID \u2014 CONTENT UNDERGOING QC/QA. Task lists change by edition; refer to the current STP 21-1-SMCT / TC 3-21.75 and your instructor in class.</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('tasks',this)">Warrior Tasks</button>
+  <button class="tab-btn" onclick="switchTab('drills',this)">Battle Drills</button>
+  <button class="tab-btn" onclick="switchTab('mnem',this)">Mnemonics</button>
+  <button class="tab-btn" onclick="switchTab('quiz',this)">Quiz</button>
+</nav>
+ 
+<div id="tab-tasks" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">Warrior Tasks \u2014 5 subject areas</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:12px"><strong style="color:var(--purple)">Warrior tasks</strong> are individual Soldier skills known to be critical to survival. They are organized into five subject areas (examples below \u2014 not the full list).</div>
+    <div id="areas"></div>
+    <div class="callout amber"><span class="key">COUNTS VARY:</span> different editions list different totals (e.g., ~39 in 2011; 65 warrior tasks + 62 battle drills in other editions). Treat the 5-area framework as solid and confirm the exact task list against the current publication.</div>
+  </div>
+</div>
+ 
+<div id="tab-drills" class="tab-content">
+  <div class="panel red">
+    <div class="panel-title">Battle Drills \u2014 collective, rehearsed reactions</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:12px">A <strong style="color:var(--red)">battle drill</strong> is a collective action executed by a platoon or smaller element <em>without</em> a deliberate decision-making process \u2014 rehearsed until it is instinctive. Common examples:</div>
+    <div id="drills"></div>
+    <div class="callout"><span class="key">WARRIOR TASK vs BATTLE DRILL:</span> a warrior task is what the <em>individual Soldier</em> can do (load a weapon, apply a tourniquet); a battle drill is what the <em>team/squad</em> does together on a cue (react to contact, react to ambush).</div>
+  </div>
+</div>
+ 
+<div id="tab-mnem" class="tab-content">
+  <div class="panel amber">
+    <div class="panel-title">Key mnemonics &amp; reports</div>
+    <div class="mnem"><div class="mt">SPORTS \u2014 immediate action (weapon stoppage)</div>
+      <table><tr><td class="k">S</td><td>Slap the magazine to seat it</td></tr><tr><td class="k">P</td><td>Pull the charging handle to the rear</td></tr><tr><td class="k">O</td><td>Observe for ejection of the round/casing</td></tr><tr><td class="k">R</td><td>Release the charging handle</td></tr><tr><td class="k">T</td><td>Tap the forward assist</td></tr><tr><td class="k">S</td><td>Shoot (or re-attempt to fire)</td></tr></table></div>
+    <div class="mnem"><div class="mt">SALUTE \u2014 spot report</div>
+      <table><tr><td class="k">S</td><td>Size (how many)</td></tr><tr><td class="k">A</td><td>Activity (what they\u2019re doing)</td></tr><tr><td class="k">L</td><td>Location (grid)</td></tr><tr><td class="k">U</td><td>Unit / uniform (who)</td></tr><tr><td class="k">T</td><td>Time (observed)</td></tr><tr><td class="k">E</td><td>Equipment (weapons/vehicles)</td></tr></table></div>
+    <div class="mnem"><div class="mt">9-LINE MEDEVAC (order of lines)</div>
+      <table>
+      <tr><td class="k">1</td><td>Location of pickup site</td></tr><tr><td class="k">2</td><td>Radio frequency, call sign, suffix</td></tr><tr><td class="k">3</td><td>Number of patients by precedence</td></tr><tr><td class="k">4</td><td>Special equipment required</td></tr><tr><td class="k">5</td><td>Number of patients by type (litter/ambulatory)</td></tr><tr><td class="k">6</td><td>Security at pickup site (or NBC in wartime)</td></tr><tr><td class="k">7</td><td>Method of marking pickup site</td></tr><tr><td class="k">8</td><td>Patient nationality &amp; status</td></tr><tr><td class="k">9</td><td>Terrain / obstacles (or NBC contamination)</td></tr></table></div>
+    <div class="callout"><span class="key">OAKOC</span> (terrain analysis): Observation &amp; fields of fire, Avenues of approach, Key terrain, Obstacles, Cover &amp; concealment.</div>
+  </div>
+</div>
+ 
+<div id="tab-quiz" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Quick check <span class="score" id="q-score" style="margin-left:auto">Score 0/0</span></div>
+    <div id="quiz-body"></div>
+  </div>
+</div>
+ 
+<script>
+function toggleTheme(){const h=document.documentElement,l=h.getAttribute('data-theme')==='light';h.setAttribute('data-theme',l?'dark':'light');document.getElementById('wt-theme').textContent=l?'\u2600 LIGHT MODE':'\u263e DARK MODE';}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+const AREAS=[
+  ['1. Shoot','Maintain, employ, and engage targets with your individually assigned weapon system.',['Load, reduce a stoppage (SPORTS), and clear the M16/M4','Engage targets with the assigned weapon','Employ hand grenades','Zero and maintain the weapon']],
+  ['2. Move','Move tactically and navigate.',['Move under direct fire; move over/through/around obstacles','React to indirect fire while dismounted','Navigate with map & lensatic compass','Determine location using a GPS/DAGR']],
+  ['3. Communicate','Send and receive information.',['Operate a tactical radio (SINCGARS)','Send a radio message using proper procedure','Report using SALUTE / SALT','Send a spot report and a SITREP']],
+  ['4. Survive','Protect yourself and your team; render aid.',['Perform first aid / control bleeding (tourniquet)','React to a chemical/biological attack; MOPP','Use cover, concealment & camouflage','Perform first aid for and evacuate a casualty']],
+  ['5. Adapt','Operate within the rules and the environment.',['Comply with the Rules of Engagement (ROE) & Law of War','Interact with the population / detainees appropriately','Adapt to the operational environment (desert, jungle, arctic, urban)','Employ the Soldier\u2019s Rules']],
+];
+function renderAreas(){document.getElementById('areas').innerHTML=AREAS.map(a=>`<div class="area"><div class="area-h">${a[0]} \u2014 ${a[1]}</div><div class="area-b"><ul>${a[2].map(t=>'<li>'+t+'</li>').join('')}</ul></div></div>`).join('');}
+const DRILLS=['React to Contact','React to Ambush (Near)','React to Ambush (Far)','Break Contact','React to Indirect Fire','Establish Security','Evacuate a Casualty','Enter and Clear a Room','React to a Chemical Attack','Perform Actions as a Member of a Convoy / Mounted Patrol','Knock Out a Bunker','Breach a Wire / Mined Obstacle','Conduct a Squad Attack'];
+function renderDrills(){document.getElementById('drills').innerHTML=DRILLS.map(d=>`<span class="drill">${d}</span>`).join('');}
+const QUIZ=[
+  {q:'What is the difference between a warrior task and a battle drill?',o:['They are the same','A warrior task is an individual Soldier skill; a battle drill is a collective team/squad action','A battle drill is only for officers','A warrior task requires a written order'],a:1,e:'Warrior tasks are individual survival skills; battle drills are collective actions a platoon or smaller element executes without a deliberate decision-making process.'},
+  {q:'The five warrior-task subject areas are:',o:['Plan, Prepare, Execute, Assess, Report','Shoot, Move, Communicate, Survive, Adapt','Detect, Track, Identify, Defeat, Assess','Situation, Mission, Execution, Sustainment, Signal'],a:1,e:'The five subject areas are Shoot, Move, Communicate, Survive, and Adapt.'},
+  {q:'What does the "P" in the SPORTS immediate-action sequence stand for?',o:['Push the safety','Pull the charging handle to the rear','Present the weapon','Prime the chamber'],a:1,e:'SPORTS = Slap, Pull, Observe, Release, Tap, Shoot. "Pull" is pulling the charging handle fully to the rear.'},
+  {q:'A battle drill is best defined as a collective action executed \u2026',o:['Only after a full OPORD','\u2026 without a deliberate decision-making process (rehearsed/instinctive)','\u2026 by a battalion staff','\u2026 during garrison operations only'],a:1,e:'A battle drill is a collective action executed by a platoon or smaller element without a deliberate decision-making process.'},
+  {q:'Which report uses the format Size, Activity, Location, Unit, Time, Equipment?',o:['9-line MEDEVAC','SALUTE spot report','SITREP','OAKOC'],a:1,e:'SALUTE (Size, Activity, Location, Unit/uniform, Time, Equipment) is the spot report format.'},
+  {q:'Which of these is a battle drill rather than an individual warrior task?',o:['Apply a tourniquet','Load an M4','React to Ambush','Send a radio message'],a:2,e:'React to Ambush is a collective battle drill. The others are individual warrior tasks.'},
+  {q:'The 9-line is used to request what?',o:['Resupply','MEDEVAC (medical evacuation)','Fire support','A frequency change'],a:1,e:'The 9-line MEDEVAC request passes the information needed to evacuate casualties (location, freq/call sign, number/precedence of patients, etc.).'},
+  {q:'What publications are the doctrinal sources for warrior tasks and battle drills?',o:['FM 3-12 and JP 3-85','TC 3-21.75 and STP 21-1-SMCT','ADP 5-0 and FM 6-0','TM 9-1005-319-10 only'],a:1,e:'TC 3-21.75 (Warrior Skills) and STP 21-1-SMCT (Soldier\u2019s Manual of Common Tasks) are the doctrinal sources.'},
+];
+let qi=0,qs=0,qDone=false;
+function renderQuiz(){
+  const b=document.getElementById('quiz-body');
+  if(qi>=QUIZ.length){const pct=Math.round(qs/QUIZ.length*100);b.innerHTML=`<div style="text-align:center;padding:14px"><div style="font-family:var(--mono);font-size:34px;color:var(--purple)">${qs}/${QUIZ.length}</div><div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin:8px 0 16px">${pct}%</div><button class="cbtn" onclick="restartQuiz()">\u21bb Retake</button></div>`;document.getElementById('q-score').textContent='Score '+qs+'/'+QUIZ.length;return;}
+  const Q=QUIZ[qi];const opts=Q.o.map((t,i)=>({t,c:i===Q.a}));for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[opts[i],opts[j]]=[opts[j],opts[i]];}
+  b.innerHTML=`<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-bottom:8px">QUESTION ${qi+1} OF ${QUIZ.length}</div><div class="quiz-q">${Q.q}</div><div id="opts">${opts.map(o=>`<button class="opt" onclick="ans(this,${o.c})">${o.t}</button>`).join('')}</div><div class="qfb" id="qfb"></div><div class="qnav"><span></span><button class="cbtn" id="qnext" onclick="qnext()" style="display:none">Next \u2192</button></div>`;
+  qDone=false;document.getElementById('q-score').textContent='Score '+qs+'/'+QUIZ.length;
+}
+function ans(btn,correct){if(qDone)return;qDone=true;const Q=QUIZ[qi];document.querySelectorAll('#opts .opt').forEach(b=>{b.disabled=true;if(b.getAttribute('onclick').includes('true'))b.classList.add('correct');});const fb=document.getElementById('qfb');
+  if(correct){qs++;btn.classList.add('correct');fb.className='qfb good show';fb.innerHTML='\u2713 Correct. '+Q.e;}
+  else{btn.classList.add('wrong');fb.className='qfb bad show';fb.innerHTML='\u2717 '+Q.e;}
+  document.getElementById('q-score').textContent='Score '+qs+'/'+QUIZ.length;document.getElementById('qnext').style.display='inline-block';}
+function qnext(){qi++;renderQuiz();}
+function restartQuiz(){qi=0;qs=0;renderQuiz();}
+window.addEventListener('load',()=>{renderAreas();renderDrills();renderQuiz();});
+</script>
+</body>
+</html>
