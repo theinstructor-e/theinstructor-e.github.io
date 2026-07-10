@@ -39,6 +39,12 @@ h1 span{color:var(--text-dim);font-weight:400}
 .card .nm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
 .card .ds{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.6}
 .card .go{font-family:var(--mono);font-size:9px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.tag{font-family:var(--mono);font-size:7px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
+.tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
+.tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
+[data-theme="light"] .tag-guide{color:#5a3ccc}
+.card.is-guide{border-style:dashed}
+.card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
 .section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .section-label:first-child{margin-top:0}
 .empty-cat{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
@@ -64,32 +70,38 @@ const TOOLS=[
   // B1 Math
   {cat:'B1 Math',nm:'Math',ds:'Core math refresher for EW calculations',file:'math',color:'#ffb300'},
   // B2 Physics
+  {cat:'B2 Physics',kind:'guide',nm:'Radio Waves Explained',ds:'Plain-language guide: waves, spectrum, propagation, loss & antennas',file:'physicsguide',color:'#00d4ff'},
   {cat:'B2 Physics',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
   {cat:'B2 Physics',nm:'Physics 1',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
   {cat:'B2 Physics',nm:'Physics 2',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
   {cat:'B2 Physics',nm:'Physics 3',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
   {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff'},
   // C BET
+  {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
   {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
   {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88'},
   // E EW Theory
+  {cat:'E EW Theory',kind:'guide',nm:'Electronic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
   {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electronic attack, J-series',file:'EW Principles',color:'#ff4444'},
   {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff'},
   {cat:'E EW Theory',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df',color:'#bb88ff'},
   {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
   {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
   // D Networking
+  {cat:'D Networking',kind:'guide',nm:'Networking Explained',ds:'Plain-language guide: OSI, MAC/IP, subnetting, topologies & gear',file:'networkguide',color:'#00d4ff'},
   {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
   {cat:'D Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
-  {cat:'D Networking',nm:'WiFi Guide',ds:'Wi-Fi standards, bands & deployment guide',file:'wifiguide',color:'#00d4ff'},
+  {cat:'D Networking',kind:'guide',nm:'Wi-Fi Explained',ds:'Plain-language guide: Wi-Fi standards, bands & channels',file:'wifiguide',color:'#00d4ff'},
   {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
   {cat:'D Networking',nm:'Network Test',ds:'200-question quiz: networking, wireless & cellular (slide-referenced)',file:'nettest',color:'#bb88ff'},
   // F Systems
+  {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
   {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
   {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700'},
   {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700'},
   // G Planning
+  {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
   {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff'},
   {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff'},
   {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff'},
@@ -98,14 +110,18 @@ function render(){
   // grouped launch cards — iterate CATEGORIES so empty sections still appear
   let vh='';
   CATEGORIES.forEach(cat=>{
-    const items=TOOLS.filter(t=>t.cat===cat);
+    // guides first, then interactives, within each module
+    const items=TOOLS.filter(t=>t.cat===cat).sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
     vh+=`<div class="section-label">${cat}</div>`;
     if(items.length===0){vh+=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;return;}
     vh+='<div class="grid">';
     items.forEach(t=>{
-      vh+=`<a class="card" href="${t.file}" style="--accent:${t.color}">
-        <div class="cat">${t.cat}</div><div class="nm">${t.nm}</div>
-        <div class="ds">${t.ds}</div><div class="go">LAUNCH \u2192</div></a>`;
+      const guide=t.kind==='guide';
+      const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+      const go=guide?'READ \u2192':'LAUNCH \u2192';
+      vh+=`<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+        <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
     });
     vh+='</div>';
   });
