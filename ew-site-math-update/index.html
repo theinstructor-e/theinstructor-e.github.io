@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17E Interactive Training Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+h1 span{color:var(--text-dim);font-weight:400}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:6px 12px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
+.card:hover{border-color:var(--accent,var(--green));transform:translateY(-2px)}
+.card .cat{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.card .nm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.6}
+.card .go{font-family:var(--mono);font-size:9px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.tag{font-family:var(--mono);font-size:7px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
+.tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
+.tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
+[data-theme="light"] .tag-guide{color:#5a3ccc}
+.card.is-guide{border-style:dashed}
+.card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.section-label:first-child{margin-top:0}
+.empty-cat{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
+.pagetabs{display:flex;gap:8px}
+.pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
+  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s}
+.pagetab:hover{border-color:var(--amber);color:var(--amber)}
+.pagetab.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.page{display:none}
+.page.on{display:block}
+.tag-slide{color:var(--amber);background:var(--amber-dark);border:1px solid var(--amber-dim)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>17E Tools <span>// Interactive Training</span></h1>
+  </div>
+  <div class="hl">
+    <div class="pagetabs">
+      <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
+      <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
+    </div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
+</header>
+<div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electronic Warfare Specialist — Self-Contained Interactive References</div>
+
+<div id="page-tools" class="page on">
+<div class="wrap">
+  <div id="view-grid"></div>
+</div>
+</div>
+
+<div id="page-slides" class="page">
+<div class="wrap">
+  <div class="section-label">Lesson Slide Decks</div>
+  <div id="view-slides"></div>
+</div>
+</div>
+
+<script>
+// Section order. Empty sections still render (placeholder shown) so you can fill them later.
+const CATEGORIES=['B1 Math','B2 Physics','C BET','D Networking','E EW Theory','F Systems','G Planning'];
+// hrefs/labels match your existing site. Edit "file" if your paths change.
+const TOOLS=[
+  // B1 Math
+  {cat:'B1 Math',kind:'guide',nm:'Math Explained',ds:'Plain-language guide: algebra, trig, logarithms & decibels',file:'mathguide',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math for EW',ds:'Algebra, trigonometry, logarithms & decibels calculators',file:'mathtools',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math',ds:'Core math refresher for EW calculations',file:'math',color:'#ffb300'},
+  // B2 Physics
+  {cat:'B2 Physics',kind:'guide',nm:'Radio Waves Explained',ds:'Plain-language guide: waves, spectrum, propagation, loss & antennas',file:'physicsguide',color:'#00d4ff'},
+  {cat:'B2 Physics',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'Physics 1',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
+  {cat:'B2 Physics',nm:'Physics 2',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'Physics 3',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
+  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff'},
+  // C BET
+  {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
+  {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
+  {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88'},
+  // E EW Theory
+  {cat:'E EW Theory',kind:'guide',nm:'Electronic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
+  {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electronic attack, J-series',file:'EW Principles',color:'#ff4444'},
+  {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff'},
+  {cat:'E EW Theory',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df',color:'#bb88ff'},
+  {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
+  {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
+  // D Networking
+  {cat:'D Networking',kind:'guide',nm:'Networking Explained',ds:'Plain-language guide: OSI, MAC/IP, subnetting, topologies & gear',file:'networkguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
+  {cat:'D Networking',kind:'guide',nm:'Wi-Fi Explained',ds:'Plain-language guide: Wi-Fi standards, bands & channels',file:'wifiguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
+  {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
+  {cat:'D Networking',nm:'Network Test',ds:'200-question quiz: networking, wireless & cellular (slide-referenced)',file:'nettest',color:'#bb88ff'},
+  // F Systems
+  {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
+  {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
+  {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700'},
+  {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700'},
+  // G Planning
+  {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
+  {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff'},
+  {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff'},
+  {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff'},
+];
+function render(){
+  // grouped launch cards — iterate CATEGORIES so empty sections still appear
+  let vh='';
+  CATEGORIES.forEach(cat=>{
+    // guides first, then interactives, within each module
+    const items=TOOLS.filter(t=>t.cat===cat).sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
+    vh+=`<div class="section-label">${cat}</div>`;
+    if(items.length===0){vh+=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;return;}
+    vh+='<div class="grid">';
+    items.forEach(t=>{
+      const guide=t.kind==='guide';
+      const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+      const go=guide?'READ \u2192':'LAUNCH \u2192';
+      vh+=`<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+        <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-grid').innerHTML=vh;
+}
+// Lesson slide decks — 10-Day EW Networking Fundamentals course. Edit file paths once your .pptx files are uploaded to /slides/.
+const SLIDES=[
+  {nm:'Day 1',ds:'Fundamentals of Networking + OSI Model',file:'slides/day-01.pptx'},
+  {nm:'Day 2',ds:'MAC Addressing, IP Addressing &amp; The Internet',file:'slides/day-02.pptx'},
+  {nm:'Day 3',ds:'Network Security + Data Transmission &amp; Signaling',file:'slides/day-03.pptx'},
+  {nm:'Day 4',ds:'WiFi Standards + WiFi Topology',file:'slides/day-04.pptx'},
+  {nm:'Day 5',ds:'WiFi Channels/Frequency/Bandwidth + Wireless Network Ops &amp; Security',file:'slides/day-05.pptx'},
+  {nm:'Day 6',ds:'Basics of Cellphone Technology + Cell Networks &amp; Coverage',file:'slides/day-06.pptx'},
+  {nm:'Day 7',ds:'3G and Beyond (4G LTE / 5G NR)',file:'slides/day-07.pptx'},
+  {nm:'Day 8',ds:'SDR Fundamentals + SDR Applications',file:'slides/day-08.pptx'},
+  {nm:'Day 9',ds:'SDR Receive + SDR Transmit (Lab Day)',file:'slides/day-09.pptx'},
+  {nm:'Day 10',ds:'Full Review + Apply-Level Assessment',file:'slides/day-10.pptx'},
+];
+function renderSlides(){
+  let vh='<div class="grid">';
+  SLIDES.forEach(s=>{
+    vh+=`<a class="card" href="${s.file}" download style="--accent:#ffb300">
+      <div class="cat">LESSON <span class="tag tag-slide">PPTX</span></div><div class="nm">${s.nm}</div>
+      <div class="ds">${s.ds}</div><div class="go">DOWNLOAD &#8595;</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-slides').innerHTML=vh;
+}
+function showPage(name){
+  document.getElementById('tab-tools').classList.toggle('on',name==='tools');
+  document.getElementById('tab-slides').classList.toggle('on',name==='slides');
+  document.getElementById('page-tools').classList.toggle('on',name==='tools');
+  document.getElementById('page-slides').classList.toggle('on',name==='slides');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+render();
+renderSlides();
+</script>
+</body>
+</html>
