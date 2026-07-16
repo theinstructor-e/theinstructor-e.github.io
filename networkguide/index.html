@@ -65,6 +65,23 @@ input[type=range]{-webkit-appearance:none;flex:1;height:5px;border-radius:5px;ba
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg-card)}
 .slider-row .val{font-family:'Courier New',monospace;font-weight:700;min-width:104px;text-align:right;color:var(--text-primary)}
 .addr{font-family:'Courier New',monospace;font-weight:700}
+.steps{display:flex;flex-direction:column;gap:.6rem;margin:1rem 0}
+.step{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1rem;background:var(--bg-card)}
+.step .sn{font-family:'Nunito',sans-serif;font-weight:800;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.step .st{font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;color:var(--text-primary);margin-bottom:2px}
+.step .sd{font-size:12.5px;color:var(--text-secondary)}
+.bitrow{display:flex;gap:3px;font-family:'Courier New',monospace;font-weight:700;font-size:13px;margin:.6rem 0;flex-wrap:wrap}
+.bit{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:5px;background:var(--table-head-bg);color:var(--text-muted)}
+.bit.on{background:var(--accent);color:#fff}
+.url-anatomy{display:flex;flex-wrap:wrap;gap:2px;font-family:'Courier New',monospace;font-size:13px;font-weight:700;margin:1rem 0;align-items:center}
+.url-part{padding:4px 8px;border-radius:6px}
+.url-part.proto{background:var(--c1s);color:var(--c1)}
+.url-part.host{background:var(--c3s);color:var(--c3)}
+.url-part.path{background:var(--c4s);color:var(--c4)}
+.url-part.query{background:var(--c2s);color:var(--c2)}
+.url-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin-top:.6rem}
+.url-legend span{display:flex;align-items:center;gap:5px}
+.url-legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 </style>
 </head>
 <body>
@@ -78,11 +95,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab-btn active" onclick="switchTab('osi',this)">🎂 The OSI Layers</button>
     <button class="tab-btn" onclick="switchTab('addr',this)">🏷️ MAC &amp; IP</button>
     <button class="tab-btn" onclick="switchTab('subnet',this)">✂️ Subnetting</button>
+    <button class="tab-btn" onclick="switchTab('dhcp',this)">📬 DHCP</button>
+    <button class="tab-btn" onclick="switchTab('tcp',this)">🤝 TCP/UDP &amp; Ports</button>
+    <button class="tab-btn" onclick="switchTab('dns',this)">🔍 DNS &amp; URLs</button>
     <button class="tab-btn" onclick="switchTab('topo',this)">🕸️ Topologies</button>
     <button class="tab-btn" onclick="switchTab('devices',this)">🔌 The Gear</button>
   </div>
 </header>
- 
+
 <div class="section-wrap">
   <!-- OSI -->
   <div class="tab-content active" id="tab-osi">
@@ -94,7 +114,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">📦</span><span class="fact-card-text"><strong>The data changes names as it goes down:</strong> it's called <em>Data</em> up top, a <em>Segment</em> at Transport, a <em>Packet</em> at Network, a <em>Frame</em> at Data Link, and raw <em>Bits</em> at Physical.</span></div>
     <div class="tryit"><strong>▶ Walk the layers:</strong> the <em>Networking</em> tool animates data moving down and up the OSI stack.</div>
   </div>
- 
+
   <!-- ADDR -->
   <div class="tab-content" id="tab-addr">
     <h2>Two addresses: MAC and IP</h2>
@@ -105,11 +125,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <p style="margin-bottom:0">All ones — <span class="addr">FF:FF:FF:FF:FF:FF</span> — is the <strong>broadcast</strong> address: "everyone on this segment."</p></div>
     <div class="card" style="border-top:4px solid var(--c1)"><div class="card-head"><span class="card-emoji">📍</span><div><div class="card-title">IP address</div><div class="card-sub">Layer 3 · depends on the network</div></div></div>
       <p>IPv4 is four numbers 0–255, like <span class="addr">192.168.1.50</span> — 32 bits total. It's split into a <strong>network</strong> part (which neighborhood) and a <strong>host</strong> part (which house). Routers use it to steer packets across the world.</p>
-      <p style="margin-bottom:0">Some ranges are <strong>private</strong> (10.x, 172.16–31.x, 192.168.x) and only used inside local networks; <span class="addr">127.0.0.1</span> always means "this device."</p></div>
-    <div class="fact-card"><span class="fact-card-emoji">🌍</span><span class="fact-card-text"><strong>We ran out of IPv4.</strong> With only ~4.3 billion addresses, the world outgrew IPv4. IPv6 uses 128 bits — enough for an almost unimaginable number of devices.</span></div>
+      <p style="margin-bottom:0">Some ranges are <strong>private</strong> and only used inside local networks; <span class="addr">127.0.0.1</span> always means "this device."</p></div>
+
+    <h3>Private IP ranges — the addresses behind every router</h3>
+    <table class="compare">
+      <tr><th>Range</th><th>Class</th><th>Typical Use</th></tr>
+      <tr><td class="addr">10.0.0.0 – 10.255.255.255</td><td>Class A</td><td>Large corporate/military networks</td></tr>
+      <tr><td class="addr">172.16.0.0 – 172.31.255.255</td><td>Class B</td><td>Medium-sized networks</td></tr>
+      <tr><td class="addr">192.168.0.0 – 192.168.255.255</td><td>Class C</td><td>Home and small office routers</td></tr>
+    </table>
+
+    <div class="fact-card"><span class="fact-card-emoji">🌍</span><span class="fact-card-text"><strong>We ran out of IPv4.</strong> With only ~4.3 billion addresses, the world outgrew IPv4. IPv6 uses 128 bits — written as 8 groups of hex digits like <span class="addr">2001:0db8:85a3::8a2e:0370:7334</span> — enough for an almost unimaginable number of devices.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔁</span><span class="fact-card-text"><strong>TTL stops loops.</strong> Each packet carries a "time to live" that drops by one at every router. Hit zero and it's discarded — so a mis-routed packet can't circle forever.</span></div>
   </div>
- 
+
   <!-- SUBNET -->
   <div class="tab-content" id="tab-subnet">
     <h2>Subnetting — slicing up address space</h2>
@@ -117,39 +146,155 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="analogy">🏢 <strong>Like a street address:</strong> "1600 Pennsylvania Ave" has a <strong>street</strong> part (the network) and a <strong>house number</strong> (the host). The subnet mask is the line that says "everything up to here is the street, the rest is the house." Two devices can only talk directly if they're on the <em>same street</em>.</div>
     <h3>The mask is just a dividing line</h3>
     <p>A mask like <strong>/24</strong> means "the first 24 bits are the network, the last 8 are hosts." More network bits = more separate networks, each with fewer hosts. Fewer = bigger networks. It's a trade you tune with the slash number (CIDR).</p>
+
+    <h4>Building the mask, bit by bit</h4>
+    <p>A /24 mask means the first 24 bits are all turned <strong>ON</strong> (1), and the rest are <strong>OFF</strong> (0). Here's the first octet worth of that idea for a /24 — all 8 bits ON, since 24 ≥ 8:</p>
+    <div class="bitrow" id="bit-demo"></div>
+    <p style="font-size:12.5px">Each full octet of ON bits equals <strong>255</strong>; a fully OFF octet equals <strong>0</strong>. That's why a /24 mask is written 255.255.255.0 — three full octets ON, the last fully OFF.</p>
+
     <div class="viz">
       <h4>Try it: move the dividing line</h4>
       <div class="slider-row"><label>Mask (CIDR)</label><input type="range" id="sn-cidr" min="8" max="30" value="24" oninput="calcSub()"><span class="val" id="sn-cidr-val">/24</span></div>
-      <table class="compare" style="margin-top:.4rem">
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="compare" style="margin-top:.4rem">
         <tr><td><strong>Subnet mask</strong></td><td class="addr" id="sn-mask">255.255.255.0</td></tr>
         <tr><td><strong>Usable hosts</strong></td><td id="sn-hosts">254</td></tr>
         <tr><td><strong>Example network</strong></td><td class="addr" id="sn-net">192.168.1.0 – .255</td></tr>
-      </table>
+      </table></div>
       <p style="font-size:12.5px;margin:.3rem 0 0">Notice the trade: slide toward /30 and you get lots of tiny networks; toward /8 and you get a few huge ones.</p>
     </div>
+
+    <h4>Going backwards — from a mask back to a CIDR</h4>
+    <p>Given a subnet mask like <span class="addr">255.255.255.192</span>, count the ON bits: 255.255.255 is 24 full bits, and 192 in binary is <span class="addr">11000000</span> — 2 more ON bits. Total: 24 + 2 = <strong>/26</strong>.</p>
+
     <div class="fact-card"><span class="fact-card-emoji">➖</span><span class="fact-card-text"><strong>Why "minus 2"?</strong> Usable hosts = 2^(host bits) − 2. Two addresses are reserved in every subnet: the first (the network ID) and the last (the broadcast).</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🚫</span><span class="fact-card-text"><strong>Different subnet = no direct chat.</strong> 192.168.<strong>1</strong>.10 and 192.168.<strong>2</strong>.10 with a /24 mask are on different networks — they can't talk directly without a router, no matter how close they are.</span></div>
     <div class="tryit"><strong>▶ Crunch it:</strong> the <em>Subnetting</em> tool is a full CIDR calculator with worked examples.</div>
   </div>
- 
+
+  <!-- DHCP -->
+  <div class="tab-content" id="tab-dhcp">
+    <h2>DHCP — how your device gets an IP address automatically</h2>
+    <p class="lede">You almost never type in an IP address by hand. DHCP is the process quietly running in the background every time a device joins a network, handing out an address automatically.</p>
+    <div class="analogy">🏨 <strong>Like checking into a hotel:</strong> you don't pick your own room number — the front desk assigns you one for your stay, and takes it back when you check out. DHCP does the same thing with IP addresses: it "leases" you one for a limited time, not forever.</div>
+
+    <h3>The DORA process</h3>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div><div class="st">Discover</div><div class="sd">Your device broadcasts: "Is there a DHCP server out there? I need an address."</div></div></div>
+      <div class="step"><div class="sn">2</div><div><div class="st">Offer</div><div class="sd">A DHCP server responds: "Here's an available address you can use."</div></div></div>
+      <div class="step"><div class="sn">3</div><div><div class="st">Request</div><div class="sd">Your device replies: "I'll take that one, please" (broadcast so other servers know to stand down).</div></div></div>
+      <div class="step"><div class="sn">4</div><div><div class="st">Acknowledge</div><div class="sd">The server confirms: "It's yours" — and your device configures itself with that address.</div></div></div>
+    </div>
+    <p style="font-size:12.5px">Remember it with <strong>DORA</strong>: Discover, Offer, Request, Acknowledge.</p>
+
+    <h3>What DHCP hands you besides just an IP</h3>
+    <table class="compare">
+      <tr><th>Item</th><th>What It's For</th></tr>
+      <tr><td>IP address</td><td>Your device's address on this network</td></tr>
+      <tr><td>Subnet mask</td><td>Tells your device which addresses are "local"</td></tr>
+      <tr><td>Default gateway</td><td>The router to send traffic to for anything outside the local network</td></tr>
+      <tr><td>DNS server</td><td>Where to ask when translating names like google.com into an IP</td></tr>
+      <tr><td>Lease time</td><td>How long you get to keep this address before renewing</td></tr>
+    </table>
+
+    <div class="fact-card"><span class="fact-card-emoji">⏳</span><span class="fact-card-text"><strong>Leases expire.</strong> If your device stays connected, it quietly renews its lease before it runs out. If it disconnects for a long time, the address can be handed to someone else — which is why your IP sometimes changes after being off the network a while.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🛠️</span><span class="fact-card-text"><strong>Static vs. dynamic.</strong> Most devices use DHCP (dynamic) and just get whatever's available. Servers and network gear often use a fixed, manually configured "static" address instead, so their address never changes.</span></div>
+  </div>
+
+  <!-- TCP/UDP & PORTS -->
+  <div class="tab-content" id="tab-tcp">
+    <h2>TCP vs. UDP, and what ports are for</h2>
+    <p class="lede">Getting a packet to the right device (via IP) is only half the job — it also has to reach the right <em>program</em> on that device. That's what ports and transport protocols handle.</p>
+    <div class="analogy">🏢 <strong>Like an apartment building:</strong> the IP address gets your mail to the right building. The <strong>port number</strong> is the apartment number that gets it to the right resident inside. Two different apartments (ports) in the same building (IP) can be having completely separate conversations at the same time.</div>
+
+    <h3>TCP vs. UDP — reliable vs. fast</h3>
+    <table class="compare">
+      <tr><th></th><th>TCP</th><th>UDP</th></tr>
+      <tr><td><strong>Style</strong></td><td>Connection-based — sets up a link first</td><td>Connectionless — just sends it</td></tr>
+      <tr><td><strong>Reliability</strong></td><td>Confirms delivery, resends lost data</td><td>No confirmation, no resending</td></tr>
+      <tr><td><strong>Speed</strong></td><td>Slower (overhead from reliability checks)</td><td>Faster (no waiting for confirmations)</td></tr>
+      <tr><td><strong>Good for</strong></td><td>Web pages, email, file transfers — accuracy matters</td><td>Video calls, live streaming, gaming — speed matters more than a perfect copy</td></tr>
+    </table>
+
+    <h3>TCP's "three-way handshake" — how a connection starts</h3>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div><div class="st">SYN</div><div class="sd">Your device: "I'd like to start a conversation" (synchronize)</div></div></div>
+      <div class="step"><div class="sn">2</div><div><div class="st">SYN-ACK</div><div class="sd">The server: "Got it, and same to you" (synchronize-acknowledge)</div></div></div>
+      <div class="step"><div class="sn">3</div><div><div class="st">ACK</div><div class="sd">Your device: "Confirmed, let's go" (acknowledge) — the connection is now open</div></div></div>
+    </div>
+    <p style="font-size:12.5px">Only after all three steps does actual data start flowing — this is why TCP has more setup delay than UDP, which skips the handshake entirely.</p>
+
+    <h3>Common ports worth knowing</h3>
+    <table class="compare">
+      <tr><th>Port</th><th>Service</th><th>Protocol</th></tr>
+      <tr><td>20 / 21</td><td>FTP (file transfer)</td><td>TCP</td></tr>
+      <tr><td>22</td><td>SSH (secure remote login)</td><td>TCP</td></tr>
+      <tr><td>23</td><td>Telnet (unencrypted remote login)</td><td>TCP</td></tr>
+      <tr><td>53</td><td>DNS (name lookups)</td><td>TCP/UDP</td></tr>
+      <tr><td>67 / 68</td><td>DHCP</td><td>UDP</td></tr>
+      <tr><td>80</td><td>HTTP (web, unencrypted)</td><td>TCP</td></tr>
+      <tr><td>443</td><td>HTTPS (web, encrypted)</td><td>TCP</td></tr>
+    </table>
+
+    <div class="fact-card"><span class="fact-card-emoji">🔢</span><span class="fact-card-text"><strong>Ports 0–1023</strong> are "well-known" ports, reserved for standard services like the ones above. Anything above that is available for other applications to use freely.</span></div>
+  </div>
+
+  <!-- DNS & URLS -->
+  <div class="tab-content" id="tab-dns">
+    <h2>DNS — the internet's phone book</h2>
+    <p class="lede">Computers navigate by IP address, but humans remember names. DNS (Domain Name System) is the translation layer that connects the two.</p>
+    <div class="analogy">📞 <strong>Like an old phone book:</strong> you know your friend's name, not their phone number. You look up the name, get the number, then dial. DNS does the same thing: you type a name, it finds the IP address, then your device connects to that address.</div>
+
+    <h3>How a DNS lookup happens</h3>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div><div class="st">You type a name</div><div class="sd">e.g., www.example.com, into your browser</div></div></div>
+      <div class="step"><div class="sn">2</div><div><div class="st">Your device asks a DNS server</div><div class="sd">"What's the IP address for this name?"</div></div></div>
+      <div class="step"><div class="sn">3</div><div><div class="st">The DNS server responds</div><div class="sd">With the matching IP address (or points you to another server that knows)</div></div></div>
+      <div class="step"><div class="sn">4</div><div><div class="st">Your device connects</div><div class="sd">Directly to that IP address — the name was just a lookup step</div></div></div>
+    </div>
+
+    <h3>Anatomy of a URL</h3>
+    <div class="url-anatomy">
+      <span class="url-part proto">https://</span><span class="url-part host">www.example.com</span><span class="url-part path">/training/lesson1</span><span class="url-part query">?id=42</span>
+    </div>
+    <div class="url-legend">
+      <span><span class="dot" style="background:var(--c1)"></span>Protocol — how to talk (HTTPS = encrypted web traffic)</span>
+      <span><span class="dot" style="background:var(--c3)"></span>Host — which server, resolved via DNS</span>
+      <span><span class="dot" style="background:var(--c4)"></span>Path — which specific page/resource on that server</span>
+      <span><span class="dot" style="background:var(--c2)"></span>Query — extra parameters passed to the page</span>
+    </div>
+
+    <div class="fact-card"><span class="fact-card-emoji">💾</span><span class="fact-card-text"><strong>DNS caching speeds things up.</strong> Once your device (or its network) looks up a name, it remembers the answer for a while instead of asking again every time — that's why the second visit to a site is often faster to connect than the first.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🔒</span><span class="fact-card-text"><strong>HTTP vs. HTTPS.</strong> The "S" means the connection is encrypted — anyone intercepting the traffic sees scrambled data instead of readable content. Always prefer HTTPS when it's available.</span></div>
+  </div>
+
   <!-- TOPO -->
   <div class="tab-content" id="tab-topo">
     <h2>Topologies — how devices are wired together</h2>
     <p class="lede">"Topology" just means the shape of the connections. The shape decides speed, reliability, and what happens when a link breaks.</p>
     <div class="analogy">🛣️ <strong>Like road layouts:</strong> a single main road everyone shares (bus), a roundabout (ring), spokes into one hub (star), or a web of streets with many routes (mesh). Each layout handles traffic — and road closures — differently.</div>
-    <table class="compare">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="compare">
       <tr><th>Topology</th><th>Shape</th><th>If a link breaks</th></tr>
       <tr><td><strong>Bus</strong></td><td>All on one shared cable</td><td>A break can down the whole line (old, rarely used now)</td></tr>
       <tr><td><strong>Ring</strong></td><td>Each device links to two neighbors in a loop</td><td>One break can split the ring</td></tr>
       <tr><td><strong>Star</strong></td><td>Everyone connects to a central switch</td><td>One cable failing only drops that device (very common)</td></tr>
       <tr><td><strong>Mesh</strong></td><td>Many devices interconnect with multiple paths</td><td>Traffic reroutes around the break (most resilient)</td></tr>
+    </table></div>
+
+    <h3>Networks come in sizes — and your message travels through all of them</h3>
+    <table class="compare">
+      <tr><th>Size</th><th>Covers</th><th>Example</th></tr>
+      <tr><td><strong>PAN</strong></td><td>Your immediate personal gear</td><td>Phone to earbuds via Bluetooth</td></tr>
+      <tr><td><strong>LAN</strong></td><td>A single building or site</td><td>Your office or home network</td></tr>
+      <tr><td><strong>MAN</strong></td><td>A city</td><td>A university connecting several campuses</td></tr>
+      <tr><td><strong>WAN</strong></td><td>Regions or the whole globe</td><td>The internet itself — the biggest WAN there is</td></tr>
     </table>
-    <h3>And networks come in sizes</h3>
-    <div class="fact-card"><span class="fact-card-emoji">📶</span><span class="fact-card-text"><strong>PAN → LAN → MAN → WAN.</strong> From smallest to largest: a Personal Area Network (your gear), a Local Area Network (a building), a Metropolitan Area Network (a city), and a Wide Area Network (regions or the whole globe — the internet is the biggest WAN).</span></div>
+    <p>A message you send often crosses all four in sequence: it starts on your device's <strong>PAN</strong>, hits your <strong>LAN</strong>'s switch and router, travels across <strong>MAN</strong>/<strong>WAN</strong> infrastructure — often over fiber-optic cable for the long-haul legs — and arrives at a server that's doing the same journey in reverse.</p>
+
+    <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>Fiber carries the long-haul traffic.</strong> Once data leaves your building, it's likely traveling as pulses of light through fiber-optic cable for at least part of the journey — light in glass is what makes MAN/WAN-scale distances practical at high speed.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Mesh is why the internet survives.</strong> With many possible paths between points, losing one node or link just reroutes traffic — there's no single point of failure. It's also how tactical mesh radios stay connected.</span></div>
     <div class="tryit"><strong>▶ Build a mesh:</strong> the <em>Mesh Radio</em> tool lets you place radios and watch links form, break, and reroute.</div>
   </div>
- 
+
   <!-- DEVICES -->
   <div class="tab-content" id="tab-devices">
     <h2>The gear that moves your data</h2>
@@ -165,9 +310,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="tryit"><strong>▶ Test comms:</strong> the <em>Networking</em> and <em>Mesh Radio</em> tools let you route real packets and see them hop.</div>
   </div>
 </div>
- 
+
 <div class="footer">Networking Explained · Companion guide to the Networking interactive tools · UNCLASSIFIED // FOUO</div>
- 
+
 <script>
 function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
@@ -185,6 +330,11 @@ function renderOSI(){
   document.getElementById('osi-layers').innerHTML=OSI.map(l=>
     `<div class="layer"><div class="ln" style="background:var(--${l[3]})">${l[0]}</div><div><div class="lt">${l[1]}</div><div class="ld">${l[2]}</div></div></div>`).join('');
 }
+function renderBitDemo(){
+  let h='';
+  for(let i=0;i<8;i++){h+=`<div class="bit on">1</div>`;}
+  document.getElementById('bit-demo').innerHTML=h+`<span style="align-self:center;margin-left:8px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-secondary)">= 255</span>`;
+}
 function calcSub(){
   const cidr=+document.getElementById('sn-cidr').value;
   document.getElementById('sn-cidr-val').textContent='/'+cidr;
@@ -201,7 +351,7 @@ function calcSub(){
   else ex='10.0.0.0 – 10.255.255.255';
   document.getElementById('sn-net').textContent=ex;
 }
-window.addEventListener('load',()=>{renderOSI();calcSub();});
+window.addEventListener('load',()=>{renderOSI();renderBitDemo();calcSub();});
 </script>
 </body>
 </html>
