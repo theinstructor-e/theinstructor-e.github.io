@@ -23,7 +23,7 @@
 body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.hl{display:flex;align-items:center;gap:16px}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
 h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
 h1 span{color:var(--text-dim);font-weight:400}
@@ -48,6 +48,14 @@ h1 span{color:var(--text-dim);font-weight:400}
 .section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .section-label:first-child{margin-top:0}
 .empty-cat{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
+.pagetabs{display:flex;gap:8px}
+.pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
+  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s}
+.pagetab:hover{border-color:var(--amber);color:var(--amber)}
+.pagetab.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.page{display:none}
+.page.on{display:block}
+.tag-slide{color:var(--amber);background:var(--amber-dark);border:1px solid var(--amber-dim)}
 </style>
 </head>
 <body>
@@ -56,18 +64,37 @@ h1 span{color:var(--text-dim);font-weight:400}
     <div class="mil-badge">MIL-SPEC</div>
     <h1>17E Tools <span>// Interactive Training</span></h1>
   </div>
-  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  <div class="hl">
+    <div class="pagetabs">
+      <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
+      <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
+    </div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
 </header>
 <div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electronic Warfare Specialist — Self-Contained Interactive References</div>
+
+<div id="page-tools" class="page on">
 <div class="wrap">
   <div id="view-grid"></div>
 </div>
+</div>
+
+<div id="page-slides" class="page">
+<div class="wrap">
+  <div class="section-label">Lesson Slide Decks</div>
+  <div id="view-slides"></div>
+</div>
+</div>
+
 <script>
 // Section order. Empty sections still render (placeholder shown) so you can fill them later.
 const CATEGORIES=['B1 Math','B2 Physics','C BET','D Networking','E EW Theory','F Systems','G Planning'];
 // hrefs/labels match your existing site. Edit "file" if your paths change.
 const TOOLS=[
   // B1 Math
+  {cat:'B1 Math',kind:'guide',nm:'Math Explained',ds:'Plain-language guide: algebra, trig, logarithms & decibels',file:'mathguide',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math for EW',ds:'Algebra, trigonometry, logarithms & decibels calculators',file:'mathtools',color:'#3d7fd6'},
   {cat:'B1 Math',nm:'Math',ds:'Core math refresher for EW calculations',file:'math',color:'#ffb300'},
   // B2 Physics
   {cat:'B2 Physics',kind:'guide',nm:'Radio Waves Explained',ds:'Plain-language guide: waves, spectrum, propagation, loss & antennas',file:'physicsguide',color:'#00d4ff'},
@@ -127,12 +154,42 @@ function render(){
   });
   document.getElementById('view-grid').innerHTML=vh;
 }
+// Lesson slide decks — 10-Day EW Networking Fundamentals course. Edit file paths once your .pptx files are uploaded to /slides/.
+const SLIDES=[
+  {nm:'Day 1',ds:'Fundamentals of Networking + OSI Model',file:'slides/day-01.pptx'},
+  {nm:'Day 2',ds:'MAC Addressing, IP Addressing &amp; The Internet',file:'slides/day-02.pptx'},
+  {nm:'Day 3',ds:'Network Security + Data Transmission &amp; Signaling',file:'slides/day-03.pptx'},
+  {nm:'Day 4',ds:'WiFi Standards + WiFi Topology',file:'slides/day-04.pptx'},
+  {nm:'Day 5',ds:'WiFi Channels/Frequency/Bandwidth + Wireless Network Ops &amp; Security',file:'slides/day-05.pptx'},
+  {nm:'Day 6',ds:'Basics of Cellphone Technology + Cell Networks &amp; Coverage',file:'slides/day-06.pptx'},
+  {nm:'Day 7',ds:'3G and Beyond (4G LTE / 5G NR)',file:'slides/day-07.pptx'},
+  {nm:'Day 8',ds:'SDR Fundamentals + SDR Applications',file:'slides/day-08.pptx'},
+  {nm:'Day 9',ds:'SDR Receive + SDR Transmit (Lab Day)',file:'slides/day-09.pptx'},
+  {nm:'Day 10',ds:'Full Review + Apply-Level Assessment',file:'slides/day-10.pptx'},
+];
+function renderSlides(){
+  let vh='<div class="grid">';
+  SLIDES.forEach(s=>{
+    vh+=`<a class="card" href="${s.file}" download style="--accent:#ffb300">
+      <div class="cat">LESSON <span class="tag tag-slide">PPTX</span></div><div class="nm">${s.nm}</div>
+      <div class="ds">${s.ds}</div><div class="go">DOWNLOAD &#8595;</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-slides').innerHTML=vh;
+}
+function showPage(name){
+  document.getElementById('tab-tools').classList.toggle('on',name==='tools');
+  document.getElementById('tab-slides').classList.toggle('on',name==='slides');
+  document.getElementById('page-tools').classList.toggle('on',name==='tools');
+  document.getElementById('page-slides').classList.toggle('on',name==='slides');
+}
 function toggleTheme(){
   const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
   h.setAttribute('data-theme',light?'dark':'light');
   document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
 }
 render();
+renderSlides();
 </script>
 </body>
 </html>
