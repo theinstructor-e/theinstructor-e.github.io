@@ -1302,12 +1302,12 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="band-wavelength">λ = 1–10 m</span>
     </div>
     <div class="band-intro">VHF stands for <strong>Very High Frequency</strong>. It's the lowest radio band used for satellite communication. The waves are very long — up to 10 meters each — which means the antennas are large and you can't send much information at once. VHF is good at going through trees and buildings, and it can bounce off the upper atmosphere (the ionosphere) to travel thousands of miles — without a satellite at all. Most modern systems have moved to higher bands, but VHF is still used for old military backup links and emergency weather broadcasts.</div>
-    <table class="freq-table" style="--band-color:#9b59b6">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#9b59b6">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
       <tr><td class="ft-name">NOAA Weather Radio</td><td class="ft-freq">162.4–162.55 MHz</td><td>Emergency weather broadcast heard on all-hazard radios</td></tr>
       <tr><td class="ft-name">Maritime VHF SATCOM</td><td class="ft-freq">~156–174 MHz</td><td>Ships talking to shore using satellite signal repeaters</td></tr>
       <tr><td class="ft-name">Legacy military SATCOM</td><td class="ft-freq">~230–400 MHz</td><td>Old Cold War backup radio links — some still in service</td></tr>
-    </table>
+    </table></div>
     <div class="lb-mos"><div class="lb-mos-hdr"><span>🪖</span> 17E NOTE</div><p><strong>VHF is not usually a satellite threat today</strong>, but it matters for one big reason: VHF signals can travel around the curve of the Earth by bouncing off the upper atmosphere. That means if your unit transmits on a VHF radio, an enemy listening station thousands of miles away might be able to pick it up — even without a satellite. Always follow emissions control (EMCON) rules on VHF just like any other radio.</p></div>
   </div>
 
@@ -1326,14 +1326,14 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="subband-chip hl">Fleet SATCOM (290–320 MHz)</span>
       <span class="subband-chip">GPS L2 (1,227 MHz) — upper edge</span>
     </div>
-    <table class="freq-table" style="--band-color:#2980b9">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#2980b9">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
       <tr><td class="ft-name">UHF MILSATCOM (MUOS)</td><td class="ft-freq">240–270 MHz</td><td>US military voice and data through satellite — works worldwide</td></tr>
       <tr><td class="ft-name">Fleet SATCOM (FLTSATCOM)</td><td class="ft-freq">290–320 MHz</td><td>Older US Navy and Air Force satellite link — still used as backup</td></tr>
       <tr><td class="ft-name">NATO SATCOM</td><td class="ft-freq">~243–270 MHz</td><td>Allied military comms through NATO satellites</td></tr>
       <tr><td class="ft-name">MUOS (WCDMA 3G core)</td><td class="ft-freq">~360–380 MHz</td><td>Upgraded US system — like satellite 3G for soldiers. More data, more secure.</td></tr>
       <tr><td class="ft-name">AEHF supplemental UHF</td><td class="ft-freq">~300–400 MHz</td><td>Backup link designed to keep working even when jammed</td></tr>
-    </table>
+    </table></div>
     <div class="uses-grid">
       <div class="use-card"><div class="use-card-icon">📟</div><div class="use-card-title">Tactical Voice</div><div class="use-card-body">Soldiers at the squad and platoon level use UHF SATCOM radios (like the AN/PRC-117G) to talk to units that are too far away for normal radio to reach.</div></div>
       <div class="use-card"><div class="use-card-icon">🚁</div><div class="use-card-title">Aircraft Comms</div><div class="use-card-body">Military planes and helicopters use UHF satellite links to stay in contact with commanders when they fly beyond the range of ground radios.</div></div>
@@ -1367,7 +1367,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="subband-chip">NavIC L5 (1176.45 MHz)</span>
       <span class="subband-chip">QZSS L1/L5</span>
     </div>
-    <table class="freq-table" style="--band-color:#27ae60">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#27ae60">
       <tr><th>Signal</th><th>Frequency</th><th>System</th><th>Description</th></tr>
       <tr><td class="ft-name">GPS L1 C/A</td><td class="ft-freq">1575.42 MHz</td><td class="ft-system">USA GPS</td><td>Civilian open signal. Unencrypted. In every smartphone. Easiest to jam and spoof.</td></tr>
       <tr><td class="ft-name">GPS L1 P(Y)</td><td class="ft-freq">1575.42 MHz</td><td class="ft-system">USA GPS</td><td>Military encrypted signal, same frequency as L1 C/A but encrypted. Harder to spoof.</td></tr>
@@ -1384,7 +1384,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <tr><td class="ft-name">Iridium L-band</td><td class="ft-freq">1616–1626 MHz</td><td class="ft-system">Iridium</td><td>LEO satellite phone and data. Globally available. Used by SOF, maritime, aviation, and remote teams.</td></tr>
       <tr><td class="ft-name">Inmarsat L-band</td><td class="ft-freq">1525–1646 MHz</td><td class="ft-system">Inmarsat</td><td>GEO satellite comms. Maritime (GMDSS), aviation, and mobile satphone. BGAN terminals use this band.</td></tr>
       <tr><td class="ft-name">NavIC L5</td><td class="ft-freq">1176.45 MHz</td><td class="ft-system">India</td><td>Indian regional nav. Same frequency as GPS L5. Covers Indian subcontinent + 1,500 km region.</td></tr>
-    </table>
+    </table></div>
     <div class="uses-grid">
       <div class="use-card"><div class="use-card-icon">🧭</div><div class="use-card-title">GPS / GNSS Navigation</div><div class="use-card-body">All six global navigation systems transmit in L-band. Your GPS receiver, targeting systems, and precision munitions all rely on L-band signals.</div></div>
       <div class="use-card"><div class="use-card-icon">📱</div><div class="use-card-title">Satellite Phones</div><div class="use-card-body">Iridium and Inmarsat handheld satellite phones operate in L-band. Small enough for a pocket antenna. Used by SOF, NGOs, maritime, and remote teams globally.</div></div>
@@ -1405,7 +1405,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="band-wavelength">λ = 7.5–15 cm</span>
     </div>
     <div class="band-intro">S-band sits just above L-band and is used for <strong>deep space tracking, weather radar, some military SATCOM, and regional navigation augmentation</strong>. It handles rain better than higher bands but worse than L-band. NASA uses S-band for spacecraft tracking and ISS comms. India's NavIC uniquely uses S-band for navigation to penetrate monsoon rain.</div>
-    <table class="freq-table" style="--band-color:#e67e22">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#e67e22">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
       <tr><td class="ft-name">NASA Deep Space Network</td><td class="ft-freq">2.025–2.120 GHz</td><td>Spacecraft uplink/downlink (Voyager, Mars rovers)</td></tr>
       <tr><td class="ft-name">ISS S-band comms</td><td class="ft-freq">2.0–2.3 GHz</td><td>Space station voice and data relay via TDRS</td></tr>
@@ -1413,7 +1413,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <tr><td class="ft-name">Weather radar (WSR-88D)</td><td class="ft-freq">2.7–3.0 GHz</td><td>NEXRAD Doppler radar network</td></tr>
       <tr><td class="ft-name">TDRSS (NASA relay)</td><td class="ft-freq">2.0–2.3 GHz</td><td>Tracking &amp; Data Relay Satellite System</td></tr>
       <tr><td class="ft-name">SiriusXM (satellite radio)</td><td class="ft-freq">2.320–2.345 GHz</td><td>Digital audio broadcasting to vehicles</td></tr>
-    </table>
+    </table></div>
     <div class="lb-mos"><div class="lb-mos-hdr"><span>🪖</span> 17E NOTE</div><p>S-band is not usually a top priority for a 17E, but there are two things worth knowing. First: <strong>NavIC's S-band signal (2.492 GHz) is notable</strong> — India built NavIC to work in monsoon rain — so if you are operating in South Asia, Indian forces may still have reliable GPS-like navigation during a heavy storm even when US GPS signals are being degraded. Second: <strong>SiriusXM satellite radio (2.33 GHz)</strong> comes down from HEO satellites using Tundra orbits. It is a good real-world example of how HEO satellites stay over one region for hours at a time.</p></div>
   </div>
 
@@ -1426,14 +1426,14 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="band-wavelength">λ = 3.75–7.5 cm</span>
     </div>
     <div class="band-intro">C-band was the <strong>original commercial satellite TV and broadcast band</strong> and remains heavily used for video distribution, backhaul, and some military links. It handles rain better than Ku/Ka and works with moderate-sized antennas. The large dishes you see at TV studios and broadcast centers are usually C-band. It's also used for radar altimeters, weather radar, and some ISR downlinks.</div>
-    <table class="freq-table" style="--band-color:#e74c3c">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#e74c3c">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
       <tr><td class="ft-name">C-band SATCOM downlink</td><td class="ft-freq">3.7–4.2 GHz</td><td>Broadcast TV, news feeds, ISR downlink</td></tr>
       <tr><td class="ft-name">C-band SATCOM uplink</td><td class="ft-freq">5.925–6.425 GHz</td><td>Uplink from ground to GEO satellites</td></tr>
       <tr><td class="ft-name">Weather radar</td><td class="ft-freq">5.6 GHz</td><td>Some military and aviation weather systems</td></tr>
       <tr><td class="ft-name">ISR data downlink</td><td class="ft-freq">~5–6 GHz</td><td>Some military imagery downlinks from recon satellites</td></tr>
       <tr><td class="ft-name">Wi-Fi 802.11a/n/ac</td><td class="ft-freq">5.0–5.9 GHz</td><td>Not satellite, but in same band — causes interference</td></tr>
-    </table>
+    </table></div>
     <div class="lb-mos"><div class="lb-mos-hdr"><span>🪖</span> 17E NOTE</div><p><strong>C-band is worth knowing because some ISR satellite imagery downlinks use it</strong> — especially older systems and some foreign military satellites. C-band downlinks (3.7–4.2 GHz) need a medium-sized dish to receive, but the signals on commercial satellites are <strong>often not encrypted</strong>, which means imagery or broadcast feeds can sometimes be picked up with basic signals intelligence equipment. Also note: C-band holds up better in rain than Ku or Ka — so if an adversary switches their SATCOM from Ku to C during a storm, they are probably protecting a high-value link.</p></div>
   </div>
 
@@ -1446,7 +1446,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="band-wavelength">λ = 2.5–3.75 cm</span>
     </div>
     <div class="band-intro">X-band is the <strong>main military satellite band for sending large amounts of data quickly</strong>. This is where live drone video, spy satellite imagery, and military command networks travel. It can carry far more data than UHF or L-band — enough to stream full-motion video from a drone in real time. It also handles rain reasonably well. The US military's main satellite data system — called WGS (Wideband Global SATCOM) — uses X-band, and so does NATO's satellite network.</div>
-    <table class="freq-table" style="--band-color:#8e44ad">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#8e44ad">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
       <tr><td class="ft-name">X-band military SATCOM downlink</td><td class="ft-freq">7.25–7.75 GHz</td><td>Wideband military data — WGS, NATO SATCOM IV</td></tr>
       <tr><td class="ft-name">X-band military SATCOM uplink</td><td class="ft-freq">7.9–8.4 GHz</td><td>Ground-to-satellite uplink for WGS terminals</td></tr>
@@ -1454,7 +1454,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <tr><td class="ft-name">NATO SATCOM</td><td class="ft-freq">~7.9–8.4 GHz</td><td>Alliance-wide C2 and ISR data distribution</td></tr>
       <tr><td class="ft-name">Radar — SAR / ground</td><td class="ft-freq">9–10 GHz</td><td>Synthetic aperture radar for ISR, weather, terrain mapping</td></tr>
       <tr><td class="ft-name">XTAR military SATCOM</td><td class="ft-freq">7.25–8.4 GHz</td><td>US-Spanish joint military X-band GEO satellites</td></tr>
-    </table>
+    </table></div>
     <div class="uses-grid">
       <div class="use-card"><div class="use-card-icon">🎥</div><div class="use-card-title">UAV Video Downlink</div><div class="use-card-body">Live video from military drones like the Predator and Reaper is sent back to commanders through X-band satellite links. X-band has enough capacity to stream real-time video without delay.</div></div>
       <div class="use-card"><div class="use-card-icon">🖼️</div><div class="use-card-title">Imagery Distribution</div><div class="use-card-body">Satellite photos taken by intelligence collection satellites are sent to commanders using X-band links. A terminal called TROJAN SPIRIT II is a common X-band receiver used by Army intelligence teams in the field.</div></div>
@@ -1473,15 +1473,15 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="band-wavelength">λ = 1.67–2.5 cm</span>
     </div>
     <div class="band-intro">Ku-band is the main frequency for <strong>satellite internet, TV broadcasting, and Starlink</strong>. You can send a lot of data using Ku-band with a fairly small dish — about 60–90 cm across. The biggest problem with Ku-band is rain. When heavy rain falls between your dish and the satellite, the signal gets absorbed and weakens or drops out. Despite that, this is the band that most forward-deployed military units use for satellite internet through commercial services and Starlink flat panel terminals.</div>
-    <table class="freq-table" style="--band-color:#2980b9">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#2980b9">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
-      <tr><td class="ft-name">Ku-band downlink</td><td class="ft-freq">10.7–12.75 GHz</td><td>Commercial SATCOM, TV broadcast, VSAT, Starlink</td></div>
+      <tr><td class="ft-name">Ku-band downlink</td><td class="ft-freq">10.7–12.75 GHz</td><td>Commercial SATCOM, TV broadcast, VSAT, Starlink</td></tr>
       <tr><td class="ft-name">Ku-band uplink</td><td class="ft-freq">13.75–14.5 GHz</td><td>VSAT terminal uplinks, Starlink ground station</td></tr>
       <tr><td class="ft-name">Starlink user terminal</td><td class="ft-freq">~10.7–12.7 / 14.0–14.5 GHz</td><td>LEO broadband — flat panel antenna, ~500 Mbps down</td></tr>
       <tr><td class="ft-name">VSAT terminals</td><td class="ft-freq">~14 GHz uplink</td><td>Remote HQ, FOB internet, NGO field comms</td></tr>
       <tr><td class="ft-name">DirecTV / Sky / HughesNet</td><td class="ft-freq">12.2–12.7 GHz</td><td>Consumer satellite TV and internet (GEO)</td></tr>
       <tr><td class="ft-name">Military Ku lease</td><td class="ft-freq">~14 GHz uplink</td><td>Military forces using commercial Ku SATCOM for bandwidth</td></tr>
-    </table>
+    </table></div>
     <div class="uses-grid">
       <div class="use-card"><div class="use-card-icon">🌐</div><div class="use-card-title">Starlink Battlefield Link</div><div class="use-card-body">Ukraine has used Starlink's Ku-band flat panel terminals at the front line for commanding troops, coordinating artillery, and receiving live drone feeds. The terminals are vehicle-portable and quick to set up.</div></div>
       <div class="use-card"><div class="use-card-icon">📺</div><div class="use-card-title">TV Broadcast</div><div class="use-card-body">Most satellite TV around the world — including DirecTV and Sky — uses Ku-band. A small 60 cm dish is all you need. The equipment is cheap and available almost everywhere.</div></div>
@@ -1500,7 +1500,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <span class="band-wavelength">λ = 0.75–1.1 cm</span>
     </div>
     <div class="band-intro">Ka-band (<em>"Kurz-above"</em>) offers the <strong>highest bandwidth of any common satellite band</strong> but is most vulnerable to rain fade. It enables gigabit-speed satellite internet (ViaSat-3, HughesNet Gen5, Starlink's inter-satellite laser links). The US military uses Ka-band on the Advanced EHF (AEHF) satellites for jam-resistant, high-bandwidth command links. Small, high-gain antennas are needed — typically 75 cm or larger for GEO, but small for LEO like Starlink.</div>
-    <table class="freq-table" style="--band-color:#1abc9c">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:#1abc9c">
       <tr><th>Signal / System</th><th>Frequency</th><th>Use</th></tr>
       <tr><td class="ft-name">Ka-band downlink</td><td class="ft-freq">18.3–20.2 GHz</td><td>High-bandwidth commercial internet (ViaSat, HughesNet)</td></tr>
       <tr><td class="ft-name">Ka-band uplink</td><td class="ft-freq">27.5–30.0 GHz</td><td>Commercial and military SATCOM uplink</td></tr>
@@ -1508,7 +1508,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <tr><td class="ft-name">WGS Ka-band</td><td class="ft-freq">~20/30 GHz</td><td>Wideband Global SATCOM Ka channels</td></tr>
       <tr><td class="ft-name">ViaSat-3</td><td class="ft-freq">~18.3–20.2 GHz</td><td>1 Tbps capacity Ka-band internet — aviation, maritime, military</td></tr>
       <tr><td class="ft-name">Starlink inter-sat laser</td><td class="ft-freq">(optical, ~193 THz)</td><td>Optical inter-satellite links — faster than fiber, no frequency allocation</td></tr>
-    </table>
+    </table></div>
     <div class="lb-mos"><div class="lb-mos-hdr"><span>🪖</span> 17E NOTE</div><p><strong>Ka-band and EHF are where hardened military strategic comms live</strong> — harder to jam, harder to intercept, but still detectable as signal sources.</p><ul><li><strong>AEHF (EHF at ~44 GHz uplink):</strong> This system handles the most important military communications — including nuclear command and control. It is extremely resistant to jamming because it uses spread signals, frequency hopping, and special antennas that reject interference. You cannot realistically jam AEHF, but you can still detect the physical terminal and its location.</li><li><strong>WGS Ka-band:</strong> The military's WGS satellite system also has Ka-band channels for very large data transfers — things like high-resolution video and large intelligence files. The terminals emit signals around 30 GHz when they transmit.</li><li><strong>Rain fade at Ka-band is severe:</strong> A heavy tropical storm can completely knock out Ka-band signals. Military systems using Ka-band have backup systems built in — like automatically switching to a different frequency or beam when rain blocks the primary link.</li><li><strong>Starlink laser links between satellites:</strong> Some Starlink satellites pass data to each other using lasers instead of radio waves. Laser signals cannot be detected by radio equipment at all. This means data can travel through space from satellite to satellite without ever touching a ground station — making interception nearly impossible.</li></ul></div>
   </div>
 
@@ -1516,7 +1516,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
   <div class="band-section">
     <div class="ls-label" style="margin-bottom:.8rem">Quick Reference</div>
     <div class="ls-h2" style="margin-bottom:.8rem">Band Comparison Cheat Sheet</div>
-    <table class="freq-table" style="--band-color:var(--accent)">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="freq-table" style="--band-color:var(--accent)">
       <tr><th>Band</th><th>Frequency</th><th>Primary Satellite Use</th><th>Rain Resistance</th><th>17E Relevance</th></tr>
       <tr><td class="ft-name" style="color:#2980b9">VHF</td><td class="ft-freq">30–300 MHz</td><td>Legacy military, emergency</td><td>Excellent</td><td>Low (EMCON awareness)</td></tr>
       <tr><td class="ft-name" style="color:#2980b9">UHF</td><td class="ft-freq">300 MHz–1 GHz</td><td>Tactical MILSATCOM, MUOS</td><td>Very Good</td><td>⭐⭐⭐ Critical — tactical comms</td></tr>
@@ -1526,7 +1526,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
       <tr><td class="ft-name" style="color:#8e44ad">X-band</td><td class="ft-freq">8–12 GHz</td><td>Military SATCOM (WGS), SAR radar</td><td>Moderate</td><td>⭐⭐⭐ High — WGS, UAV, ISR</td></tr>
       <tr><td class="ft-name" style="color:#2980b9">Ku-band</td><td class="ft-freq">12–18 GHz</td><td>Starlink, VSAT, broadcast TV</td><td>Moderate</td><td>⭐⭐⭐ High — Starlink, VSAT OPSEC</td></tr>
       <tr><td class="ft-name" style="color:#1abc9c">Ka-band</td><td class="ft-freq">26.5–40 GHz</td><td>High-speed internet, AEHF</td><td>Poor</td><td>⭐⭐ Medium — AEHF C2, strategic</td></tr>
-    </table>
+    </table></div>
   </div>
 
 </div><!-- /lb-wrap -->
