@@ -62,6 +62,11 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
 .abtn:hover{border-color:#3a5266}
 .abtn.act{color:var(--cyan);border-color:#0099bb;background:#001a22;box-shadow:0 0 10px rgba(0,212,255,.12)}
 .bbtn.act{color:var(--amber);border-color:var(--gdim);background:var(--amber-dark);box-shadow:var(--glow-a)}
+.pbtn{font-size:12.5px;font-weight:700;padding:8px 16px}
+.pbtn.sensor.act{color:var(--cyan);border-color:#0099bb;background:#001a22;box-shadow:0 0 10px rgba(0,212,255,.15)}
+.pbtn.emitter.act{color:var(--red);border-color:#aa2222;background:#220a0a;box-shadow:0 0 10px rgba(255,74,74,.15)}
+.placement-picker{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--b2);flex-wrap:wrap}
+.locked{opacity:.45;pointer-events:none}
 .terrain-toggle{margin-left:auto;display:flex;align-items:center;gap:8px}
 .ttoggle{position:relative;width:38px;height:20px;background:var(--b1);border-radius:20px;cursor:pointer;transition:background .2s;border:1px solid var(--b2)}
 .ttoggle.on{background:var(--gfaint);border-color:var(--gdim)}
@@ -147,7 +152,7 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
 <div class="hdr">
   <div class="hdr-left">
     <div class="title">DF Trainer — Baseline Geometry <span>&amp; Propagation Realism</span></div>
-    <div class="sub">Left-click to place a DF sensor · Right-click to set emitter position · Toggle terrain for tactical realism</div>
+    <div class="sub">Tap the map to place a DF sensor or emitter (pick which above) · Right-click always sets the emitter on desktop · Toggle terrain for tactical realism</div>
   </div>
   <div class="mode-btns">
     <button class="mbtn act" onclick="setMode('free')" id="btn-free">Free Build</button>
@@ -188,7 +193,7 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
     </div>
     <div class="ref-sec">
       <div class="rt">Biomes — Same Physics, Different Environment</div>
-      <b>Mountainous</b> uses varied terrain elevation — a taller antenna can clear a <em>lower</em> hill but not a taller one (each hill lists its peak height). <b>Desert</b> is flat and dry, extending range and sharpening bearings versus baseline. <b>Urban</b> buildings block LOS <em>regardless</em> of antenna height (dense structures beat even an elevated OP) and cause heavy multipath — the hardest environment here. <b>Maritime</b> has no terrain at all and the cleanest propagation of the four, representing open water with an evaporation duct.
+      <b>Mountainous</b> uses varied terrain elevation — a taller antenna can clear a <em>lower</em> hill but not a taller one (each hill lists its peak height). <b>Desert</b> is flat and dry, extending range and sharpening bearings versus baseline. <b>Urban</b> buildings block LOS <em>regardless</em> of antenna height (dense structures beat even an elevated OP) and cause heavy multipath — the hardest environment here. <b>Forest</b> canopy and tree trunks attenuate signal and add moderate multipath — worse than open terrain, though not as severe as Urban.
     </div>
   </div>
 </div>
@@ -200,7 +205,13 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
       <span class="map-title">TACTICAL MAP — GRID REFERENCE DISPLAY</span>
       <span class="map-coords" id="coords">Hover for grid coords</span>
     </div>
-    <div class="antenna-picker">
+    <div class="placement-picker">
+      <span class="ap-label">Tap Map To Place:</span>
+      <button class="abtn pbtn sensor act" onclick="setPlacementMode('sensor',this)" id="place-sensor">📍 Sensor</button>
+      <button class="abtn pbtn emitter" onclick="setPlacementMode('emitter',this)" id="place-emitter">🎯 Emitter</button>
+      <span class="ap-label" style="text-transform:none;letter-spacing:0;color:var(--txtd)">(desktop: right-click always places the emitter too)</span>
+    </div>
+    <div class="antenna-picker" id="antennaPickerRow">
       <span class="ap-label">Next Sensor:</span>
       <button class="abtn act" onclick="setAntenna('handheld',this)" id="ant-handheld">📻 Handheld (2m)</button>
       <button class="abtn" onclick="setAntenna('vehicle',this)" id="ant-vehicle">🚙 Vehicle Mast (10m)</button>
@@ -210,12 +221,12 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
         <div class="ttoggle on" id="terrainToggle" onclick="toggleTerrain()"><div class="knob"></div></div>
       </div>
     </div>
-    <div class="antenna-picker">
+    <div class="antenna-picker" id="biomePickerRow">
       <span class="ap-label">Biome:</span>
       <button class="abtn bbtn act" onclick="setBiome('mountainous',this)" id="biome-mountainous">⛰️ Mountainous</button>
       <button class="abtn bbtn" onclick="setBiome('desert',this)" id="biome-desert">🏜️ Desert</button>
       <button class="abtn bbtn" onclick="setBiome('urban',this)" id="biome-urban">🏙️ Urban</button>
-      <button class="abtn bbtn" onclick="setBiome('maritime',this)" id="biome-maritime">🌊 Maritime</button>
+      <button class="abtn bbtn" onclick="setBiome('forest',this)" id="biome-forest">🌲 Forest</button>
       <span class="ap-label" id="biomeNote" style="text-transform:none;letter-spacing:0;flex:1;min-width:180px"></span>
     </div>
     <canvas id="mapCanvas" height="520"></canvas>
@@ -228,8 +239,7 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
     <div class="instr" id="instrBox">
       <div class="instr-hdr">▶ HOW TO USE</div>
       <div class="instr-body" id="instrText">
-        <strong>Left-click</strong> on the map to place a DF sensor (up to 4). Pick an antenna type above first — it changes your <em>radio horizon</em> and <em>bearing accuracy</em>.<br><br>
-        <strong>Right-click</strong> to place the emitter (the target you're trying to locate).<br><br>
+        Use the <strong>"Tap Map To Place"</strong> buttons above the map to choose whether tapping places a <strong>Sensor</strong> or the <strong>Emitter</strong> — works on both touchscreens and desktop. Pick an antenna type first — it changes your <em>radio horizon</em> and <em>bearing accuracy</em>. (On desktop, right-click always places the emitter directly, regardless of mode.)<br><br>
         With <strong>Terrain Realism</strong> on, hills can <em>mask</em> a sensor's line of bearing entirely — that sensor won't contribute to the fix until you reposition it.<br><br>
         Watch how <strong>LOB → Cut → Fix</strong> accuracy improves as you add sensors. The <em>CEP circle</em> shrinks with each usable addition.
       </div>
@@ -289,9 +299,8 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
 
     <!-- Quiz answer -->
     <div class="card" id="quizAnswerCard" style="display:none">
-      <div class="card-title">Answer</div>
+      <div class="card-title">Result</div>
       <div id="quizAnswer" style="font-size:12.5px;color:var(--txt);line-height:1.65"></div>
-      <button class="btn" onclick="nextQuizQ()">Next Question →</button>
     </div>
 
   </div>
@@ -340,8 +349,8 @@ const BIOMES = {
     note:'Flat, open, dry air — minimal moisture absorption and almost no multipath. Range extends and bearings sharpen versus baseline.' },
   urban:       { label:'Urban',       icon:'🏙️', rangeMult:0.70, errMult:1.70, obstacles: BUILDINGS_URBAN,
     note:'Dense structures cause severe multipath and reflection. Buildings block LOS regardless of antenna height, and bearing error nearly doubles even where a signal is copied at all.' },
-  maritime:    { label:'Maritime',    icon:'🌊', rangeMult:1.35, errMult:0.65, obstacles: [],
-    note:'Open water with no terrain and often an evaporation duct near the surface — the cleanest propagation environment here. Range and bearing accuracy are both the best of the four settings.' },
+  forest:      { label:'Forest',      icon:'🌲', rangeMult:0.85, errMult:1.30, obstacles: [],
+    note:'Dense canopy and tree trunks attenuate signal strength and cause moderate multipath — worse than open terrain, but not as severe as urban structures. Range shortens and bearings get noisier versus baseline.' },
 };
 
 let mode = 'free';
@@ -349,6 +358,13 @@ let sensors = [];   // {x,y,color,name,lob,errorDeg,antenna,masked}
 let emitter = null; // {x,y}
 let terrainOn = true;
 let nextAntenna = 'handheld';
+let placementMode = 'sensor';
+let restrictionLineX = 350;
+let allowedSide = 'right';
+let emitterHidden = false;
+let awaitingGuess = false;
+let guessPos = null;
+let feRoundNum = 0;
 let currentBiome = 'mountainous';
 
 function activeObstacles() {
@@ -402,7 +418,12 @@ function radioHorizonPx(heightM) {
 /* ── ANTENNA PICKER ──────────────────────────────── */
 function setAntenna(type, btn) {
   nextAntenna = type;
-  document.querySelectorAll('.abtn:not(.bbtn)').forEach(b => b.classList.remove('act'));
+  document.querySelectorAll('.abtn:not(.bbtn):not(.pbtn)').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+}
+function setPlacementMode(mode_, btn) {
+  placementMode = mode_;
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.remove('act'));
   btn.classList.add('act');
 }
 function setBiome(name, btn) {
@@ -435,29 +456,55 @@ function toggleRef() {
 /* ── MOUSE ───────────────────────────────────────── */
 canvas.addEventListener('contextmenu', e => { e.preventDefault(); });
 
-canvas.addEventListener('click', e => {
-  const r = canvas.getBoundingClientRect();
-  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
-  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
-  if(sensors.length < 4) {
-    const idx = sensors.length;
-    const at = ANTENNA_TYPES[nextAntenna];
-    const errorDeg = (at.errMin + Math.random() * (at.errMax - at.errMin)) * BIOMES[currentBiome].errMult;
-    sensors.push({ x, y, color: SENSOR_COLORS[idx], name: SENSOR_NAMES[idx], lob: null, errorDeg, antenna: nextAntenna, masked:false });
-    computeLOBs();
-    updateSidebar();
-    draw();
-  }
-});
-
-canvas.addEventListener('contextmenu', e => {
-  const r = canvas.getBoundingClientRect();
-  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
-  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
+function placeSensorAt(x, y) {
+  if(sensors.length >= 4) return;
+  const idx = sensors.length;
+  const at = ANTENNA_TYPES[nextAntenna];
+  const errorDeg = (at.errMin + Math.random() * (at.errMax - at.errMin)) * BIOMES[currentBiome].errMult;
+  sensors.push({ x, y, color: SENSOR_COLORS[idx], name: SENSOR_NAMES[idx], lob: null, errorDeg, antenna: nextAntenna, masked:false });
+  computeLOBs();
+  updateSidebar();
+  draw();
+}
+function placeEmitterAt(x, y) {
   emitter = { x, y };
   computeLOBs();
   updateSidebar();
   draw();
+}
+function isInAllowedZone(x) {
+  return allowedSide === 'right' ? x >= restrictionLineX : x <= restrictionLineX;
+}
+function flashZoneWarning() {
+  const el = document.getElementById('quizStatus');
+  if(!el) return;
+  el.innerHTML = '<span style="color:var(--red)">⚠ That\'s across the restricted boundary \u2014 sensors must stay in your zone.</span>';
+  setTimeout(() => { if(mode === 'quiz' && !awaitingGuess) updateFindEmitterStatus(); }, 1800);
+}
+
+canvas.addEventListener('click', e => {
+  const r = canvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
+  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
+
+  if(mode === 'quiz') {
+    if(awaitingGuess) { submitGuess(x, y); return; }
+    if(!isInAllowedZone(x)) { flashZoneWarning(); return; }
+    placeSensorAt(x, y);
+    updateFindEmitterStatus();
+    return;
+  }
+
+  if(placementMode === 'emitter') placeEmitterAt(x, y);
+  else placeSensorAt(x, y);
+});
+
+canvas.addEventListener('contextmenu', e => {
+  if(mode === 'quiz') return; // emitter is hidden/system-controlled during Find the Emitter
+  const r = canvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (canvas.width / r.width) / scale();
+  const y = (e.clientY - r.top)  * (canvas.height / r.height) / scale();
+  placeEmitterAt(x, y);
 });
 
 canvas.addEventListener('mousemove', e => {
@@ -636,26 +683,28 @@ function updateSidebar() {
     color = fix && fix.cep < 30 ? 'var(--green)' : 'var(--amber)';
   }
 
-  document.getElementById('fixMethod').textContent = method;
-  document.getElementById('fixMethod').style.color = color;
+  document.getElementById('fixMethod').textContent = emitterHidden ? 'CLASSIFIED' : method;
+  document.getElementById('fixMethod').style.color = emitterHidden ? 'var(--txtd)' : color;
   document.getElementById('fixSensors').textContent = sensors.length;
   document.getElementById('fixMasked').textContent = maskedCount;
   document.getElementById('fixMasked').style.color = maskedCount > 0 ? 'var(--red)' : 'var(--txt)';
   document.getElementById('fixBaseline').textContent = baseline > 0 ? baseline.toFixed(1)+' km' : '—';
-  document.getElementById('fixQuality').textContent = quality;
-  document.getElementById('fixCEP').textContent = cepText;
-  document.getElementById('cepBar').style.width = cepPct + '%';
+  document.getElementById('fixQuality').textContent = emitterHidden ? 'Solve it visually — no auto-fix shown' : quality;
+  document.getElementById('fixCEP').textContent = emitterHidden ? '—' : cepText;
+  document.getElementById('cepBar').style.width = (emitterHidden ? 0 : cepPct) + '%';
   document.getElementById('cepBar').style.background = n >= 3 ? 'var(--green)' : n === 2 ? 'var(--amber)' : 'var(--red)';
-  document.getElementById('cepVal').textContent = cepText;
+  document.getElementById('cepVal').textContent = emitterHidden ? '—' : cepText;
   document.getElementById('cepVal').style.color = color;
 
-  if(emitter) {
+  if(emitterHidden) {
+    document.getElementById('fixGrid').textContent = 'CLASSIFIED';
+  } else if(emitter) {
     document.getElementById('fixGrid').textContent = gridLabel(emitter.x, emitter.y);
   } else {
-    document.getElementById('fixGrid').textContent = 'Right-click to set';
+    document.getElementById('fixGrid').textContent = 'Tap map to set';
   }
 
-  if(mode === 'quiz') updateQuizStatus();
+  if(mode === 'quiz') updateFindEmitterStatus();
 }
 
 function removeSensor(i) {
@@ -686,13 +735,13 @@ function draw() {
     mountainous: light ? ['#dce8dc','#c6dcc2'] : ['#060d0a','#050a08'],
     desert:      light ? ['#f0e2ba','#e8d29a'] : ['#241c0c','#1a1408'],
     urban:       light ? ['#dfe2e6','#c8ccd2'] : ['#12141c','#0c0e14'],
-    maritime:    light ? ['#c6e2f0','#a4cde6'] : ['#071824','#04101a'],
+    forest:      light ? ['#c8ddc0','#a8c896'] : ['#0a1608','#061006'],
   };
   const PATCH_COLOR = {
     mountainous: 'rgba(20,40,25,0.35)',
     desert:      'rgba(160,130,70,0.3)',
     urban:       'rgba(90,95,105,0.3)',
-    maritime:    'rgba(30,90,130,0.3)',
+    forest:      'rgba(15,60,20,0.4)',
   };
   const GRID_COLOR = light ? '0,80,50' : '0,255,136';
 
@@ -727,23 +776,12 @@ function draw() {
     ctx.fillText(String(i*10).padStart(2,'0'), 2, gy+3);
   }
 
-  // Water feature — only for non-maritime biomes (maritime is already all water)
-  if(currentBiome !== 'maritime') {
-    ctx.strokeStyle = 'rgba(120,100,60,0.2)';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(0,300); ctx.bezierCurveTo(200,280,400,320,LW,280); ctx.stroke();
-    ctx.fillStyle = 'rgba(20,60,80,0.35)';
-    ctx.beginPath(); ctx.ellipse(650,460,50,26,0.2,0,Math.PI*2); ctx.fill();
-  } else {
-    // gentle wave lines across the whole open-water map
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    ctx.lineWidth = 1;
-    for(let wy=40; wy<LH; wy+=45) {
-      ctx.beginPath();
-      for(let wx=0; wx<=LW; wx+=20) ctx.lineTo(wx, wy + Math.sin(wx*0.03)*4);
-      ctx.stroke();
-    }
-  }
+  // Decorative river/pond feature (all biomes are land-based now)
+  ctx.strokeStyle = 'rgba(120,100,60,0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0,300); ctx.bezierCurveTo(200,280,400,320,LW,280); ctx.stroke();
+  ctx.fillStyle = 'rgba(20,60,80,0.35)';
+  ctx.beginPath(); ctx.ellipse(650,460,50,26,0.2,0,Math.PI*2); ctx.fill();
 
   // ─── OBSTACLES (functional — blocks LOS unless antenna clears them) ───
   if(terrainOn) {
@@ -846,8 +884,31 @@ function draw() {
     }
   });
 
-  // ─── CEP CIRCLE ───
-  if(fix && fix.n >= 2) {
+  // ─── RESTRICTION LINE (Find the Emitter mode) ───
+  if(mode === 'quiz') {
+    ctx.beginPath();
+    ctx.moveTo(restrictionLineX, 0);
+    ctx.lineTo(restrictionLineX, LH);
+    ctx.strokeStyle = 'rgba(255,74,74,0.55)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10,6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const deniedX = allowedSide === 'right' ? 0 : restrictionLineX;
+    const deniedW = allowedSide === 'right' ? restrictionLineX : (LW - restrictionLineX);
+    ctx.fillStyle = 'rgba(255,74,74,0.06)';
+    ctx.fillRect(deniedX, 0, deniedW, LH);
+    ctx.save();
+    ctx.translate(restrictionLineX - 6, 16);
+    ctx.rotate(-Math.PI/2);
+    ctx.font = 'bold 9px Share Tech Mono';
+    ctx.fillStyle = 'rgba(255,120,120,0.85)';
+    ctx.fillText('RESTRICTED BOUNDARY — NO SENSORS BEYOND THIS LINE', 0, 0);
+    ctx.restore();
+  }
+
+  // ─── CEP CIRCLE (hidden during the live Find the Emitter round; revealed after guessing, for comparison) ───
+  if(fix && fix.n >= 2 && (mode !== 'quiz' || !emitterHidden)) {
     fix.pts.forEach(pt => {
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 4, 0, Math.PI*2);
@@ -884,8 +945,8 @@ function draw() {
     ctx.fillText(`CEP ~${cepKm} km`, fix.x + fix.cep + 4, fix.y);
   }
 
-  // ─── EMITTER ───
-  if(emitter) {
+  // ─── EMITTER (hidden during Find the Emitter until the guess is revealed) ───
+  if(emitter && !emitterHidden) {
     const pulse = (Date.now() % 2000) / 2000;
     [0, 0.33, 0.66].forEach(offset => {
       const rr = ((pulse + offset) % 1) * 35;
@@ -908,6 +969,22 @@ function draw() {
     ctx.font = 'bold 10px Share Tech Mono';
     ctx.fillStyle = '#ff8888';
     ctx.fillText('EMITTER', emitter.x+12, emitter.y-10);
+  }
+
+  // ─── GUESS MARKER (after Find the Emitter reveal) ───
+  if(guessPos && !emitterHidden) {
+    ctx.beginPath();
+    ctx.moveTo(guessPos.x-9, guessPos.y-9); ctx.lineTo(guessPos.x+9, guessPos.y+9);
+    ctx.moveTo(guessPos.x+9, guessPos.y-9); ctx.lineTo(guessPos.x-9, guessPos.y+9);
+    ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(guessPos.x, guessPos.y); ctx.lineTo(emitter.x, emitter.y);
+    ctx.strokeStyle = 'rgba(255,224,102,0.5)'; ctx.lineWidth = 1.5;
+    ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font = 'bold 10px Share Tech Mono';
+    ctx.fillStyle = '#ffe066';
+    ctx.fillText('YOUR GUESS', guessPos.x+12, guessPos.y-10);
   }
 
   // ─── SENSORS ───
@@ -941,8 +1018,18 @@ function setMode(m) {
   document.getElementById('quizBanner').style.display = m === 'quiz' ? 'block' : 'none';
   document.getElementById('quizAnswerCard').style.display = 'none';
   document.getElementById('refStrip').classList.toggle('show', m === 'free');
+  document.getElementById('antennaPickerRow').classList.remove('locked');
+  document.getElementById('biomePickerRow').classList.remove('locked');
+  const staleGuessBtn = document.getElementById('guessBtn');
+  if(staleGuessBtn) staleGuessBtn.remove();
+  emitterHidden = false;
+  awaitingGuess = false;
+  guessPos = null;
 
   sensors = []; emitter = null;
+  placementMode = 'sensor';
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.toggle('act', b.id === 'place-sensor'));
+  document.getElementById('place-emitter').style.display = m === 'quiz' ? 'none' : '';
   currentBiome = 'mountainous';
   document.querySelectorAll('.bbtn').forEach(b => b.classList.toggle('act', b.id === 'biome-mountainous'));
   document.getElementById('biomeNote').textContent = BIOMES.mountainous.note;
@@ -950,12 +1037,11 @@ function setMode(m) {
   if(m === 'concave') { terrainOn = false; syncTerrainToggle(); loadConcave(); }
   else if(m === 'convex') { terrainOn = false; syncTerrainToggle(); loadConvex(); }
   else if(m === 'terrain') { terrainOn = true; syncTerrainToggle(); loadTerrainChallenge(); }
-  else if(m === 'quiz') { terrainOn = true; syncTerrainToggle(); startQuiz(); }
+  else if(m === 'quiz') { terrainOn = true; syncTerrainToggle(); startFindEmitter(); }
   else {
     terrainOn = true; syncTerrainToggle();
     document.getElementById('instrText').innerHTML = `
-      <strong>Left-click</strong> to place a DF sensor (up to 4). Pick an antenna type above first.<br><br>
-      <strong>Right-click</strong> to place the emitter target.<br><br>
+      Use <strong>Tap Map To Place</strong> above to pick Sensor or Emitter, then tap the map (up to 4 sensors). Pick an antenna type first.<br><br>
       Watch how <strong>LOB → Cut → Fix</strong> accuracy changes as you add sensors and move them around. Try different <strong>Biomes</strong> below to see how terrain type changes range and accuracy.`;
   }
   computeLOBs();
@@ -966,39 +1052,38 @@ function syncTerrainToggle() {
 }
 
 function loadConcave() {
-  emitter = { x: 500, y: 120 };
+  emitter = { x: 375, y: 20 };
   sensors = [
-    { x:100, y:300, color:SENSOR_COLORS[0], name:SENSOR_NAMES[0], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
-    { x:240, y:340, color:SENSOR_COLORS[1], name:SENSOR_NAMES[1], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
-    { x:400, y:350, color:SENSOR_COLORS[2], name:SENSOR_NAMES[2], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
-    { x:560, y:320, color:SENSOR_COLORS[3], name:SENSOR_NAMES[3], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:60,  y:380, color:SENSOR_COLORS[0], name:SENSOR_NAMES[0], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:280, y:440, color:SENSOR_COLORS[1], name:SENSOR_NAMES[1], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:470, y:440, color:SENSOR_COLORS[2], name:SENSOR_NAMES[2], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:690, y:380, color:SENSOR_COLORS[3], name:SENSOR_NAMES[3], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
   ];
   computeLOBs();
   document.getElementById('instrText').innerHTML = `
     <strong>Concave Baseline</strong> (terrain off for a clean geometry lesson)<br><br>
-    Sensors arc <em>toward</em> the expected target area. This creates:<br><br>
-    • Compact, narrow but <strong>deep</strong> target zone<br>
-    • Excellent accuracy at <em>short ranges</em><br>
-    • Satisfactory bearings at longer ranges<br><br>
-    Notice the CEP is elongated along the radial axis — good lateral precision, less depth precision.`;
+    The sensor line <em>bulges away</em> from the emitter \u2014 the middle two sensors sit farther from the target than the two on the ends, like the back of a bow facing away from it. This creates:<br><br>
+    \u2022 A wider front, covering more ground when the target's exact location isn't known yet<br>
+    \u2022 Shallower crossing angles, since the sensors are spread further from the convergence point<br><br>
+    Compare the CEP here to the Convex demo \u2014 same 4 sensors, opposite curve, noticeably tighter fix there.`;
 }
 
 function loadConvex() {
-  emitter = { x: 350, y: 150 };
+  emitter = { x: 375, y: 190 };
   sensors = [
-    { x:80,  y:200, color:SENSOR_COLORS[0], name:SENSOR_NAMES[0], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
-    { x:280, y:420, color:SENSOR_COLORS[1], name:SENSOR_NAMES[1], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
-    { x:480, y:420, color:SENSOR_COLORS[2], name:SENSOR_NAMES[2], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
-    { x:620, y:200, color:SENSOR_COLORS[3], name:SENSOR_NAMES[3], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:200, y:370, color:SENSOR_COLORS[0], name:SENSOR_NAMES[0], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:310, y:300, color:SENSOR_COLORS[1], name:SENSOR_NAMES[1], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:440, y:300, color:SENSOR_COLORS[2], name:SENSOR_NAMES[2], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
+    { x:550, y:370, color:SENSOR_COLORS[3], name:SENSOR_NAMES[3], lob:null, errorDeg:4, antenna:'vehicle', masked:false },
   ];
   computeLOBs();
   document.getElementById('instrText').innerHTML = `
     <strong>Convex Baseline</strong> (terrain off for a clean geometry lesson)<br><br>
-    Sensors arc <em>away</em> from the target area. This creates:<br><br>
-    • Reasonable azimuth angles over a <strong>wide front</strong><br>
-    • Satisfies the average tactical/strategic situation<br>
-    • Better all-around coverage<br><br>
-    Compare the CEP size here vs the concave demo. The convex baseline provides more even accuracy across a wider area.`;
+    The sensor line <em>cups toward</em> the emitter \u2014 the middle two sensors sit closer to the target than the two on the ends, like a bow curving in around it. This creates:<br><br>
+    \u2022 A relatively short-range, tightly curved baseline<br>
+    \u2022 Sharper crossing angles where the LOBs converge<br>
+    \u2022 A small, tight CEP \u2014 excellent precision<br><br>
+    Compare this to the Concave demo's larger CEP \u2014 same 4 sensors, opposite curve direction.`;
 }
 
 function loadTerrainChallenge() {
@@ -1015,97 +1100,125 @@ function loadTerrainChallenge() {
     Check the <em>DF Fundamentals</em> card above for how antenna height and hill height interact.`;
 }
 
-/* ── QUIZ MODE ───────────────────────────────────── */
-const QUIZ_QS = [
-  {
-    q: 'Switch the biome to Urban and place a sensor whose LOB to the emitter crosses a building. Now switch to Maritime with the same sensor positions. What changes?',
-    hint: 'Try the same sensor/emitter placement in the Urban biome first, then switch the biome dropdown to Maritime without moving anything.',
-    setup: () => { emitter = {x:350, y:250}; },
-    check: () => sensors.length >= 1 && emitter && (currentBiome === 'urban' || currentBiome === 'maritime'),
-    answer: 'In <strong>Urban</strong>, buildings block line of sight <em>regardless of antenna height</em> — even an Elevated OP gets masked if a building is in the path, and bearing error is much worse everywhere else due to multipath. In <strong>Maritime</strong>, there is no terrain to mask anything, range extends significantly, and bearing error drops to its best case — open water is by far the cleanest environment this trainer models.'
-  },
-  {
-    q: 'Place sensors so that a CUT is established on the emitter. What is the minimum number of usable sensors needed for a Cut?',
-    hint: 'Right-click to place emitter first, then left-click to add sensors one at a time.',
-    setup: () => { emitter = {x:400, y:180}; },
-    check: () => usableSensors().length >= 2 && usableSensors().length < 3,
-    answer: 'A <strong>Cut</strong> requires exactly <strong>2 usable sensors</strong>. Two LOBs intersect to give a general location. It is more accurate than a single LOB but still has significant error — the intersection is a point but both LOBs carry angular error, producing an uncertainty area. A masked or beyond-horizon sensor does not count toward this.'
-  },
-  {
-    q: 'Place a sensor so its LOB to the emitter is blocked by a hill. What happens to that sensor\'s contribution to the fix?',
-    hint: 'Turn Terrain Realism on, then place a sensor on the far side of a hill from the emitter.',
-    setup: () => { emitter = {x:470, y:380}; },
-    check: () => sensors.some(s => s.maskReason === 'terrain'),
-    answer: 'A <strong>terrain-masked</strong> sensor contributes <strong>nothing</strong> to the fix — LOS DF (VHF/UHF) can\'t see through a ridgeline the way HF sky wave can. The trainer excludes masked sensors from the intersection/CEP math entirely, mirroring reality: you either reposition to restore line of sight or accept a fix from fewer sensors.'
-  },
-  {
-    q: 'Compare a Handheld (2m) sensor to an Elevated OP (30m) sensor at the same position. What two things change?',
-    hint: 'Place two sensors at similar spots with different antenna types (change the "Next Sensor" selector between clicks) and compare their tooltips.',
-    setup: () => { emitter = {x:400, y:200}; },
-    check: () => new Set(sensors.map(s => s.antenna)).size >= 2,
-    answer: 'Two things change: the <strong>radio horizon</strong> extends from about 6 km (2m) to about 23 km (30m), using Horizon ≈ 4.12×√height(m); and the <strong>bearing error</strong> narrows, since an elevated antenna sits above ground-level multipath and clutter. The tradeoff: the 30m OP takes real time to erect and isn\'t quickly displaced, while the 2m handheld deploys instantly.'
-  },
-  {
-    q: 'Place sensors in a CONCAVE arrangement around the emitter and observe the CEP shape.',
-    hint: 'Place sensors in an arc that curves TOWARD the emitter (like a bowl facing the emitter). Right-click to set emitter first.',
-    setup: () => { emitter = {x:450, y:140}; },
-    check: () => usableSensors().length >= 3 && computeFixPoint() !== null,
-    answer: 'A <strong>concave baseline</strong> curves toward the expected target area. It produces a narrow but deep target zone — excellent triangulation at short ranges, satisfactory bearings at longer ranges. The CEP is elongated radially (deep) but narrow laterally.'
-  },
-  {
-    q: 'Place sensors very close together (tight cluster) vs spread far apart. What happens to the CEP?',
-    hint: 'First place 3 sensors close together, note the CEP. Then clear and place 3 sensors spread widely.',
-    setup: () => { emitter = {x:400, y:200}; },
-    check: () => usableSensors().length >= 2 && computeFixPoint() !== null,
-    answer: 'When sensors are <strong>spread far apart</strong>, the LOBs intersect at sharper angles — producing a smaller, tighter CEP. When sensors are <strong>clustered together</strong>, the LOBs are nearly parallel and intersect at shallow angles — producing a large, elongated CEP. This is why <strong>baseline distance matters</strong>: the DF network can effectively locate a transmitter at a depth roughly equal to its baseline distance.'
-  },
-];
-let quizIdx = 0;
-function startQuiz() {
-  quizIdx = 0;
-  loadQuizQ();
-}
-function loadQuizQ() {
-  const q = QUIZ_QS[quizIdx % QUIZ_QS.length];
-  document.getElementById('quizBanner').style.display = 'block';
-  document.getElementById('quizQ').innerHTML = `Q${quizIdx+1}: ${q.q}`;
-  document.getElementById('quizHint').textContent = q.hint;
+/* ── FIND THE EMITTER MODE ──────────────────────── */
+function startFindEmitter() {
+  feRoundNum++;
+
+  // Randomly assign biome and antenna type — the student doesn't choose these
+  const biomeKeys = Object.keys(BIOMES);
+  currentBiome = biomeKeys[Math.floor(Math.random() * biomeKeys.length)];
+  document.querySelectorAll('.bbtn').forEach(b => b.classList.toggle('act', b.id === 'biome-' + currentBiome));
+  document.getElementById('biomeNote').textContent = BIOMES[currentBiome].note;
+
+  const antKeys = Object.keys(ANTENNA_TYPES);
+  nextAntenna = antKeys[Math.floor(Math.random() * antKeys.length)];
+  document.querySelectorAll('.abtn:not(.bbtn):not(.pbtn)').forEach(b => b.classList.toggle('act', b.id === 'ant-' + nextAntenna));
+
+  document.getElementById('antennaPickerRow').classList.add('locked');
+  document.getElementById('biomePickerRow').classList.add('locked');
+
+  // Random restriction line and allowed side
+  allowedSide = Math.random() < 0.5 ? 'left' : 'right';
+  restrictionLineX = 260 + Math.random() * 180;
+
+  // Hidden emitter placed somewhere in the DENIED zone (the side sensors can't reach)
+  let ex;
+  if(allowedSide === 'right') { ex = 20 + Math.random() * (restrictionLineX - 40); }
+  else { ex = restrictionLineX + 20 + Math.random() * (700 - restrictionLineX - 40); }
+  const ey = 60 + Math.random() * 400;
+  emitter = { x: ex, y: ey };
+  emitterHidden = true;
+  awaitingGuess = false;
+  guessPos = null;
+
+  sensors = [];
+  terrainOn = true;
+  syncTerrainToggle();
+
+  computeLOBs();
+  updateSidebar();
   document.getElementById('quizAnswerCard').style.display = 'none';
-  document.getElementById('quizStatus').innerHTML = '';
-  if(q.setup) q.setup();
-  computeLOBs(); updateSidebar();
-  document.getElementById('instrText').innerHTML = `
-    Answer the question by <strong>placing sensors</strong> and <strong>right-clicking an emitter</strong> on the map.<br><br>
-    When you think you've demonstrated the answer, click <strong>Show Answer</strong> below.`;
-  const existing = document.getElementById('showAnsBtn');
+  updateFindEmitterStatus();
+  draw();
+}
+
+function updateFindEmitterStatus() {
+  const at = ANTENNA_TYPES[nextAntenna];
+  const bi = BIOMES[currentBiome];
+  document.getElementById('quizQ').innerHTML = `🎯 FIND THE EMITTER — Round ${feRoundNum}`;
+  document.getElementById('quizHint').innerHTML =
+    `Assigned: ${at.icon} ${at.label} in a ${bi.icon} ${bi.label} environment.<br>` +
+    `Sensors are restricted to the <strong>${allowedSide.toUpperCase()}</strong> side of the boundary line \u2014 the emitter is hidden somewhere on the other side.`;
+  const n = sensors.length;
+  const usable = usableSensors().length;
+  document.getElementById('quizStatus').innerHTML =
+    `Sensors placed: ${n}/4 (${usable} usable). Tap your zone to place sensors, then Submit Guess when ready.`;
+
+  const existing = document.getElementById('guessBtn');
   if(existing) existing.remove();
   const btn = document.createElement('button');
-  btn.id = 'showAnsBtn';
+  btn.id = 'guessBtn';
   btn.className = 'btn';
-  btn.textContent = 'Show Answer';
-  btn.onclick = showQuizAnswer;
+  btn.textContent = awaitingGuess ? 'Tap the map to place your guess\u2026' : 'Submit Guess';
+  btn.onclick = armGuessMode;
   document.getElementById('instrBox').appendChild(btn);
+
+  document.getElementById('instrText').innerHTML = `
+    Use your LOBs \u2014 including where they'd cross if extended \u2014 to estimate the emitter's location on the far side of the boundary.<br><br>
+    Remember: a masked or out-of-range sensor still counts against your 4-sensor limit, so site carefully. Watch the wavering "DETECTED" lines \u2014 they mean a sensor is too far out to trust its bearing.`;
 }
-function updateQuizStatus() {
-  const q = QUIZ_QS[quizIdx % QUIZ_QS.length];
-  const el = document.getElementById('quizStatus');
-  if(!el) return;
-  if(q.check && q.check()) {
-    el.innerHTML = '<span style="color:var(--green)">✓ Demonstrated — click Show Answer to confirm</span>';
-  } else {
-    el.innerHTML = '<span style="color:var(--txtd)">Not yet demonstrated — keep adjusting sensors/emitter</span>';
+
+function armGuessMode() {
+  if(sensors.length === 0) {
+    document.getElementById('quizStatus').innerHTML = '<span style="color:var(--amber)">Place at least one sensor before guessing.</span>';
+    return;
   }
+  awaitingGuess = true;
+  updateFindEmitterStatus();
+  document.getElementById('quizStatus').innerHTML = '<span style="color:var(--cyan)">Tap anywhere on the map to place your guess.</span>';
 }
-function showQuizAnswer() {
-  const q = QUIZ_QS[quizIdx % QUIZ_QS.length];
-  document.getElementById('quizAnswer').innerHTML = q.answer;
+
+function submitGuess(x, y) {
+  guessPos = { x, y };
+  emitterHidden = false;
+  awaitingGuess = false;
+
+  const distPx = Math.hypot(x - emitter.x, y - emitter.y);
+  const distKm = distPx * KM_PER_UNIT;
+  let grade, color;
+  if(distKm < 1.5)      { grade = 'EXCELLENT \u2014 Direct Hit';  color = 'var(--green)'; }
+  else if(distKm < 3.5) { grade = 'GOOD \u2014 Close Fix';        color = 'var(--cyan)'; }
+  else if(distKm < 7)   { grade = 'FAIR \u2014 In the Area';      color = 'var(--amber)'; }
+  else                  { grade = 'POOR \u2014 Way Off';          color = 'var(--red)'; }
+
+  const fix = computeFixPoint();
+  let fixCompareHtml = '';
+  if(fix && fix.n >= 2) {
+    const fixDistKm = Math.hypot(fix.x - emitter.x, fix.y - emitter.y) * KM_PER_UNIT;
+    fixCompareHtml = `Your <strong>triangulated fix</strong> (from your own sensors' LOBs, now shown on the map) was <strong>${fixDistKm.toFixed(2)} km</strong> from the actual emitter \u2014 ${fixDistKm < distKm ? 'better than your visual guess' : fixDistKm > distKm ? 'your visual guess actually beat the raw triangulation' : 'about the same as your visual guess'}.<br><br>`;
+  }
+
   document.getElementById('quizAnswerCard').style.display = 'block';
-}
-function nextQuizQ() {
-  quizIdx++;
-  sensors = []; emitter = null;
-  loadQuizQ();
+  document.getElementById('quizAnswer').innerHTML = `
+    <div style="font-size:15px;font-weight:800;color:${color};margin-bottom:6px">${grade}</div>
+    Your guess was <strong>${distKm.toFixed(2)} km</strong> from the actual emitter.<br><br>
+    ${fixCompareHtml}
+    Actual emitter grid: <strong>${gridLabel(emitter.x, emitter.y)}</strong><br>
+    Your guess grid: <strong>${gridLabel(x, y)}</strong>
+  `;
+  const existingBtn = document.getElementById('quizAnswerCard').querySelector('.btn');
+  if(existingBtn) existingBtn.remove();
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'btn';
+  nextBtn.textContent = 'Next Round \u2192';
+  nextBtn.onclick = startFindEmitter;
+  document.getElementById('quizAnswerCard').appendChild(nextBtn);
+
+  const oldGuessBtn = document.getElementById('guessBtn');
+  if(oldGuessBtn) oldGuessBtn.remove();
+
   updateSidebar();
+  draw();
 }
 
 /* ── INIT ─────────────────────────────────────────── */
