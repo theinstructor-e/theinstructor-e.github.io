@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cellular Technology — 17E Interactive Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dark:#1a0033;
+  --pink:#ff66aa;--pink-dark:#2a0015;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#ffffff;
+  --canvas-bg:#000000;
+  --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dark:#ede0ff;
+  --pink:#cc3377;--pink-dark:#ffe0ee;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+  --canvas-bg:#f8fafc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--ui);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px}
+.header-left{display:flex;align-items:center;gap:14px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--ui);font-size:19px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:right;line-height:1.7;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.live{color:var(--green);animation:blink 1.4s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 16px;gap:1px}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:11px 16px;cursor:pointer;transition:color .18s,border-color .18s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tab-btn .tnum{font-family:var(--mono);font-size:9px;opacity:.55}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-content{display:none;padding:20px 24px;max-width:1180px;margin:0 auto}
+.tab-content.active{display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.full{margin-bottom:18px}
+@media(max-width:780px){.two-col{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);padding:16px;position:relative;overflow:hidden;transition:background .2s}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);opacity:.4}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}
+.panel.purple::before{background:var(--purple)}.panel.pink::before{background:var(--pink)}
+.ptitle{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ptitle::before{content:'▶';font-size:7px;color:var(--green)}
+.panel.cyan .ptitle::before{color:var(--cyan)}.panel.amber .ptitle::before{color:var(--amber)}
+.panel.purple .ptitle::before{color:var(--purple)}
+.section-head{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:7px;margin-bottom:16px}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--border-bright);outline:none;cursor:pointer;margin:3px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--green);border:2px solid var(--bg);cursor:pointer}
+.panel.cyan input[type=range]::-webkit-slider-thumb{background:var(--cyan)}
+.panel.amber input[type=range]::-webkit-slider-thumb{background:var(--amber)}
+.panel.purple input[type=range]::-webkit-slider-thumb{background:var(--purple)}
+.slrow{margin-bottom:12px}
+.slabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.slabel .nm{font-family:var(--ui);font-size:12px;font-weight:600;color:var(--text);letter-spacing:.8px}
+.slabel .vl{font-family:var(--mono);font-size:12px;color:var(--green);min-width:90px;text-align:right}
+.panel.cyan .slabel .vl{color:var(--cyan)}.panel.amber .slabel .vl{color:var(--amber)}.panel.purple .slabel .vl{color:var(--purple)}
+canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);display:block}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:10px}
+.rd{background:var(--canvas-bg);border:1px solid var(--border);padding:8px 10px;text-align:center;transition:background .2s}
+.rd .rl{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:3px}
+.rd .rv{font-family:var(--mono);font-size:15px;color:var(--green);line-height:1}
+.rd .ru{font-family:var(--mono);font-size:8px;color:var(--text-dim);margin-top:2px}
+.rd.cyan .rv{color:var(--cyan)}.rd.amber .rv{color:var(--amber)}.rd.purple .rv{color:var(--purple)}
+.fbox{background:var(--canvas-bg);border-left:3px solid var(--green);padding:9px 12px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.8;transition:background .2s}
+.fbox .eq{color:var(--green);font-size:11px}
+.panel.cyan .fbox{border-left-color:var(--cyan)}.panel.cyan .fbox .eq{color:var(--cyan)}
+.panel.amber .fbox{border-left-color:var(--amber)}.panel.amber .fbox .eq{color:var(--amber)}
+.panel.purple .fbox{border-left-color:var(--purple)}.panel.purple .fbox .eq{color:var(--purple)}
+.callout{border:1px solid var(--border);border-left:3px solid var(--green);background:var(--green-dark);padding:8px 12px;font-size:12px;color:var(--text);line-height:1.6;margin-top:10px;transition:background .2s}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}
+.callout.cyan{border-left-color:var(--cyan);background:var(--cyan-dark)}
+.callout.purple{border-left-color:var(--purple);background:var(--purple-dark)}
+.key{font-weight:700;color:var(--green)}.callout.amber .key{color:var(--amber)}.callout.cyan .key{color:var(--cyan)}.callout.purple .key{color:var(--purple)}
+.ch-grid{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0}
+.ch-block{font-family:var(--mono);font-size:9px;padding:5px 8px;border:1px solid;cursor:pointer;transition:all .12s;min-width:58px;text-align:center;letter-spacing:.5px}
+.ch-block:hover{filter:brightness(1.2)}
+.ch-block.active{outline:2px solid var(--text-bright);outline-offset:1px}
+.ch-detail{background:var(--canvas-bg);border:1px solid var(--border-bright);padding:10px 12px;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.8;min-height:60px;transition:background .2s}
+.ch-detail .cn{font-size:12px;display:block;margin-bottom:4px}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:5px 12px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover{border-color:var(--green);color:var(--green)}
+.cbtn.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.cyan:hover,.cbtn.cyan.active{border-color:var(--cyan);color:var(--cyan)}
+.cbtn.cyan.active{background:var(--cyan-dark)}
+.cbtn.amber:hover,.cbtn.amber.active{border-color:var(--amber);color:var(--amber)}
+.cbtn.amber.active{background:var(--amber-dark)}
+.cbtn.purple:hover,.cbtn.purple.active{border-color:var(--purple);color:var(--purple)}
+.cbtn.purple.active{background:var(--purple-dark)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+
+/* PLMN identifier styles */
+.id-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.id-card{background:var(--canvas-bg);border:1px solid var(--border);padding:12px;transition:background .2s}
+.id-card .ic-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px}
+.id-card .ic-val{font-family:var(--mono);font-size:16px;color:var(--cyan);margin-bottom:3px}
+.id-card .ic-desc{font-family:var(--mono);font-size:9px;color:var(--text-dim);line-height:1.5}
+.id-card.green .ic-val{color:var(--green)}.id-card.amber .ic-val{color:var(--amber)}
+.id-card.purple .ic-val{color:var(--purple)}.id-card.pink .ic-val{color:var(--pink)}
+.id-input{font-family:var(--mono);font-size:13px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;outline:none;width:100%;transition:background .2s}
+.id-input:focus{border-color:var(--cyan)}
+.id-tree{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:2;padding:10px 12px;background:var(--canvas-bg);border:1px solid var(--border);margin-top:10px;transition:background .2s}
+.id-tree .tn{color:var(--cyan)}.id-tree .tv{color:var(--green)}.id-tree .ta{color:var(--amber)}
+
+/* channel flow animation */
+.flow-wrap{position:relative;overflow:hidden;background:var(--canvas-bg);border:1px solid var(--border);margin-top:8px}
+/* carrier table */
+.carrier-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;min-width:580px}
+.carrier-table th{background:var(--border);color:var(--text-dim);padding:6px 10px;text-align:left;letter-spacing:1px;font-size:9px;text-transform:uppercase;white-space:nowrap}
+.carrier-table td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.carrier-table tr:hover td{background:var(--cyan-dark)}
+.carrier-table .plmn-id{color:var(--cyan);font-family:var(--mono);font-weight:700;font-size:12px}
+.carrier-table .country{color:var(--text-dim);font-size:11px}
+.carrier-table .op{color:var(--green);font-weight:600;font-family:var(--ui)}
+.carrier-table .tech{color:var(--amber);font-size:10px;font-family:var(--mono)}
+.carrier-table .bands{color:var(--text-dim);font-size:9px;font-family:var(--mono)}
+.ct-copy{font-family:var(--mono);font-size:9px;background:none;border:1px solid var(--border);color:var(--text-dim);padding:2px 6px;cursor:pointer;transition:all .1s}
+.ct-copy:hover{border-color:var(--cyan);color:var(--cyan)}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Cellular Technology <span>// 17E Interactive Reference</span></h1>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">☀ LIGHT MODE</button>
+    <div style="text-align:right">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">● LIVE</span><br>UNCLASSIFIED</div>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('bcch',this)"><span class="tnum">01</span> BCCH / Logical Channels</button>
+  <button class="tab-btn" onclick="switchTab('plmn',this)"><span class="tnum">02</span> Network Identifiers</button>
+  <button class="tab-btn" onclick="switchTab('arch',this)"><span class="tnum">03</span> Architecture & Channel Flow</button>
+</nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../cellularguide/">📱 Cellular Explained (guide)</a>
+  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../network/">🖧 Network Interactive</a>
+</div>
+
+<!-- ═══ TAB 1: BCCH ═══ -->
+<div id="tab-bcch" class="tab-content active">
+  <div class="section-head">MODULE 01 — BCCH ANALYSIS & LOGICAL CHANNEL MAP (2G / 4G / 5G)</div>
+  <div class="panel full">
+    <div class="ptitle">Generation & Channel Selector</div>
+    <div class="btn-row">
+      <button class="cbtn active" id="bc-2g" onclick="selectGen('2g',this)">2G GSM</button>
+      <button class="cbtn cyan" id="bc-4g" onclick="selectGen('4g',this)">4G LTE</button>
+      <button class="cbtn purple" id="bc-5g" onclick="selectGen('5g',this)">5G NR</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px" id="ch-subtitle">2G GSM LOGICAL CHANNELS</div>
+    <div id="ch-grid" class="ch-grid"></div>
+    <div id="ch-detail" class="ch-detail"><span class="cn" style="color:var(--green)">Select a channel above</span>Click any channel block to see its function, direction, and 17E relevance.</div>
+    <div class="fbox" id="ch-fbox" style="margin-top:10px">
+      <div class="eq">GSM Channel Hierarchy: Logical → Physical → Transport</div>
+      Logical channels carry specific information types and are mapped to physical channels (time slots / resource blocks).<br>
+      BCCH = Broadcast Control Channel — always on, always readable, never encrypted.
+    </div>
+    <div class="rg" style="margin-top:10px">
+      <div class="rd"><div class="rl">Total Channels</div><div class="rv" id="r-ch-count">12</div></div>
+      <div class="rd"><div class="rl">Broadcast</div><div class="rv" id="r-ch-bc" style="color:var(--green)">3</div></div>
+      <div class="rd"><div class="rl">Control</div><div class="rv" id="r-ch-ctrl" style="color:var(--amber)">5</div></div>
+      <div class="rd"><div class="rl">Traffic</div><div class="rv" id="r-ch-tch" style="color:var(--cyan)">4</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB 2: PLMN / NETWORK IDENTIFIERS ═══ -->
+<div id="tab-plmn" class="tab-content">
+  <div class="section-head">MODULE 02 — CELLULAR NETWORK IDENTIFIER BREAKDOWN (PLMN / CGI / BSIC / PCI / NCI)</div>
+  <div class="two-col">
+    <div class="panel cyan">
+      <div class="ptitle">Enter Network Parameters</div>
+      <div class="btn-row">
+        <button class="cbtn cyan active" id="pl-2g" onclick="selectPlmnGen('2g',this)">2G GSM</button>
+        <button class="cbtn cyan" id="pl-4g" onclick="selectPlmnGen('4g',this)">4G LTE</button>
+        <button class="cbtn cyan" id="pl-5g" onclick="selectPlmnGen('5g',this)">5G NR</button>
+      </div>
+
+      <div id="plmn-inputs"></div>
+
+      <div class="id-tree" id="id-tree">
+        <div class="tn">Loading...</div>
+      </div>
+
+      <div class="fbox" id="plmn-fbox">
+        <div class="eq">PLMN = MCC + MNC (Public Land Mobile Network)</div>
+        MCC: 3 digits — ITU country code. US=310-316, UK=234-235.<br>
+        MNC: 2-3 digits — operator within country.<br>
+        LAC/TAC: area code within PLMN. CGI = PLMN + LAC + CI.
+      </div>
+    </div>
+
+    <div class="panel cyan">
+      <div class="ptitle">Identifier Breakdown Diagram</div>
+      <canvas id="plmn-canvas" height="260"></canvas>
+      <div id="plmn-id-grid" class="id-grid" style="margin-top:10px"></div>
+
+      <div class="callout cyan" id="plmn-callout">
+        <span class="key">17E:</span> The CGI/ECGI/NCI is broadcast unencrypted in SIBs. Passive collection of these identifiers reveals operator, country, location area, and exact cell identity — all without transmitting.
+      </div>
+    </div>
+  </div>
+
+  <!-- Carrier Reference Table -->
+  <div class="panel full" style="margin-top:0">
+    <div class="ptitle">Global Carrier PLMN Reference — MCC / MNC Lookup</div>
+    <div class="btn-row" id="carrier-region-btns">
+      <button class="cbtn cyan active" onclick="showCarrierRegion('us',this)">United States</button>
+      <button class="cbtn cyan" onclick="showCarrierRegion('uk',this)">United Kingdom</button>
+      <button class="cbtn cyan" onclick="showCarrierRegion('eu',this)">Europe</button>
+      <button class="cbtn cyan" onclick="showCarrierRegion('ap',this)">Asia-Pacific</button>
+      <button class="cbtn cyan" onclick="showCarrierRegion('me',this)">Middle East / AF</button>
+      <button class="cbtn cyan" onclick="showCarrierRegion('la',this)">Latin America</button>
+    </div>
+    <div id="carrier-table-wrap" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<!-- ═══ TAB 3: ARCHITECTURE + CHANNEL FLOW ═══ -->
+<div id="tab-arch" class="tab-content">
+  <div class="section-head">MODULE 03 — NETWORK ARCHITECTURE & LOGICAL CHANNEL FLOW (2G / 4G / 5G)</div>
+  <div class="two-col">
+    <div class="panel amber">
+      <div class="ptitle">Architecture — click any node</div>
+      <div class="btn-row">
+        <button class="cbtn amber active" id="ar-2g" onclick="selectArch('2g',this)">2G GSM</button>
+        <button class="cbtn amber" id="ar-4g" onclick="selectArch('4g',this)">4G LTE</button>
+        <button class="cbtn amber" id="ar-5g" onclick="selectArch('5g',this)">5G NR</button>
+      </div>
+      <canvas id="arch-canvas" height="240"></canvas>
+      <div id="arch-node-detail" class="ch-detail" style="border-left:3px solid var(--amber)">
+        <span class="cn" style="color:var(--amber)">Click a network node above</span>
+        Each block is a network element. Click to see its function and interfaces.
+      </div>
+      <div class="fbox">
+        <div class="eq" id="arch-formula">GSM: MS ↔ BTS ↔ BSC ↔ MSC ↔ PSTN</div>
+        <span id="arch-formula-body">Um = air interface (RF, interceptable). All other interfaces wired.</span>
+      </div>
+    </div>
+
+    <div class="panel amber">
+      <div class="ptitle">Logical Channel Flow — select a flow to animate</div>
+      <div class="btn-row" id="flow-btn-row">
+        <button class="cbtn amber active" id="fl-attach" onclick="selectFlow('attach',this)">Attach / Register</button>
+        <button class="cbtn amber" id="fl-page" onclick="selectFlow('page',this)">Paging</button>
+        <button class="cbtn amber" id="fl-call" onclick="selectFlow('call',this)">Voice Call Setup</button>
+        <button class="cbtn amber" id="fl-ho" onclick="selectFlow('ho',this)">Handover</button>
+        <button class="cbtn amber" id="fl-data" onclick="selectFlow('data',this)">Data Session</button>
+      </div>
+
+      <canvas id="flow-canvas" height="240"></canvas>
+
+      <div id="flow-detail" class="ch-detail" style="border-left:3px solid var(--amber);margin-top:8px">
+        <span class="cn" style="color:var(--amber)">Attach / Register</span>
+        Loading flow description...
+      </div>
+
+      <div class="callout amber" id="arch-callout" style="margin-top:8px">
+        <span class="key">17E:</span> The Um/Uu air interface carries all these logical channels over RF. Channels visible in passive collection: BCCH, PCH, RACH, AGCH, SDCCH, SACCH. TCH/DTCH are encrypted but timing/frequency patterns remain observable.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ THEME TOGGLE ══════════════════════════════════════
+function toggleTheme(){
+  const h=document.documentElement;
+  const isLight=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',isLight?'dark':'light');
+  document.getElementById('theme-toggle').textContent=isLight?'☀ LIGHT MODE':'☾ DARK MODE';
+  // redraw all canvases
+  const active=document.querySelector('.tab-content.active');
+  if(active){
+    if(active.id==='tab-bcch')drawChannelOverlay(-1);
+    if(active.id==='tab-plmn'){updatePlmn();drawPlmnCanvas();}
+    if(active.id==='tab-arch'){drawArch();if(currentFlow)animateFlow(currentFlow,true);}
+    if(active.id==='tab-sig')updateSig();
+  }
+}
+function getThemeColor(key){
+  const style=getComputedStyle(document.documentElement);
+  return style.getPropertyValue('--'+key).trim();
+}
+function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
+function canvasBg(){return isLight()?'#f8fafc':'#000000';}
+function col(key){return getThemeColor(key);}
+
+// ══ TAB SWITCH ═══════════════════════════════════════
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  setTimeout(()=>{
+    if(id==='bcch')initBcch();
+    if(id==='plmn'){initPlmnInputs();updatePlmn();drawPlmnCanvas();renderCarrierTable(currentCarrierRegion);}
+    if(id==='arch'){drawArch();selectFlow(currentFlow,document.getElementById('fl-'+currentFlow));}
+    if(id==='sig')updateSig();
+  },10);
+}
+
+// ══════════════════════════════════════════════════════
+// MODULE 1: BCCH / LOGICAL CHANNELS
+// ══════════════════════════════════════════════════════
+const CHANNELS={
+  '2g':{subtitle:'2G GSM LOGICAL CHANNELS',counts:{total:12,bc:3,ctrl:5,tch:4},
+    fbox:'<div class="eq">GSM Channel Hierarchy: Logical → Physical → Transport</div>Logical channels mapped onto time slots (ARFCN/TS). BCCH always on TS0, unencrypted.',
+    channels:[
+      {n:'BCCH',full:'Broadcast Control Channel',dir:'DL',type:'broadcast',
+       detail:'The heartbeat of a GSM cell. Transmitted on TS0 of the BCCH carrier. Carries: MCC/MNC (network ID), LAI, cell options, neighbor cell ARFCN list, channel description. UNENCRYPTED — readable by any GSM receiver. Critical for passive collection. Repeated every 51-frame multiframe.'},
+      {n:'FCCH',full:'Frequency Correction Channel',dir:'DL',type:'broadcast',
+       detail:'All-zeros burst → pure tone 67.7 kHz above carrier. The UE uses this to lock its frequency synthesizer to the BTS. First channel found when scanning. Interval: every 10 TDMA frames in the 51-frame multiframe. No data content.'},
+      {n:'SCH',full:'Synchronization Channel',dir:'DL',type:'broadcast',
+       detail:'Carries TDMA frame number (T1/T2/T3 reduced frame number) and BSIC (Base Station Identity Code). UE uses SCH to synchronize its frame counter. BSIC = NCC (3b, network color code) + BCC (3b, base station color code). Disambiguates co-channel cells.'},
+      {n:'PCH',full:'Paging Channel',dir:'DL',type:'control',
+       detail:'Carries paging messages from network to MS. MS wakes from DRX sleep at its paging occasion (IMSI-derived). Paging group determines which PCH subblock to monitor. Reveals when a subscriber is being contacted.'},
+      {n:'AGCH',full:'Access Grant Channel',dir:'DL',type:'control',
+       detail:'Carries Immediate Assignment message after RACH request. Assigns an SDCCH or TCH. Contains channel description (TS + ARFCN) and timing advance. UE must act within ~200ms or lose the assignment.'},
+      {n:'RACH',full:'Random Access Channel',dir:'UL',type:'control',
+       detail:'Only UL channel in the CCCH group. MS sends an 8-bit access burst using slotted ALOHA to request a channel. BTS responds on AGCH. High RACH load indicates a busy cell. Used for initial access, location update, SMS.'},
+      {n:'SDCCH',full:'Standalone Dedicated Control Ch.',dir:'DL/UL',type:'control',
+       detail:'Signaling before TCH assignment: authentication, ciphering mode setup, location update, SMS delivery. Acts as a "waiting room." Accompanied by SACCH for measurement reports. SDCCH/4 (4 subchannels) or SDCCH/8 (8 subchannels).'},
+      {n:'SACCH',full:'Slow Associated Control Channel',dir:'DL/UL',type:'control',
+       detail:'Piggybacks on TCH or SDCCH. DL: system info, power control, timing advance. UL: MS reports RxLev + RxQual every 480ms (26 SACCH frames). The passive measurement goldmine — reveals handover thresholds, neighbor lists, power levels without decrypting traffic.'},
+      {n:'TCH/F',full:'Traffic Channel / Full Rate',dir:'DL/UL',type:'traffic',
+       detail:'Full-rate traffic channel: 22.8 kbps gross, 13 kbps net (FR codec). One TCH/F per TDMA slot. Primary voice bearer in GSM. Encrypted with A5/1 (or A5/0 = no encryption). Can carry CSD data (9.6 kbps).'},
+      {n:'TCH/H',full:'Traffic Channel / Half Rate',dir:'DL/UL',type:'traffic',
+       detail:'Half-rate traffic: 11.4 kbps gross, 6.5 kbps net. Two TCH/H share one slot — doubles capacity. HR codec quality noticeably worse than FR. Used during congestion.'},
+      {n:'FACCH',full:'Fast Associated Control Channel',dir:'DL/UL',type:'traffic',
+       detail:'Steals TCH frames for urgent signaling (handover command, call setup fast path). TCH frames blanked and FACCH inserted. Causes brief audio interruption. Handover FACCH is the last transmission before frequency change.'},
+      {n:'CBCH',full:'Cell Broadcast Channel',dir:'DL',type:'broadcast',
+       detail:'Carries Cell Broadcast Service (CBS) messages — public safety alerts, emergency info. Uses SDCCH/4 or SDCCH/8 subchannel. Unencrypted broadcast to all UEs in cell. Used for Wireless Emergency Alerts (WEA) in US.'},
+    ]
+  },
+  '4g':{subtitle:'4G LTE LOGICAL CHANNELS',counts:{total:10,bc:2,ctrl:5,tch:3},
+    fbox:'<div class="eq">LTE: Logical → Transport → Physical channel mapping</div>Logical channels define what is carried. Transport channels define formatting. Physical channels = actual radio.',
+    channels:[
+      {n:'BCCH',full:'Broadcast Control Channel',dir:'DL',type:'broadcast',
+       detail:'Carries MIB (on PBCH) and SIBs (on PDSCH). MIB: DL bandwidth, PHICH config, SFN. SIB1: PLMN list, TAC, cell barring, SI scheduling. SIB2: RRC/UL config. Must decode SIB1 to camp on a cell. All unencrypted.'},
+      {n:'PCCH',full:'Paging Control Channel',dir:'DL',type:'broadcast',
+       detail:'Paging messages for idle UEs. Paging Occasion determined by IMSI mod (T×nB). DRX cycle: 32/64/128/256 radio frames. LTE paging carries S-TMSI + CN domain. IMSI paging used for IMSI detach/emergency.'},
+      {n:'CCCH',full:'Common Control Channel',dir:'DL/UL',type:'control',
+       detail:'RRC signaling before dedicated context established. UL CCCH: RRCConnectionRequest (carries S-TMSI or random value). DL CCCH: RRCConnectionSetup or RRCConnectionReject. Carried on RACH → PDSCH path.'},
+      {n:'DCCH',full:'Dedicated Control Channel',dir:'DL/UL',type:'control',
+       detail:'Per-UE RRC signaling in RRC_CONNECTED. Carries: security mode, handover commands, UE capability, measurement configuration, BWP config. Protected by AS security (RRC integrity + ciphering) after SecurityModeComplete.'},
+      {n:'DTCH',full:'Dedicated Traffic Channel',dir:'DL/UL',type:'traffic',
+       detail:'User data bearer. Multiple simultaneous EPS bearers (default QCI-9 + dedicated QCI-1 for VoLTE). Each bearer mapped to a DRB (Data Radio Bearer). PDCP handles compression, ciphering, ROHC. Carried on PDSCH/PUSCH.'},
+      {n:'MCCH',full:'Multicast Control Channel',dir:'DL',type:'control',
+       detail:'eMBMS session control. Scheduling and session start/stop info for multicast services. Carried on PMCH. Not widely deployed but part of LTE spec for broadcast TV, push content.'},
+      {n:'MTCH',full:'Multicast Traffic Channel',dir:'DL',type:'traffic',
+       detail:'eMBMS user-plane data. Actual multicast media stream after MCCH provides session info. All UEs in MBSFN area receive identical content. Single-frequency network (SFN) transmission.'},
+      {n:'RACH',full:'Random Access Channel',dir:'UL',type:'control',
+       detail:'LTE PRACH: Zadoff-Chu preamble sequences (64 per cell, configurable). eNB estimates TA from preamble timing. Responds with RAR (Random Access Response) on PDSCH. Contention-free RACH for handover.'},
+      {n:'PDCCH',full:'Phys. Downlink Control Ch.',dir:'DL',type:'control',
+       detail:'Scheduling grants for DL and UL. Carries DCI (Downlink Control Info) — resource allocation, MCS, HARQ process, power control. UE blind-decodes PDCCH every subframe to find its RNTI. First 1-3 OFDM symbols.'},
+      {n:'PUCCH',full:'Phys. Uplink Control Ch.',dir:'UL',type:'traffic',
+       detail:'UL control: HARQ ACK/NACK, CQI (channel quality indicator), SR (scheduling request). At band edges to preserve contiguous PUSCH. Formats 1/1a/1b for ACK, 2/2a/2b for CQI.'},
+    ]
+  },
+  '5g':{subtitle:'5G NR LOGICAL CHANNELS',counts:{total:10,bc:2,ctrl:4,tch:4},
+    fbox:'<div class="eq">5G NR: Flexible numerology µ. SUCI protects IMSI from catchers.</div>SUPI (IMSI) concealed in SUCI via ECIES encryption on initial registration. After authentication, GUTI used.',
+    channels:[
+      {n:'BCCH',full:'Broadcast Control Channel',dir:'DL',type:'broadcast',
+       detail:'MIB on PBCH (part of SSB). SIBs on PDSCH. NR MIB: subcarrier spacing common, SSB subcarrier offset, dmrs-TypeA-Position, cell barred. SIB1: PLMN, TAC, cell selection. SSB = PSS+SSS+PBCH in 4 OFDM symbols, beam-swept up to 64 beams (FR2).'},
+      {n:'PCCH',full:'Paging Control Channel',dir:'DL',type:'broadcast',
+       detail:'Paging for RRC_IDLE and RRC_INACTIVE UEs. NR adds RNA (RAN Notification Area) for INACTIVE state — paged by gNB without core. Wake-up signal (WUS) before paging occasion reduces battery drain. IMSI/5G-TMSI/I-RNTI based.'},
+      {n:'CCCH',full:'Common Control Channel',dir:'DL/UL',type:'control',
+       detail:'RRC before dedicated connection. UL: RRCSetupRequest, RRCResumeRequest (for INACTIVE→CONNECTED). DL: RRCSetup, RRCRelease (with suspendConfig for INACTIVE), RRCReject. Key NR addition: RRC_INACTIVE state to save power while maintaining context.'},
+      {n:'DCCH',full:'Dedicated Control Channel',dir:'DL/UL',type:'control',
+       detail:'RRC signaling in RRC_CONNECTED. MeasConfig (beam + cell measurements), BWP switching, EN-DC configuration, beam failure recovery. PDCP handles ROHC, ciphering (NEA0/1/2/3), integrity (NIA). N1 for NAS, SRB1/2 for RRC.'},
+      {n:'DTCH',full:'Dedicated Traffic Channel',dir:'DL/UL',type:'traffic',
+       detail:'User data. QoS flows mapped to DRBs. 5QI replaces QCI. GBR flows (VoNR, URLLC) and non-GBR (eMBB data). SDAP adds QFI header for QoS flow mapping. Supports up to 8 DL MIMO layers, 4 UL layers.'},
+      {n:'SSB',full:'SS/PBCH Block',dir:'DL',type:'broadcast',
+       detail:'NR equivalent of GSM FCCH+SCH+BCCH. Contains PSS+SSS+PBCH in 4 symbols. SSB burst set: up to 8 beams FR1, 64 beams FR2 mmWave. Each SSB has an index (beam ID). UE measures per-SSB L1-RSRP for beam management. Periodicity: 5/10/20ms.'},
+      {n:'PDCCH',full:'Phys. Downlink Control Ch.',dir:'DL',type:'control',
+       detail:'DCI in CORESETs (Control Resource Sets) — flexible placement unlike LTE. Multiple CORESETs per BWP. Blind decoding over search spaces (Common + UE-specific). Beam-specific PDCCH. DCI formats: 0_0/0_1 (UL), 1_0/1_1 (DL), 2_x (group).'},
+      {n:'PRACH',full:'Physical Random Access Ch.',dir:'UL',type:'control',
+       detail:'Zadoff-Chu preambles, formats A/B/C (short) and 0/1/2/3 (long). PRACH occasions linked to SSB index — UE picks PRACH resource associated with the best SSB beam. CFRA for handover/BFR. RA procedure: Msg1 (preamble)→Msg2 (RAR)→Msg3→Msg4.'},
+      {n:'PUSCH',full:'Physical Uplink Shared Ch.',dir:'UL',type:'traffic',
+       detail:'UL data + control when multiplexed. CP-OFDM (default) or DFT-s-OFDM (coverage). Grant-based (via DCI 0_0/0_1) or configured-grant (CG) for URLLC. Up to 4 UL MIMO layers. Supports SRS switching for beam management.'},
+      {n:'PDSCH',full:'Physical Downlink Shared Ch.',dir:'DL',type:'traffic',
+       detail:'DL data. TypeA (slot-based, 14 symbols) or TypeB (mini-slot, 2/4/7 symbols for URLLC). Up to 8 MIMO layers. Modulation: QPSK to 256QAM. DMRS front-loaded (symbol 2) or additional for high-speed. PT-RS for mmWave phase noise.'},
+    ]
+  }
+};
+
+let currentGen='2g';
+function selectGen(gen,btn){
+  currentGen=gen;
+  document.querySelectorAll('#tab-bcch .cbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  initBcch();
+}
+function initBcch(){
+  const data=CHANNELS[currentGen];
+  document.getElementById('ch-subtitle').textContent=data.subtitle;
+  document.getElementById('ch-fbox').innerHTML=data.fbox;
+  const c=data.counts;
+  document.getElementById('r-ch-count').textContent=c.total;
+  document.getElementById('r-ch-bc').textContent=c.bc;
+  document.getElementById('r-ch-ctrl').textContent=c.ctrl;
+  document.getElementById('r-ch-tch').textContent=c.tch;
+  const typeColors={broadcast:'var(--green-dark)',control:'var(--amber-dark)',traffic:'var(--cyan-dark)'};
+  const accentColors={broadcast:'var(--green)',control:'var(--amber)',traffic:'var(--cyan)'};
+  const grid=document.getElementById('ch-grid');
+  grid.innerHTML=data.channels.map((c,i)=>
+    `<div class="ch-block" id="ch-${i}" onclick="selectChannel(${i})"
+      style="background:${typeColors[c.type]};border-color:${accentColors[c.type]};color:${accentColors[c.type]}">
+      <div style="font-size:9px;font-weight:700">${c.n}</div>
+      <div style="font-size:7px;opacity:.7;margin-top:1px">${c.dir}</div>
+    </div>`).join('');
+  document.getElementById('ch-detail').innerHTML='<span class="cn" style="color:var(--green)">Select a channel above</span>Click any channel block to see its function, direction, and 17E relevance.';
+}
+function selectChannel(idx){
+  document.querySelectorAll('.ch-block').forEach(e=>e.classList.remove('active'));
+  const el=document.getElementById('ch-'+idx); if(el)el.classList.add('active');
+  const c=CHANNELS[currentGen].channels[idx];
+  const typeLabel={broadcast:'BROADCAST (UNENCRYPTED)',control:'CONTROL / SIGNALING',traffic:'TRAFFIC / DATA'};
+  const accent=c.type==='broadcast'?'var(--green)':c.type==='control'?'var(--amber)':'var(--cyan)';
+  document.getElementById('ch-detail').innerHTML=
+    `<span class="cn" style="color:${accent}">${c.n} — ${c.full}</span>`+
+    `<span style="font-size:8px;letter-spacing:1px;color:${accent}88;display:block;margin-bottom:6px">DIR: ${c.dir} &nbsp;|&nbsp; TYPE: ${typeLabel[c.type]}</span>${c.detail}`;
+}
+
+// ══════════════════════════════════════════════════════
+// MODULE 2: PLMN / NETWORK IDENTIFIERS
+// ══════════════════════════════════════════════════════
+let currentPlmnGen='2g';
+const plmnDefs={
+  '2g':{
+    inputs:[
+      {id:'mcc',label:'MCC (Mobile Country Code)',val:'310',ph:'3 digits, e.g. 310=US'},
+      {id:'mnc',label:'MNC (Mobile Network Code)',val:'260',ph:'2-3 digits, e.g. 260=T-Mobile US'},
+      {id:'lac',label:'LAC (Location Area Code)',val:'4321',ph:'16-bit, 1–65534'},
+      {id:'ci',label:'CI (Cell Identity)',val:'7890',ph:'16-bit (GSM) / 28-bit (UMTS)'},
+      {id:'bsic_ncc',label:'BSIC NCC (Network Color Code)',val:'3',ph:'0–7'},
+      {id:'bsic_bcc',label:'BSIC BCC (Base Station Color Code)',val:'5',ph:'0–7'},
+      {id:'arfcn',label:'ARFCN (Absolute Radio Freq Ch. No.)',val:'124',ph:'GSM-900: 1–124'},
+    ],
+    compute(v){
+      const mcc=v.mcc.padStart(3,'0'), mnc=v.mnc.padStart(2,'0');
+      const lac=parseInt(v.lac)||0, ci=parseInt(v.ci)||0;
+      const ncc=parseInt(v.bsic_ncc)&7, bcc=parseInt(v.bsic_bcc)&7;
+      const bsic=`${ncc}${bcc} (NCC=${ncc}, BCC=${bcc}, BSIC=${ncc*8+bcc})`;
+      const cgi=`${mcc}${mnc}-${lac.toString(16).toUpperCase().padStart(4,'0')}-${ci.toString(16).toUpperCase().padStart(4,'0')}`;
+      const arfcn=parseInt(v.arfcn)||124;
+      const freqMHz=arfcn>=1&&arfcn<=124?890+arfcn*0.2:arfcn>=512&&arfcn<=885?1710.2+(arfcn-512)*0.2:arfcn>=975&&arfcn<=1023?890+(arfcn-1024)*0.2:null;
+      return{
+        plmn:`${mcc}${mnc}`,mcc,mnc,lac,ci,bsic,cgi,
+        arfcn,freq:freqMHz?freqMHz.toFixed(1)+' MHz':'N/A',
+        ids:[
+          {l:'PLMN',v:`${mcc}-${mnc}`,d:'Public Land Mobile Network ID',cls:''},
+          {l:'MCC',v:mcc,d:`Country code. 310=${mcc==='310'?'USA (AT&T/T-Mo/Verizon)':mcc==='234'?'UK':mcc==='262'?'Germany':'see ITU-T E.212'}`,cls:'green'},
+          {l:'MNC',v:mnc,d:`Operator. ${mnc==='260'?'T-Mobile US':mnc==='410'?'AT&T':mnc==='311'?'Verizon':mnc==='020'?'Vodafone':mnc==='001'?'EE UK':'see operator list'}`,cls:'green'},
+          {l:'LAC',v:'0x'+lac.toString(16).toUpperCase().padStart(4,'0'),d:`Location Area Code = ${lac} dec. Paging scope.`,cls:'amber'},
+          {l:'CI',v:'0x'+ci.toString(16).toUpperCase().padStart(4,'0'),d:`Cell Identity = ${ci} dec. Unique within LAC.`,cls:'amber'},
+          {l:'CGI',v:cgi,d:'Cell Global Identity = MCC+MNC+LAC+CI',cls:'purple'},
+          {l:'BSIC',v:bsic,d:'Base Station Identity Code — NCC+BCC disambiguates co-channel cells.',cls:'pink'},
+          {l:'ARFCN',v:arfcn,d:`Absolute Radio Freq Channel Number → ${freqMHz?freqMHz.toFixed(1)+' MHz DL':''}`,cls:''},
+        ],
+        tree:`<span class="tn">PLMN</span> <span class="tv">${mcc}-${mnc}</span><br>`+
+          `├─ <span class="tn">MCC</span> <span class="tv">${mcc}</span> <span class="ta">(country)</span><br>`+
+          `├─ <span class="tn">MNC</span> <span class="tv">${mnc}</span> <span class="ta">(operator)</span><br>`+
+          `├─ <span class="tn">LAC</span>  <span class="tv">${lac}</span> / <span class="tv">0x${lac.toString(16).toUpperCase().padStart(4,'0')}</span> <span class="ta">(location area)</span><br>`+
+          `│  └─ <span class="tn">CI</span>   <span class="tv">${ci}</span> / <span class="tv">0x${ci.toString(16).toUpperCase().padStart(4,'0')}</span> <span class="ta">(cell identity)</span><br>`+
+          `│     └─ <span class="tn">CGI</span>  <span class="tv">${cgi}</span><br>`+
+          `├─ <span class="tn">BSIC</span> <span class="tv">NCC=${ncc} BCC=${bcc}</span> → <span class="tv">${ncc*8+bcc}</span> decimal<br>`+
+          `└─ <span class="tn">ARFCN</span> <span class="tv">${arfcn}</span> → <span class="tv">${freqMHz?freqMHz.toFixed(1)+' MHz':'N/A'}</span> DL`
+      };
+    }
+  },
+  '4g':{
+    inputs:[
+      {id:'mcc',label:'MCC',val:'310',ph:'3 digits'},
+      {id:'mnc',label:'MNC',val:'260',ph:'2-3 digits'},
+      {id:'tac',label:'TAC (Tracking Area Code)',val:'12345',ph:'16-bit, 0–65535'},
+      {id:'eci',label:'ECI (E-UTRAN Cell Identity)',val:'123456',ph:'28-bit, 0–268435455'},
+      {id:'pci',label:'PCI (Physical Cell ID)',val:'42',ph:'0–503'},
+      {id:'earfcn',label:'EARFCN (E-UTRAN ARFCN)',val:'1300',ph:'Band 2=600–1199, Band 4=1950–2399'},
+      {id:'band',label:'LTE Band',val:'4',ph:'e.g. 4=AWS-1, 12=700MHz, 17=700MHz'},
+    ],
+    compute(v){
+      const mcc=v.mcc.padStart(3,'0'), mnc=v.mnc.padStart(2,'0');
+      const tac=parseInt(v.tac)||0, eci=parseInt(v.eci)||0;
+      const pci=parseInt(v.pci)%504;
+      const nid1=Math.floor(pci/3), nid2=pci%3;
+      const earfcn=parseInt(v.earfcn)||1300;
+      const plmn=`${mcc}${mnc}`;
+      const enb_id=Math.floor(eci/256), cell_id=eci%256;
+      const ecgi=`${plmn}-${tac.toString(16).toUpperCase().padStart(4,'0')}-${eci.toString(16).toUpperCase().padStart(7,'0')}`;
+      return{
+        plmn,mcc,mnc,tac,eci,pci,ecgi,
+        ids:[
+          {l:'PLMN',v:`${mcc}-${mnc}`,d:'PLMN ID',cls:''},
+          {l:'MCC',v:mcc,d:'Country code',cls:'green'},
+          {l:'MNC',v:mnc,d:'Operator code',cls:'green'},
+          {l:'TAC',v:'0x'+tac.toString(16).toUpperCase().padStart(4,'0'),d:`Tracking Area Code = ${tac}. Paging area.`,cls:'amber'},
+          {l:'ECI',v:eci,d:`E-UTRAN Cell Identity (28b). eNB-ID=${enb_id}, Cell-ID=${cell_id}`,cls:'amber'},
+          {l:'ECGI',v:ecgi,d:'E-UTRAN CGI = PLMN + ECI',cls:'purple'},
+          {l:'PCI',v:pci,d:`Physical Cell ID = 3×N_ID1(${nid1}) + N_ID2(${nid2}). Derived from PSS+SSS.`,cls:'pink'},
+          {l:'EARFCN',v:earfcn,d:`E-UTRAN ARFCN. Band ${v.band||'?'}`,cls:''},
+        ],
+        tree:`<span class="tn">PLMN</span> <span class="tv">${mcc}-${mnc}</span><br>`+
+          `├─ <span class="tn">MCC</span>  <span class="tv">${mcc}</span><br>`+
+          `├─ <span class="tn">MNC</span>  <span class="tv">${mnc}</span><br>`+
+          `├─ <span class="tn">TAC</span>  <span class="tv">${tac}</span> / <span class="tv">0x${tac.toString(16).toUpperCase().padStart(4,'0')}</span> <span class="ta">(tracking area)</span><br>`+
+          `│  └─ <span class="tn">ECI</span>   <span class="tv">${eci}</span> <span class="ta">(eNB-ID=${enb_id}, Cell=${cell_id})</span><br>`+
+          `│     └─ <span class="tn">ECGI</span>  <span class="tv">${ecgi}</span><br>`+
+          `├─ <span class="tn">PCI</span>  <span class="tv">${pci}</span> <span class="ta">(N_ID1=${nid1}, N_ID2=${nid2})</span><br>`+
+          `└─ <span class="tn">EARFCN</span> <span class="tv">${earfcn}</span> <span class="ta">(Band ${v.band||'?'})</span>`
+      };
+    }
+  },
+  '5g':{
+    inputs:[
+      {id:'mcc',label:'MCC',val:'310',ph:'3 digits'},
+      {id:'mnc',label:'MNC',val:'260',ph:'2-3 digits'},
+      {id:'tac',label:'TAC (Tracking Area Code)',val:'12345',ph:'24-bit in NR'},
+      {id:'nci',label:'NCI (NR Cell Identity)',val:'1234567',ph:'36-bit, 0–68719476735'},
+      {id:'pci',label:'PCI (Physical Cell ID)',val:'42',ph:'0–1007 in NR'},
+      {id:'nrarfcn',label:'NR-ARFCN',val:'620000',ph:'FR1: 0–3279165, FR2: 2016667+'},
+      {id:'ssb_idx',label:'SSB Index (beam)',val:'0',ph:'0–7 (FR1) / 0–63 (FR2)'},
+    ],
+    compute(v){
+      const mcc=v.mcc.padStart(3,'0'), mnc=v.mnc.padStart(2,'0');
+      const tac=parseInt(v.tac)||0, nci=parseInt(v.nci)||0;
+      const pci=parseInt(v.pci)%1008;
+      const nid1=Math.floor(pci/3), nid2=pci%3;
+      const nrarfcn=parseInt(v.nrarfcn)||620000;
+      const ssb=parseInt(v.ssb_idx)||0;
+      const plmn=`${mcc}${mnc}`;
+      const gnb_id=Math.floor(nci/4096), cell_id=nci%4096;
+      const ncgi=`${plmn}-${tac.toString(16).toUpperCase().padStart(6,'0')}-${nci.toString(16).toUpperCase().padStart(9,'0')}`;
+      const fr=nrarfcn>=2016667?'FR2 (mmWave)':'FR1 (Sub-6GHz)';
+      const freqMHz=nrarfcn<=599999?nrarfcn*0.005:nrarfcn<=2016666?3000+((nrarfcn-600000)*0.015):24250.08+((nrarfcn-2016667)*0.060);
+      return{
+        plmn,mcc,mnc,tac,nci,pci,ncgi,
+        ids:[
+          {l:'PLMN',v:`${mcc}-${mnc}`,d:'5G PLMN ID',cls:''},
+          {l:'MCC',v:mcc,d:'Country code',cls:'green'},
+          {l:'MNC',v:mnc,d:'Operator code',cls:'green'},
+          {l:'TAC',v:'0x'+tac.toString(16).toUpperCase().padStart(6,'0'),d:`NR TAC (24-bit) = ${tac}`,cls:'amber'},
+          {l:'NCI',v:nci,d:`NR Cell Identity (36b). gNB-ID=${gnb_id}, Cell-ID=${cell_id}`,cls:'amber'},
+          {l:'NCGI',v:ncgi,d:'NR CGI = PLMN + NCI',cls:'purple'},
+          {l:'PCI',v:pci,d:`NR PCI = 3×${nid1}+${nid2}. Range 0–1007 (vs LTE 0–503).`,cls:'pink'},
+          {l:'NR-ARFCN',v:nrarfcn,d:`${fr} → ~${freqMHz.toFixed(0)} MHz`,cls:''},
+          {l:'SSB-Idx',v:ssb,d:`SSB/beam index. L1-RSRP reported per SSB for beam mgmt.`,cls:''},
+        ],
+        tree:`<span class="tn">PLMN</span> <span class="tv">${mcc}-${mnc}</span><br>`+
+          `├─ <span class="tn">MCC</span>    <span class="tv">${mcc}</span><br>`+
+          `├─ <span class="tn">MNC</span>    <span class="tv">${mnc}</span><br>`+
+          `├─ <span class="tn">TAC</span>    <span class="tv">${tac}</span> <span class="ta">(24-bit, tracking area)</span><br>`+
+          `│  └─ <span class="tn">NCI</span>    <span class="tv">${nci}</span> <span class="ta">(gNB-ID=${gnb_id}, Cell=${cell_id})</span><br>`+
+          `│     └─ <span class="tn">NCGI</span>   <span class="tv">${ncgi}</span><br>`+
+          `├─ <span class="tn">PCI</span>    <span class="tv">${pci}</span> <span class="ta">(N_ID1=${nid1}, N_ID2=${nid2}, range 0–1007)</span><br>`+
+          `├─ <span class="tn">NR-ARFCN</span> <span class="tv">${nrarfcn}</span> <span class="ta">(${fr}, ~${freqMHz.toFixed(0)} MHz)</span><br>`+
+          `└─ <span class="tn">SSB-Idx</span>  <span class="tv">${ssb}</span> <span class="ta">(beam index)</span>`
+      };
+    }
+  }
+};
+
+let plmnResult=null;
+function selectPlmnGen(gen,btn){
+  currentPlmnGen=gen;
+  document.querySelectorAll('#tab-plmn .cbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  initPlmnInputs();updatePlmn();drawPlmnCanvas();
+}
+function initPlmnInputs(){
+  const def=plmnDefs[currentPlmnGen];
+  const wrap=document.getElementById('plmn-inputs');
+  wrap.innerHTML=def.inputs.map(inp=>
+    `<div style="margin-bottom:8px">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:3px">${inp.label}</div>
+      <input class="id-input" id="pi-${inp.id}" value="${inp.val}" placeholder="${inp.ph}" oninput="updatePlmn()">
+    </div>`
+  ).join('');
+}
+function getPlmnVals(){
+  const def=plmnDefs[currentPlmnGen];
+  const v={};
+  def.inputs.forEach(inp=>{const el=document.getElementById('pi-'+inp.id);v[inp.id]=el?el.value.trim():inp.val;});
+  return v;
+}
+function updatePlmn(){
+  const def=plmnDefs[currentPlmnGen];
+  try{
+    plmnResult=def.compute(getPlmnVals());
+    document.getElementById('id-tree').innerHTML=plmnResult.tree;
+    const grid=document.getElementById('plmn-id-grid');
+    grid.innerHTML=plmnResult.ids.map(id=>
+      `<div class="id-card ${id.cls}">
+        <div class="ic-label">${id.l}</div>
+        <div class="ic-val">${id.v}</div>
+        <div class="ic-desc">${id.d}</div>
+      </div>`
+    ).join('');
+    drawPlmnCanvas();
+  }catch(e){console.error(e);}
+}
+function drawPlmnCanvas(){
+  const canvas=document.getElementById('plmn-canvas');
+  if(!canvas||!plmnResult)return;
+  const W=canvas.clientWidth||520,H=260;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const bg=canvasBg();
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const light=isLight();
+  const textDim=light?'#4a6070':'#6a8090';
+  const textBright=light?'#1a2a3a':'#c8d8e8';
+
+  ctx.fillStyle=textDim;ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('CELLULAR IDENTIFIER HIERARCHY ('+currentPlmnGen.toUpperCase()+')',W/2,14);
+
+  if(currentPlmnGen==='2g'){
+    // Draw nested boxes: PLMN > LAC > CGI, with BSIC and ARFCN aside
+    const boxes=[
+      {label:'PLMN',sub:plmnResult.plmn,x:0.05,y:0.1,w:0.9,h:0.82,color:col('green')},
+      {label:'LAC',sub:'0x'+(plmnResult.lac||0).toString(16).toUpperCase().padStart(4,'0'),x:0.1,y:0.22,w:0.5,h:0.62,color:col('amber')},
+      {label:'CI',sub:'0x'+(plmnResult.ci||0).toString(16).toUpperCase().padStart(4,'0'),x:0.15,y:0.4,w:0.35,h:0.36,color:col('cyan')},
+    ];
+    boxes.forEach(b=>{
+      ctx.strokeStyle=b.color;ctx.lineWidth=1.5;ctx.setLineDash([]);
+      ctx.strokeRect(b.x*W,b.y*H,b.w*W,b.h*H);
+      ctx.fillStyle=b.color;ctx.font='10px Share Tech Mono';ctx.textAlign='left';
+      ctx.fillText(b.label+': '+b.sub,b.x*W+6,b.y*H+14);
+    });
+    // BSIC box aside
+    ctx.strokeStyle=col('purple');ctx.lineWidth=1;
+    ctx.strokeRect(0.68*W,0.35*H,0.25*W,0.28*H);
+    ctx.fillStyle=col('purple');ctx.font='9px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText('BSIC',0.68*W+5,0.35*H+13);
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';
+    ctx.fillText('NCC: '+(plmnResult.ncc||'?'),0.68*W+5,0.35*H+26);
+    ctx.fillText('BCC: '+(plmnResult.bcc||'?'),0.68*W+5,0.35*H+38);
+
+    // CGI label in CI box
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText('CGI = PLMN+LAC+CI',0.33*W,0.7*H);
+    ctx.fillStyle=col('cyan');ctx.font='9px Share Tech Mono';
+    ctx.fillText(plmnResult.cgi,0.33*W,0.72*H+10);
+
+  }else if(currentPlmnGen==='4g'){
+    const boxes=[
+      {label:'PLMN',sub:plmnResult.plmn,x:0.03,y:0.08,w:0.94,h:0.84,color:col('green')},
+      {label:'TAC',sub:'0x'+(plmnResult.tac||0).toString(16).toUpperCase().padStart(4,'0'),x:0.07,y:0.22,w:0.55,h:0.62,color:col('amber')},
+      {label:'ECI',sub:(plmnResult.eci||0).toString(),x:0.12,y:0.38,w:0.38,h:0.38,color:col('cyan')},
+    ];
+    boxes.forEach(b=>{
+      ctx.strokeStyle=b.color;ctx.lineWidth=1.5;
+      ctx.strokeRect(b.x*W,b.y*H,b.w*W,b.h*H);
+      ctx.fillStyle=b.color;ctx.font='10px Share Tech Mono';ctx.textAlign='left';
+      ctx.fillText(b.label+': '+b.sub,b.x*W+6,b.y*H+14);
+    });
+    ctx.strokeStyle=col('purple');ctx.lineWidth=1;
+    ctx.strokeRect(0.67*W,0.3*H,0.28*W,0.4*H);
+    ctx.fillStyle=col('purple');ctx.font='9px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText('PCI: '+(plmnResult.pci||0),0.67*W+5,0.3*H+14);
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';
+    ctx.fillText('PSS→N_ID2',0.67*W+5,0.3*H+28);
+    ctx.fillText('SSS→N_ID1',0.67*W+5,0.3*H+40);
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText('ECGI',0.31*W,0.66*H);
+    ctx.fillStyle=col('cyan');ctx.font='8px Share Tech Mono';
+    const ecgi=plmnResult.ecgi||'';
+    ctx.fillText(ecgi.length>20?ecgi.substring(0,20)+'…':ecgi,0.31*W,0.76*H);
+
+  }else{
+    const boxes=[
+      {label:'PLMN',sub:plmnResult.plmn,x:0.03,y:0.08,w:0.94,h:0.84,color:col('green')},
+      {label:'TAC (24b)',sub:'0x'+(plmnResult.tac||0).toString(16).toUpperCase().padStart(6,'0'),x:0.07,y:0.22,w:0.55,h:0.62,color:col('amber')},
+      {label:'NCI (36b)',sub:(plmnResult.nci||0).toString(),x:0.12,y:0.38,w:0.38,h:0.38,color:col('cyan')},
+    ];
+    boxes.forEach(b=>{
+      ctx.strokeStyle=b.color;ctx.lineWidth=1.5;
+      ctx.strokeRect(b.x*W,b.y*H,b.w*W,b.h*H);
+      ctx.fillStyle=b.color;ctx.font='10px Share Tech Mono';ctx.textAlign='left';
+      ctx.fillText(b.label+': '+b.sub,b.x*W+6,b.y*H+14);
+    });
+    ctx.strokeStyle=col('purple');ctx.lineWidth=1;
+    ctx.strokeRect(0.67*W,0.28*H,0.28*W,0.46*H);
+    ctx.fillStyle=col('purple');ctx.font='9px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText('PCI: '+(plmnResult.pci||0),0.67*W+5,0.28*H+14);
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';
+    ctx.fillText('Range 0–1007',0.67*W+5,0.28*H+27);
+    ctx.fillText('SSB-Idx: '+(getPlmnVals().ssb_idx||0),0.67*W+5,0.28*H+40);
+    ctx.fillText('Beam ID',0.67*W+5,0.28*H+53);
+  }
+  ctx.textAlign='left';
+}
+
+// ══════════════════════════════════════════════════════
+// MODULE 3: ARCHITECTURE + CHANNEL FLOW
+// ══════════════════════════════════════════════════════
+let currentArch='2g';
+const archData={
+  '2g':{
+    formula:'GSM: MS ↔ BTS ↔ BSC ↔ MSC ↔ PSTN',
+    body:'Um = air interface (RF). Abis = BTS↔BSC (E1/IP). A = BSC↔MSC (SS7). All post-Um interfaces are wired.',
+    callout:'Um interface carries all logical channels over RF. BCCH/PCH/RACH/AGCH/SDCCH/SACCH are all interceptable in plaintext before ciphering mode. A5/1 cipher applied only on Um.',
+    nodes:[
+      {id:'MS',label:'MS',x:.07,y:.5,color:'#00ff88',detail:'Mobile Station. ME + SIM. SIM stores IMSI, Ki, TMSI. IMEI identifies hardware. Handles L1-L3.'},
+      {id:'BTS',label:'BTS',x:.27,y:.5,color:'#00d4ff',detail:'Base Transceiver Station. Handles Um air interface. RF, modulation, burst format, ciphering. Controlled by BSC over Abis.'},
+      {id:'BSC',label:'BSC',x:.48,y:.5,color:'#ffb300',detail:'Base Station Controller. Manages multiple BTSs. Handover decisions, RRM, frequency allocation. A interface to MSC.'},
+      {id:'MSC',label:'MSC',x:.7,y:.5,color:'#ff9900',detail:'Mobile Switching Centre. Core circuit-switched node. Call routing, auth, SMS, roaming. Connects to PSTN/ISDN.'},
+      {id:'HLR',label:'HLR',x:.7,y:.18,color:'#bb88ff',detail:'Home Location Register. Stores IMSI, MSISDN, service profile, current VLR. Queried for every call.'},
+      {id:'VLR',label:'VLR',x:.7,y:.82,color:'#9966cc',detail:'Visitor Location Register. Temporary store for visiting subscribers. Reduces HLR queries.'},
+      {id:'INT',label:'PSTN',x:.91,y:.5,color:'#4a6070',detail:'PSTN/Internet. External networks. MSC connects via ISUP/SIP.'},
+    ],
+    edges:[['MS','BTS','Um (RF)'],['BTS','BSC','Abis'],['BSC','MSC','A'],['MSC','HLR','C/D'],['MSC','VLR','int.'],['MSC','INT','ISUP']],
+  },
+  '4g':{
+    formula:'LTE: UE ↔ eNB ↔ MME/S-GW ↔ P-GW ↔ Internet',
+    body:'Flat all-IP. No BSC. RRM in eNB. EPC = MME+SGW+PGW+HSS. X2: direct eNB-eNB.',
+    callout:'Uu air interface. AS security (RRC+UP encryption) from UE to eNB only. NAS between UE and MME. IMS for VoLTE. S1 interface between eNB and EPC over IP.',
+    nodes:[
+      {id:'UE',label:'UE',x:.06,y:.5,color:'#00ff88',detail:'User Equipment. USIM stores IMSI, K, PLMN lists. LTE Cat-6: up to 300 Mbps DL.'},
+      {id:'eNB',label:'eNB',x:.24,y:.5,color:'#00d4ff',detail:'Evolved NodeB. Combines BTS+BSC. Scheduling, RRM, HARQ, RRC. S1 to EPC, X2 to other eNBs.'},
+      {id:'MME',label:'MME',x:.44,y:.22,color:'#ffb300',detail:'Mobility Management Entity. Control plane. NAS, attach, bearer setup, paging, handover via S1-MME.'},
+      {id:'SGW',label:'S-GW',x:.44,y:.5,color:'#ff9900',detail:'Serving Gateway. User-plane anchor. Routes packets between eNB and P-GW. S1-U to eNB.'},
+      {id:'PGW',label:'P-GW',x:.64,y:.5,color:'#ff6600',detail:'PDN Gateway. IP address anchor. Internet gateway. QoS enforcement. SGi interface.'},
+      {id:'HSS',label:'HSS',x:.44,y:.78,color:'#bb88ff',detail:'Home Subscriber Server. HLR+AuC combined. IMSI, K, subscription. AV generation.'},
+      {id:'INT',label:'Internet',x:.84,y:.5,color:'#4a6070',detail:'External internet/IMS. P-GW connects via SGi.'},
+    ],
+    edges:[['UE','eNB','Uu (RF LTE)'],['eNB','MME','S1-MME'],['eNB','SGW','S1-U'],['SGW','PGW','S5'],['MME','HSS','S6a'],['PGW','INT','SGi']],
+  },
+  '5g':{
+    formula:'5G: UE ↔ gNB ↔ AMF/UPF ↔ Internet (SBA)',
+    body:'Service-Based Architecture. All NFs via HTTP/2 REST. CU/DU split in gNB. SUCI protects IMSI.',
+    callout:'NR Uu interface. SUCI (ECIES-encrypted IMSI) prevents IMSI catchers at initial attach. After auth, GUTI/5G-GUTI used. NAS between UE and AMF. AS between UE and gNB.',
+    nodes:[
+      {id:'UE',label:'UE',x:.06,y:.5,color:'#00ff88',detail:'5G UE. SUPI (IMSI). SUCI conceals SUPI — blocks IMSI catchers. SA or NSA mode.'},
+      {id:'gNB',label:'gNB\nCU/DU',x:.24,y:.5,color:'#00d4ff',detail:'gNodeB. CU (RRC/PDCP) + DU (MAC/PHY). F1 interface. eCPRI to RRU.'},
+      {id:'AMF',label:'AMF',x:.44,y:.22,color:'#ffb300',detail:'Access & Mobility Fn. Replaces MME. NAS, registration, handover. N1(UE), N2(gNB).'},
+      {id:'SMF',label:'SMF',x:.44,y:.5,color:'#ff9900',detail:'Session Management Fn. PDU sessions, IP allocation, UPF selection. N4 to UPF (PFCP).'},
+      {id:'UPF',label:'UPF',x:.64,y:.5,color:'#ff6600',detail:'User Plane Fn. Replaces SGW+PGW-U. N3(gNB), N6(internet), N9(inter-UPF).'},
+      {id:'UDM',label:'UDM',x:.44,y:.78,color:'#bb88ff',detail:'Unified Data Mgmt. Replaces HSS. SUPI store, SIDF decrypts SUCI. AUSF handles 5G-AKA.'},
+      {id:'INT',label:'Internet',x:.84,y:.5,color:'#4a6070',detail:'Data Network. UPF connects via N6.'},
+    ],
+    edges:[['UE','gNB','Uu (5G NR RF)'],['gNB','AMF','N2/NGAP'],['gNB','UPF','N3 GTP-U'],['AMF','SMF','N11'],['SMF','UPF','N4 PFCP'],['AMF','UDM','N8'],['UPF','INT','N6']],
+  }
+};
+
+const FLOWS={
+  '2g':{
+    attach:{name:'GSM Attach / Location Update',
+      steps:[
+        {from:'MS',to:'BTS',ch:'RACH',label:'Channel Request (RACH)'},
+        {from:'BTS',to:'MS',ch:'AGCH',label:'Imm. Assignment (AGCH)'},
+        {from:'MS',to:'BSC',ch:'SDCCH',label:'Location Updating Req (SDCCH)'},
+        {from:'BSC',to:'MSC',ch:'A',label:'CM Service Req / BSSMAP'},
+        {from:'MSC',to:'HLR',ch:'MAP',label:'Send Auth Info (MAP)'},
+        {from:'MSC',to:'MS',ch:'SDCCH',label:'Auth Request'},
+        {from:'MS',to:'MSC',ch:'SDCCH',label:'Auth Response (SRES)'},
+        {from:'MSC',to:'MS',ch:'SDCCH',label:'Cipher Mode Command'},
+        {from:'MS',to:'MSC',ch:'FACCH',label:'Cipher Mode Complete'},
+        {from:'MSC',to:'MS',ch:'SDCCH',label:'Location Updating Accept + TMSI'},
+      ],
+      desc:'On power-on or entering a new Location Area, MS sends RACH→gets SDCCH assigned→authenticates (A3/A8)→enables A5 ciphering→receives new TMSI. All pre-cipher messages are in plaintext on the air.'},
+    page:{name:'GSM Paging + Call Answer',
+      steps:[
+        {from:'MSC',to:'BSC',ch:'A',label:'Paging (IMSI/TMSI)'},
+        {from:'BSC',to:'BTS',ch:'Abis',label:'Paging Command'},
+        {from:'BTS',to:'MS',ch:'PCH',label:'Paging Message (PCH)'},
+        {from:'MS',to:'BTS',ch:'RACH',label:'Channel Request (RACH)'},
+        {from:'BTS',to:'MS',ch:'AGCH',label:'Imm. Assignment'},
+        {from:'MS',to:'MSC',ch:'SDCCH',label:'Paging Response'},
+        {from:'MSC',to:'MS',ch:'SDCCH',label:'Setup (alert)'},
+        {from:'MS',to:'MSC',ch:'FACCH',label:'Call Confirmed'},
+      ],
+      desc:'Network sends paging on PCH (unencrypted). MS responds on RACH. SDCCH assigned for signaling. Call proceeds to TCH assignment after setup.'},
+    call:{name:'GSM Voice Call Setup',
+      steps:[
+        {from:'MS',to:'BTS',ch:'RACH',label:'Channel Request'},
+        {from:'BTS',to:'MS',ch:'AGCH',label:'Imm. Assignment (SDCCH)'},
+        {from:'MS',to:'MSC',ch:'SDCCH',label:'CM Service Request (MO call)'},
+        {from:'MSC',to:'MS',ch:'SDCCH',label:'Auth + Cipher Mode'},
+        {from:'MS',to:'MSC',ch:'SDCCH',label:'Setup (called number)'},
+        {from:'MSC',to:'MS',ch:'SDCCH',label:'Assign TCH (FACCH)'},
+        {from:'MS',to:'BTS',ch:'TCH',label:'⟵ Voice / TCH/F ⟶'},
+        {from:'MS',to:'BTS',ch:'SACCH',label:'Meas. Reports (SACCH)'},
+      ],
+      desc:'MO call: CM Service Req on SDCCH → auth/cipher → Setup message → TCH assignment via FACCH → voice on TCH/F. SACCH carries measurement reports throughout call.'},
+    ho:{name:'GSM Intra-BSC Handover',
+      steps:[
+        {from:'MS',to:'BTS',ch:'SACCH',label:'Measurement Report (UL SACCH)'},
+        {from:'BSC',to:'BSC',ch:'Internal',label:'HO Decision (threshold breach)'},
+        {from:'BSC',to:'MS',ch:'FACCH',label:'Handover Command (FACCH)'},
+        {from:'MS',to:'BTS2',ch:'RACH',label:'HO Access (target BTS)'},
+        {from:'BTS2',to:'MS',ch:'FACCH',label:'Physical Info (timing advance)'},
+        {from:'MS',to:'BSC',ch:'FACCH',label:'Handover Complete'},
+      ],
+      desc:'BSC monitors per-MS RxLev/RxQual from UL SACCH. When serving cell drops below threshold and neighbor is stronger, BSC sends HO Command on FACCH. MS immediately accesses target BTS. Entire HO ~300ms.'},
+    data:{name:'GPRS Data Attach',
+      steps:[
+        {from:'MS',to:'BTS',ch:'RACH',label:'GPRS Channel Req'},
+        {from:'BTS',to:'MS',ch:'AGCH',label:'Packet Uplink/Downlink Assign'},
+        {from:'MS',to:'SGSN',ch:'PDCH',label:'Attach Request (GPRS)'},
+        {from:'SGSN',to:'HLR',ch:'MAP',label:'Update GPRS Location'},
+        {from:'SGSN',to:'MS',ch:'PDCH',label:'Attach Accept + P-TMSI'},
+        {from:'MS',to:'GGSN',ch:'GTP',label:'Activate PDP Context'},
+        {from:'GGSN',to:'MS',ch:'GTP',label:'PDP Context Accept + IP addr'},
+      ],
+      desc:'GPRS overlay on GSM. Packet Data CHannel (PDCH) is a timeslot repurposed for packet data. MS gets P-TMSI and IP address. GPRS uses dynamic timeslot allocation (GPRS multislot classes).'},
+  },
+  '4g':{
+    attach:{name:'LTE Initial Attach',
+      steps:[
+        {from:'UE',to:'eNB',ch:'PRACH',label:'PRACH Preamble'},
+        {from:'eNB',to:'UE',ch:'PDSCH',label:'RAR (Random Access Response)'},
+        {from:'UE',to:'eNB',ch:'PUSCH',label:'RRCConnectionRequest (CCCH)'},
+        {from:'eNB',to:'UE',ch:'PDSCH',label:'RRCConnectionSetup'},
+        {from:'UE',to:'MME',ch:'S1/NAS',label:'Attach Request + PDN Conn Req'},
+        {from:'MME',to:'HSS',ch:'S6a',label:'Auth Info Request'},
+        {from:'MME',to:'UE',ch:'NAS',label:'Auth Request + NAS Security Mode'},
+        {from:'UE',to:'MME',ch:'NAS',label:'Auth Response + Security Mode Complete'},
+        {from:'eNB',to:'UE',ch:'RRC',label:'RRCConnectionReconfiguration (DRBs)'},
+        {from:'MME',to:'UE',ch:'NAS',label:'Attach Accept + IP address'},
+      ],
+      desc:'LTE attach: PRACH→RRC setup→NAS Attach Request→EPS-AKA authentication→AS security activation→default bearer setup. IMSI sent in first Attach if no GUTI. NAS protected after SecurityModeComplete.'},
+    page:{name:'LTE Paging + UE Wakeup',
+      steps:[
+        {from:'MME',to:'eNB',ch:'S1',label:'S1-AP Paging (S-TMSI, TAI list)'},
+        {from:'eNB',to:'UE',ch:'PCCH',label:'RRCPaging (PCCH/PCH)'},
+        {from:'UE',to:'eNB',ch:'PRACH',label:'PRACH (wakeup)'},
+        {from:'eNB',to:'UE',ch:'PDSCH',label:'RRCConnectionSetup'},
+        {from:'UE',to:'MME',ch:'NAS',label:'Service Request'},
+        {from:'MME',to:'UE',ch:'NAS',label:'Service Accept + DRB setup'},
+      ],
+      desc:'Idle UE wakes at Paging Occasion (IMSI-derived DRX). Reads PCH. If paged, sends Service Request. eNB reconnects DRBs. Paging on PCH is unencrypted — reveals S-TMSI.'},
+    call:{name:'VoLTE Call Setup (IMS)',
+      steps:[
+        {from:'UE',to:'eNB',ch:'PUSCH',label:'SIP INVITE (Dedicated QCI-1 bearer req)'},
+        {from:'eNB',to:'MME',ch:'S1',label:'Bearer Resource Modification'},
+        {from:'MME',to:'PGW',ch:'S5',label:'Create Bearer Req (QCI-1, GBR)'},
+        {from:'PGW',to:'IMS',ch:'SGi',label:'SIP INVITE forward'},
+        {from:'IMS',to:'PGW',ch:'SGi',label:'SIP 200 OK'},
+        {from:'PGW',to:'UE',ch:'GTP',label:'Dedicated EPS bearer activate'},
+        {from:'UE',to:'eNB',ch:'PDCCH',label:'Scheduling Grant (QCI-1)'},
+        {from:'UE',to:'UE',ch:'RTP/EVS',label:'⟵ VoLTE RTP/EVS codec ⟶'},
+      ],
+      desc:'VoLTE: UE sends SIP INVITE in default bearer → network creates dedicated QCI-1 GBR bearer (4.75 kbps minimum) → SIP completes on IMS P-CSCF → RTP/EVS codec streams on PDSCH/PUSCH.'},
+    ho:{name:'LTE X2 Handover',
+      steps:[
+        {from:'UE',to:'eNB',ch:'PUCCH',label:'CSI/CQI + A3 event meas report'},
+        {from:'eNB',to:'eNB2',ch:'X2',label:'HO Request (X2-AP)'},
+        {from:'eNB2',to:'eNB',ch:'X2',label:'HO Request Ack (C-RNTI, config)'},
+        {from:'eNB',to:'UE',ch:'PDSCH',label:'RRCConnectionReconfiguration'},
+        {from:'UE',to:'eNB2',ch:'PRACH',label:'PRACH (target cell)'},
+        {from:'eNB2',to:'UE',ch:'PDSCH',label:'RRCConnectionReconfigurationComplete'},
+        {from:'eNB2',to:'MME',ch:'S1',label:'Path Switch Request'},
+        {from:'MME',to:'SGW',ch:'S11',label:'Modify Bearer (new eNB path)'},
+      ],
+      desc:'LTE X2 HO: Source eNB triggers on A3 event (neighbor 3dB > serving for 160ms). X2 path avoids MME for speed. Full HO ~50ms. S1 HO used if no X2 or inter-MME.'},
+    data:{name:'LTE Data Bearer Setup',
+      steps:[
+        {from:'UE',to:'MME',ch:'NAS',label:'PDN Connectivity Request'},
+        {from:'MME',to:'SGW',ch:'S11',label:'Create Session Request'},
+        {from:'SGW',to:'PGW',ch:'S5',label:'Create Session Request'},
+        {from:'PGW',to:'SGW',ch:'S5',label:'Create Session Response + IP'},
+        {from:'MME',to:'eNB',ch:'S1',label:'Initial Context Setup (DRB config)'},
+        {from:'eNB',to:'UE',ch:'RRC',label:'RRCConnectionReconfiguration (DRB1)'},
+        {from:'UE',to:'Internet',ch:'PDSCH/PUSCH',label:'⟵ User IP Data ⟶'},
+      ],
+      desc:'Default bearer created at attach. Additional bearers created by PDN Connectivity Request. Each bearer = one DRB (Data Radio Bearer) in RRC. PDCP handles ciphering and header compression (ROHC).'},
+  },
+  '5g':{
+    attach:{name:'5G SA Initial Registration',
+      steps:[
+        {from:'UE',to:'gNB',ch:'PRACH',label:'PRACH Preamble (SSB-linked)'},
+        {from:'gNB',to:'UE',ch:'PDSCH',label:'RAR + Msg3 grant'},
+        {from:'UE',to:'AMF',ch:'NAS',label:'Registration Request + SUCI'},
+        {from:'AMF',to:'AUSF',ch:'N12',label:'UE Authentication (5G-AKA)'},
+        {from:'AMF',to:'UE',ch:'NAS',label:'Auth Request + NAS Security Mode'},
+        {from:'UE',to:'AMF',ch:'NAS',label:'Registration Request (protected) + SUPI→GUTI'},
+        {from:'AMF',to:'SMF',ch:'N11',label:'PDU Session Establishment'},
+        {from:'SMF',to:'UPF',ch:'N4',label:'PFCP Session Establishment'},
+        {from:'gNB',to:'UE',ch:'RRC',label:'RRCReconfiguration (DRBs + QoS flows)'},
+        {from:'AMF',to:'UE',ch:'NAS',label:'Registration Accept + 5G-GUTI'},
+      ],
+      desc:'5G SA: SUCI (ECIES-encrypted IMSI) sent in first Registration → 5G-AKA or EAP-AKA′ → NAS security → GUTI assigned. SUCI prevents IMSI catchers. PDU session over N4 PFCP between SMF and UPF.'},
+    page:{name:'5G Paging (IDLE + INACTIVE)',
+      steps:[
+        {from:'AMF',to:'gNB',ch:'N2',label:'AMF Paging (5G-S-TMSI)'},
+        {from:'gNB',to:'UE',ch:'PCCH',label:'RRCPaging (PCCH, all beams)'},
+        {from:'UE',to:'gNB',ch:'PRACH',label:'PRACH (best SSB beam)'},
+        {from:'gNB',to:'UE',ch:'PDSCH',label:'RRCSetup'},
+        {from:'UE',to:'AMF',ch:'NAS',label:'Service Request'},
+        {from:'AMF',to:'UE',ch:'NAS',label:'Service Accept'},
+      ],
+      desc:'5G paging includes RAN-based paging for RRC_INACTIVE via RNA. RRC_INACTIVE allows gNB-level paging without AMF — reduces signaling. Paging on PCCH sent on all configured SSB beams.'},
+    call:{name:'VoNR / IMS Registration',
+      steps:[
+        {from:'UE',to:'gNB',ch:'PUSCH',label:'PDU Session for IMS (5QI-1)'},
+        {from:'SMF',to:'UPF',ch:'N4',label:'QoS flow 5QI-1 (GBR, 100kbps)'},
+        {from:'UE',to:'IMS',ch:'SIP',label:'SIP REGISTER (IMS registration)'},
+        {from:'IMS',to:'UE',ch:'SIP',label:'SIP 200 OK'},
+        {from:'UE',to:'IMS',ch:'SIP',label:'SIP INVITE (VoNR call)'},
+        {from:'IMS',to:'UE',ch:'SIP',label:'SIP 183 + 200 OK'},
+        {from:'UE',to:'UE',ch:'RTP/EVS',label:'⟵ VoNR EVS 13.2 kbps ⟶'},
+      ],
+      desc:'VoNR uses 5QI-1 QoS flow (GBR) for IMS signaling and media. EVS codec (Enhanced Voice Services) at 5.9–128 kbps. 5G also supports EPS fallback to LTE for voice if VoNR not supported by network.'},
+    ho:{name:'5G NR Handover (Xn)',
+      steps:[
+        {from:'UE',to:'gNB',ch:'PUCCH',label:'L1-RSRP measurement (per SSB beam)'},
+        {from:'UE',to:'gNB',ch:'PUSCH',label:'A3 Measurement Report'},
+        {from:'gNB',to:'gNB2',ch:'Xn',label:'HO Request (Xn-AP)'},
+        {from:'gNB2',to:'gNB',ch:'Xn',label:'HO Request Ack'},
+        {from:'gNB',to:'UE',ch:'RRC',label:'RRCReconfiguration (target config)'},
+        {from:'UE',to:'gNB2',ch:'PRACH',label:'PRACH (linked to best SSB)'},
+        {from:'gNB2',to:'AMF',ch:'N2',label:'Path Switch Request'},
+        {from:'AMF',to:'UPF',ch:'N4',label:'N9 path update'},
+      ],
+      desc:'NR Xn HO: beam-aware (L1-RSRP per SSB) A3 event triggers HO. PRACH preamble linked to best SSB index of target cell for beam alignment. P2/P3 beam refinement post-HO. BWP switching during HO supported.'},
+    data:{name:'5G PDU Session / QoS Flow',
+      steps:[
+        {from:'UE',to:'AMF',ch:'NAS',label:'PDU Session Establishment Req'},
+        {from:'AMF',to:'SMF',ch:'N11',label:'SM Context Create (DNN, S-NSSAI)'},
+        {from:'SMF',to:'UPF',ch:'N4',label:'PFCP Session Establish (QoS rules)'},
+        {from:'SMF',to:'gNB',ch:'N2',label:'PDU Session Resource Setup'},
+        {from:'gNB',to:'UE',ch:'RRC',label:'RRCReconfiguration (DRB + SDAP config)'},
+        {from:'UE',to:'Internet',ch:'SDAP/PDCP',label:'⟵ QoS Flow mapped to DRB ⟶'},
+      ],
+      desc:'5G uses PDU Sessions (not EPS bearers). QoS Flows within a session are identified by QFI. SDAP layer maps QoS flows to DRBs. Slice selection via S-NSSAI (SST+SD). UPF enforces per-flow QoS and charging.'},
+  }
+};
+
+let currentFlow='attach';
+let flowAnim=null;
+let flowStep=0;
+
+function selectArch(gen,btn){
+  currentArch=gen;
+  document.querySelectorAll('#tab-arch .panel.amber .btn-row .cbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d=archData[gen];
+  document.getElementById('arch-formula').textContent=d.formula;
+  document.getElementById('arch-formula-body').innerHTML=d.body;
+  document.getElementById('arch-callout').textContent=d.callout;
+  drawArch();
+  // restart current flow with new gen
+  const flowBtn=document.getElementById('fl-'+currentFlow);
+  if(flowBtn)selectFlow(currentFlow,flowBtn);
+}
+
+function drawArch(){
+  const canvas=document.getElementById('arch-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||520,H=240;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const d=archData[currentArch];
+  const light=isLight();
+
+  d.edges.forEach(([a,b,label])=>{
+    const na=d.nodes.find(n=>n.id===a),nb=d.nodes.find(n=>n.id===b);
+    if(!na||!nb)return;
+    const isRF=label.includes('RF')||label.includes('Um')||label.includes('Uu');
+    ctx.strokeStyle=isRF?col('green')+'99':(light?'#90a8b8':'#2e3f52');
+    ctx.lineWidth=isRF?2:1;
+    ctx.setLineDash(isRF?[5,3]:[]);
+    ctx.beginPath();ctx.moveTo(na.x*W,na.y*H);ctx.lineTo(nb.x*W,nb.y*H);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=isRF?col('green'):(light?'#607888':'#3a5060');
+    ctx.font='7px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText(label,(na.x+nb.x)/2*W,(na.y+nb.y)/2*H-4);
+  });
+
+  d.nodes.forEach(n=>{
+    const x=n.x*W,y=n.y*H;
+    ctx.fillStyle=light?'#ffffff':'#000000';
+    ctx.strokeStyle=n.color;ctx.lineWidth=1.5;
+    ctx.shadowBlur=4;ctx.shadowColor=n.color+'55';
+    ctx.fillRect(x-26,y-16,52,32);ctx.strokeRect(x-26,y-16,52,32);
+    ctx.shadowBlur=0;
+    ctx.fillStyle=n.color;ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    n.label.split('\n').forEach((line,li)=>ctx.fillText(line,x,y-2+li*10));
+  });
+  ctx.textAlign='left';
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const archCanvas=document.getElementById('arch-canvas');
+  if(archCanvas)archCanvas.addEventListener('click',function(e){
+    const rect=this.getBoundingClientRect();
+    const cx=(e.clientX-rect.left)/rect.width;
+    const cy=(e.clientY-rect.top)/rect.height;
+    const d=archData[currentArch];
+    let closest=null,minD=999;
+    d.nodes.forEach(n=>{const dx=n.x-cx,dy=n.y-cy,dist=Math.sqrt(dx*dx+dy*dy*4);if(dist<minD){minD=dist;closest=n;}});
+    if(closest&&minD<0.15)document.getElementById('arch-node-detail').innerHTML=
+      `<span class="cn" style="color:${closest.color}">${closest.id} — ${closest.label.replace(/\n/g,' ')}</span>${closest.detail}`;
+  });
+});
+
+function selectFlow(name,btn){
+  currentFlow=name;
+  document.querySelectorAll('#flow-btn-row .cbtn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(flowAnim){clearInterval(flowAnim);flowAnim=null;}
+  flowStep=0;
+  drawFlowStep(0);
+  const flowData=FLOWS[currentArch]&&FLOWS[currentArch][name];
+  if(flowData)document.getElementById('flow-detail').innerHTML=
+    `<span class="cn" style="color:var(--amber)">${flowData.name}</span>${flowData.desc}`;
+  startFlowAnim();
+}
+
+function startFlowAnim(){
+  const flowData=FLOWS[currentArch]&&FLOWS[currentArch][currentFlow];
+  if(!flowData)return;
+  let step=0,prog=0;
+  flowAnim=setInterval(()=>{
+    prog+=0.04;
+    if(prog>=1){prog=0;step=(step+1)%flowData.steps.length;}
+    drawFlowStep(step,prog);
+  },40);
+}
+
+function drawFlowStep(step,prog=0){
+  const canvas=document.getElementById('flow-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||520,H=240;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const d=archData[currentArch];
+  const flowData=FLOWS[currentArch]&&FLOWS[currentArch][currentFlow];
+  if(!flowData)return;
+  const light=isLight();
+  const textDim=light?'#4a6070':'#6a8090';
+
+  // Draw node columns
+  const nodeX={};
+  d.nodes.forEach(n=>{nodeX[n.id]=n.x*W;});
+  // Draw all node labels at top
+  d.nodes.forEach(n=>{
+    const x=n.x*W;
+    ctx.fillStyle=n.color;ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    n.label.split('\n').forEach((line,li)=>ctx.fillText(line,x,16+li*10));
+    ctx.strokeStyle=n.color+'44';ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(x,28);ctx.lineTo(x,H-10);ctx.stroke();
+  });
+
+  // Draw completed steps (faded)
+  const stepsToShow=Math.min(flowData.steps.length,7);
+  const rowH=(H-40)/stepsToShow;
+  flowData.steps.slice(0,stepsToShow).forEach((s,i)=>{
+    const y=36+i*rowH;
+    const isCurrent=i===step;
+    const isDone=i<step;
+    const x1=nodeX[s.from]||W*0.1, x2=nodeX[s.to]||W*0.9;
+    const isLeft=x2>x1;
+    const alpha=isCurrent?1:isDone?0.35:0.15;
+    const chColors={'RACH':'#ff9900','AGCH':'#00ff88','PCH':'#00d4ff','BCCH':'#00ff88','SDCCH':'#ffb300','SACCH':'#0077aa','TCH':'#00d4ff','FACCH':'#ff6600','PDCCH':'#bb88ff','PRACH':'#ff9900','PDSCH':'#00d4ff','PUSCH':'#00ff88','NAS':'#ffb300','RRC':'#00d4ff','S1':'#ff9900','X2':'#ffb300','Xn':'#ffb300','N2':'#ffb300','N4':'#ff9900','N11':'#ff6600','SIP':'#bb88ff','RTP/EVS':'#00ff88','SDAP/PDCP':'#00d4ff','GTP':'#ff9900','PFCP':'#ff6600','MAP':'#9966cc','A':'#ffb300','Abis':'#4a8090','INT':'#4a6070'};
+    const chColor=chColors[s.ch]||'#4a6070';
+    ctx.globalAlpha=alpha;
+
+    // Draw arrow
+    const ax=isCurrent?x1+(x2-x1)*prog:isDone?x2:x1;
+    const ay=y;
+    ctx.strokeStyle=chColor;ctx.lineWidth=isCurrent?2:1;
+    ctx.beginPath();ctx.moveTo(x1,ay);ctx.lineTo(isDone||isCurrent?ax:x1,ay);ctx.stroke();
+
+    // Arrowhead
+    if(isDone||isCurrent===true){
+      const hx=isDone?x2:ax, hy=ay;
+      const dir=isLeft?1:-1;
+      ctx.fillStyle=chColor;
+      ctx.beginPath();ctx.moveTo(hx,hy);ctx.lineTo(hx-dir*7,hy-4);ctx.lineTo(hx-dir*7,hy+4);ctx.closePath();ctx.fill();
+    }
+
+    // Label
+    ctx.fillStyle=isCurrent?chColor:textDim;ctx.font=(isCurrent?'bold ':'')+'8px Share Tech Mono';ctx.textAlign='center';
+    const lx=(x1+x2)/2, lh=y-5;
+    ctx.fillText(s.ch,lx,lh-1);
+    ctx.fillStyle=isCurrent?'#ffffff':textDim;ctx.font='7px Share Tech Mono';
+    ctx.fillText(s.label.length>28?s.label.substring(0,28)+'…':s.label,lx,lh+8);
+
+    ctx.globalAlpha=1;
+  });
+  ctx.textAlign='left';
+}
+
+// ══ CARRIER PLMN REFERENCE ════════════════════════════
+const CARRIERS={
+  us:[
+    {mcc:'310',mnc:'410',country:'USA',operator:'AT&T Mobility',tech:'2G/4G/5G',bands:'B2,B4,B5,B12,B14,B17,B29,B30,B66 | n14,n25,n77'},
+    {mcc:'310',mnc:'260',country:'USA',operator:'T-Mobile US',tech:'4G/5G',bands:'B2,B4,B12,B25,B41,B66,B71 | n25,n41,n71,n258,n260,n261'},
+    {mcc:'311',mnc:'480',country:'USA',operator:'Verizon Wireless',tech:'4G/5G',bands:'B2,B4,B5,B13,B48,B66 | n5,n48,n77,n260,n261'},
+    {mcc:'311',mnc:'490',country:'USA',operator:'Verizon (alt MNC)',tech:'4G/5G',bands:'B2,B4,B5,B13,B66'},
+    {mcc:'312',mnc:'530',country:'USA',operator:'DISH Wireless',tech:'5G',bands:'n70,n66 (band 14 leased)'},
+    {mcc:'310',mnc:'120',country:'USA',operator:'Sprint (now T-Mo)',tech:'Legacy 3G/4G',bands:'B25,B26,B41 (acquired by T-Mobile)'},
+    {mcc:'310',mnc:'030',country:'USA',operator:'AT&T FirstNet',tech:'4G/5G',bands:'B14 (700 MHz, priority public safety)'},
+    {mcc:'316',mnc:'010',country:'USA',operator:'Clearwire (WiMAX era)',tech:'Legacy',bands:'B41 (2.5 GHz TDD) — historical'},
+    {mcc:'310',mnc:'590',country:'USA',operator:'MVNO / Google Fi (T-Mo)',tech:'4G/5G',bands:'Shared T-Mobile network'},
+    {mcc:'311',mnc:'020',country:'USA',operator:'US Cellular',tech:'4G/5G',bands:'B2,B5,B12,B25,B26 | n25,n41,n71'},
+  ],
+  uk:[
+    {mcc:'234',mnc:'010',country:'UK',operator:'O2 UK',tech:'4G/5G',bands:'B1,B3,B8,B20,B40 | n1,n3,n40,n78'},
+    {mcc:'234',mnc:'020',country:'UK',operator:'O2 UK (alt)',tech:'2G/3G/4G',bands:'900/1800 MHz GSM | B1,B3,B8'},
+    {mcc:'234',mnc:'030',country:'UK',operator:'EE (BT)',tech:'4G/5G',bands:'B1,B3,B7,B20,B40 | n1,n3,n78,n258'},
+    {mcc:'234',mnc:'015',country:'UK',operator:'Vodafone UK',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n3,n7,n78'},
+    {mcc:'234',mnc:'020',country:'UK',operator:'Three UK (H3G)',tech:'4G/5G',bands:'B1,B3,B7,B20 | n1,n3,n78'},
+    {mcc:'234',mnc:'076',country:'UK',operator:'BT Mobile (MVNO)',tech:'4G',bands:'EE network roaming'},
+    {mcc:'234',mnc:'050',country:'UK',operator:'JT Group (Channel Is.)',tech:'4G',bands:'B3,B20'},
+    {mcc:'234',mnc:'033',country:'UK',operator:'EE (alt)',tech:'2G/4G',bands:'Legacy Orange/T-Mobile spectrum'},
+  ],
+  eu:[
+    {mcc:'262',mnc:'01',country:'Germany',operator:'T-Mobile DE',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n28,n78'},
+    {mcc:'262',mnc:'02',country:'Germany',operator:'Vodafone DE',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n3,n78'},
+    {mcc:'262',mnc:'03',country:'Germany',operator:'O2 DE (Telefónica)',tech:'4G/5G',bands:'B1,B3,B8,B20 | n1,n3,n78'},
+    {mcc:'262',mnc:'07',country:'Germany',operator:'O2 DE (alt)',tech:'2G/4G',bands:'900/1800 MHz'},
+    {mcc:'208',mnc:'01',country:'France',operator:'Orange France',tech:'4G/5G',bands:'B1,B3,B7,B20,B28 | n1,n3,n78'},
+    {mcc:'208',mnc:'10',country:'France',operator:'SFR',tech:'4G/5G',bands:'B1,B3,B7,B20 | n1,n3,n78'},
+    {mcc:'208',mnc:'20',country:'France',operator:'Bouygues Telecom',tech:'4G/5G',bands:'B1,B3,B7,B20 | n1,n3,n28'},
+    {mcc:'208',mnc:'15',country:'France',operator:'Free Mobile',tech:'4G/5G',bands:'B1,B3,B7,B28 | n1,n3,n78'},
+    {mcc:'214',mnc:'07',country:'Spain',operator:'Movistar (Telefónica)',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n3,n78'},
+    {mcc:'214',mnc:'01',country:'Spain',operator:'Vodafone ES',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n3,n78'},
+    {mcc:'222',mnc:'01',country:'Italy',operator:'TIM (Telecom Italia)',tech:'4G/5G',bands:'B1,B3,B7,B20 | n1,n3,n28,n78'},
+    {mcc:'222',mnc:'10',country:'Italy',operator:'Vodafone IT',tech:'4G/5G',bands:'B1,B3,B7,B20 | n1,n78'},
+    {mcc:'240',mnc:'01',country:'Sweden',operator:'Telia SE',tech:'4G/5G',bands:'B3,B7,B20 | n1,n3,n28,n78'},
+    {mcc:'238',mnc:'01',country:'Denmark',operator:'TDC/Nuuday',tech:'4G/5G',bands:'B1,B3,B7,B20 | n1,n3,n78'},
+    {mcc:'232',mnc:'01',country:'Austria',operator:'A1 Telekom',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n78'},
+  ],
+  ap:[
+    {mcc:'440',mnc:'10',country:'Japan',operator:'NTT Docomo',tech:'4G/5G',bands:'B1,B3,B19,B21,B28,B42 | n77,n78,n257,n258'},
+    {mcc:'440',mnc:'20',country:'Japan',operator:'SoftBank JP',tech:'4G/5G',bands:'B1,B3,B8,B11,B28,B42 | n3,n77,n257'},
+    {mcc:'440',mnc:'50',country:'Japan',operator:'KDDI / au',tech:'4G/5G',bands:'B1,B3,B11,B18,B28,B42 | n3,n28,n77,n257'},
+    {mcc:'450',mnc:'05',country:'South Korea',operator:'SK Telecom',tech:'4G/5G',bands:'B1,B3,B5,B7,B42 | n1,n3,n26,n28,n257,n258'},
+    {mcc:'450',mnc:'08',country:'South Korea',operator:'KT Corp',tech:'4G/5G',bands:'B1,B3,B7,B42 | n1,n3,n28,n257'},
+    {mcc:'450',mnc:'06',country:'South Korea',operator:'LG U+',tech:'4G/5G',bands:'B1,B3,B5,B7,B42 | n1,n3,n5,n28,n257'},
+    {mcc:'460',mnc:'00',country:'China',operator:'China Mobile',tech:'4G/5G',bands:'B1,B3,B8,B38,B39,B40,B41 | n1,n28,n40,n41,n79'},
+    {mcc:'460',mnc:'01',country:'China',operator:'China Unicom',tech:'4G/5G',bands:'B1,B3,B6,B8,B9 | n1,n3,n28,n41,n78'},
+    {mcc:'460',mnc:'11',country:'China',operator:'China Telecom',tech:'4G/5G',bands:'B1,B3,B5,B7,B8,B41 | n1,n3,n28,n41,n78'},
+    {mcc:'404',mnc:'20',country:'India',operator:'Airtel',tech:'4G/5G',bands:'B3,B5,B8,B40,B41 | n1,n28,n78'},
+    {mcc:'404',mnc:'45',country:'India',operator:'Airtel (alt)',tech:'4G',bands:'B3,B5,B8,B40'},
+    {mcc:'404',mnc:'20',country:'India',operator:'Jio (Reliance)',tech:'4G/5G',bands:'B3,B5,B40,B41 | n1,n28,n78,n258'},
+    {mcc:'505',mnc:'01',country:'Australia',operator:'Telstra',tech:'4G/5G',bands:'B1,B3,B7,B28,B40 | n1,n3,n28,n78,n258'},
+    {mcc:'505',mnc:'03',country:'Australia',operator:'Vodafone AU',tech:'4G',bands:'B1,B3,B5,B28'},
+    {mcc:'520',mnc:'01',country:'Thailand',operator:'AIS',tech:'4G/5G',bands:'B1,B3,B7,B8,B28 | n1,n3,n28,n77'},
+  ],
+  me:[
+    {mcc:'420',mnc:'01',country:'Saudi Arabia',operator:'STC (Al-Jawal)',tech:'4G/5G',bands:'B1,B3,B7,B8,B20,B28 | n1,n3,n78,n258'},
+    {mcc:'420',mnc:'03',country:'Saudi Arabia',operator:'Mobily (Etihad)',tech:'4G/5G',bands:'B1,B3,B7,B8,B28 | n1,n3,n78'},
+    {mcc:'420',mnc:'04',country:'Saudi Arabia',operator:'Zain SA',tech:'4G/5G',bands:'B1,B3,B7,B8 | n1,n3,n78'},
+    {mcc:'424',mnc:'02',country:'UAE',operator:'Etisalat (e&)',tech:'4G/5G',bands:'B1,B3,B7,B8,B28 | n1,n3,n28,n78,n258'},
+    {mcc:'424',mnc:'03',country:'UAE',operator:'du (EITC)',tech:'4G/5G',bands:'B1,B3,B7,B8 | n1,n3,n78'},
+    {mcc:'425',mnc:'01',country:'Israel',operator:'Cellcom',tech:'4G/5G',bands:'B1,B3,B7,B28 | n1,n3,n28,n78'},
+    {mcc:'418',mnc:'05',country:'Iraq',operator:'Asia Cell',tech:'4G',bands:'B1,B3,B7,B8,B20'},
+    {mcc:'418',mnc:'08',country:'Iraq',operator:'Korek Telecom',tech:'4G',bands:'B1,B3,B7'},
+    {mcc:'602',mnc:'01',country:'Egypt',operator:'Mobinil / Orange EG',tech:'4G',bands:'B1,B3,B7,B8,B20,B28'},
+    {mcc:'602',mnc:'02',country:'Egypt',operator:'Vodafone EG',tech:'4G',bands:'B1,B3,B7,B8,B20'},
+    {mcc:'655',mnc:'01',country:'South Africa',operator:'Vodacom',tech:'4G/5G',bands:'B1,B3,B7,B8,B20,B28 | n1,n3,n28,n78'},
+    {mcc:'655',mnc:'10',country:'South Africa',operator:'MTN SA',tech:'4G/5G',bands:'B1,B3,B7,B8,B20 | n1,n3,n78'},
+    {mcc:'639',mnc:'02',country:'Kenya',operator:'Safaricom (M-Pesa)',tech:'4G/5G',bands:'B1,B3,B8,B20,B28 | n1,n3,n78'},
+    {mcc:'621',mnc:'30',country:'Nigeria',operator:'MTN Nigeria',tech:'4G',bands:'B1,B3,B7,B8,B20,B28'},
+  ],
+  la:[
+    {mcc:'724',mnc:'06',country:'Brazil',operator:'Claro BR (América Móvil)',tech:'4G/5G',bands:'B2,B4,B17,B28 | n1,n3,n28,n78'},
+    {mcc:'724',mnc:'10',country:'Brazil',operator:'TIM BR (Telecom Italia)',tech:'4G/5G',bands:'B2,B4,B9,B28,B66 | n1,n28,n78'},
+    {mcc:'724',mnc:'05',country:'Brazil',operator:'Vivo (Telefónica)',tech:'4G/5G',bands:'B2,B4,B7,B17,B28,B66 | n1,n3,n28,n78'},
+    {mcc:'724',mnc:'23',country:'Brazil',operator:'Oi',tech:'4G',bands:'B2,B4,B7,B17,B28'},
+    {mcc:'334',mnc:'020',country:'Mexico',operator:'Telcel (América Móvil)',tech:'4G/5G',bands:'B2,B4,B5,B17,B28,B66 | n1,n3,n28,n78'},
+    {mcc:'334',mnc:'030',country:'Mexico',operator:'AT&T MX',tech:'4G/5G',bands:'B2,B4,B17,B66 | n1,n3,n28'},
+    {mcc:'334',mnc:'050',country:'Mexico',operator:'Movistar MX (Telefónica)',tech:'4G',bands:'B2,B4,B7,B28'},
+    {mcc:'722',mnc:'070',country:'Argentina',operator:'Movistar AR',tech:'4G',bands:'B2,B4,B7,B17,B28'},
+    {mcc:'722',mnc:'010',country:'Argentina',operator:'Claro AR',tech:'4G',bands:'B2,B4,B17,B28'},
+    {mcc:'730',mnc:'01',country:'Chile',operator:'Entel Chile',tech:'4G/5G',bands:'B2,B4,B7,B28,B66 | n1,n28,n78'},
+    {mcc:'730',mnc:'02',country:'Chile',operator:'Movistar CL',tech:'4G',bands:'B2,B4,B7,B28'},
+    {mcc:'716',mnc:'010',country:'Peru',operator:'Claro PE',tech:'4G',bands:'B2,B4,B17,B28'},
+  ]
+};
+
+let currentCarrierRegion='us';
+function showCarrierRegion(region,btn){
+  currentCarrierRegion=region;
+  document.querySelectorAll('#carrier-region-btns .cbtn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderCarrierTable(region);
+}
+function renderCarrierTable(region){
+  const carriers=CARRIERS[region]||[];
+  const wrap=document.getElementById('carrier-table-wrap');
+  if(!wrap)return;
+  wrap.innerHTML=`<table class="carrier-table">
+    <thead><tr>
+      <th>MCC</th><th>MNC</th><th>PLMN</th><th>Country</th><th>Operator</th><th>Tech</th><th>Key Bands</th><th>Load</th>
+    </tr></thead>
+    <tbody>${carriers.map((c,i)=>`
+      <tr>
+        <td class="plmn-id">${c.mcc}</td>
+        <td class="plmn-id">${c.mnc}</td>
+        <td><span class="plmn-id">${c.mcc}${c.mnc.padStart(2,'0')}</span>
+          <button class="ct-copy" onclick="loadPlmn('${c.mcc}','${c.mnc}')" title="Load into identifier tool">▶ LOAD</button></td>
+        <td class="country">${c.country}</td>
+        <td class="op">${c.operator}</td>
+        <td class="tech">${c.tech}</td>
+        <td class="bands">${c.bands}</td>
+        <td class="tech" style="color:${i%3===0?'var(--green)':i%3===1?'var(--amber)':'var(--cyan)'}">
+          ${i%3===0?'▓▓▓▓▓ HIGH':i%3===1?'▓▓▓░░ MED':'▓▓░░░ LOW'}
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+  <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:8px;letter-spacing:1px">
+    ${carriers.length} entries &nbsp;|&nbsp; Click ▶ LOAD to populate identifier fields above &nbsp;|&nbsp; Bands shown as LTE Band / 5G NR n-band
+  </div>`;
+}
+function loadPlmn(mcc,mnc){
+  // Switch to PLMN tab if not active
+  const plmnTab=document.getElementById('tab-plmn');
+  if(!plmnTab.classList.contains('active')){
+    document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+    plmnTab.classList.add('active');
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+  }
+  const mccEl=document.getElementById('pi-mcc'), mncEl=document.getElementById('pi-mnc');
+  if(mccEl){mccEl.value=mcc; mncEl.value=mnc; updatePlmn();}
+  // Scroll to top of plmn tab
+  plmnTab.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ══ INIT ════════════════════════════════════════════
+window.addEventListener('load',()=>{
+  initBcch();
+  initPlmnInputs();updatePlmn();
+  showCarrierRegion('us',document.querySelector('#carrier-region-btns .cbtn'));
+  drawArch();
+  selectFlow('attach',document.getElementById('fl-attach'));
+});
+window.addEventListener('resize',()=>{
+  const a=document.querySelector('.tab-content.active');
+  if(!a)return;
+  if(a.id==='tab-plmn'){drawPlmnCanvas();}
+  if(a.id==='tab-arch'){drawArch();drawFlowStep(flowStep);}
+});
+</script>
+</body>
+</html>

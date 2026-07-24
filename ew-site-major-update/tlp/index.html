@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troop Leading Procedures — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px}
+.header-left{display:flex;align-items:center;gap:16px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--purple);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.live{color:var(--purple);animation:blink 1.4s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 60px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--purple);opacity:.5}
+.panel.cyan::before{background:var(--cyan)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'▶';color:var(--purple);font-size:8px}
+.steps-list{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border-bright);background:var(--canvas-bg);padding:12px 14px;cursor:pointer;transition:all .14s}
+.step:hover{border-color:var(--purple)}
+.step.open{border-color:var(--purple);background:var(--purple-dark)}
+.step .num{background:var(--purple);color:var(--bg);width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;border-radius:3px}
+.step .body .t{font-family:var(--display);font-size:15px;font-weight:700;color:var(--text-bright)}
+.step .body .d{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);line-height:1.6;margin-top:6px;display:none}
+.step.open .body .d{display:block}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.mett{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:6px}
+.mett .m{border:1px solid var(--border);background:var(--canvas-bg);padding:9px 11px}
+.mett .m .l{font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:700}
+.mett .m .x{font-size:12px;color:var(--text);line-height:1.5;margin-top:3px}
+/* practice */
+.pr-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.pr-slot{display:flex;gap:10px;align-items:center;border:1px dashed var(--border-bright);padding:10px 12px;min-height:44px;font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.pr-slot .sn{background:var(--border);color:var(--text-dim);width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:2px}
+.pr-slot.filled{border-style:solid;border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.pr-slot.filled .sn{background:var(--green);color:var(--bg)}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--display);font-size:13px;font-weight:600;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:9px 14px;cursor:pointer;transition:all .14s}
+.chip:hover{border-color:var(--purple);color:var(--purple)}
+.chip.wrong{animation:shake .3s;border-color:var(--red);color:var(--red)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:8px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-dark)}
+.pr-status{font-family:var(--mono);font-size:12px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.5}
+.pr-status.win{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>Troop Leading Procedures <span>// 8 Steps — 17E</span></h1></div>
+  <div class="hdr-right"><button class="theme-btn" id="tl-theme" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID \u2014 CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('ref',this)">Reference</button>
+  <button class="tab-btn" onclick="switchTab('practice',this)">Order the Steps</button>
+  <button class="tab-btn" onclick="switchTab('mett',this)">METT-TC</button>
+</nav>
+ 
+<div id="tab-ref" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">The 8 Troop Leading Procedures \u2014 tap a step for detail</div>
+    <div class="steps-list" id="steps-ref"></div>
+    <div class="callout amber"><span class="key">NOT RIGID:</span> steps 1\u20133 are normally sequential, but the rest may run simultaneously or repeat as the situation changes. TLP begin the moment a leader gets the first hint of a mission and continue through plan\u2013prepare\u2013execute\u2013assess.</div>
+    <div class="callout"><span class="key">WHO USES TLP:</span> small-unit leaders at company level and below. Battalion and above use the Military Decision-Making Process (MDMP). Reference: FM 6-0 / FM 5-0 / ADP 5-0.</div>
+  </div>
+</div>
+ 
+<div id="tab-practice" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Put the 8 steps in the correct order</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:12px">Click the steps below in the order they occur. Correct picks lock into the slots; a wrong pick shakes and waits.</div>
+    <div class="pr-slots" id="pr-slots"></div>
+    <div class="pool" id="pr-pool"></div>
+    <div class="pr-status" id="pr-status">Click the first step to begin.</div>
+    <button class="cbtn" onclick="startPractice()">\u21bb New Attempt</button>
+  </div>
+</div>
+ 
+<div id="tab-mett" class="tab-content">
+  <div class="panel cyan">
+    <div class="panel-title">METT-TC \u2014 the mission-analysis framework (used in Step 3)</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.7;margin-bottom:10px">When a leader makes the tentative plan, they analyze the situation across these factors. Newer doctrine adds <strong>(I) Informational considerations</strong> \u2192 METT-TC(I).</div>
+    <div class="mett" id="mett-grid"></div>
+    <div class="callout"><span class="key">USE IT:</span> METT-TC turns "what's the situation?" into a structured checklist so nothing is missed \u2014 it feeds the tentative plan and the coordinating instructions in your OPORD.</div>
+  </div>
+</div>
+ 
+<script>
+function toggleTheme(){const h=document.documentElement,l=h.getAttribute('data-theme')==='light';h.setAttribute('data-theme',l?'dark':'light');document.getElementById('tl-theme').textContent=l?'\u2600 LIGHT MODE':'\u263e DARK MODE';}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+const TLP=[
+  ['Receive the Mission','Analyze the order (WARNORD, OPORD, or FRAGO). Understand the task \u2014 specified and implied \u2014 and, most importantly, the commander\u2019s intent. Begin an initial time analysis (the "1/3 \u2013 2/3 rule": use no more than a third of available time so subordinates get two-thirds).'],
+  ['Issue a Warning Order','Give subordinates preliminary notice so they can start their own preparation immediately \u2014 don\u2019t wait for a complete plan. Pass on the mission and any early instructions; update with follow-on WARNORDs as more is known.'],
+  ['Make a Tentative Plan','Conduct mission analysis using METT-TC, develop and compare courses of action, and select one. This becomes the working plan you will confirm and refine.'],
+  ['Initiate Movement','Start any movement necessary to continue mission preparation or posture the unit \u2014 e.g., moving to an assembly area, quartering party, or line of departure \u2014 often while planning continues.'],
+  ['Conduct Reconnaissance','Confirm the terrain analysis and the plan\u2019s assumptions. A physical recon is best; when time or risk doesn\u2019t allow it, do a thorough map reconnaissance or rely on scouts.'],
+  ['Complete the Plan','Incorporate what recon and any changes revealed. Finalize the plan and check it against the mission and the commander\u2019s intent; prepare the order and its products (overlays, sketches).'],
+  ['Issue the Order','Brief the complete order \u2014 at platoon and squad level, normally an oral 5-paragraph OPORD delivered with a terrain model or sketch. Confirm understanding with backbriefs.'],
+  ['Supervise and Refine','Supervise preparation through rehearsals, backbriefs, and precombat checks/inspections (PCC/PCI). Refine the plan as the situation develops. This step is continuous and arguably the most important.'],
+];
+function renderRef(){document.getElementById('steps-ref').innerHTML=TLP.map((s,i)=>
+  `<div class="step" onclick="this.classList.toggle('open')"><div class="num">${i+1}</div><div class="body"><div class="t">${s[0]}</div><div class="d">${s[1]}</div></div></div>`).join('');}
+const METT=[['M \u2014 Mission','The task and purpose; what must be accomplished and why.'],['E \u2014 Enemy','Composition, disposition, strength, capabilities, and likely courses of action.'],['T \u2014 Terrain & Weather','OAKOC: Observation/fields of fire, Avenues of approach, Key terrain, Obstacles, Cover & concealment \u2014 plus weather effects.'],['T \u2014 Troops & Support','Your own forces, attachments, and available support (fires, EW, aviation, sustainment).'],['T \u2014 Time Available','Time to plan, prepare, and execute; drives the 1/3\u20132/3 rule.'],['C \u2014 Civil Considerations','ASCOPE: Areas, Structures, Capabilities, Organizations, People, Events in the operational environment.'],['(I) \u2014 Informational','Newer addition: informational considerations and the information environment.']];
+function renderMett(){document.getElementById('mett-grid').innerHTML=METT.map(m=>`<div class="m"><div class="l">${m[0]}</div><div class="x">${m[1]}</div></div>`).join('');}
+// practice
+let prNext=0;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startPractice(){
+  prNext=0;
+  document.getElementById('pr-slots').innerHTML=TLP.map((s,i)=>`<div class="pr-slot" id="slot-${i}"><span class="sn">${i+1}</span><span id="slot-t-${i}">\u2014</span></div>`).join('');
+  const order=shuffle(TLP.map((s,i)=>({t:s[0],i})));
+  document.getElementById('pr-pool').innerHTML=order.map(o=>`<button class="chip" data-i="${o.i}" onclick="pickStep(${o.i},this)">${o.t}</button>`).join('');
+  setPr('Click the step that comes first.','');
+}
+function pickStep(i,btn){
+  if(i===prNext){
+    document.getElementById('slot-'+prNext).classList.add('filled');
+    document.getElementById('slot-t-'+prNext).textContent=TLP[i][0];
+    btn.remove();prNext++;
+    if(prNext>=TLP.length)setPr('\u2713 CORRECT SEQUENCE \u2014 all 8 steps in order. Well done.','win');
+    else setPr('Good. Now pick step '+(prNext+1)+'.','');
+  } else {
+    btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),350);
+    setPr('\u2717 Not next \u2014 that\u2019s step '+(i+1)+' in the sequence. Try the one that comes at position '+(prNext+1)+'.','');
+  }
+}
+function setPr(msg,cls){const s=document.getElementById('pr-status');s.textContent=msg;s.className='pr-status'+(cls?' '+cls:'');}
+window.addEventListener('load',()=>{renderRef();renderMett();startPractice();});
+</script>
+</body>
+</html>
+ 

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cellular Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;--border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#1a2f52;--hero-eyebrow:#8fb3e6;--hero-sub:#c2d4f0;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;--toggle-bg:rgba(255,255,255,0.15);
+  --accent:#2f6fc7;--accent-soft:#e2edfb;
+  --c1:#1f6fe0;--c1s:#e2edfb;--c2:#c0392b;--c2s:#fbe4e0;--c3:#159c72;--c3s:#dcf3ea;--c4:#d98a1f;--c4s:#fbeed6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;--border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#a8a49c;--text-muted:#706d66;
+  --hero-bg:#0c1830;--hero-eyebrow:#7ea6e8;--hero-sub:#9fb8dc;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;--toggle-bg:rgba(255,255,255,0.08);
+  --accent:#5a9bf0;--accent-soft:#0a2240;
+  --c1:#5a9bf0;--c1s:#0a2240;--c2:#e0685a;--c2s:#2e0e0a;--c3:#33b98d;--c3s:#0a2e22;--c4:#EFAF4A;--c4s:#3a2800;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:580px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.related-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:.9rem;font-family:'Nunito',sans-serif;font-size:12px}
+.related-label{color:var(--hero-sub);font-weight:700;white-space:nowrap}
+.related-bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);padding:4px 12px;border-radius:999px;
+  background:rgba(255,255,255,.1);font-weight:700;transition:.18s;white-space:nowrap}
+.related-bar a:hover{background:rgba(255,255,255,.2);border-color:#fff}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+h4{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:1rem 0 .5rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}.fact-card-text strong{color:var(--text-primary)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+.addr{font-family:'Courier New',monospace;font-weight:700}
+.gen-timeline{display:flex;flex-direction:column;gap:6px;margin:1rem 0}
+.gen-row{display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);border-radius:10px;padding:.7rem 1rem;background:var(--bg-card)}
+.gen-row .gn{font-family:'Nunito',sans-serif;font-weight:800;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:14px}
+.gen-row .gt{font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-primary)}
+.gen-row .gd{font-size:12px;color:var(--text-secondary)}
+.arch-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:1rem 0;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px}
+.arch-node{background:var(--bg-card);border:2px solid var(--accent);border-radius:10px;padding:.6rem 1rem;color:var(--accent)}
+.arch-arrow{color:var(--text-muted);font-size:16px}
+.chan-pill{display:inline-block;font-family:'Courier New',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;margin:2px}
+.chan-pill.b{background:var(--c1s);color:var(--c1)}
+.chan-pill.c{background:var(--c2s);color:var(--c2)}
+.chan-pill.t{background:var(--c3s);color:var(--c3)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>How does <span>Cellular</span> work?<br>The basics, made simple.</h1>
+  <p class="hero-sub">From 1G to 5G, every cellular network does the same three jobs: get your phone talking to a tower, know exactly who and where you are, and hand your call off as you move. Here's how.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('gen',this)">📶 Generations</button>
+    <button class="tab-btn" onclick="switchTab('arch',this)">🏗️ Architecture</button>
+    <button class="tab-btn" onclick="switchTab('id',this)">🆔 Identifiers</button>
+    <button class="tab-btn" onclick="switchTab('chan',this)">📻 Logical Channels</button>
+  </div>
+  <div class="related-bar">
+    <span class="related-label">Related:</span>
+    <a href="../cellular/">📱 Cellular Interactive</a>
+    <a href="../nettest/">📝 Network Test (quiz)</a>
+    <a href="../networkguide/">📘 Networking Explained</a>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <!-- GENERATIONS -->
+  <div class="tab-content active" id="tab-gen">
+    <h2>1G to 5G — what actually changed each time</h2>
+    <p class="lede">Each cellular "generation" wasn't just a speed bump — each one changed what the network was fundamentally built to carry.</p>
+    <div class="analogy">📻 <strong>Think of it as an evolving delivery service:</strong> 1G could only carry your voice, like an analog walkie-talkie. Every generation since has added a new kind of cargo — first digital voice, then data, then all-IP data, and now ultra-fast, ultra-low-latency data for things far beyond phones.</div>
+
+    <div class="gen-timeline">
+      <div class="gen-row"><div class="gn" style="background:var(--c2)">1G</div><div><div class="gt">Analog Voice</div><div class="gd">1980s — analog radio, voice only, no encryption, easy to eavesdrop</div></div></div>
+      <div class="gen-row"><div class="gn" style="background:var(--c4)">2G</div><div><div class="gt">GSM — Digital Voice</div><div class="gd">1990s — voice goes digital, SMS text messaging arrives, basic encryption</div></div></div>
+      <div class="gen-row"><div class="gn" style="background:var(--c3)">3G</div><div><div class="gt">Mobile Data Arrives</div><div class="gd">2000s — real internet access on a phone, video calling becomes possible</div></div></div>
+      <div class="gen-row"><div class="gn" style="background:var(--c1)">4G</div><div><div class="gt">LTE — All-IP</div><div class="gd">2010s — everything (voice included) travels as IP data packets; big speed jump</div></div></div>
+      <div class="gen-row"><div class="gn" style="background:var(--accent)">5G</div><div><div class="gt">NR — New Radio</div><div class="gd">2020s — much higher speed, much lower latency, built for massive device density</div></div></div>
+    </div>
+
+    <table class="compare">
+      <tr><th>Generation</th><th>Core Tech</th><th>What It Enabled</th></tr>
+      <tr><td>2G</td><td>GSM</td><td>Digital voice, SMS</td></tr>
+      <tr><td>3G</td><td>UMTS/CDMA2000</td><td>Mobile internet, video calling</td></tr>
+      <tr><td>4G</td><td>LTE</td><td>All-IP network, HD video streaming</td></tr>
+      <tr><td>5G</td><td>NR (New Radio)</td><td>Multi-gigabit speed, near-instant response time, huge device density</td></tr>
+    </table>
+
+    <div class="fact-card"><span class="fact-card-emoji">📡</span><span class="fact-card-text"><strong>Voice used to be special.</strong> In 2G and 3G, voice calls ran on dedicated circuit-switched channels, separate from data. By 4G, voice itself became just another IP data stream (VoLTE) — the network stopped treating voice as a unique case.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>5G's real headline isn't just speed.</strong> Its biggest structural change is ultra-low latency and the ability to serve enormous numbers of connected devices per cell — the design target that makes things like large-scale IoT deployments realistic.</span></div>
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <div class="tab-content" id="tab-arch">
+    <h2>Two halves: the Radio side and the Core</h2>
+    <p class="lede">Every cellular generation splits into the same two halves: a Radio Access Network (RAN) that talks to your phone over the air, and a Core Network that handles identity, routing, and connecting out to other networks — including the internet.</p>
+    <div class="analogy">🏢 <strong>Like a hotel:</strong> the RAN is the front desk and hallways — it's what you actually interact with to get to your room. The Core is everything behind the scenes — reservations, billing, security — that makes the whole hotel actually function, even though guests never see it directly.</div>
+
+    <h3>How the architecture evolved by generation</h3>
+    <table class="compare">
+      <tr><th>Generation</th><th>Radio Side (RAN)</th><th>Core Network</th></tr>
+      <tr><td>2G (GSM)</td><td><strong>BTS</strong> (tower radio) → <strong>BSC</strong> (controller)</td><td><strong>MSC</strong> (mobile switching center)</td></tr>
+      <tr><td>4G (LTE)</td><td><strong>eNodeB</strong> (does what BTS+BSC used to do, combined)</td><td><strong>EPC</strong> — MME, SGW, PGW</td></tr>
+      <tr><td>5G (NR)</td><td><strong>gNodeB</strong></td><td><strong>5GC</strong> — AMF, SMF, UPF</td></tr>
+    </table>
+
+    <div class="arch-flow">
+      <div class="arch-node">Phone (UE)</div><span class="arch-arrow">→</span>
+      <div class="arch-node">BTS / eNodeB / gNodeB</div><span class="arch-arrow">→</span>
+      <div class="arch-node">Controller (BSC / MME / AMF)</div><span class="arch-arrow">→</span>
+      <div class="arch-node">Core Network</div><span class="arch-arrow">→</span>
+      <div class="arch-node">Internet / Other Networks</div>
+    </div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🗼</span><span class="fact-card-text"><strong>UE</strong> stands for User Equipment — the generic term for "your phone" (or any cellular-connected device) used throughout cellular standards, regardless of generation.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Fewer boxes, more software.</strong> Notice the trend: 2G needed separate BTS and BSC hardware; by 4G, the eNodeB absorbed both jobs into one unit; the underlying trend across generations is pushing more function into fewer, smarter, more software-defined boxes.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">📲</span><span class="fact-card-text"><strong>Handover (HO)</strong> is how a call or data session survives you moving from one cell's coverage to the next without dropping — the network hands your connection from one tower's controller to another, ideally before the old signal gets too weak.</span></div>
+  </div>
+
+  <!-- IDENTIFIERS -->
+  <div class="tab-content" id="tab-id">
+    <h2>How the network knows who and where you are</h2>
+    <p class="lede">Cellular networks run on a stack of IDs — some identify the network itself, some identify your device, and some identify the specific cell tower you're talking to.</p>
+    <div class="analogy">🪪 <strong>Like a layered ID system:</strong> your <strong>IMSI</strong> is like your permanent national ID number — it never changes and identifies you specifically. Your <strong>TMSI</strong> is a temporary badge the network hands you for a session, so your permanent ID isn't broadcast over the air constantly. The <strong>PLMN</strong> is which country/carrier's "building" you're in, and the <strong>Cell ID</strong> is which specific room.</div>
+
+    <h3>Network identifiers</h3>
+    <div class="card" style="border-top:4px solid var(--c1)"><div class="card-head"><span class="card-emoji">🌍</span><div><div class="card-title">PLMN</div><div class="card-sub">Public Land Mobile Network</div></div></div>
+      <p style="margin-bottom:0">Identifies a specific carrier in a specific country. It's built from two smaller codes: the <strong>MCC</strong> (Mobile Country Code — which country) and the <strong>MNC</strong> (Mobile Network Code — which carrier within that country).</p></div>
+    <div class="card" style="border-top:4px solid var(--c3)"><div class="card-head"><span class="card-emoji">📍</span><div><div class="card-title">TAC / LAC</div><div class="card-sub">Tracking Area Code / Location Area Code</div></div></div>
+      <p style="margin-bottom:0">Groups of cells that the network manages together for tracking your rough location — so it doesn't have to page every single tower to find you, just the ones in your current tracking/location area.</p></div>
+
+    <h3>Device identifiers</h3>
+    <div class="card" style="border-top:4px solid var(--c2)"><div class="card-head"><span class="card-emoji">🪪</span><div><div class="card-title">IMSI</div><div class="card-sub">International Mobile Subscriber Identity</div></div></div>
+      <p style="margin-bottom:0">A permanent number tied to your SIM card, uniquely identifying you as a subscriber worldwide. It rarely changes and is sensitive — networks try to avoid broadcasting it directly over the air whenever possible.</p></div>
+    <div class="card" style="border-top:4px solid var(--c4)"><div class="card-head"><span class="card-emoji">🏷️</span><div><div class="card-title">TMSI</div><div class="card-sub">Temporary Mobile Subscriber Identity</div></div></div>
+      <p style="margin-bottom:0">A temporary, reassignable ID the network gives your device instead of using your IMSI on every over-the-air exchange — a privacy measure so your permanent identity isn't constantly exposed.</p></div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🏗️</span><span class="fact-card-text"><strong>Cell-level identifiers scale with the network.</strong> Things like the Cell Global Identity (CGI) in older networks and the Physical Cell Identity (PCI) or NR Cell Identity (NCI) in newer ones all serve the same basic purpose: uniquely naming a specific cell/tower/sector so the network and your phone both know exactly which piece of radio coverage you're using.</span></div>
+    <div class="tryit"><strong>▶ See it live:</strong> the <em>Cellular</em> interactive tool has a full identifier-breakdown module showing PLMN, CGI, BSIC, PCI, and NCI together.</div>
+  </div>
+
+  <!-- LOGICAL CHANNELS -->
+  <div class="tab-content" id="tab-chan">
+    <h2>Logical channels — the radio's "conversation types"</h2>
+    <p class="lede">Even though it's all radio waves, a cellular connection isn't one single conversation — it's split into several logical channels, each carrying a different kind of information at a different time.</p>
+    <div class="analogy">📻 <strong>Think of separate radio stations sharing one tower:</strong> one "station" just broadcasts network info to everyone listening. Another handles the brief back-and-forth of a phone trying to connect. A third carries your actual call or data once you're connected. They're logically separate even though they may share the same physical radio.</div>
+
+    <h3>Three broad families</h3>
+    <div class="card" style="border-top:4px solid var(--c1)"><div class="card-head"><span class="card-emoji">📢</span><div><div class="card-title">Broadcast Channels</div><div class="card-sub">one-way, to everyone in range</div></div></div>
+      <p style="margin-bottom:0">Carry system information every device in range needs — network identity, timing, configuration — before a device even tries to connect. Example: <span class="chan-pill b">BCCH</span> (Broadcast Control Channel).</p></div>
+    <div class="card" style="border-top:4px solid var(--c3)"><div class="card-head"><span class="card-emoji">🤝</span><div><div class="card-title">Control Channels</div><div class="card-sub">setting up and managing a connection</div></div></div>
+      <p style="margin-bottom:0">Handle the handshake of getting a device connected and keeping the link managed: paging a device, letting it request access, and carrying signaling during a call. Examples: <span class="chan-pill c">PCH</span> (paging), <span class="chan-pill c">RACH</span> (random access — a device's first "hello"), <span class="chan-pill c">SDCCH</span> (stand-alone dedicated control), <span class="chan-pill c">SACCH</span>/<span class="chan-pill c">FACCH</span> (associated control, running alongside a call).</p></div>
+    <div class="card" style="border-top:4px solid var(--c2)"><div class="card-head"><span class="card-emoji">🗣️</span><div><div class="card-title">Traffic Channels</div><div class="card-sub">your actual call or data</div></div></div>
+      <p style="margin-bottom:0">Carry the payload — your actual voice or data — once a connection is established. Example: <span class="chan-pill t">TCH</span> (Traffic Channel).</p></div>
+
+    <h3>The basic sequence</h3>
+    <p>A device generally: (1) listens to the broadcast channel to learn about the network, (2) uses a random access channel to say "I'd like to connect," (3) gets assigned a dedicated control channel to complete setup, then (4) moves to a traffic channel for the actual call or data session.</p>
+
+    <div class="fact-card"><span class="fact-card-emoji">🔄</span><span class="fact-card-text"><strong>The names change across generations, the concept doesn't.</strong> GSM's BCCH/PCH/RACH/SDCCH/TCH model has direct conceptual cousins in LTE (PRACH for random access, RRC signaling for control) and 5G NR (SSB for broadcast/synchronization, PDSCH for the actual data) — the channel <em>types</em> persist even as the specific channel <em>names</em> evolve.</span></div>
+    <div class="tryit"><strong>▶ See it live:</strong> the <em>Cellular</em> interactive tool has a full BCCH/logical-channel map across 2G, 4G, and 5G side by side.</div>
+  </div>
+</div>
+
+<div class="footer">Cellular Explained · Companion guide to the Cellular interactive tool · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electricity Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#12492b;--hero-eyebrow:#8fd3ac;--hero-sub:#bfe6cf;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1f8a4c;--accent-soft:#e6f5ec;
+  --v-color:#d98a1f;--v-soft:#fbeED6;   /* voltage */
+  --i-color:#1f6fe0;--i-soft:#e2edfb;   /* current */
+  --r-color:#159c72;--r-soft:#dcf3ea;   /* resistance */
+  --p-color:#c0392b;--p-soft:#fbe4e0;   /* power */
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#a8a49c;--text-muted:#706d66;
+  --hero-bg:#08361f;--hero-eyebrow:#5fae82;--hero-sub:#79b493;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#4cc07f;--accent-soft:#0c2a19;
+  --v-color:#EFAF4A;--v-soft:#3a2800;
+  --i-color:#5a9bf0;--i-soft:#0a2240;
+  --r-color:#33b98d;--r-soft:#0a2e22;
+  --p-color:#e0685a;--p-soft:#2e0e0a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:560px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}
+.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}
+.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}
+h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+h4{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:1rem 0 .5rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}
+p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}
+.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}
+.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}
+.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}
+.fact-card-text strong{color:var(--text-primary)}
+.viz{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.2rem;margin:1.2rem 0}
+.quantities{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.2rem 0}
+.q-tile{border:1.5px solid var(--border);border-radius:12px;padding:1rem;background:var(--bg-card)}
+.q-tile .q-sym{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:800;line-height:1}
+.q-tile .q-name{font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;margin:.3rem 0 .1rem}
+.q-tile .q-unit{font-size:12px;color:var(--text-muted);font-weight:600}
+.q-tile .q-desc{font-size:12.5px;color:var(--text-secondary);margin-top:.5rem;line-height:1.5}
+.q-tile.v{border-top:4px solid var(--v-color)}.q-tile.v .q-sym{color:var(--v-color)}
+.q-tile.i{border-top:4px solid var(--i-color)}.q-tile.i .q-sym{color:var(--i-color)}
+.q-tile.r{border-top:4px solid var(--r-color)}.q-tile.r .q-sym{color:var(--r-color)}
+.q-tile.p{border-top:4px solid var(--p-color)}.q-tile.p .q-sym{color:var(--p-color)}
+.formula{font-family:'Courier New',monospace;background:var(--table-head-bg);border-radius:10px;padding:.9rem 1.1rem;text-align:center;font-size:1.1rem;font-weight:700;color:var(--text-primary);margin:1rem 0;letter-spacing:.02em}
+.formula .v{color:var(--v-color)}.formula .i{color:var(--i-color)}.formula .r{color:var(--r-color)}.formula .p{color:var(--p-color)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin:.4rem 0 1rem}
+.pill{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;border:1.5px solid var(--border)}
+.pill.v{color:var(--v-color);background:var(--v-soft);border-color:transparent}
+.pill.i{color:var(--i-color);background:var(--i-soft);border-color:transparent}
+.pill.r{color:var(--r-color);background:var(--r-soft);border-color:transparent}
+.pill.p{color:var(--p-color);background:var(--p-soft);border-color:transparent}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}
+.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.slider-row{display:flex;align-items:center;gap:12px;margin:.6rem 0}
+.slider-row label{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;min-width:88px}
+input[type=range]{-webkit-appearance:none;flex:1;height:5px;border-radius:5px;background:var(--border);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg-card)}
+.slider-row .val{font-family:'Courier New',monospace;font-weight:700;min-width:70px;text-align:right;color:var(--text-primary)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>What is <span>Electricity</span>?<br>The basics, made simple.</h1>
+  <p class="hero-sub">Electricity is just tiny charged particles pushed through a wire. Master four ideas — voltage, current, resistance, and power — and every circuit starts to make sense.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('basics',this)">⚡ The Big 4</button>
+    <button class="tab-btn" onclick="switchTab('ohm',this)">🧮 Ohm's Law</button>
+    <button class="tab-btn" onclick="switchTab('acdc',this)">🔄 AC vs DC</button>
+    <button class="tab-btn" onclick="switchTab('circuits',this)">🔗 Series &amp; Parallel</button>
+    <button class="tab-btn" onclick="switchTab('parts',this)">🔩 Components</button>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <!-- ============ BASICS ============ -->
+  <div class="tab-content active" id="tab-basics">
+    <h2>The four things that explain everything</h2>
+    <p class="lede">Before any gadget or circuit, there are four quantities. Learn what each one <em>is</em> and you can reason about almost any electrical problem.</p>
+
+    <div class="analogy">💧 <strong>The water pipe analogy:</strong> imagine water flowing through a pipe. The <strong>pressure</strong> pushing the water is <em>voltage</em>. The <strong>amount of water flowing</strong> is <em>current</em>. Anything that <strong>narrows the pipe</strong> and slows the flow is <em>resistance</em>. And the <strong>work the water can do</strong> (spin a wheel) is <em>power</em>. This one picture carries you a long way.</div>
+
+    <div class="quantities">
+      <div class="q-tile v"><div class="q-sym">V</div><div class="q-name">Voltage</div><div class="q-unit">measured in Volts (V)</div><div class="q-desc">The <strong>push</strong>. How hard the electricity is being shoved through the wire. A 9 V battery pushes three times harder than a 3 V one.</div></div>
+      <div class="q-tile i"><div class="q-sym">I</div><div class="q-name">Current</div><div class="q-unit">measured in Amps (A)</div><div class="q-desc">The <strong>flow</strong>. How much electric charge actually moves past a point each second. (The symbol is "I", from the French <em>intensité</em>.)</div></div>
+      <div class="q-tile r"><div class="q-sym">R</div><div class="q-name">Resistance</div><div class="q-unit">measured in Ohms (Ω)</div><div class="q-desc">The <strong>opposition</strong>. How much the material fights the flow. More resistance = less current for the same push, and heat is given off.</div></div>
+      <div class="q-tile p"><div class="q-sym">P</div><div class="q-name">Power</div><div class="q-unit">measured in Watts (W)</div><div class="q-desc">The <strong>work rate</strong>. How fast energy is used — a bright bulb or a hot resistor uses more watts than a dim one.</div></div>
+    </div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🔢</span><span class="fact-card-text"><strong>One amp is a LOT of electrons.</strong> A current of 1 amp means about <strong>6.24 × 10¹⁸</strong> electrons flow past a point every second — that's 6.24 billion-billion.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🌡️</span><span class="fact-card-text"><strong>Resistance makes heat.</strong> When current fights through resistance, energy turns into heat. That's exactly how a toaster, a hair dryer, and an old light bulb work on purpose.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">⚠️</span><span class="fact-card-text"><strong>It's the current that hurts you</strong>, not the voltage alone. Voltage provides the push, but it's the amount of current through the body that's dangerous — which is why even low voltages can matter in the wrong conditions.</span></div>
+
+    <div class="tryit"><strong>▶ Try the interactive:</strong> open the <em>BET Components</em> and <em>Circuit Bench</em> tools to see these quantities change live as you build circuits.</div>
+  </div>
+
+  <!-- ============ OHM'S LAW ============ -->
+  <div class="tab-content" id="tab-ohm">
+    <h2>Ohm's Law — the one equation to know</h2>
+    <p class="lede">Voltage, current, and resistance are locked together by a single, famous relationship. If you know any two, you can always find the third.</p>
+
+    <div class="formula"><span class="v">V</span> = <span class="i">I</span> × <span class="r">R</span></div>
+    <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:-.4rem">"Voltage equals current times resistance." Rearranged: <strong>I = V ÷ R</strong> &nbsp;and&nbsp; <strong>R = V ÷ I</strong>.</p>
+
+    <div class="analogy">👆 <strong>The magic triangle trick:</strong> write V on top, with I and R underneath. Cover the letter you want to find. Cover <strong>V</strong> → you see <strong>I × R</strong>. Cover <strong>I</strong> → you see <strong>V over R</strong> (divide). Cover <strong>R</strong> → you see <strong>V over I</strong>. The triangle hands you the formula every time.</div>
+
+    <div class="viz">
+      <h4>See it move</h4>
+      <div class="slider-row"><label>Voltage</label><input type="range" id="oh-v" min="1" max="24" value="12" step="1" oninput="calcOhm()"><span class="val" id="oh-v-val">12 V</span></div>
+      <div class="slider-row"><label>Resistance</label><input type="range" id="oh-r" min="10" max="1000" value="100" step="10" oninput="calcOhm()"><span class="val" id="oh-r-val">100 Ω</span></div>
+      <div style="text-align:center;margin-top:.8rem;padding:.9rem;border-radius:10px;background:var(--i-soft)">
+        <div style="font-size:12px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Resulting current</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:2rem;font-weight:800;color:var(--i-color)" id="oh-i-out">0.12 A</div>
+        <div style="font-size:12px;color:var(--text-secondary)" id="oh-p-out">using 1.44 W of power</div>
+      </div>
+      <p style="font-size:12.5px;margin-top:.7rem;margin-bottom:0">Notice: turn the <strong style="color:var(--v-color)">voltage</strong> up and current rises. Turn the <strong style="color:var(--r-color)">resistance</strong> up and current falls. That push-and-fight balance is the whole idea.</p>
+    </div>
+
+    <h3>Power ties in too</h3>
+    <div class="formula"><span class="p">P</span> = <span class="v">V</span> × <span class="i">I</span></div>
+    <p>Power (watts) is voltage times current. Because of Ohm's Law you can also write it as <strong>P = I²R</strong> or <strong>P = V²÷R</strong> — three doors to the same room. This is how you figure out if a resistor will run cool or cook itself.</p>
+
+    <div class="fact-card"><span class="fact-card-emoji">🎓</span><span class="fact-card-text"><strong>Who was Ohm?</strong> Georg Ohm published this relationship in 1827. At first his work was dismissed — today his name is a unit of measurement used billions of times a day.</span></div>
+  </div>
+
+  <!-- ============ AC vs DC ============ -->
+  <div class="tab-content" id="tab-acdc">
+    <h2>AC vs DC — two ways electricity flows</h2>
+    <p class="lede">Electricity can flow steadily in one direction, or rapidly back and forth. Both are everywhere, and each is good at different jobs.</p>
+
+    <div class="card">
+      <div class="card-head"><span class="card-emoji">🔋</span><div><div class="card-title">DC — Direct Current</div><div class="card-sub">flows one direction, steady</div></div></div>
+      <p>Direct current flows steadily from minus to plus, always the same direction. It's what <strong>batteries</strong> give you, and what almost all electronics run on internally — phones, radios, circuit boards.</p>
+      <h4>Where you see it</h4>
+      <p style="margin-bottom:0">Batteries, USB power, solar panels, every chip and sensor in your gear.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="card-emoji">🔄</span><div><div class="card-title">AC — Alternating Current</div><div class="card-sub">reverses direction many times a second</div></div></div>
+      <p>Alternating current constantly switches direction — in the US wall outlets it reverses <strong>60 times a second</strong> (60 Hz). AC is easy to push over long distances and to step up or down with a transformer, which is why the <strong>power grid</strong> uses it.</p>
+      <h4>Where you see it</h4>
+      <p style="margin-bottom:0">Wall outlets, the power grid, large motors, and the RF signals that carry radio and Wi-Fi (very fast AC!).</p>
+    </div>
+
+    <div class="viz">
+      <h4>What they look like on a scope</h4>
+      <svg viewBox="0 0 600 200" id="acdc-svg"></svg>
+      <p style="font-size:12.5px;text-align:center;margin:.6rem 0 0">DC is a flat, steady line. AC is a smooth wave rising and falling above and below zero.</p>
+    </div>
+
+    <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>The "War of Currents."</strong> In the 1880s–90s, Edison pushed DC while Tesla and Westinghouse pushed AC. AC won for power delivery because it travels long distances with far less loss.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">📻</span><span class="fact-card-text"><strong>Radio is just really fast AC.</strong> A 100 MHz FM signal is alternating current reversing 100 million times a second. That's why RF theory and basic AC are the same family.</span></div>
+  </div>
+
+  <!-- ============ SERIES & PARALLEL ============ -->
+  <div class="tab-content" id="tab-circuits">
+    <h2>Series &amp; parallel — two ways to wire things up</h2>
+    <p class="lede">How you connect components decides how current and voltage split up. There are two basic ways, and every complex circuit is a mix of them.</p>
+
+    <div class="card">
+      <div class="card-head"><span class="card-emoji">➡️</span><div><div class="card-title">Series — one single path</div><div class="card-sub">components in a line</div></div></div>
+      <p>In a <strong>series</strong> circuit everything sits on one loop, so the <strong>same current</strong> flows through every part. The resistances <strong>add up</strong>, and the voltage is <em>shared</em> among them (the drops add back up to the battery).</p>
+      <div class="analogy">🎄 <strong>Old Christmas lights:</strong> wired in series, if one bulb burned out it broke the single path and <em>the whole string</em> went dark. That's series in a nutshell — one break stops everything.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="card-emoji">🔀</span><div><div class="card-title">Parallel — multiple paths</div><div class="card-sub">components side by side</div></div></div>
+      <p>In a <strong>parallel</strong> circuit each component gets its own branch, so every branch sees the <strong>same voltage</strong> (the full battery). The currents in the branches <strong>add up</strong>, and the total resistance actually drops <em>below</em> the smallest branch.</p>
+      <div class="analogy">🏠 <strong>Your house wiring:</strong> outlets are in parallel. Each device gets the full 120 V, and unplugging one doesn't affect the others. One break only kills its own branch.</div>
+    </div>
+
+    <table class="compare">
+      <tr><th></th><th>Series</th><th>Parallel</th></tr>
+      <tr><td><strong>Current</strong></td><td>Same everywhere</td><td>Splits between branches (adds up)</td></tr>
+      <tr><td><strong>Voltage</strong></td><td>Shared (drops add up)</td><td>Same across each branch</td></tr>
+      <tr><td><strong>Total resistance</strong></td><td>Adds up (bigger)</td><td>Less than the smallest branch</td></tr>
+      <tr><td><strong>One part fails</strong></td><td>Whole circuit stops</td><td>Only that branch stops</td></tr>
+    </table>
+
+    <div class="tryit"><strong>▶ Build one:</strong> the <em>Circuit Bench</em> tool lets you wire resistors in series and parallel and watch the current split and the voltages drop in real time.</div>
+  </div>
+
+  <!-- ============ COMPONENTS ============ -->
+  <div class="tab-content" id="tab-parts">
+    <h2>The parts in the box</h2>
+    <p class="lede">Circuits are built from a small cast of characters. Here's what each one does, in plain terms.</p>
+
+    <div class="card"><div class="card-head"><span class="card-emoji">🟫</span><div><div class="card-title">Resistor</div><div class="card-sub">limits current</div></div></div>
+      <p style="margin-bottom:0">A deliberate "narrow spot" in the pipe. It limits how much current flows and drops some voltage. The colored bands on it are a code for its value.</p></div>
+
+    <div class="card"><div class="card-head"><span class="card-emoji">🔵</span><div><div class="card-title">Capacitor</div><div class="card-sub">stores charge briefly</div></div></div>
+      <p style="margin-bottom:0">A tiny rechargeable bucket. It charges up and releases energy quickly — great for smoothing out bumps in power and for timing. It blocks steady DC but lets AC "through."</p></div>
+
+    <div class="card"><div class="card-head"><span class="card-emoji">🌀</span><div><div class="card-title">Inductor</div><div class="card-sub">resists changes in current</div></div></div>
+      <p style="margin-bottom:0">A coil of wire that stores energy in a magnetic field and dislikes sudden changes in current. It passes DC easily but resists fast AC — the opposite personality to a capacitor.</p></div>
+
+    <div class="card"><div class="card-head"><span class="card-emoji">▶️</span><div><div class="card-title">Diode</div><div class="card-sub">one-way valve</div></div></div>
+      <p style="margin-bottom:0">Lets current flow one direction and blocks the other. This is what turns AC into DC (rectification). An <strong>LED</strong> is a diode that also gives off light.</p></div>
+
+    <div class="card"><div class="card-head"><span class="card-emoji">🎛️</span><div><div class="card-title">Transistor</div><div class="card-sub">switch &amp; amplifier</div></div></div>
+      <p style="margin-bottom:0">A tiny electronic tap where a <em>small</em> signal controls a <em>large</em> one. It can switch things on/off or amplify a weak signal. Billions of them make up every computer chip.</p></div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🎨</span><span class="fact-card-text"><strong>Resistor color code:</strong> the bands read as digits and a multiplier. A handy mnemonic for 0–9 is <strong>B</strong>lack <strong>B</strong>rown <strong>R</strong>ed <strong>O</strong>range <strong>Y</strong>ellow <strong>G</strong>reen <strong>B</strong>lue <strong>V</strong>iolet <strong>G</strong>ray <strong>W</strong>hite.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>Why LEDs need a resistor:</strong> an LED will grab as much current as it can and burn out. A small series resistor limits the current to a safe level — a classic first circuit to build.</span></div>
+
+    <div class="tryit"><strong>▶ Play with these:</strong> the <em>BET Components</em> tool has interactive diodes, LED circuits, rectifiers, and a transistor you can switch on and off.</div>
+  </div>
+</div>
+
+<div class="footer">Electricity Explained · Companion guide to the BET interactive tools · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('t-icon').textContent=dark?'🌙':'☀️';
+  document.getElementById('t-label').textContent=dark?'Dark mode':'Light mode';
+  drawACDC();
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+  if(id==='acdc')drawACDC();
+}
+function calcOhm(){
+  const v=+document.getElementById('oh-v').value,r=+document.getElementById('oh-r').value;
+  document.getElementById('oh-v-val').textContent=v+' V';
+  document.getElementById('oh-r-val').textContent=r+' Ω';
+  const i=v/r,p=v*i;
+  document.getElementById('oh-i-out').textContent=(i<1?(i*1000).toFixed(0)+' mA':i.toFixed(2)+' A');
+  document.getElementById('oh-p-out').textContent='using '+(p<1?(p*1000).toFixed(0)+' mW':p.toFixed(2)+' W')+' of power';
+}
+function cvar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function drawACDC(){
+  const svg=document.getElementById('acdc-svg');if(!svg)return;
+  const W=600,H=200,mid=H/2;
+  const grid=cvar('--border'),dc=cvar('--i-color'),ac=cvar('--v-color'),txt=cvar('--text-muted');
+  let s=`<line x1="0" y1="${mid}" x2="${W}" y2="${mid}" stroke="${grid}" stroke-width="1"/>`;
+  // DC line
+  s+=`<line x1="40" y1="${mid-45}" x2="${W-10}" y2="${mid-45}" stroke="${dc}" stroke-width="3"/>`;
+  s+=`<text x="44" y="${mid-52}" fill="${dc}" font-family="Nunito,sans-serif" font-weight="700" font-size="13">DC — steady</text>`;
+  // AC wave
+  let d='M 40 '+mid;
+  for(let x=40;x<=W-10;x+=4){const y=mid+55*Math.sin((x-40)/40);d+=' L '+x+' '+y.toFixed(1);}
+  s+=`<path d="${d}" fill="none" stroke="${ac}" stroke-width="3"/>`;
+  s+=`<text x="44" y="${mid+82}" fill="${ac}" font-family="Nunito,sans-serif" font-weight="700" font-size="13">AC — alternates</text>`;
+  s+=`<text x="${W-8}" y="${mid+14}" fill="${txt}" font-size="11" text-anchor="end">time →</text>`;
+  svg.innerHTML=s;
+}
+window.addEventListener('load',()=>{calcOhm();drawACDC();});
+</script>
+</body>
+</html>

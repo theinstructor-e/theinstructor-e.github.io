@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electronic Warfare — 17E Interactive Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dark:#1a0033;
+  --pink:#ff66aa;--pink-dark:#2a0015;
+  --orange:#ff7700;--orange-dark:#2a1000;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#ffffff;
+  --canvas-bg:#000000;
+  --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dark:#ede0ff;
+  --pink:#cc3377;--pink-dark:#ffe0ee;
+  --orange:#cc5500;--orange-dark:#fff0d0;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+  --canvas-bg:#f8fafc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--ui);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--ui);font-size:20px;font-weight:700;color:var(--red);letter-spacing:3px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.hdr-status{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:right;line-height:1.7}
+.live{color:var(--red);animation:blink 1.2s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 16px;gap:1px}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:11px 16px;cursor:pointer;transition:color .18s,border-color .18s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tab-btn .tnum{font-family:var(--mono);font-size:9px;opacity:.55}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-content{display:none;padding:20px 24px;max-width:1180px;margin:0 auto}
+.tab-content.active{display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.full{margin-bottom:18px}
+@media(max-width:780px){.two-col{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);padding:16px;position:relative;overflow:hidden;transition:background .2s}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);opacity:.4}
+.panel.green::before{background:var(--green)}.panel.cyan::before{background:var(--cyan)}
+.panel.amber::before{background:var(--amber)}.panel.purple::before{background:var(--purple)}
+.panel.orange::before{background:var(--orange)}.panel.pink::before{background:var(--pink)}
+.ptitle{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ptitle::before{content:'▶';font-size:7px;color:var(--red)}
+.panel.green .ptitle::before{color:var(--green)}.panel.cyan .ptitle::before{color:var(--cyan)}
+.panel.amber .ptitle::before{color:var(--amber)}.panel.purple .ptitle::before{color:var(--purple)}
+.panel.orange .ptitle::before{color:var(--orange)}.panel.pink .ptitle::before{color:var(--pink)}
+.section-head{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:7px;margin-bottom:16px}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--border-bright);outline:none;cursor:pointer;margin:3px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--red);border:2px solid var(--bg);cursor:pointer}
+.panel.green input[type=range]::-webkit-slider-thumb{background:var(--green)}
+.panel.cyan input[type=range]::-webkit-slider-thumb{background:var(--cyan)}
+.panel.amber input[type=range]::-webkit-slider-thumb{background:var(--amber)}
+.panel.purple input[type=range]::-webkit-slider-thumb{background:var(--purple)}
+.panel.orange input[type=range]::-webkit-slider-thumb{background:var(--orange)}
+.slrow{margin-bottom:12px}
+.slabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.slabel .nm{font-family:var(--ui);font-size:12px;font-weight:600;color:var(--text);letter-spacing:.8px}
+.slabel .vl{font-family:var(--mono);font-size:12px;color:var(--red);min-width:100px;text-align:right}
+.panel.green .slabel .vl{color:var(--green)}.panel.cyan .slabel .vl{color:var(--cyan)}
+.panel.amber .slabel .vl{color:var(--amber)}.panel.purple .slabel .vl{color:var(--purple)}
+.panel.orange .slabel .vl{color:var(--orange)}
+canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);display:block}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:10px}
+.rd{background:var(--canvas-bg);border:1px solid var(--border);padding:8px 10px;text-align:center;transition:background .2s}
+.rd .rl{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:3px}
+.rd .rv{font-family:var(--mono);font-size:15px;color:var(--red);line-height:1}
+.rd .ru{font-family:var(--mono);font-size:8px;color:var(--text-dim);margin-top:2px}
+.rd.green .rv{color:var(--green)}.rd.cyan .rv{color:var(--cyan)}.rd.amber .rv{color:var(--amber)}
+.rd.purple .rv{color:var(--purple)}.rd.orange .rv{color:var(--orange)}
+.fbox{background:var(--canvas-bg);border-left:3px solid var(--red);padding:9px 12px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.8;transition:background .2s}
+.fbox .eq{color:var(--red);font-size:11px}
+.panel.green .fbox{border-left-color:var(--green)}.panel.green .fbox .eq{color:var(--green)}
+.panel.cyan .fbox{border-left-color:var(--cyan)}.panel.cyan .fbox .eq{color:var(--cyan)}
+.panel.amber .fbox{border-left-color:var(--amber)}.panel.amber .fbox .eq{color:var(--amber)}
+.panel.purple .fbox{border-left-color:var(--purple)}.panel.purple .fbox .eq{color:var(--purple)}
+.panel.orange .fbox{border-left-color:var(--orange)}.panel.orange .fbox .eq{color:var(--orange)}
+.callout{border:1px solid var(--border);border-left:3px solid var(--red);background:var(--red-dark);padding:8px 12px;font-size:12px;color:var(--text);line-height:1.6;margin-top:10px;transition:background .2s}
+.callout.green{border-left-color:var(--green);background:var(--green-dark)}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}
+.callout.cyan{border-left-color:var(--cyan);background:var(--cyan-dark)}
+.callout.purple{border-left-color:var(--purple);background:var(--purple-dark)}
+.callout.orange{border-left-color:var(--orange);background:var(--orange-dark)}
+.key{font-weight:700;color:var(--red)}
+.callout.green .key{color:var(--green)}.callout.amber .key{color:var(--amber)}
+.callout.cyan .key{color:var(--cyan)}.callout.purple .key{color:var(--purple)}
+.callout.orange .key{color:var(--orange)}
+.cbtn{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:5px 12px;cursor:pointer;transition:all .14s;text-transform:uppercase}
+.cbtn:hover,.cbtn.active{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.cbtn.green:hover,.cbtn.green.active{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.cbtn.cyan:hover,.cbtn.cyan.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.cbtn.amber:hover,.cbtn.amber.active{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.cbtn.purple:hover,.cbtn.purple.active{border-color:var(--purple);color:var(--purple);background:var(--purple-dark)}
+.cbtn.orange:hover,.cbtn.orange.active{border-color:var(--orange);color:var(--orange);background:var(--orange-dark)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.detail-box{background:var(--canvas-bg);border:1px solid var(--border-bright);padding:10px 12px;font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.8;min-height:60px;transition:background .2s}
+.detail-box .dn{font-size:12px;display:block;margin-bottom:4px;color:var(--red)}
+.ew-card{background:var(--canvas-bg);border:1px solid var(--border);padding:12px;margin-bottom:8px;cursor:pointer;transition:all .14s}
+.ew-card:hover{border-color:var(--red)}
+.ew-card.active{border-color:var(--red);background:var(--red-dark)}
+.ew-card .ec-title{font-family:var(--ui);font-size:14px;font-weight:700;letter-spacing:1px;margin-bottom:4px}
+.ew-card .ec-sub{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px}
+.ant-select{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ant-btn{font-family:var(--mono);font-size:9px;letter-spacing:.8px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;cursor:pointer;transition:all .12s;text-transform:uppercase}
+.ant-btn:hover,.ant-btn.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dark)}
+.ep-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:10px}
+.ep-table th{background:var(--border);color:var(--text-dim);padding:6px 10px;text-align:left;letter-spacing:1px;font-size:9px;text-transform:uppercase}
+.ep-table td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}
+.ep-table .tn{color:var(--green);font-weight:700}
+.ep-table .vs{color:var(--red)}
+.ep-table .eff{color:var(--amber)}
+.sig-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;background:var(--canvas-bg);border:1px solid var(--border);padding:4px 8px;margin-bottom:3px}
+.sig-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Electronic Warfare <span>// 17E Interactive Reference</span></h1>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-btn" id="ew-theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="hdr-status">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; JAM</span><br>UNCLASSIFIED</div>
+  </div>
+</header>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('ew',this)"><span class="tnum">01</span> EW Principles</button>
+  <button class="tab-btn" onclick="switchTab('ant',this)"><span class="tnum">02</span> Antenna Fundamentals</button>
+  <button class="tab-btn" onclick="switchTab('ea',this)"><span class="tnum">03</span> Electronic Attack</button>
+</nav>
+
+
+<!-- TAB 1: EW PRINCIPLES -->
+<div id="tab-ew" class="tab-content active">
+  <div class="section-head">MODULE 01 — EW PRINCIPLES: ES / EA / EP FRAMEWORK (FM 3-12 / JP 3-85)</div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="ptitle">EW Disciplines — click to explore</div>
+      <div id="ew-cards"></div>
+      <div class="detail-box" id="ew-detail" style="margin-top:10px">
+        <span class="dn">Select a discipline above</span>
+        EW is divided into three core disciplines. Click each to understand its role in the EM spectrum battle.
+      </div>
+      <div class="fbox">
+        <div class="eq">EW = ES + EA + EP (FM 3-12 / JP 3-85)</div>
+        ES: Exploit EM emissions for intelligence and targeting.<br>
+        EA: Use EM energy to attack personnel, equipment, or spectrum.<br>
+        EP: Protect friendly EM spectrum use from EA and ES.
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">EW Operating Concept — OODA Loop &amp; Spectrum Control</div>
+      <canvas id="ew-canvas" height="310"></canvas>
+      <div class="rg">
+        <div class="rd green"><div class="rl">ES Tasks</div><div class="rv" id="r-es-tasks">5</div></div>
+        <div class="rd"><div class="rl">EA Tasks</div><div class="rv" id="r-ea-tasks">6</div></div>
+        <div class="rd cyan"><div class="rl">EP Tasks</div><div class="rv" id="r-ep-tasks">7</div></div>
+        <div class="rd amber"><div class="rl">Domain</div><div class="rv" style="font-size:11px">EM Spectrum</div></div>
+      </div>
+      <div class="callout" style="margin-top:8px">
+        <span class="key">17E FOCUS:</span> ES feeds targeting for EA. EP ensures friendly comms survive EA. All three must be synchronized — jamming friendly forces (fratricide) is the most common EW failure mode at entry level.
+      </div>
+    </div>
+  </div>
+  <div class="panel full">
+    <div class="ptitle">J-Series EW Tasks Reference (FM 3-12)</div>
+    <div id="j-series-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:4px"></div>
+  </div>
+</div>
+
+<!-- TAB 2: ANTENNA FUNDAMENTALS -->
+<div id="tab-ant" class="tab-content">
+  <div class="section-head">MODULE 02 — FUNDAMENTALS OF ANTENNAS</div>
+  <div class="two-col">
+    <div class="panel cyan">
+      <div class="ptitle">Antenna Type &amp; Parameters</div>
+      <div class="ant-select" id="ant-type-btns">
+        <button class="ant-btn active" onclick="selectAnt('dipole',this)">Half-Wave Dipole</button>
+        <button class="ant-btn" onclick="selectAnt('monopole',this)">Monopole</button>
+        <button class="ant-btn" onclick="selectAnt('yagi',this)">Yagi-Uda</button>
+        <button class="ant-btn" onclick="selectAnt('horn',this)">Horn</button>
+        <button class="ant-btn" onclick="selectAnt('patch',this)">Patch</button>
+        <button class="ant-btn" onclick="selectAnt('parabolic',this)">Parabolic Dish</button>
+        <button class="ant-btn" onclick="selectAnt('phased',this)">Phased Array</button>
+      </div>
+      <div class="slrow"><div class="slabel"><span class="nm">Frequency</span><span class="vl" id="ant-freq-disp">300 MHz</span></div><input type="range" id="ant-freq" min="30" max="30000" value="300" step="10" oninput="updateAnt()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Gain</span><span class="vl" id="ant-gain-disp">2.15 dBi</span></div><input type="range" id="ant-gain" min="-3" max="40" value="2.15" step="0.5" oninput="updateAnt()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Beamwidth (3dB)</span><span class="vl" id="ant-bw-disp">78 deg</span></div><input type="range" id="ant-bw" min="2" max="360" value="78" step="1" oninput="updateAnt()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Polarization tilt</span><span class="vl" id="ant-pol-disp">0 deg (V)</span></div><input type="range" id="ant-pol" min="0" max="180" value="0" step="5" oninput="updateAnt()"></div>
+      <div class="rg">
+        <div class="rd cyan"><div class="rl">Wavelength</div><div class="rv" id="r-ant-wl">1.00</div><div class="ru">meters</div></div>
+        <div class="rd cyan"><div class="rl">Phys. Length</div><div class="rv" id="r-ant-len">0.50</div><div class="ru">meters</div></div>
+        <div class="rd cyan"><div class="rl">Eff. Area</div><div class="rv" id="r-ant-area">0.27</div><div class="ru">m sq</div></div>
+        <div class="rd cyan"><div class="rl">Gain (lin)</div><div class="rv" id="r-ant-lin">1.64</div><div class="ru">x isotropic</div></div>
+      </div>
+      <div class="detail-box" id="ant-detail" style="margin-top:10px;border-left:3px solid var(--cyan)">
+        <span class="dn" style="color:var(--cyan)">Half-Wave Dipole</span>Loading...
+      </div>
+    </div>
+    <div class="panel cyan">
+      <div class="ptitle">Radiation Pattern (Azimuth) &amp; Polarization</div>
+      <canvas id="ant-canvas" height="260"></canvas>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px" id="ant-pattern-legend">Azimuth cut — CYAN=main lobe, rings=-3/-10/-20dB, AMBER=polarization vector</div>
+      <div class="fbox" id="ant-fbox" style="margin-top:10px">
+        <div class="eq">lambda=c/f | L_dipole=lambda/2 | G(dBi)=10*log10(G_lin)</div>
+        Dipole 2.15dBi | Yagi 6-15dBi | Horn 10-25dBi | Dish 20-50+dBi<br>
+        Pol mismatch: up to 20dB loss for cross-polarized signals
+      </div>
+    </div>
+  </div>
+  <div class="panel full">
+    <div class="ptitle">Polarization Mismatch Loss vs Angle Difference</div>
+    <canvas id="pol-canvas" height="160"></canvas>
+    <div class="callout cyan" style="margin-top:10px">
+      <span class="key">17E:</span> Antenna gain is NOT amplification — it focuses power. A 10dBi antenna concentrates 10x more power in one direction with the same total radiated power. Phased arrays steer electronically with no moving parts — AESA radars and modern EW systems use this. Polarization mismatch is a key intercept/exploitation consideration.
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: ELECTRONIC ATTACK -->
+<div id="tab-ea" class="tab-content">
+  <div class="section-head">MODULE 03 — BASICS OF ELECTRONIC ATTACK</div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="ptitle">Jamming Type Selector</div>
+      <div class="btn-row">
+        <button class="cbtn active" id="ea-noise" onclick="selectEA('noise',this)">Noise Jam</button>
+        <button class="cbtn" id="ea-spot" onclick="selectEA('spot',this)">Spot Jam</button>
+        <button class="cbtn" id="ea-sweep" onclick="selectEA('sweep',this)">Sweep Jam</button>
+        <button class="cbtn" id="ea-barrage" onclick="selectEA('barrage',this)">Barrage Jam</button>
+        <button class="cbtn" id="ea-deceptive" onclick="selectEA('deceptive',this)">Deceptive</button>
+        <button class="cbtn" id="ea-meaconing" onclick="selectEA('meaconing',this)">Meaconing</button>
+      </div>
+      <div class="slrow"><div class="slabel"><span class="nm">Jammer ERP</span><span class="vl" id="ea-erp-disp">40 dBW</span></div><input type="range" id="ea-erp" min="0" max="60" value="40" step="1" oninput="updateEA()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Target Signal Power</span><span class="vl" id="ea-sig-disp">-80 dBm</span></div><input type="range" id="ea-sig" min="-120" max="-40" value="-80" step="1" oninput="updateEA()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Jammer Distance</span><span class="vl" id="ea-dist-disp">10 km</span></div><input type="range" id="ea-dist" min="1" max="200" value="10" step="1" oninput="updateEA()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Target Bandwidth</span><span class="vl" id="ea-bw-disp">25 kHz</span></div><input type="range" id="ea-bw" min="1" max="2000" value="25" step="1" oninput="updateEA()"></div>
+      <div class="slrow"><div class="slabel"><span class="nm">Jammer Bandwidth</span><span class="vl" id="ea-jbw-disp">25 kHz</span></div><input type="range" id="ea-jbw" min="1" max="2000" value="25" step="1" oninput="updateEA()"></div>
+      <div class="rg">
+        <div class="rd"><div class="rl">J/S Ratio</div><div class="rv" id="r-js">--</div><div class="ru">dB</div></div>
+        <div class="rd"><div class="rl">Burn-Through</div><div class="rv" id="r-bt">--</div><div class="ru">km</div></div>
+        <div class="rd"><div class="rl">Jam Status</div><div class="rv" id="r-jam-status" style="font-size:11px">--</div></div>
+        <div class="rd"><div class="rl">BW Efficiency</div><div class="rv" id="r-ejbw">--</div><div class="ru">%</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">J/S Geometry &amp; Burn-Through Visualization</div>
+      <canvas id="ea-canvas" height="280"></canvas>
+      <div class="detail-box" id="ea-detail" style="margin-top:8px"><span class="dn">Noise Jamming</span>Loading...</div>
+    </div>
+  </div>
+  <div class="panel full">
+    <div class="ptitle">Jamming Waveform Display — Signal vs Jammer vs Combined</div>
+    <canvas id="jam-wave-canvas" height="120"></canvas>
+    <div class="fbox">
+      <div class="eq">J/S = ERP_j - PathLoss_j - S_target + BW_factor [dB]</div>
+      Burn-through range: R_bt = R_j / sqrt(J/S_ratio)<br>
+      Spot jam: all power on one freq, max J/S | Barrage: power spread, lower J/S per channel<br>
+      Deceptive jamming: lower power, harder to detect than noise jamming
+    </div>
+    <div class="callout" style="margin-top:10px">
+      <span class="key">BURN-THROUGH:</span> At close enough range, the target signal overpowers the jamming. J/S &gt; 0dB = jamming effective. J/S &gt; 20dB = effective denial. Below 0dB = burn-through, signal is readable. Jammer must maintain geometric advantage to stay above burn-through range.
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+// ══ THEME ══════════════════════════════════════
+function toggleTheme(){
+  const h=document.documentElement;
+  const light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('ew-theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  setTimeout(()=>{
+    const a=document.querySelector('.tab-content.active');
+    if(!a)return;
+    if(a.id==='tab-ew')drawEWCanvas();
+    if(a.id==='tab-ant')updateAnt();
+    if(a.id==='tab-ea'){updateEA();drawJamWave();}
+  },20);
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  setTimeout(()=>{
+    if(id==='ew'){initEW();drawEWCanvas();}
+    if(id==='ant')updateAnt();
+    if(id==='ea'){updateEA();drawJamWave();}
+  },10);
+}
+function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
+function canvasBg(){return isLight()?'#f8fafc':'#000000';}
+function col(k){return getComputedStyle(document.documentElement).getPropertyValue('--'+k).trim();}
+
+// ══════════════ MODULE 1: EW PRINCIPLES ══════════════
+const EW_DISCIPLINES=[
+  {id:'es',title:'ES \u2014 Electronic Warfare Support',color:'#00ff88',
+   sub:'Passive | Intelligence-driven | Feeds EA & EP',
+   detail:'Electronic Warfare Support is the PASSIVE collection and processing of EM energy to support EW operations and other tactical actions. ES does NOT transmit \u2014 it only listens.\n\nES Tasks (FM 3-12):\n\u2022 Electronic reconnaissance \u2014 locate/characterize emitters\n\u2022 Electromagnetic battle management (EMBM)\n\u2022 Intercept / direction finding (DF)\n\u2022 Signal analysis / SIGINT support\n\u2022 Threat warning\n\nES is the ENABLER for EA. You must know where and what to jam before you can jam it effectively. ES also feeds targeting for lethal effects (HPM, anti-radiation missiles).'},
+  {id:'ea',title:'EA \u2014 Electronic Attack',color:'#ff4444',
+   sub:'Active | Offensive | Denies / Disrupts / Destroys',
+   detail:'Electronic Attack involves use of EM energy, directed energy, or anti-radiation weapons to attack personnel, facilities, or equipment with intent to degrade, neutralize, or destroy enemy combat capability.\n\nEA Tasks (FM 3-12):\n\u2022 Jamming (comms, radar, nav)\n\u2022 Deception (false targets, meaconing)\n\u2022 Anti-radiation weapons (ARM/HARM)\n\u2022 High-power microwave (HPM)\n\u2022 Directed energy weapons (DEW)\n\u2022 Counter-IED EW (JCREW/Duke)\n\nEA ALWAYS risks EW fratricide. Coordination with friendly forces is non-negotiable before any jamming operation.'},
+  {id:'ep',title:'EP \u2014 Electronic Protection',color:'#00d4ff',
+   sub:'Active/Passive | Defensive | Preserves EM access',
+   detail:'Electronic Protection involves actions taken to protect personnel, facilities, and equipment from any effects of friendly or enemy employment of EW that degrade, neutralize, or destroy friendly combat capability.\n\nEP Tasks (FM 3-12):\n\u2022 Frequency management and deconfliction\n\u2022 Emission control (EMCON)\n\u2022 Low probability of intercept/detection (LPI/LPD)\n\u2022 Frequency hopping / spread spectrum\n\u2022 Antenna management (nulling, directional)\n\u2022 Electronic masking / deception\n\u2022 Anti-jam waveform design\n\nEP also protects against FRIENDLY EA \u2014 the most overlooked aspect for entry-level 17Es.'},
+];
+
+const J_SERIES=[
+  {j:'J-01',title:'EM Spectrum Management',cat:'ES/EP',color:'#00ff88',desc:'Coordinate and deconflict EM spectrum across the force. Prevents fratricide. Enables simultaneous EA and friendly comms on shared spectrum.'},
+  {j:'J-02',title:'Electronic Reconnaissance',cat:'ES',color:'#00ff88',desc:'Detect, intercept, identify, and locate EM emitters. Foundation for targeting and threat assessment. Feeds the EA targeting process.'},
+  {j:'J-03',title:'EM Battle Management',cat:'ES/EP',color:'#00d4ff',desc:'Coordinate EW activities in time, space, and spectrum. Deconflict jamming from friendly operations. Synchronize the master EW plan.'},
+  {j:'J-04',title:'EA \u2014 Communications',cat:'EA',color:'#ff4444',desc:'Jam enemy C2 communications. Disrupt coordination, degrade C2 effectiveness. Includes spot, sweep, and barrage jamming of voice/data nets.'},
+  {j:'J-05',title:'EA \u2014 Radar',cat:'EA',color:'#ff4444',desc:'Jam, deceive, or destroy enemy radar systems. Noise jamming, chaff, false targets, DRFM deception. Protects aircraft and ground maneuver.'},
+  {j:'J-06',title:'EA \u2014 Navigation',cat:'EA',color:'#ff4444',desc:'Jam or spoof enemy navigation aids (GPS, GLONASS). Meaconing \u2014 rebroadcast nav signals with error. Disrupts precision fires and UAVs.'},
+  {j:'J-07',title:'Anti-Radiation Weapons',cat:'EA',color:'#ff6600',desc:'Missiles/munitions that home on EM emissions. ARM/HARM targets radar emitters. Requires ES cueing. Forces emitter shutdown (silent SAM problem).'},
+  {j:'J-08',title:'Directed Energy Attack',cat:'EA',color:'#ff6600',desc:'HPM, HEL, and other DEW. Disrupts or destroys electronics without kinetic damage. Increasing role in counter-UAS and counter-sensor operations.'},
+  {j:'J-09',title:'Electronic Deception',cat:'EA',color:'#ffb300',desc:'Transmit EM energy to mislead enemy. Types: Manipulative (false signals), Imitative (copy friendly), Simulative (fake force signatures).'},
+  {j:'J-10',title:'Emission Control (EMCON)',cat:'EP',color:'#00d4ff',desc:'Selective control of EM emissions to deny ES. EMCON A=silent, B=plan only, C=normal. Trade: lose C2 to gain signature reduction.'},
+  {j:'J-11',title:'Electronic Hardening',cat:'EP',color:'#00d4ff',desc:'Design modifications to reduce EA vulnerability. Shielding, filtering, hardened receivers, spread spectrum waveforms, EMP hardening.'},
+  {j:'J-12',title:'EM Compatibility (EMC)',cat:'EP',color:'#00d4ff',desc:'Ensure systems operate without interfering with each other. EMI control. Critical in dense signal environments like forward command posts.'},
+];
+
+function initEW(){
+  const cards=document.getElementById('ew-cards');
+  if(!cards)return;
+  cards.innerHTML=EW_DISCIPLINES.map(d=>`
+    <div class="ew-card" id="ewc-${d.id}" onclick="selectEWCard('${d.id}')">
+      <div class="ec-title" style="color:${d.color}">${d.title}</div>
+      <div class="ec-sub">${d.sub}</div>
+    </div>`).join('');
+
+  const jgrid=document.getElementById('j-series-grid');
+  if(jgrid) jgrid.innerHTML=J_SERIES.map(j=>`
+    <div style="background:var(--canvas-bg);border:1px solid var(--border);border-left:3px solid ${j.color};padding:10px 12px">
+      <div style="font-family:var(--mono);font-size:9px;color:${j.color};letter-spacing:1px;margin-bottom:3px">${j.j} \u2014 ${j.cat}</div>
+      <div style="font-family:var(--ui);font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">${j.title}</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);line-height:1.6">${j.desc}</div>
+    </div>`).join('');
+}
+
+function selectEWCard(id){
+  document.querySelectorAll('.ew-card').forEach(c=>c.classList.remove('active'));
+  const el=document.getElementById('ewc-'+id);
+  if(el)el.classList.add('active');
+  const d=EW_DISCIPLINES.find(x=>x.id===id);
+  document.getElementById('ew-detail').innerHTML=
+    `<span class="dn" style="color:${d.color}">${d.title}</span>`+
+    d.detail.replace(/\n/g,'<br>');
+  drawEWCanvas(id);
+}
+
+function drawEWCanvas(active){
+  const canvas=document.getElementById('ew-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||520,H=310;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const light=isLight();
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const textDim=light?'#4a6070':'#6a8090';
+
+  // EM spectrum gradient bar
+  const specY=34,specH=22;
+  const grad=ctx.createLinearGradient(20,0,W-20,0);
+  ['#ff000044','#ff770044','#ffff0044','#00ff0044','#00ffff44','#0000ff44','#ff00ff44'].forEach((c,i)=>grad.addColorStop(i/6,c));
+  ctx.fillStyle=grad;ctx.fillRect(20,specY,W-40,specH);
+  ctx.strokeStyle=light?'#a0b0c0':'#2e3f52';ctx.lineWidth=1;ctx.strokeRect(20,specY,W-40,specH);
+  ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('ELECTROMAGNETIC SPECTRUM',W/2,specY-6);
+  ['HF','VHF','UHF','L','S','C','X','Ku','Ka','mm'].forEach((b,i)=>{
+    ctx.fillStyle=textDim;ctx.font='7px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText(b,20+(i+0.5)*((W-40)/10),specY+specH+10);
+  });
+
+  // Three pillars
+  const pillars=[
+    {id:'es',label:'ES',sub:'EW Support',color:'#00ff88',x:0.18},
+    {id:'ea',label:'EA',sub:'EW Attack',color:'#ff4444',x:0.5},
+    {id:'ep',label:'EP',sub:'EW Protection',color:'#00d4ff',x:0.82},
+  ];
+  pillars.forEach(p=>{
+    const isAct=active===p.id;
+    const x=p.x*W,pW=80,pH=90,pY=72;
+    ctx.fillStyle=isAct?p.color+'44':light?'#e8f0f8':'#0a1018';
+    ctx.strokeStyle=isAct?p.color:p.color+'55';ctx.lineWidth=isAct?2:1;
+    ctx.fillRect(x-pW/2,pY,pW,pH);ctx.strokeRect(x-pW/2,pY,pW,pH);
+    ctx.fillStyle=p.color;ctx.font='bold 15px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText(p.label,x,pY+26);
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';
+    ctx.fillText(p.sub,x,pY+42);
+    // connector to spectrum
+    ctx.strokeStyle=p.color+'66';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(x,pY);ctx.lineTo(x,specY+specH);ctx.stroke();ctx.setLineDash([]);
+  });
+
+  // Interconnect
+  ctx.strokeStyle='#ffb30066';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0.18*W+42,115);ctx.lineTo(0.5*W-42,115);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0.5*W+42,115);ctx.lineTo(0.82*W-42,115);ctx.stroke();
+  ctx.fillStyle='#ffb300';
+  [[0.5*W-42,115],[0.82*W-42,115]].forEach(([x,y])=>{
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-7,y-4);ctx.lineTo(x-7,y+4);ctx.closePath();ctx.fill();
+  });
+  ctx.fillStyle='#ffb30099';ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('cues',0.34*W,111);ctx.fillText('protects',0.66*W,111);
+
+  // OODA loop
+  ctx.fillStyle=textDim;ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('EW OODA LOOP',W/2,188);
+  const ooda=['OBSERVE\n(ES)','ORIENT\n(Analysis)','DECIDE\n(EMBM)','ACT\n(EA/EP)'];
+  const oodaC=['#00ff88','#ffb300','#00d4ff','#ff4444'];
+  const ow=W*0.18;
+  ooda.forEach((o,i)=>{
+    const x=W*0.05+i*(W*0.23),oy=196,oh=38;
+    ctx.fillStyle=oodaC[i]+'22';ctx.strokeStyle=oodaC[i]+'88';ctx.lineWidth=1;
+    ctx.fillRect(x,oy,ow,oh);ctx.strokeRect(x,oy,ow,oh);
+    ctx.fillStyle=oodaC[i];ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    o.split('\n').forEach((l,li)=>ctx.fillText(l,x+ow/2,oy+13+li*12));
+    if(i<3){
+      ctx.strokeStyle=oodaC[i+1]+'88';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+ow,oy+oh/2);ctx.lineTo(x+ow+W*0.05,oy+oh/2);ctx.stroke();
+      ctx.fillStyle=oodaC[i+1];
+      ctx.beginPath();ctx.moveTo(x+ow+W*0.05,oy+oh/2);ctx.lineTo(x+ow+W*0.05-6,oy+oh/2-4);ctx.lineTo(x+ow+W*0.05-6,oy+oh/2+4);ctx.closePath();ctx.fill();
+    }
+  });
+
+  // Fratricide warning
+  ctx.strokeStyle='#ff444433';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.strokeRect(W*0.05,260,W*0.9,28);ctx.setLineDash([]);
+  ctx.fillStyle='#ff4444';ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('\u26a0 EW FRATRICIDE: Jamming own forces is the #1 entry-level EW failure. ALWAYS deconflict before EA.',W/2,278);
+  ctx.textAlign='left';
+}
+
+// ══════════════ MODULE 2: ANTENNAS ══════════════
+const ANT_DATA={
+  dipole:{name:'Half-Wave Dipole',gainDef:2.15,bwDef:78,
+    desc:'The fundamental reference antenna. Length = lambda/2. Omnidirectional in azimuth, figure-8 in elevation. Gain = 2.15 dBi. Used in: VHF/UHF comms, SIGINT reference antennas, simple intercept receivers. Impedance ~73 ohm. Bandwidth ~10% of center frequency. Every other antenna gain is measured relative to this.'},
+  monopole:{name:'Monopole (Quarter-Wave)',gainDef:5.19,bwDef:90,
+    desc:'Lambda/4 vertical over ground plane. Half the dipole pattern but 5.19 dBi gain due to ground reflection. Most vehicle whip and handheld antennas are monopoles. Impedance ~36 ohm. Ground plane quality is critical to performance. Base of most manpack and vehicle radio antennas.'},
+  yagi:{name:'Yagi-Uda Array',gainDef:10,bwDef:55,
+    desc:'Directional antenna: driven element + reflector + multiple directors. Gain increases with number of elements (6-15+ dBi). Highly polarization-dependent. Narrow bandwidth ~5-10%. Used for: point-to-point links, direction finding (DF), intercept, TV/comms reception. Classic 17E collection antenna for VHF/UHF DF.'},
+  horn:{name:'Horn Antenna',gainDef:15,bwDef:30,
+    desc:'Flared waveguide. Very broadband (octave or more). Low sidelobes. Gain 10-25 dBi determined by aperture size. Handles high power well. Used in: RCIED jammers, radar feed, EMC test chambers, EW illuminators. Common in microwave EA systems due to broadband nature.'},
+  patch:{name:'Patch / Microstrip',gainDef:6,bwDef:65,
+    desc:'Flat PCB antenna, low profile and lightweight. Narrow bandwidth ~5%. Supports circular or linear polarization. Used in: GPS receivers, satellite comms, UAS, wearable SIGINT equipment, body-worn intercept kits. Easy to integrate into platforms.'},
+  parabolic:{name:'Parabolic Dish',gainDef:35,bwDef:3,
+    desc:'Parabolic reflector focuses EM at focal point. Gain 20-50+ dBi with extremely narrow beam. Used in: satellite comms, long-range radar, microwave relay links, long-range SIGINT collection. Beamwidth inversely proportional to (diameter x frequency). Sensitive to mechanical pointing error.'},
+  phased:{name:'Phased Array (AESA)',gainDef:25,bwDef:8,
+    desc:'Array of elements with individually phase-controlled signals. Beam steered electronically - no mechanical movement. Can generate multiple simultaneous beams. Rapid beam switching. Used in: AESA radars, EPAWSS, NGAD EW suite, ship-based EW. Key modern EW technology - beam agility defeats many EP techniques. Can null interference directions.'},
+};
+
+let currentAnt='dipole';
+function selectAnt(type,btn){
+  currentAnt=type;
+  document.querySelectorAll('.ant-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d=ANT_DATA[type];
+  document.getElementById('ant-gain').value=d.gainDef;
+  document.getElementById('ant-bw').value=d.bwDef;
+  updateAnt();
+}
+
+function updateAnt(){
+  const freq=parseFloat(document.getElementById('ant-freq').value);
+  const gain_dBi=parseFloat(document.getElementById('ant-gain').value);
+  const bw=parseFloat(document.getElementById('ant-bw').value);
+  const pol=parseFloat(document.getElementById('ant-pol').value);
+  const d=ANT_DATA[currentAnt];
+  const lambda=300/freq;
+  const physLen=lambda/2;
+  const gainLin=Math.pow(10,gain_dBi/10);
+  const aeff=gainLin*lambda*lambda/(4*Math.PI);
+
+  document.getElementById('ant-freq-disp').textContent=freq>=1000?(freq/1000).toFixed(2)+' GHz':freq+' MHz';
+  document.getElementById('ant-gain-disp').textContent=gain_dBi.toFixed(1)+' dBi';
+  document.getElementById('ant-bw-disp').textContent=bw.toFixed(0)+'°';
+  document.getElementById('ant-pol-disp').textContent=pol.toFixed(0)+'° '+(pol<20?'(V)':pol<70?'(Slant)':pol<110?'(H)':pol<160?'(Slant)':'(V)');
+  document.getElementById('r-ant-wl').textContent=lambda.toFixed(2);
+  document.getElementById('r-ant-len').textContent=physLen.toFixed(2);
+  document.getElementById('r-ant-area').textContent=aeff.toFixed(3);
+  document.getElementById('r-ant-lin').textContent=gainLin.toFixed(2);
+
+  document.getElementById('ant-detail').innerHTML=
+    `<span class="dn" style="color:var(--cyan)">${d.name}</span>${d.desc}`;
+  document.getElementById('ant-fbox').innerHTML=`
+    <div class="eq">lambda=${lambda.toFixed(2)}m | L_phys=${physLen.toFixed(2)}m | G=${gain_dBi.toFixed(1)}dBi | Aeff=${aeff.toFixed(3)}m²</div>
+    Beamwidth=${bw}° | Gain(lin)=${gainLin.toFixed(2)}x isotropic | Pol tilt=${pol}°<br>
+    Cross-pol mismatch at 90°: ~20 dB signal loss<br>
+    Higher freq → shorter wavelength → smaller physical antenna for same electrical length`;
+
+  drawAntPattern(gain_dBi,bw,pol);
+  drawPolCanvas(pol);
+}
+
+function drawAntPattern(gain_dBi,bw,pol){
+  const canvas=document.getElementById('ant-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||520,H=260;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const light=isLight();
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const textDim=light?'#4a6070':'#6a8090';
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.42;
+
+  [-3,-10,-20].forEach((db,i)=>{
+    const r=R*(1-i*0.22);
+    ctx.strokeStyle=light?'#d0dce8':'#1a2530';ctx.lineWidth=0.5;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText(db+'dB',cx+r+2,cy+3);
+  });
+
+  [[cx,cy-R-5,cx,cy+R+5],[cx-R-5,cy,cx+R+5,cy]].forEach(([x1,y1,x2,y2])=>{
+    ctx.strokeStyle=light?'#d0dce8':'#1e2530';ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  });
+
+  ctx.fillStyle=textDim;ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('0°',cx,cy-R-8);ctx.fillText('180°',cx,cy+R+14);
+  ctx.textAlign='left';ctx.fillText('90°',cx+R+6,cy+4);
+  ctx.textAlign='right';ctx.fillText('270°',cx-R-6,cy+4);
+  ctx.textAlign='left';
+
+  const bwRad=(bw/2)*Math.PI/180;
+  ctx.strokeStyle=col('cyan');ctx.lineWidth=2;
+  ctx.shadowBlur=6;ctx.shadowColor=col('cyan');
+  ctx.beginPath();
+  for(let a=0;a<=360;a+=0.5){
+    let relAngle=((a-90+pol*0)%360+360)%360;
+    if(relAngle>180)relAngle=360-relAngle;
+    const relRad=relAngle*Math.PI/180;
+    let mag;
+    if(bw>=355){mag=R*0.85;}
+    else{
+      const x=relRad/bwRad;
+      mag=x<1?R*0.85*Math.cos(relRad*Math.PI/2/bwRad):R*0.08*Math.max(0,Math.abs(Math.sin(x*1.2)));
+    }
+    const px=cx+mag*Math.sin(a*Math.PI/180);
+    const py=cy-mag*Math.cos(a*Math.PI/180);
+    a===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.closePath();ctx.stroke();ctx.shadowBlur=0;
+  ctx.fillStyle=col('cyan')+'18';ctx.fill();
+
+  // Polarization vector
+  const polRad=pol*Math.PI/180;
+  const pLen=R*0.28;
+  ctx.strokeStyle=col('amber');ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(cx-pLen*Math.sin(polRad),cy-pLen*Math.cos(polRad));
+  ctx.lineTo(cx+pLen*Math.sin(polRad),cy+pLen*Math.cos(polRad));
+  ctx.stroke();
+  ctx.fillStyle=col('amber');ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('POL',cx+(pLen+12)*Math.sin(polRad),cy+(pLen+12)*Math.cos(polRad));
+  ctx.textAlign='left';
+}
+
+function drawPolCanvas(pol){
+  const canvas=document.getElementById('pol-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||900,H=160;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const light=isLight();
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const textDim=light?'#4a6070':'#6a8090';
+  const gridCol=light?'#d0dce8':'#1a2530';
+
+  ctx.fillStyle=textDim;ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('POLARIZATION MISMATCH LOSS vs ANGLE DIFFERENCE',W/2,14);
+
+  const pL=50,pR=20,pT=22,pB=28,gW=W-pL-pR,gH=H-pT-pB;
+  for(let i=0;i<=4;i++){
+    const y=pT+gH*i/4;
+    ctx.strokeStyle=gridCol;ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(pL+gW,y);ctx.stroke();
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='right';
+    ctx.fillText((-i*5)+'dB',pL-4,y+3);
+  }
+  for(let i=0;i<=6;i++){
+    const x=pL+gW*i/6;
+    ctx.strokeStyle=gridCol;ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(x,pT);ctx.lineTo(x,pT+gH);ctx.stroke();
+    ctx.fillStyle=textDim;ctx.font='7px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText((i*30)+'°',x,pT+gH+14);
+  }
+
+  ctx.strokeStyle=col('cyan');ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let angle=0;angle<=180;angle+=0.5){
+    const effA=angle>90?180-angle:angle;
+    const loss=20*Math.log10(Math.max(Math.cos(effA*Math.PI/180),0.001));
+    const x=pL+(angle/180)*gW;
+    const y=pT+gH*((loss/-20));
+    angle===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  const effPol=pol>90?180-pol:pol;
+  const curLoss=20*Math.log10(Math.max(Math.cos(effPol*Math.PI/180),0.001));
+  const mx=pL+(pol/180)*gW;
+  const my=pT+gH*(curLoss/-20);
+  ctx.fillStyle=col('amber');ctx.shadowBlur=6;ctx.shadowColor=col('amber');
+  ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle=col('amber');ctx.font='9px Share Tech Mono';ctx.textAlign='left';
+  ctx.fillText('\u0394pol='+pol+'° \u2192 '+curLoss.toFixed(1)+'dB loss',Math.min(mx+8,W-140),Math.max(my,pT+12));
+
+  ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('Polarization angle difference (\u00b0) \u2014 0\u00b0=matched, 90\u00b0=cross-pol (worst)',pL+gW/2,H-4);
+  ctx.textAlign='left';
+}
+
+// ══════════════ MODULE 3: ELECTRONIC ATTACK ══════════════
+const EA_DATA={
+  noise:{name:'Noise Jamming',color:'#ff4444',
+    desc:'Broadband noise transmitted to mask target comms. Simple to implement, high power, easily direction-found. Noise raises receiver noise floor, degrading SNR. J/S > 0dB needed for effect, >20dB for reliable denial. Subtype of all-source jamming.'},
+  spot:{name:'Spot Jamming',color:'#ff6600',
+    desc:'All jammer power concentrated on one specific frequency. Maximum J/S against a single target. Easily defeated by target changing frequency. Used against known fixed-frequency links. Best efficiency when target frequency is confirmed by ES.'},
+  sweep:{name:'Sweep Jamming',color:'#ff9900',
+    desc:'Jammer rapidly scans across a frequency band. Lower instantaneous J/S but covers multiple frequencies sequentially. Dwell time per frequency limits effectiveness against narrow-band targets. Used when target frequencies are partially known.'},
+  barrage:{name:'Barrage Jamming',color:'#ffb300',
+    desc:'Simultaneous broadband jamming across a wide frequency range. Lower J/S per channel but denies entire band. High power requirement — power divided across all channels. Used against frequency-hopping comms or when denying entire spectrum segments.'},
+  deceptive:{name:'Deceptive Jamming',color:'#bb88ff',
+    desc:'Transmits false or manipulated signals to confuse rather than overpower. Radar deception: range gate pull-off (RGPO), velocity gate pull-off (VGPO), false targets. Lower power than noise jamming, harder to detect. Used against radar-guided weapons and sensors. DRFM (Digital RF Memory) enables realistic deception.'},
+  meaconing:{name:'Meaconing / Nav Spoofing',color:'#00d4ff',
+    desc:'Receive, delay, and retransmit navigation signals (GPS, TACAN, VOR) to create false position fixes. Creates false position without strong jamming signature. Low detectability compared to noise jamming. Used to deny accurate navigation to enemy forces, UAVs, and precision guided munitions.'},
+};
+
+let currentEA='noise';
+function selectEA(type,btn){
+  currentEA=type;
+  document.querySelectorAll('#tab-ea .btn-row .cbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateEA();
+}
+
+function updateEA(){
+  const erp=parseFloat(document.getElementById('ea-erp').value);
+  const sig=parseFloat(document.getElementById('ea-sig').value);
+  const dist=parseFloat(document.getElementById('ea-dist').value);
+  const bw=parseFloat(document.getElementById('ea-bw').value);
+  const jbw=parseFloat(document.getElementById('ea-jbw').value);
+
+  document.getElementById('ea-erp-disp').textContent=erp+' dBW';
+  document.getElementById('ea-sig-disp').textContent=sig+' dBm';
+  document.getElementById('ea-dist-disp').textContent=dist+' km';
+  document.getElementById('ea-bw-disp').textContent=bw>=1000?(bw/1000).toFixed(1)+' MHz':bw+' kHz';
+  document.getElementById('ea-jbw-disp').textContent=jbw>=1000?(jbw/1000).toFixed(1)+' MHz':jbw+' kHz';
+
+  const freq=150; // MHz
+  const pl=20*Math.log10(dist)+20*Math.log10(freq)+32.4;
+  const erpDbm=erp+30;
+  const jAtRx=erpDbm-pl;
+  const bwFactor=10*Math.log10(Math.min(jbw,bw)/bw);
+  const js=jAtRx-sig+bwFactor;
+  const btRange=dist/Math.pow(10,js/20);
+  const effPct=Math.round(Math.min(jbw,bw)/bw*100);
+
+  document.getElementById('r-js').textContent=js.toFixed(1);
+  document.getElementById('r-js').style.color=js>20?col('red'):js>0?col('amber'):col('green');
+  document.getElementById('r-bt').textContent=btRange.toFixed(1);
+  document.getElementById('r-jam-status').textContent=js>20?'EFFECTIVE':js>0?'MARGINAL':'BURN-THRU';
+  document.getElementById('r-jam-status').style.color=js>20?col('red'):js>0?col('amber'):col('green');
+  document.getElementById('r-ejbw').textContent=effPct;
+
+  const d=EA_DATA[currentEA];
+  document.getElementById('ea-detail').innerHTML=
+    `<span class="dn" style="color:${d.color}">${d.name}</span>${d.desc}`;
+
+  drawEACanvas(dist,js,btRange,erp,sig);
+  drawJamWave();
+}
+
+function drawEACanvas(dist,js,btRange,erp,sig){
+  const canvas=document.getElementById('ea-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||520,H=280;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const light=isLight();
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const textDim=light?'#4a6070':'#6a8090';
+
+  ctx.fillStyle=textDim;ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('JAMMING GEOMETRY \u2014 BURN-THROUGH VISUALIZATION',W/2,14);
+
+  const jX=60,tX=W-70,midY=H/2-20;
+  const btFrac=Math.max(0,Math.min(0.85,btRange/dist));
+  const btX=jX+(tX-jX)*btFrac;
+
+  // Jamming zone fill
+  const jamG=ctx.createLinearGradient(jX,0,btX,0);
+  jamG.addColorStop(0,'rgba(255,68,68,0.22)');
+  jamG.addColorStop(1,'rgba(255,68,68,0.03)');
+  ctx.fillStyle=jamG;ctx.fillRect(jX,midY-44,Math.max(btX-jX,2),88);
+
+  // Protected zone fill
+  if(btX<tX-10){
+    const protG=ctx.createLinearGradient(btX,0,tX,0);
+    protG.addColorStop(0,'rgba(0,255,136,0.03)');
+    protG.addColorStop(1,'rgba(0,255,136,0.18)');
+    ctx.fillStyle=protG;ctx.fillRect(btX,midY-44,tX-btX,88);
+  }
+
+  // Jammer icon
+  ctx.fillStyle=light?'#fff':'#000';ctx.strokeStyle=col('red');ctx.lineWidth=2;
+  ctx.shadowBlur=8;ctx.shadowColor=col('red');
+  ctx.beginPath();ctx.arc(jX,midY,20,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+  ctx.fillStyle=col('red');ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('JAM',jX,midY+3);ctx.fillText(erp+'dBW',jX,midY+32);
+
+  // Target icon
+  ctx.fillStyle=light?'#fff':'#000';ctx.strokeStyle=col('green');ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(tX,midY,20,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle=col('green');ctx.fillText('TGT',tX,midY+3);ctx.fillText(sig+'dBm',tX,midY+32);
+
+  // Range arrow
+  ctx.strokeStyle=col('red')+'88';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(jX+22,midY);ctx.lineTo(tX-22,midY);ctx.stroke();
+  ctx.fillStyle=col('red');
+  ctx.beginPath();ctx.moveTo(tX-22,midY);ctx.lineTo(tX-30,midY-5);ctx.lineTo(tX-30,midY+5);ctx.closePath();ctx.fill();
+
+  // Burn-through line
+  if(btX>jX+10&&btX<tX-10){
+    ctx.strokeStyle=col('amber');ctx.lineWidth=1.5;ctx.setLineDash([5,3]);
+    ctx.beginPath();ctx.moveTo(btX,midY-60);ctx.lineTo(btX,midY+60);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=col('amber');ctx.font='8px Share Tech Mono';ctx.textAlign='center';
+    ctx.fillText('BURN-THRU',btX,midY-64);
+    ctx.fillText(btRange.toFixed(1)+'km',btX,midY-53);
+  }
+
+  // J/S meter
+  const mX=W*0.1,mY=H-52,mW=W*0.8,mH=16;
+  ctx.fillStyle=light?'#e0e8f0':'#1e2530';ctx.fillRect(mX,mY,mW,mH);
+  const jsN=Math.max(0,Math.min(1,(js+10)/50));
+  const mCol=js>20?col('red'):js>0?col('amber'):col('green');
+  ctx.fillStyle=mCol+'aa';ctx.fillRect(mX,mY,jsN*mW,mH);
+  ctx.strokeStyle=mCol;ctx.lineWidth=1;ctx.strokeRect(mX,mY,mW,mH);
+  ctx.fillStyle=mCol;ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillText('J/S = '+js.toFixed(1)+' dB  ('+(js>20?'EFFECTIVE':js>0?'MARGINAL':'BURN-THROUGH')+')',W/2,mY-5);
+
+  ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';
+  ctx.fillText(dist+' km range | BT@'+btRange.toFixed(1)+'km',W/2,H-8);
+  ctx.textAlign='left';
+}
+
+function drawJamWave(){
+  const canvas=document.getElementById('jam-wave-canvas');
+  if(!canvas)return;
+  const W=canvas.clientWidth||900,H=120;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const light=isLight();
+  ctx.fillStyle=canvasBg();ctx.fillRect(0,0,W,H);
+  const textDim=light?'#4a6070':'#6a8090';
+  const type=currentEA;
+  const lH=H/3;
+
+  ['Target Signal','Jammer Output','Combined (Receiver sees)'].forEach((label,li)=>{
+    ctx.fillStyle=textDim;ctx.font='8px Share Tech Mono';ctx.textAlign='left';
+    ctx.fillText(label,4,li*lH+11);
+    ctx.strokeStyle=light?'#d0dce8':'#1e2530';ctx.lineWidth=0.4;
+    ctx.beginPath();ctx.moveTo(0,(li+1)*lH);ctx.lineTo(W,(li+1)*lH);ctx.stroke();
+    // center line
+    ctx.strokeStyle=light?'#e0e8f0':'#1a2530';ctx.lineWidth=0.3;
+    ctx.beginPath();ctx.moveTo(0,li*lH+lH/2);ctx.lineTo(W,li*lH+lH/2);ctx.stroke();
+  });
+
+  // Target signal - clean sine
+  ctx.strokeStyle=col('green');ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(let i=0;i<W;i++){
+    const t=i/W;
+    const y=lH*0.5-lH*0.35*Math.sin(2*Math.PI*8*t);
+    i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);
+  }
+  ctx.stroke();
+
+  // Jammer
+  ctx.strokeStyle=col('red');ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(let i=0;i<W;i++){
+    const t=i/W;
+    let jy;
+    if(type==='noise'||type==='barrage'){
+      jy=lH*1.5+(Math.random()*0.6-0.3)*lH*0.7;
+    } else if(type==='spot'){
+      jy=lH*1.5-lH*0.42*Math.sin(2*Math.PI*8*t);
+    } else if(type==='sweep'){
+      const sweepF=2+t*14;
+      jy=lH*1.5-lH*0.38*Math.sin(2*Math.PI*sweepF*t);
+    } else if(type==='deceptive'){
+      jy=lH*1.5-lH*0.35*Math.sin(2*Math.PI*8*(t+0.08))*1.15;
+    } else {
+      jy=lH*1.5-lH*0.30*Math.sin(2*Math.PI*6.5*(t+0.12));
+    }
+    i===0?ctx.moveTo(i,jy):ctx.lineTo(i,jy);
+  }
+  ctx.stroke();
+
+  // Combined
+  ctx.strokeStyle=col('amber');ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(let i=0;i<W;i++){
+    const t=i/W;
+    const s=Math.sin(2*Math.PI*8*t)*0.28;
+    let j;
+    if(type==='noise'||type==='barrage') j=(Math.random()*0.6-0.3);
+    else if(type==='spot') j=Math.sin(2*Math.PI*8*t)*0.42;
+    else if(type==='sweep') j=Math.sin(2*Math.PI*(2+t*14)*t)*0.36;
+    else j=Math.sin(2*Math.PI*8*(t+0.08))*0.32;
+    const y=lH*2.5+(s+j)*lH*0.35;
+    i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);
+  }
+  ctx.stroke();
+  ctx.textAlign='left';
+}
+
+// ══ INIT ══════════════════════════════════════
+window.addEventListener('load',()=>{
+  initEW();
+  drawEWCanvas();
+  updateAnt();
+  updateEA();
+  drawJamWave();
+});
+window.addEventListener('resize',()=>{
+  const a=document.querySelector('.tab-content.active');
+  if(!a)return;
+  if(a.id==='tab-ew')drawEWCanvas();
+  if(a.id==='tab-ant')updateAnt();
+  if(a.id==='tab-ea'){updateEA();drawJamWave();}
+});
+</script>
+</body>
+</html>
