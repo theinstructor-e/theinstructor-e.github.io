@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Electromagnetic Warfare Interactive Guide</title>
+<title>Electromagnetic Warfare Interactive Tool (E-WIT)</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -20,34 +20,37 @@
   --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
-h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
 h1 span{color:var(--text-dim);font-weight:400}
-.theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:6px 12px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+.theme-btn{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .15s}
 .theme-btn:hover{border-color:var(--amber);color:var(--amber)}
-.sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.sub{font-family:var(--mono);font-size:13px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
 .wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
 .card:hover{border-color:var(--accent,var(--green));transform:translateY(-2px)}
-.card .cat{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
-.card .nm{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
-.card .ds{font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:1.6}
-.card .go{font-family:var(--mono);font-size:9px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
-.tag{font-family:var(--mono);font-size:7px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
+.card .cat{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.card .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.6}
+.card .go{font-family:var(--mono);font-size:11px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
 .tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
 .tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
 [data-theme="light"] .tag-guide{color:#5a3ccc}
 .card.is-guide{border-style:dashed}
 .card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
-.section-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.section-label{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:color .15s}
+.section-label:hover{color:var(--green)}
+.cat-chevron{font-size:9px;display:inline-block;transition:transform .15s}
+.cat-count{font-size:11px;color:var(--text-dim);letter-spacing:0;font-weight:400;margin-left:auto}
 .section-label:first-child{margin-top:0}
-.empty-cat{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
+.empty-cat{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
 .pagetabs{display:flex;gap:8px}
 .pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
   padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s}
@@ -62,18 +65,19 @@ h1 span{color:var(--text-dim);font-weight:400}
 <header>
   <div class="hl">
     <div class="mil-badge">MIL-SPEC</div>
-    <h1>Electromagnetic Warfare Interactive Guide</h1>
+    <h1>Electromagnetic Warfare Interactive Tool (E-WIT)</h1>
   </div>
   <div class="hl">
     <div class="pagetabs">
       <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
       <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
       <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
+      <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
     </div>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
   </div>
 </header>
-<div class="sub">UNCLASSIFIED // FOUO &nbsp;|&nbsp; Electromagnetic Warfare Specialist — Self-Contained Interactive References</div>
+<div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Electromagnetic Warfare Specialist — Self-Contained Interactive References</div>
 
 <div id="page-tools" class="page on">
 <div class="wrap">
@@ -95,6 +99,16 @@ h1 span{color:var(--text-dim);font-weight:400}
     Self-study resources for career progression beyond this course — external links open in a new tab. Details below are current as of research, but always verify current requirements/costs directly with the certifying body before committing time or money.
   </div>
   <div id="view-learning"></div>
+</div>
+</div>
+
+<div id="page-wraven" class="page">
+<div class="wrap">
+  <div class="section-label">WRAVEN Training Modules</div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Self-paced WRAVEN modules — each opens as its own interactive lesson with inline quizzes, a final exam, and a printable certificate of completion.
+  </div>
+  <div id="view-wraven"></div>
 </div>
 </div>
 
@@ -146,15 +160,19 @@ const TOOLS=[
   {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff'},
   {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff'},
 ];
+function catId(cat){ return cat.replace(/[^a-zA-Z0-9]/g,'-'); }
 function render(){
   // grouped launch cards — iterate CATEGORIES so empty sections still appear
   let vh='';
   CATEGORIES.forEach(cat=>{
     // guides first, then interactives, within each module
     const items=TOOLS.filter(t=>t.cat===cat).sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
-    vh+=`<div class="section-label">${cat}</div>`;
-    if(items.length===0){vh+=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;return;}
-    vh+='<div class="grid">';
+    const id=catId(cat);
+    vh+=`<div class="section-label" onclick="toggleCategory('${id}')" role="button" tabindex="0">
+      <span class="cat-chevron" id="chev-${id}">\u25BC</span> ${cat} <span class="cat-count">(${items.length})</span>
+    </div>`;
+    if(items.length===0){vh+=`<div class="empty-cat" id="cat-${id}">No tools yet \u2014 coming soon</div>`;return;}
+    vh+=`<div class="grid" id="cat-${id}">`;
     items.forEach(t=>{
       const guide=t.kind==='guide';
       const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
@@ -166,6 +184,14 @@ function render(){
     vh+='</div>';
   });
   document.getElementById('view-grid').innerHTML=vh;
+}
+function toggleCategory(id){
+  const el=document.getElementById('cat-'+id);
+  const chev=document.getElementById('chev-'+id);
+  if(!el) return;
+  const collapsed=el.style.display==='none';
+  el.style.display=collapsed?'':'none';
+  if(chev) chev.textContent=collapsed?'\u25BC':'\u25B6';
 }
 // Lesson slide decks — 10-Day EW Networking Fundamentals course. Edit file paths once your .pptx files are uploaded to /slides/.
 const SLIDES=[
@@ -227,16 +253,7 @@ const LEARN=[
     url:'https://www.cyber.mil/dod-workforce-innovation-directorate/dod8140/qualification-matrices'},
 
   {cat:'Amateur Radio Licenses', nm:'Technician Class', tag:'HAM', color:'#00ff88',
-    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Note: the question pool just rotated (effective July 2026), so double-check any study material is current for 2026\u20132030.',
-    url:'https://www.arrl.org/getting-licensed'},
-  {cat:'Amateur Radio Licenses', nm:'General Class', tag:'HAM', color:'#00ff88',
-    ds:'Requires holding Technician first. Opens extensive HF privileges across most amateur bands \u2014 the gateway to long-distance, worldwide communication.',
-    url:'https://www.arrl.org/getting-licensed-step-by-step'},
-  {cat:'Amateur Radio Licenses', nm:'Amateur Extra Class', tag:'HAM', color:'#00ff88',
-    ds:'The top license class \u2014 full privileges across every amateur band and mode. 50-question exam drawn from the largest question pool of the three.',
-    url:'https://www.arrl.org/ham-radio-licenses'},
-  {cat:'Amateur Radio Licenses', nm:'HamStudy.org \u2014 Free Practice Exams', tag:'FREE TRAINING', color:'#00ff88',
-    ds:'Free, always-current practice tests pulled straight from the active FCC question pools for all three license classes \u2014 safer than a dated video course since pools rotate every 4 years.',
+    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Free, always-current practice tests pulled straight from the active FCC question pool.',
     url:'https://hamstudy.org/'},
 ];
 
@@ -261,6 +278,10 @@ function renderLearning(){
             <a class="go" style="text-decoration:none;display:block;margin-top:8px" href="${l.url}" target="_blank" rel="noopener">OPEN FULL COURSE &#8599;</a>
           </div>
         </div>`;
+      } else if(l.tag === 'PENDING'){
+        vh+=`<div class="card" style="--accent:${l.color};opacity:.7;cursor:default">
+          <div class="cat">${l.tag}</div><div class="nm">${l.nm}</div>
+          <div class="ds">${l.ds}</div></div>`;
       } else {
         vh+=`<a class="card" href="${l.url}" target="_blank" rel="noopener" style="--accent:${l.color}">
           <div class="cat">${l.tag} <span class="tag tag-slide">EXTERNAL LINK</span></div><div class="nm">${l.nm}</div>
@@ -272,13 +293,32 @@ function renderLearning(){
   document.getElementById('view-learning').innerHTML=vh;
 }
 
+// WRAVEN training modules — each is a self-contained interactive lesson (inline quizzes,
+// final exam, printable certificate). Add new modules here as they're built; the file
+// itself lives in /wraven/.
+const WRAVEN_MODULES=[
+  {nm:'Module 1: DC & Electrical Safety', ds:'Electrical safety and shock rescue, atomic structure, conductors/insulators, voltage/current/resistance, Ohm\u2019s Law, power, and series/parallel circuits \u2014 with inline quizzes and a final certification exam.', file:'wraven/module-1-dc-safety.html', color:'#3fb6ff'},
+];
+function renderWraven(){
+  let vh='<div class="grid">';
+  WRAVEN_MODULES.forEach(m=>{
+    vh+=`<a class="card" href="${m.file}" style="--accent:${m.color}">
+      <div class="cat">WRAVEN <span class="tag tag-int">MODULE</span></div><div class="nm">${m.nm}</div>
+      <div class="ds">${m.ds}</div><div class="go">BEGIN \u2192</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-wraven').innerHTML=vh;
+}
+
 function showPage(name){
   document.getElementById('tab-tools').classList.toggle('on',name==='tools');
   document.getElementById('tab-slides').classList.toggle('on',name==='slides');
   document.getElementById('tab-learning').classList.toggle('on',name==='learning');
+  document.getElementById('tab-wraven').classList.toggle('on',name==='wraven');
   document.getElementById('page-tools').classList.toggle('on',name==='tools');
   document.getElementById('page-slides').classList.toggle('on',name==='slides');
   document.getElementById('page-learning').classList.toggle('on',name==='learning');
+  document.getElementById('page-wraven').classList.toggle('on',name==='wraven');
 }
 function toggleTheme(){
   const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
@@ -288,6 +328,7 @@ function toggleTheme(){
 render();
 renderSlides();
 renderLearning();
+renderWraven();
 </script>
 </body>
 </html>
