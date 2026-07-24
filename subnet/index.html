@@ -191,6 +191,12 @@
     color: white;
     border-color: var(--blue);
   }
+  .related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:var(--surface2);
+    border-bottom:1px solid var(--border);font-family:'Nunito',sans-serif;font-size:12.5px}
+  .related-label{color:var(--muted);font-weight:700;letter-spacing:.02em;white-space:nowrap}
+  .related-bar a{color:var(--blue-dark);text-decoration:none;border:1.5px solid var(--border);padding:4px 12px;
+    border-radius:100px;font-weight:700;transition:.18s;white-space:nowrap;background:var(--surface)}
+  .related-bar a:hover{border-color:var(--blue);background:var(--blue-light)}
 
   /* Layout */
   main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
@@ -567,6 +573,13 @@
     <button class="nav-btn" onclick="showSection('quiz')">🧠 Quiz</button>
   </div>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../networkguide/">📘 Networking Explained (guide)</a>
+  <a href="../network/">🖧 Network Interactive</a>
+  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../nettrace/">🔍 Traffic Analyzer</a>
+</div>
 
 <main>
 

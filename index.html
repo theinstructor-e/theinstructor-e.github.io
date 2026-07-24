@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>17E Interactive Training Tools</title>
+<title>Electromagnetic Warfare Interactive Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -62,12 +62,13 @@ h1 span{color:var(--text-dim);font-weight:400}
 <header>
   <div class="hl">
     <div class="mil-badge">MIL-SPEC</div>
-    <h1>17E Tools <span>// Interactive Training</span></h1>
+    <h1>Electromagnetic Warfare Interactive Guide</h1>
   </div>
   <div class="hl">
     <div class="pagetabs">
       <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
       <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
+      <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
     </div>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
   </div>
@@ -84,6 +85,16 @@ h1 span{color:var(--text-dim);font-weight:400}
 <div class="wrap">
   <div class="section-label">Lesson Slide Decks</div>
   <div id="view-slides"></div>
+</div>
+</div>
+
+<div id="page-learning" class="page">
+<div class="wrap">
+  <div class="section-label">Additional Learning — Certifications &amp; Licenses</div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Self-study resources for career progression beyond this course — external links open in a new tab. Details below are current as of research, but always verify current requirements/costs directly with the certifying body before committing time or money.
+  </div>
+  <div id="view-learning"></div>
 </div>
 </div>
 
@@ -111,7 +122,7 @@ const TOOLS=[
   {cat:'E EW Theory',kind:'guide',nm:'Electromagnetic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
   {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444'},
   {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff'},
-  {cat:'E EW Theory',nm:'DF Trainer',ds:'Direction-finding practice & bearing intersection',file:'df',color:'#bb88ff'},
+  {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff'},
   {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
   {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
   // D Networking
@@ -122,7 +133,8 @@ const TOOLS=[
   {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
   {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
-  {cat:'D Networking',nm:'Network Test',ds:'200-question quiz: networking, wireless & cellular (slide-referenced)',file:'nettest',color:'#bb88ff'},
+  {cat:'D Networking',nm:'Network Test',ds:'243-question quiz: networking, wireless, cellular & PBQ-style practice scenarios',file:'nettest',color:'#bb88ff'},
+  {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
   // F Systems
   {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
   {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
@@ -175,11 +187,98 @@ function renderSlides(){
   vh+='</div>';
   document.getElementById('view-slides').innerHTML=vh;
 }
+
+// Additional Learning — certifications & licenses for self-study beyond this course.
+// Grouped by category; each links externally (opens in a new tab, doesn't navigate away from the toolkit).
+const LEARN=[
+  {cat:'IT / Cyber Certifications', nm:'CompTIA A+', tag:'CERT', color:'#00d4ff',
+    ds:'Foundational IT hardware, software & troubleshooting certification \u2014 a common first step before Network+ or Security+.',
+    url:'https://www.comptia.org/certifications/a'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 A+ Core 1 (220-1101)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The internet\u2019s most-used free A+ training series \u2014 full video course covering every Core 1 exam objective.',
+    embed:'playlist', embedId:'PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 A+ Core 2 (220-1102)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The companion Core 2 course \u2014 operating systems, security, software troubleshooting, and operational procedures.',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnna96gzhJrzkii4hH_mgW4b'},
+  {cat:'IT / Cyber Certifications', nm:'CompTIA Network+', tag:'CERT', color:'#00d4ff',
+    ds:'Vendor-neutral networking fundamentals \u2014 infrastructure, protocols, troubleshooting. Builds directly on this site\u2019s Networking modules.',
+    url:'https://www.comptia.org/certifications/network'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 Network+ (N10-009) Training Index', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'Free full video course covering the current N10-009 objectives \u2014 official course index with every video linked in order.',
+    url:'https://professormesser.link/n009videos'},
+  {cat:'IT / Cyber Certifications', nm:'CompTIA Security+', tag:'CERT', color:'#00d4ff',
+    ds:'Security fundamentals \u2014 commonly used to satisfy DoD 8140/8570 IAT Level II baseline certification requirements.',
+    url:'https://www.comptia.org/certifications/security'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 Security+ (SY0-701)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The current SY0-701 training course \u2014 121 videos, 15+ hours, covering every exam objective for free.',
+    embed:'playlist', embedId:'PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv'},
+
+  {cat:'DoD Baseline Certifications', nm:'DoD 8140.03 Cyber Workforce Framework', tag:'DoD', color:'#ffb300',
+    ds:'As of Feb 2023, DoDM 8140.03 supersedes the older 8570.01-M IA program, mapping roles to DCWF work roles (the old IAT/IAM/IASAE terms are still used informally). Check your specific role/level before assuming which certification applies \u2014 requirements vary by position.',
+    url:'https://dl.dod.cyber.mil/wp-content/uploads/8140/pdf/unclass-dod8570_ia_program_transition_dod8140_cwp.pdf'},
+  {cat:'DoD Baseline Certifications', nm:'Navigating DoD 8140 Qualifications', tag:'FREE TRAINING', color:'#ffb300',
+    ds:'A plain-language walkthrough of how the 8140 qualification and role-mapping process actually works in practice.',
+    embed:'video', embedId:'HgVQLTIyuh4',
+    url:'https://www.youtube.com/watch?v=HgVQLTIyuh4'},
+  {cat:'DoD Baseline Certifications', nm:'DoD 8140 Qualification Matrices (Official)', tag:'DoD', color:'#ffb300',
+    ds:'The official DoD Cyber Exchange page listing approved certifications and training by DCWF work role \u2014 the authoritative source, not a summary.',
+    url:'https://www.cyber.mil/dod-workforce-innovation-directorate/dod8140/qualification-matrices'},
+
+  {cat:'Amateur Radio Licenses', nm:'Technician Class', tag:'HAM', color:'#00ff88',
+    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Note: the question pool just rotated (effective July 2026), so double-check any study material is current for 2026\u20132030.',
+    url:'https://www.arrl.org/getting-licensed'},
+  {cat:'Amateur Radio Licenses', nm:'General Class', tag:'HAM', color:'#00ff88',
+    ds:'Requires holding Technician first. Opens extensive HF privileges across most amateur bands \u2014 the gateway to long-distance, worldwide communication.',
+    url:'https://www.arrl.org/getting-licensed-step-by-step'},
+  {cat:'Amateur Radio Licenses', nm:'Amateur Extra Class', tag:'HAM', color:'#00ff88',
+    ds:'The top license class \u2014 full privileges across every amateur band and mode. 50-question exam drawn from the largest question pool of the three.',
+    url:'https://www.arrl.org/ham-radio-licenses'},
+  {cat:'Amateur Radio Licenses', nm:'HamStudy.org \u2014 Free Practice Exams', tag:'FREE TRAINING', color:'#00ff88',
+    ds:'Free, always-current practice tests pulled straight from the active FCC question pools for all three license classes \u2014 safer than a dated video course since pools rotate every 4 years.',
+    url:'https://hamstudy.org/'},
+];
+
+function renderLearning(){
+  const cats = [...new Set(LEARN.map(l=>l.cat))];
+  let vh='';
+  cats.forEach(cat=>{
+    vh+=`<div class="section-label" style="margin-top:18px">${cat}</div><div class="grid">`;
+    LEARN.filter(l=>l.cat===cat).forEach(l=>{
+      if(l.embed==='playlist' || l.embed==='video'){
+        const src = l.embed==='playlist'
+          ? `https://www.youtube.com/embed/videoseries?list=${l.embedId}`
+          : `https://www.youtube.com/embed/${l.embedId}`;
+        vh+=`<div class="card" style="--accent:${l.color};padding:0;overflow:hidden">
+          <div style="position:relative;padding-bottom:56.25%;height:0;background:#000">
+            <iframe src="${src}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div style="padding:16px 18px">
+            <div class="cat">${l.tag} <span class="tag tag-slide">YOUTUBE</span></div><div class="nm">${l.nm}</div>
+            <div class="ds">${l.ds}</div>
+            <a class="go" style="text-decoration:none;display:block;margin-top:8px" href="${l.url}" target="_blank" rel="noopener">OPEN FULL COURSE &#8599;</a>
+          </div>
+        </div>`;
+      } else {
+        vh+=`<a class="card" href="${l.url}" target="_blank" rel="noopener" style="--accent:${l.color}">
+          <div class="cat">${l.tag} <span class="tag tag-slide">EXTERNAL LINK</span></div><div class="nm">${l.nm}</div>
+          <div class="ds">${l.ds}</div><div class="go">LEARN MORE &#8599;</div></a>`;
+      }
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-learning').innerHTML=vh;
+}
+
 function showPage(name){
   document.getElementById('tab-tools').classList.toggle('on',name==='tools');
   document.getElementById('tab-slides').classList.toggle('on',name==='slides');
+  document.getElementById('tab-learning').classList.toggle('on',name==='learning');
   document.getElementById('page-tools').classList.toggle('on',name==='tools');
   document.getElementById('page-slides').classList.toggle('on',name==='slides');
+  document.getElementById('page-learning').classList.toggle('on',name==='learning');
 }
 function toggleTheme(){
   const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
@@ -188,6 +287,7 @@ function toggleTheme(){
 }
 render();
 renderSlides();
+renderLearning();
 </script>
 </body>
 </html>

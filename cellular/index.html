@@ -42,6 +42,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .theme-btn{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap}
 .theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 16px;gap:1px}
 .tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:11px 16px;cursor:pointer;transition:color .18s,border-color .18s;white-space:nowrap;display:flex;align-items:center;gap:6px}
@@ -152,6 +156,12 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <button class="tab-btn" onclick="switchTab('plmn',this)"><span class="tnum">02</span> Network Identifiers</button>
   <button class="tab-btn" onclick="switchTab('arch',this)"><span class="tnum">03</span> Architecture & Channel Flow</button>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../cellularguide/">📱 Cellular Explained (guide)</a>
+  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../network/">🖧 Network Interactive</a>
+</div>
 
 <!-- ═══ TAB 1: BCCH ═══ -->
 <div id="tab-bcch" class="tab-content active">

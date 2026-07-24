@@ -42,6 +42,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .live{color:var(--green);animation:blink 1.4s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .wrap{max-width:1180px;margin:0 auto;padding:20px 24px 60px}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .scenario-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
 .sb-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-right:4px}
 .main-grid{display:grid;grid-template-columns:320px 1fr;gap:18px}
@@ -125,6 +129,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
     <div class="status-bar">SYS: NOMINAL &nbsp;|&nbsp; <span class="live">&#9679; LIVE</span><br>UNCLASSIFIED // FOUO</div>
   </div>
 </header>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../networkguide/">📘 Networking Explained (guide)</a>
+  <a href="../network/">🖧 Network Interactive</a>
+  <a href="../cellular/">📱 Cellular</a>
+</div>
 <div class="wrap">
   <div class="scenario-bar">
     <span class="sb-label">Load Scenario:</span>

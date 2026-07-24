@@ -42,6 +42,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .live{color:var(--green);animation:blink 1.4s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 20px;gap:2px}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .tab-btn .tnum{font-family:var(--mono);font-size:10px;color:inherit;opacity:.6}
@@ -134,6 +138,13 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <button class="tab-btn" onclick="switchTab('wifi',this)"><span class="tnum">05</span> Wi-Fi Standards</button>
   <button class="tab-btn" onclick="switchTab('chan',this)"><span class="tnum">06</span> Wi-Fi Topology &amp; Channels</button>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../networkguide/">📘 Networking Explained (guide)</a>
+  <a href="../subnet/">🧮 Subnetting Calculator</a>
+  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../nettrace/">🔍 Traffic Analyzer</a>
+</div>
 
 <!-- TAB 1: OSI -->
 <div id="tab-osi" class="tab-content active">

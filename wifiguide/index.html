@@ -290,6 +290,11 @@ body {
   margin-top: 1.5rem;
   flex-wrap: wrap;
 }
+.related-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:.9rem;font-family:'Nunito',sans-serif;font-size:12px}
+.related-label{color:var(--hero-sub);font-weight:700;white-space:nowrap}
+.related-bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);padding:4px 12px;border-radius:999px;
+  background:rgba(255,255,255,.1);font-weight:700;transition:.18s;white-space:nowrap}
+.related-bar a:hover{background:rgba(255,255,255,.2);border-color:#fff}
 .tab-btn {
   font-family: 'Nunito', sans-serif;
   font-size: 13px;
@@ -1373,6 +1378,13 @@ table.cidr-table tr:hover td { background: var(--table-row-hover); }
     <button class="tab-btn" onclick="switchTab('protocols')" id="tab-btn-protocols">📦 TCP, UDP &amp; IP</button>
     <button class="tab-btn" onclick="switchTab('cellular')" id="tab-btn-cellular">📱 3G, 4G &amp; 5G</button>
     <button class="tab-btn" onclick="switchTab('hardware')" id="tab-btn-hardware">🔌 Hubs, Switches &amp; Routers</button>
+  </div>
+  <div class="related-bar">
+    <span class="related-label">Related:</span>
+    <a href="../networkguide/">📘 Networking Explained</a>
+    <a href="../cellularguide/">📱 Cellular Explained</a>
+    <a href="../network/">🖧 Network Interactive</a>
+    <a href="../nettest/">📝 Network Test (quiz)</a>
   </div>
 </header>
 
