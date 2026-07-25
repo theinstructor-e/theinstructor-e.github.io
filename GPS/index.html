@@ -138,7 +138,7 @@ canvas.mapC{display:block;width:100%}
   <div class="ctrl-card" style="flex:0;min-width:160px">
     <div class="ctrl-title">Key Difference</div>
     <div style="font-size:12px;color:var(--txt);line-height:1.7" id="keyDiffText">
-      <span style="color:var(--txtd)">Toggle jamming or spoofing to see the critical difference in how each affects the target system.</span>
+      <span style="color:var(--txtb)">Toggle jamming or spoofing to see the critical difference in how each affects the target system.</span>
     </div>
   </div>
 </div>
@@ -314,7 +314,7 @@ function updateScenarioText() {
     kd.innerHTML = `<strong style="color:var(--orange)">SPOOFING IS INVISIBLE.</strong> The receiver shows normal operation. No failsafe trips. Target has no idea position data is false. This is why spoofing is far more dangerous.`;
   } else {
     st.innerHTML = `All systems nominal. GPS receiver has <strong style="color:var(--green)">lock on 7 satellites</strong>. Navigation display shows correct position. Target following programmed route normally.`;
-    kd.innerHTML = `<span style="color:var(--txtd)">Toggle jamming or spoofing to see the critical difference in how each affects the target system.</span>`;
+    kd.innerHTML = `<span style="color:var(--txtb)">Toggle jamming or spoofing to see the critical difference in how each affects the target system.</span>`;
   }
 }
 
