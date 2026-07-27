@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RF Spectrum Reference — 3 MHz to 6 GHz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── DARK MODE (default) ── */
+  :root, [data-theme="dark"] {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --faint: #484f58;
+    --grid-line: rgba(255,255,255,0.025);
+
+    --taboo: #f85149;
+    --taboo-bg: rgba(248,81,73,0.12);
+    --taboo-border: rgba(248,81,73,0.35);
+
+    --protected: #58a6ff;
+    --protected-bg: rgba(88,166,255,0.12);
+    --protected-border: rgba(88,166,255,0.35);
+
+    --guarded: #3fb950;
+    --guarded-bg: rgba(63,185,80,0.12);
+    --guarded-border: rgba(63,185,80,0.35);
+
+    --licensed: #e3b341;
+    --licensed-bg: rgba(227,179,65,0.12);
+    --licensed-border: rgba(227,179,65,0.35);
+
+    --unlicensed: #bc8cff;
+    --unlicensed-bg: rgba(188,140,255,0.12);
+    --unlicensed-border: rgba(188,140,255,0.35);
+
+    --toggle-bg: #21262d;
+    --toggle-border: rgba(255,255,255,0.18);
+    --toggle-knob: #e6edf3;
+    --toggle-icon: '☀';
+  }
+
+  /* ── LIGHT MODE ── */
+  [data-theme="light"] {
+    --bg: #f6f8fa;
+    --bg2: #ffffff;
+    --bg3: #eaeef2;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1f2328;
+    --muted: #57606a;
+    --faint: #9198a1;
+    --grid-line: rgba(0,0,0,0.04);
+
+    --taboo: #cf222e;
+    --taboo-bg: rgba(207,34,46,0.08);
+    --taboo-border: rgba(207,34,46,0.3);
+
+    --protected: #0969da;
+    --protected-bg: rgba(9,105,218,0.08);
+    --protected-border: rgba(9,105,218,0.3);
+
+    --guarded: #1a7f37;
+    --guarded-bg: rgba(26,127,55,0.08);
+    --guarded-border: rgba(26,127,55,0.3);
+
+    --licensed: #9a6700;
+    --licensed-bg: rgba(154,103,0,0.08);
+    --licensed-border: rgba(154,103,0,0.3);
+
+    --unlicensed: #6639ba;
+    --unlicensed-bg: rgba(102,57,186,0.08);
+    --unlicensed-border: rgba(102,57,186,0.3);
+
+    --toggle-bg: #eaeef2;
+    --toggle-border: rgba(0,0,0,0.18);
+    --toggle-knob: #1f2328;
+    --toggle-icon: '☽';
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    transition: background 0.25s, color 0.25s;
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-track {
+    width: 40px;
+    height: 22px;
+    background: var(--toggle-bg);
+    border: 1px solid var(--toggle-border);
+    border-radius: 20px;
+    position: relative;
+    transition: background 0.25s, border-color 0.25s;
+    cursor: pointer;
+  }
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--toggle-knob);
+    transition: transform 0.25s, background 0.25s;
+  }
+  [data-theme="light"] .toggle-knob { transform: translateX(18px); }
+  .toggle-label { letter-spacing: 0.5px; }
+
+  /* ── HERO (centered) ── */
+  .hero {
+    padding: 56px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 39px,
+      var(--grid-line) 39px,
+      var(--grid-line) 40px
+    );
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero-title {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 300;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--protected);
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── SPECTRUM BAR ── */
+  .vis-section {
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    transition: background 0.25s;
+  }
+  .vis-label-row {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .spectrum-bar-wrap {
+    position: relative;
+    height: 48px;
+    background: var(--bg3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    transition: background 0.25s;
+  }
+  .s-seg {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: default;
+    transition: filter 0.15s;
+    color: rgba(255,255,255,0.85);
+  }
+  [data-theme="light"] .s-seg { color: rgba(0,0,0,0.6); }
+  .s-seg:hover { filter: brightness(1.15); }
+  .taboo-bar { position: absolute; top: 0; height: 100%; pointer-events: none; }
+
+  /* ── BAND DETAIL COLUMN ── */
+  .td-detail {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    min-width: 260px;
+    max-width: 360px;
+    padding: 11px 16px;
+    vertical-align: middle;
+  }
+  .td-detail strong { font-weight: 500; color: var(--text); }
+  .td-detail .detail-sub {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    margin-top: 5px;
+    line-height: 1.6;
+  }
+  .td-detail .dtag {
+    display: inline-block;
+    background: var(--bg3);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 10px;
+    margin: 2px 2px 0 0;
+    transition: background 0.25s;
+  }
+  th.th-detail { min-width: 200px; }
+
+  /* ── STATUS EXPLAINER ── */
+  .explainer-section {
+    padding: 32px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    transition: background 0.25s;
+  }
+  .explainer-heading {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 18px;
+  }
+  .explainer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .exp-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: background 0.25s, border-color 0.2s;
+    border-left-width: 3px;
+  }
+  .exp-card:hover { border-color: var(--border2); }
+  .exp-card-taboo     { border-left-color: var(--taboo); }
+  .exp-card-protected { border-left-color: var(--protected); }
+  .exp-card-guarded   { border-left-color: var(--guarded); }
+  .exp-card-licensed  { border-left-color: var(--licensed); }
+  .exp-card-unlicensed{ border-left-color: var(--unlicensed); }
+  .exp-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 10px;
+  }
+  .exp-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .exp-penalty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    margin-left: auto;
+  }
+  .exp-body {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .exp-body strong { font-weight: 500; color: var(--text); }
+  .exp-examples {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    border-top: 1px solid var(--border);
+    padding-top: 9px;
+    line-height: 1.7;
+  }
+  .exp-examples span {
+    display: inline-block;
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin: 2px 2px 0 0;
+    transition: background 0.25s;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    padding: 18px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg);
+    transition: background 0.25s;
+  }
+  .filter-row-top {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--faint);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── TOGGLE SWITCHES (status) ── */
+  .toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .status-toggle .sw-track {
+    width: 30px;
+    height: 17px;
+    border-radius: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .status-toggle .sw-knob {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--faint);
+    transition: transform 0.2s, background 0.2s;
+  }
+  .status-toggle.on .sw-knob { transform: translateX(13px); }
+  .status-toggle.on[data-status="taboo"]      .sw-track { background: var(--taboo-bg);      border-color: var(--taboo); }
+  .status-toggle.on[data-status="taboo"]      .sw-knob  { background: var(--taboo); }
+  .status-toggle.on[data-status="protected"]  .sw-track { background: var(--protected-bg);  border-color: var(--protected); }
+  .status-toggle.on[data-status="protected"]  .sw-knob  { background: var(--protected); }
+  .status-toggle.on[data-status="guarded"]    .sw-track { background: var(--guarded-bg);    border-color: var(--guarded); }
+  .status-toggle.on[data-status="guarded"]    .sw-knob  { background: var(--guarded); }
+  .status-toggle.on[data-status="licensed"]   .sw-track { background: var(--licensed-bg);   border-color: var(--licensed); }
+  .status-toggle.on[data-status="licensed"]   .sw-knob  { background: var(--licensed); }
+  .status-toggle.on[data-status="unlicensed"] .sw-track { background: var(--unlicensed-bg); border-color: var(--unlicensed); }
+  .status-toggle.on[data-status="unlicensed"] .sw-knob  { background: var(--unlicensed); }
+  .status-toggle .sw-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .status-toggle.on .sw-label { color: var(--text); }
+  .toggle-all-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-all-btn:hover { color: var(--text); border-color: var(--text); }
+
+  /* ── FREQUENCY RANGE SLIDER ── */
+  .range-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .range-readout {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 3px 12px;
+    white-space: nowrap;
+    min-width: 150px;
+    text-align: center;
+  }
+  .range-slider-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 480px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+  }
+  .range-track-bg {
+    position: absolute;
+    left: 0; right: 0;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--bg3);
+  }
+  .range-track-fill {
+    position: absolute;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--protected);
+    opacity: 0.55;
+  }
+  .range-slider-wrap input[type="range"] {
+    position: absolute;
+    left: 0; right: 0;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+    height: 32px;
+  }
+  .range-slider-wrap input[type="range"]::-webkit-slider-thumb {
+    pointer-events: all;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--border2);
+    cursor: pointer;
+    position: relative;
+    z-index: 5;
+  }
+  .range-slider-wrap input[type="range"]::-moz-range-thumb {
+    pointer-events: all;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--border2);
+    cursor: pointer;
+  }
+  .range-slider-wrap input[type="range"]::-webkit-slider-runnable-track { background: transparent; }
+  .range-slider-wrap input[type="range"]::-moz-range-track { background: transparent; }
+  .range-reset-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--faint);
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .range-reset-btn:hover { color: var(--text); border-color: var(--text); }
+
+  /* ── SEARCH ── */
+  .search-wrap { margin-left: auto; position: relative; }
+  .search-input {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 5px 12px 5px 32px;
+    border-radius: 20px;
+    outline: none;
+    width: 200px;
+    transition: border-color 0.15s, width 0.2s, background 0.25s, color 0.25s;
+  }
+  .search-input:focus { border-color: var(--protected); width: 240px; }
+  .search-input::placeholder { color: var(--faint); }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--faint); font-size: 13px; pointer-events: none; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--bg2); border-bottom: 1px solid var(--border2); transition: background 0.25s; }
+  th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 10px 16px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:hover { background: var(--bg2); }
+  tbody tr.hidden { display: none; }
+  td { padding: 11px 16px; vertical-align: middle; line-height: 1.4; }
+  .td-freq { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text); white-space: nowrap; min-width: 150px; }
+  .td-use { color: var(--text); font-size: 12px; line-height: 1.5; min-width: 260px; }
+  .td-status { white-space: nowrap; }
+
+  tr.section-hdr td {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 14px 16px 6px;
+    background: var(--bg);
+    border-bottom: none;
+    border-top: 1px solid var(--border);
+    transition: background 0.25s;
+  }
+  tr.section-hdr:hover { background: transparent; }
+  tr.section-hdr:hover td { background: var(--bg); }
+
+  /* ── BAND NAME CELL ── */
+  .td-name { font-weight: 500; font-size: 13px; min-width: 160px; cursor: pointer; }
+  .td-name .band-title { display: flex; align-items: center; gap: 6px; }
+  .td-name .band-sub { font-size: 11px; font-weight: 300; color: var(--faint); margin-top: 2px; letter-spacing: 0px; white-space: normal; line-height: 1.3; }
+  .expand-arrow { font-size: 10px; color: var(--faint); transition: transform 0.2s; flex-shrink: 0; }
+  tr.expanded .expand-arrow { transform: rotate(90deg); }
+  tr[data-status]:hover .expand-arrow { color: var(--muted); }
+
+  /* ── DETAIL ROW ── */
+  tr.detail-row { display: none; background: var(--bg2); }
+  tr.detail-row.visible { display: table-row; }
+  tr.detail-row td {
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  tr.detail-row:hover { background: var(--bg2); }
+  .detail-inner {
+    padding: 14px 20px 14px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px 24px;
+  }
+  .detail-block { }
+  .detail-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 4px;
+  }
+  .detail-value {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .detail-value strong { font-weight: 500; color: var(--text); }
+  @media (max-width: 700px) {
+    .detail-inner { grid-template-columns: 1fr 1fr; padding-left: 20px; }
+  }
+  @media (max-width: 480px) {
+    .detail-inner { grid-template-columns: 1fr; }
+  }
+
+  /* ── PILLS ── */
+  .pill {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .pill-taboo      { background: var(--taboo-bg);      border: 1px solid var(--taboo-border);      color: var(--taboo);      }
+  .pill-protected  { background: var(--protected-bg);  border: 1px solid var(--protected-border);  color: var(--protected);  }
+  .pill-guarded    { background: var(--guarded-bg);    border: 1px solid var(--guarded-border);    color: var(--guarded);    }
+  .pill-licensed   { background: var(--licensed-bg);   border: 1px solid var(--licensed-border);   color: var(--licensed);   }
+  .pill-unlicensed { background: var(--unlicensed-bg); border: 1px solid var(--unlicensed-border); color: var(--unlicensed); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 24px 40px;
+    border-top: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--faint);
+    line-height: 1.7;
+  }
+
+  .no-results {
+    display: none;
+    padding: 48px 40px;
+    text-align: center;
+    color: var(--faint);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+
+  @media (max-width: 640px) {
+    .hero, .vis-section, .filter-bar, footer { padding-left: 16px; padding-right: 16px; }
+    .search-wrap { margin-left: 0; width: 100%; }
+    .search-input { width: 100%; }
+    .td-use { display: none; }
+    .theme-toggle { top: 12px; right: 12px; }
+    .range-slider-wrap { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Theme toggle -->
+<div class="theme-toggle" id="themeToggle" role="button" aria-label="Toggle light/dark mode" tabindex="0">
+  <span class="toggle-label" id="toggleLabel">LIGHT</span>
+  <div class="toggle-track">
+    <div class="toggle-knob"></div>
+  </div>
+</div>
+
+<!-- HERO (centered) -->
+<header class="hero">
+  <p class="hero-eyebrow">FCC / ITU · US frequency allocation reference</p>
+  <h1 class="hero-title">RF Spectrum<br><em>3 MHz → 6 GHz</em></h1>
+  <p class="hero-sub">Band allocations, primary uses, and regulatory protection status across HF, VHF, UHF, and the start of SHF. Based on FCC 47 CFR Part 2 and NTIA allocations.</p>
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot" style="background:var(--taboo)"></span>Taboo — no unauthorized tx</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--protected)"></span>Protected — primary service</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--guarded)"></span>Guarded — secondary, must yield</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--licensed)"></span>Licensed — FCC license required</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--unlicensed)"></span>Unlicensed — Part 15 devices</span>
+  </div>
+</header>
+
+<!-- SPECTRUM BAR -->
+<section class="vis-section" aria-label="Log-scale spectrum visualization">
+  <div class="vis-label-row">
+    <span>3 MHz</span><span>10 MHz</span><span>30 MHz</span><span>100 MHz</span><span>300 MHz</span><span>1 GHz</span><span>3 GHz</span><span>6 GHz</span>
+  </div>
+  <div class="spectrum-bar-wrap" id="specBar" title="Log-scale spectrum bar — hover for details"></div>
+  <div style="font-size:13px;color:var(--faint);font-family:'IBM Plex Mono',monospace;margin-top:6px;">
+    Log scale — each segment spans one decade.
+    <span style="color:var(--licensed)">■ licensed</span> &nbsp;
+    <span style="color:var(--protected)">■ protected</span> &nbsp;
+    <span style="color:var(--unlicensed)">■ unlicensed</span> &nbsp;
+    <span style="color:var(--guarded)">■ guarded</span> &nbsp;
+    <span style="color:var(--taboo)">■ taboo overlay</span>
+  </div>
+</section>
+
+<!-- STATUS EXPLAINER -->
+<section class="explainer-section" aria-label="Status definitions">
+  <p class="explainer-heading">What each status means</p>
+  <div class="explainer-grid">
+
+    <div class="exp-card exp-card-taboo">
+      <div class="exp-header">
+        <span class="exp-pill pill-taboo" style="background:var(--taboo-bg);border:1px solid var(--taboo-border);color:var(--taboo);">Taboo</span>
+        <span class="exp-penalty">⚠ Federal offense</span>
+      </div>
+      <p class="exp-body">
+        <strong>Absolutely no unauthorized transmission.</strong> These bands are reserved for safety-of-life or government-exclusive use. Transmitting — even accidentally or at low power — can endanger lives, disrupt navigation, or jam emergency services. The FCC and federal law treat violations as serious criminal offenses, not just regulatory infractions. Jamming GPS, for example, carries fines up to $100,000 per violation and potential prison time.
+      </p>
+      <div class="exp-examples">
+        Examples: <span>Aviation nav 108–136 MHz</span> <span>GPS L1/L2</span> <span>EPIRB 406 MHz</span> <span>Radio astronomy 1400 MHz</span> <span>Public safety 4.94 GHz</span>
+      </div>
+    </div>
+
+    <div class="exp-card exp-card-protected">
+      <div class="exp-header">
+        <span class="exp-pill pill-protected" style="background:var(--protected-bg);border:1px solid var(--protected-border);color:var(--protected);">Protected</span>
+        <span class="exp-penalty">Primary allocation</span>
+      </div>
+      <p class="exp-body">
+        <strong>A primary service holds exclusive rights to this band</strong> and must be shielded from interference by all other users. You generally cannot transmit here without authorization, and even licensed secondary users must not cause harmful interference. The primary service — like FM radio, TV broadcast, or weather radar — was allocated this spectrum by the FCC and has first-in-right priority under ITU Radio Regulations.
+      </p>
+      <div class="exp-examples">
+        Examples: <span>FM broadcast 87.5–108 MHz</span> <span>DTV 470–698 MHz</span> <span>NEXRAD radar 2700–2900 MHz</span> <span>Federal radar 5.35–5.47 GHz</span>
+      </div>
+    </div>
+
+    <div class="exp-card exp-card-guarded">
+      <div class="exp-header">
+        <span class="exp-pill pill-guarded" style="background:var(--guarded-bg);border:1px solid var(--guarded-border);color:var(--guarded);">Guarded</span>
+        <span class="exp-penalty">Secondary — must yield</span>
+      </div>
+      <p class="exp-body">
+        <strong>You can operate here, but you are a guest.</strong> Secondary users must not cause harmful interference to any primary user, and must accept interference from them — no complaints, no recourse. If a primary user appears (e.g. military radar sweeps through a CBRS band), secondary devices must stop or move. Think of it as operating on borrowed time: legal, but always subordinate to whoever has primary rights.
+      </p>
+      <div class="exp-examples">
+        Examples: <span>70 cm amateur 420–450 MHz</span> <span>CBRS 3.55–3.7 GHz</span> <span>9 cm amateur 3.3–3.5 GHz</span> <span>V2X 5.85–5.925 GHz</span>
+      </div>
+    </div>
+
+    <div class="exp-card exp-card-licensed">
+      <div class="exp-header">
+        <span class="exp-pill pill-licensed" style="background:var(--licensed-bg);border:1px solid var(--licensed-border);color:var(--licensed);">Licensed</span>
+        <span class="exp-penalty">FCC authorization required</span>
+      </div>
+      <p class="exp-body">
+        <strong>You must apply for and hold an FCC license to transmit.</strong> Licensing gives you exclusive or coordinated rights to specific frequencies in specific areas, with defined power limits and technical parameters. It prevents two users from trampling each other. Licenses range from amateur radio tickets (free, earned by exam) to cellular spectrum licenses auctioned for billions of dollars. Operating without a license is a violation even if you cause no interference.
+      </p>
+      <div class="exp-examples">
+        Examples: <span>Amateur HF/VHF/UHF</span> <span>Cellular 700/850/1900 MHz</span> <span>Land mobile / public safety</span> <span>C-band 5G 3.7–4.2 GHz</span>
+      </div>
+    </div>
+
+    <div class="exp-card exp-card-unlicensed">
+      <div class="exp-header">
+        <span class="exp-pill pill-unlicensed" style="background:var(--unlicensed-bg);border:1px solid var(--unlicensed-border);color:var(--unlicensed);">Unlicensed</span>
+        <span class="exp-penalty">Part 15 — no permit needed</span>
+      </div>
+      <p class="exp-body">
+        <strong>Anyone can transmit here without a license</strong> — but only within strict power and technical limits set by FCC Part 15 rules. Devices must not cause harmful interference to licensed services, and must accept any interference they receive. This is the legal home of Wi-Fi, Bluetooth, baby monitors, and garage door openers. The catch: because it's open to everyone, congestion and interference between unlicensed devices is common and unprotected.
+      </p>
+      <div class="exp-examples">
+        Examples: <span>Wi-Fi 2.4 GHz (802.11b/g/n)</span> <span>Bluetooth</span> <span>Wi-Fi 5 GHz U-NII-1/2C</span> <span>Wi-Fi 6E 5.925–6 GHz</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-row-top">
+    <span class="filter-label">status:</span>
+    <div class="toggle-group" id="toggleGroup">
+      <label class="status-toggle on" data-status="taboo">
+        <span class="sw-track"><span class="sw-knob"></span></span>
+        <span class="sw-label">Taboo</span>
+      </label>
+      <label class="status-toggle on" data-status="protected">
+        <span class="sw-track"><span class="sw-knob"></span></span>
+        <span class="sw-label">Protected</span>
+      </label>
+      <label class="status-toggle on" data-status="guarded">
+        <span class="sw-track"><span class="sw-knob"></span></span>
+        <span class="sw-label">Guarded</span>
+      </label>
+      <label class="status-toggle on" data-status="licensed">
+        <span class="sw-track"><span class="sw-knob"></span></span>
+        <span class="sw-label">Licensed</span>
+      </label>
+      <label class="status-toggle on" data-status="unlicensed">
+        <span class="sw-track"><span class="sw-knob"></span></span>
+        <span class="sw-label">Unlicensed</span>
+      </label>
+    </div>
+    <button class="toggle-all-btn" id="toggleAllBtn">All off</button>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" type="search" placeholder="search bands, uses…" id="searchInput" aria-label="Search frequency bands">
+    </div>
+  </div>
+
+  <div class="range-row">
+    <div class="range-section">
+      <span class="filter-label">range:</span>
+      <div class="range-readout" id="rangeReadout">3 MHz – 6 GHz</div>
+      <div class="range-slider-wrap">
+        <div class="range-track-bg"></div>
+        <div class="range-track-fill" id="rangeTrackFill"></div>
+        <input type="range" id="rangeMin" min="0" max="1000" value="0" step="1" aria-label="Minimum frequency">
+        <input type="range" id="rangeMax" min="0" max="1000" value="1000" step="1" aria-label="Maximum frequency">
+      </div>
+      <button class="range-reset-btn" id="rangeResetBtn">Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<main>
+  <div class="table-wrap">
+    <table aria-label="RF spectrum allocation table">
+      <thead>
+        <tr>
+          <th>Frequency range</th>
+          <th>Band / designation</th>
+          <th>Primary uses</th>
+          <th class="th-detail">About this band</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+
+        <tr class="section-hdr"><td colspan="5">HF — High Frequency · 3–30 MHz</td></tr>
+        <tr data-status="licensed" data-min="3.0000" data-max="4.0000">
+          <td class="td-freq">3 – 4 MHz</td>
+          <td class="td-name">HF / 80 m amateur</td>
+          <td class="td-use">Amateur radio, maritime mobile, fixed services</td>
+          <td class="td-detail"><strong>80 metre band</strong> — named for its ~80 m wavelength. One of the most active HF amateur bands, especially at night when ionospheric skip enables reliable continental contacts. Shared with maritime and fixed services. Heavily used for ragchewing, emergency nets (e.g. ARES), and NVIS (Near Vertical Incidence Skywave) short-range communications up to ~500 km.
+            <span class="detail-sub"><span class="dtag">Wavelength ~80 m</span><span class="dtag">Night-time skip</span><span class="dtag">NVIS propagation</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="4.0000" data-max="8.0000">
+          <td class="td-freq">4 – 8 MHz</td>
+          <td class="td-name">HF / 40 m, 60 m</td>
+          <td class="td-use">Amateur, HF shortwave broadcast, fixed/mobile</td>
+          <td class="td-detail"><strong>40 metre band (7 MHz)</strong> — the workhorse of HF amateur radio. Supports both short skip (~500–2000 km) and DX (long-distance) contacts. International shortwave broadcasters historically dominated this band. The <strong>60 metre band (5 MHz)</strong> is newer, with only 5 specific channels allocated to amateurs on a secondary, channelised basis, shared with federal fixed services.
+            <span class="detail-sub"><span class="dtag">40 m: 7.0–7.3 MHz</span><span class="dtag">60 m: 5 channels only</span><span class="dtag">Excellent DX band</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="8.0000" data-max="17.5500">
+          <td class="td-freq">8 – 17.55 MHz</td>
+          <td class="td-name">HF / 30 m, 20 m, 17 m</td>
+          <td class="td-use">Amateur radio (20 m = 14 MHz), international broadcast, aeronautical, maritime</td>
+          <td class="td-detail"><strong>20 metre band (14 MHz)</strong> is the most popular DX (long-distance) amateur band in the world — open almost 24/7 near solar maximum. The <strong>30 metre band (10 MHz)</strong> is a narrow, CW/data-only amateur allocation shared with fixed services — no phone (voice) operation. The <strong>17 metre band (18 MHz)</strong> is a WARC band (allocated at the 1979 World Administrative Radio Conference), exclusively amateur with no shared services.
+            <span class="detail-sub"><span class="dtag">20 m: premier DX band</span><span class="dtag">30 m: CW/data only</span><span class="dtag">17 m: WARC exclusive</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="17.5500" data-max="30.0000">
+          <td class="td-freq">17.55 – 30 MHz</td>
+          <td class="td-name">HF / 15 m, 12 m, 10 m</td>
+          <td class="td-use">Amateur radio, shortwave broadcast, fixed/mobile services</td>
+          <td class="td-detail"><strong>15 metre band (21 MHz)</strong> is a classic DX band, best near solar maximum. The <strong>12 metre band (24 MHz)</strong> is another WARC-exclusive amateur band. The <strong>10 metre band (28–29.7 MHz)</strong> is the widest HF amateur allocation (1.7 MHz) and is spectacular at solar maximum — low power contacts across continents are common. At solar minimum it can go dead for weeks. Also used by CB radio just below at 27 MHz.
+            <span class="detail-sub"><span class="dtag">10 m: widest HF band</span><span class="dtag">Solar-cycle dependent</span><span class="dtag">CB radio: 27 MHz</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+
+        <tr class="section-hdr"><td colspan="5">VHF — Very High Frequency · 30–300 MHz</td></tr>
+        <tr data-status="licensed" data-min="30.0000" data-max="50.0000">
+          <td class="td-freq">30 – 50 MHz</td>
+          <td class="td-name">Low VHF / 6 m amateur</td>
+          <td class="td-use">Amateur (50–54 MHz), public safety, military, land mobile</td>
+          <td class="td-detail"><strong>6 metre band (50–54 MHz)</strong> — called the "magic band" by amateurs because it occasionally exhibits HF-like ionospheric propagation (Sporadic-E, F2 skip) that allows intercontinental contacts, unpredictably and briefly. The rest of this range hosts legacy public safety, military, and business radio systems, many of which are being migrated to higher bands.
+            <span class="detail-sub"><span class="dtag">6 m: "magic band"</span><span class="dtag">Sporadic-E propagation</span><span class="dtag">TV ch. 2–6 formerly here</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="protected" data-min="87.5000" data-max="108.0000">
+          <td class="td-freq">87.5 – 108 MHz</td>
+          <td class="td-name">FM broadcast band</td>
+          <td class="td-use">Commercial FM radio broadcasting</td>
+          <td class="td-detail"><strong>FM (Frequency Modulation) broadcast</strong> — stations are spaced 200 kHz apart (every odd 0.1 MHz in the US). FM provides high-fidelity stereo audio and is far less susceptible to amplitude noise than AM. Propagation is mainly line-of-sight, so coverage radius is typically 40–100 km depending on transmitter power and antenna height. HD Radio (IBOC) allows digital sub-channels on the same frequency.
+            <span class="detail-sub"><span class="dtag">200 kHz channel spacing</span><span class="dtag">Line-of-sight ~50–100 km</span><span class="dtag">HD Radio IBOC capable</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-protected">Protected</span></td>
+        </tr>
+        <tr data-status="taboo" data-min="108.0000" data-max="136.0000">
+          <td class="td-freq">108 – 136 MHz</td>
+          <td class="td-name">Aviation nav / comm</td>
+          <td class="td-use">VOR, ILS, ATIS, ATC voice — strictly aviation only. Unauthorized transmission is a federal offense.</td>
+          <td class="td-detail"><strong>VHF aeronautical band</strong> — the most safety-critical VHF allocation. <strong>VOR</strong> (VHF Omnidirectional Range, 108–118 MHz) provides bearing to a ground station. <strong>ILS</strong> (Instrument Landing System) guides aircraft on final approach. <strong>ATIS</strong> broadcasts automatic weather/runway info. ATC voice uses AM modulation (not FM) from 118–136 MHz so ground stations can hear multiple aircraft simultaneously.
+            <span class="detail-sub"><span class="dtag">VOR: 108–118 MHz</span><span class="dtag">ILS localizer: 108–112 MHz</span><span class="dtag">ATC voice: AM (not FM)</span><span class="dtag">121.5 MHz: emergency</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="144.0000" data-max="148.0000">
+          <td class="td-freq">144 – 148 MHz</td>
+          <td class="td-name">2 m amateur band</td>
+          <td class="td-use">Amateur radio (most popular VHF band), satellite downlinks</td>
+          <td class="td-detail"><strong>2 metre band</strong> — the most widely used VHF amateur band worldwide. Propagation is normally line-of-sight (30–80 km), but repeaters extend coverage dramatically. Used for local FM voice, emergency communications (ARES/RACES), APRS (Automatic Packet Reporting System) on 144.39 MHz, satellite uplinks/downlinks, and meteor scatter. Most hand-held amateur radios cover this band.
+            <span class="detail-sub"><span class="dtag">APRS: 144.39 MHz</span><span class="dtag">FM simplex calling: 146.52 MHz</span><span class="dtag">Repeater-extended range</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="150.0000" data-max="174.0000">
+          <td class="td-freq">150 – 174 MHz</td>
+          <td class="td-name">VHF high band</td>
+          <td class="td-use">Public safety, business radio, land mobile (police/fire dispatch)</td>
+          <td class="td-detail"><strong>VHF high band</strong> — the traditional backbone of public safety radio in the US. Police, fire, and EMS systems have operated here for decades. Propagation characteristics (good range, reasonable building penetration) made it ideal before 800 MHz systems. Many rural counties still rely on VHF high. Also home to business/commercial land mobile, forestry, and railroad communications. MURS (Multi-Use Radio Service) occupies 5 specific channels here unlicensed.
+            <span class="detail-sub"><span class="dtag">Public safety staple</span><span class="dtag">MURS: 5 channels</span><span class="dtag">Rural coverage advantage</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="protected" data-min="174.0000" data-max="216.0000">
+          <td class="td-freq">174 – 216 MHz</td>
+          <td class="td-name">TV channels 7–13</td>
+          <td class="td-use">Digital TV broadcast, wireless microphone secondary use</td>
+          <td class="td-detail"><strong>VHF-High television band</strong> — US broadcast TV channels 7 through 13. After the 2009 digital transition, all stations moved to ATSC digital format. These channels have excellent propagation characteristics but are less efficient for digital TV than UHF; many stations voluntarily moved to UHF in the post-transition repack. Wireless microphones (used in live performance and news) may operate here as secondary users when TV channels are not locally active.
+            <span class="detail-sub"><span class="dtag">ATSC digital since 2009</span><span class="dtag">6 MHz per channel</span><span class="dtag">Wireless mics: secondary</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-protected">Protected</span></td>
+        </tr>
+
+        <tr class="section-hdr"><td colspan="5">UHF — Ultra High Frequency · 300 MHz–3 GHz</td></tr>
+        <tr data-status="taboo" data-min="406.0000" data-max="406.1000">
+          <td class="td-freq">406 – 406.1 MHz</td>
+          <td class="td-name">EPIRB distress beacon</td>
+          <td class="td-use">Emergency Position-Indicating Radio Beacons — satellite-monitored distress signals. No other use permitted.</td>
+          <td class="td-detail"><strong>EPIRB / PLB / ELT emergency beacon band</strong> — monitored 24/7 by the international COSPAS-SARSAT satellite system. When activated, a beacon transmits a unique 15-digit ID that search and rescue authorities use to identify the vessel/aircraft/person and their GPS position within minutes. The 100 kHz guard band on each side is kept completely clear to prevent any accidental triggering or masking of real distress signals.
+            <span class="detail-sub"><span class="dtag">COSPAS-SARSAT system</span><span class="dtag">GPS encoded position</span><span class="dtag">Marine, aviation, personal PLBs</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
+        </tr>
+        <tr data-status="guarded" data-min="420.0000" data-max="450.0000">
+          <td class="td-freq">420 – 450 MHz</td>
+          <td class="td-name">70 cm amateur</td>
+          <td class="td-use">Amateur radio (secondary), federal radar (primary), radiolocation</td>
+          <td class="td-detail"><strong>70 centimetre band</strong> — the highest-frequency band accessible with most dual-band hand-held radios. Used for FM voice through repeaters, ATV (Amateur Television), weak-signal work (EME — Earth-Moon-Earth bounces), and satellite operations. Amateur use is secondary to federal government radiolocation and radar systems, which can legally bump amateurs off the band at any time without warning.
+            <span class="detail-sub"><span class="dtag">EME (moonbounce)</span><span class="dtag">ATV: Amateur Television</span><span class="dtag">Secondary to federal radar</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="450.0000" data-max="512.0000">
+          <td class="td-freq">450 – 512 MHz</td>
+          <td class="td-name">UHF land mobile</td>
+          <td class="td-use">Business/commercial radio, public safety, LMRS</td>
+          <td class="td-detail"><strong>UHF land mobile band</strong> — a workhorse range for commercial, industrial, and public safety two-way radio. UHF waves penetrate buildings much better than VHF, making this band popular in urban environments, hospitals, warehouses, and construction sites. LMRS (Land Mobile Radio System) is the collective term for licensed, purpose-built private radio networks operating here. Many fire departments and EMS systems use 460–470 MHz specifically.
+            <span class="detail-sub"><span class="dtag">Better building penetration than VHF</span><span class="dtag">Business/industrial fleets</span><span class="dtag">EMS: 460–470 MHz common</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="protected" data-min="470.0000" data-max="698.0000">
+          <td class="td-freq">470 – 698 MHz</td>
+          <td class="td-name">UHF broadcast / 600 MHz</td>
+          <td class="td-use">Digital TV broadcast (ch. 14–51); 600 MHz lower portion reassigned to 5G LTE</td>
+          <td class="td-detail"><strong>UHF television band</strong> — originally channels 14–83, progressively repacked over decades. The 2016 FCC Incentive Auction was a landmark event: TV stations voluntarily relinquished spectrum in exchange for payment, and the reclaimed 600 MHz band (617–652 MHz) was auctioned to carriers like T-Mobile for nationwide 5G/LTE. 600 MHz has exceptional propagation — it travels far and penetrates walls well, making it valuable for rural 5G coverage.
+            <span class="detail-sub"><span class="dtag">2016 Incentive Auction</span><span class="dtag">T-Mobile Band 71 (600 MHz)</span><span class="dtag">6 MHz per TV channel</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-protected">Protected</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="698.0000" data-max="806.0000">
+          <td class="td-freq">698 – 806 MHz</td>
+          <td class="td-name">700 MHz / 4G LTE</td>
+          <td class="td-use">4G LTE cellular, FirstNet Band 14 for public safety broadband</td>
+          <td class="td-detail"><strong>700 MHz band</strong> — reclaimed from analog TV channels 52–69 after the 2009 digital transition. Auctioned in 2008 for billions. Excellent propagation: signals travel far and penetrate buildings well, earning the nickname "beach-front spectrum." <strong>Band 14 (758–768/788–798 MHz)</strong> is reserved exclusively for FirstNet — the nationwide LTE broadband network for first responders, operated by AT&amp;T under a 25-year government contract.
+            <span class="detail-sub"><span class="dtag">Band 12/13/17: AT&amp;T, Verizon</span><span class="dtag">Band 14: FirstNet (first responders)</span><span class="dtag">"Beach-front spectrum"</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="806.0000" data-max="960.0000">
+          <td class="td-freq">806 – 960 MHz</td>
+          <td class="td-name">Cellular / 900 MHz ISM</td>
+          <td class="td-use">Cellular (CDMA/LTE), public safety, 902–928 MHz ISM (RFID, LoRa, cordless phones)</td>
+          <td class="td-detail"><strong>800 MHz cellular</strong> (824–894 MHz) was the first US cellular telephone band, launched in 1983. Still widely used for LTE. The <strong>902–928 MHz ISM band</strong> is a 26 MHz unlicensed window used for LoRa/LoRaWAN IoT networks, RFID readers, cordless phones, and industrial sensors. Its relative freedom from Wi-Fi congestion makes it popular for long-range, low-power IoT deployments (LoRa can reach 10+ km with tiny batteries).
+            <span class="detail-sub"><span class="dtag">800 MHz: original cellular (1983)</span><span class="dtag">902–928 MHz: ISM/unlicensed</span><span class="dtag">LoRa IoT range: up to 15 km</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="taboo" data-min="960.0000" data-max="1215.0000">
+          <td class="td-freq">960 – 1215 MHz</td>
+          <td class="td-name">Aeronautical radionavigation</td>
+          <td class="td-use">DME, TACAN, ATCRBS transponders — aviation navigation and ATC radar. No non-aviation tx.</td>
+          <td class="td-detail"><strong>L-band aeronautical navigation</strong> — critical infrastructure for commercial and military aviation. <strong>DME</strong> (Distance Measuring Equipment) lets aircraft determine their exact slant range from a ground station. <strong>TACAN</strong> is the military equivalent combining distance and bearing. <strong>ATCRBS</strong> (Air Traffic Control Radar Beacon System) is the transponder system — Mode A/C/S replies are interrogated at 1030 MHz and respond at 1090 MHz (the same 1090 MHz used by ADS-B).
+            <span class="detail-sub"><span class="dtag">DME: slant-range nav</span><span class="dtag">1030 MHz: ATC interrogation</span><span class="dtag">1090 MHz: transponder reply / ADS-B</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
+        </tr>
+        <tr data-status="taboo" data-min="1226.6000" data-max="1576.4200">
+          <td class="td-freq">1227.6 / 1575.42 MHz</td>
+          <td class="td-name">GPS L2 / L1</td>
+          <td class="td-use">GPS satellite navigation signals — civilian and military positioning. Jamming is a federal crime.</td>
+          <td class="td-detail"><strong>GPS L1 (1575.42 MHz)</strong> carries the civilian C/A code used by every consumer GPS device. <strong>L2 (1227.6 MHz)</strong> carries a military P(Y) code and is also used by dual-frequency receivers for ionospheric error correction — enabling centimetre-level precision. GPS signals arrive at Earth at roughly −130 dBm (far weaker than a TV signal), making them trivially easy to jam or spoof. A cheap illegal jammer can disrupt GPS across several city blocks.
+            <span class="detail-sub"><span class="dtag">L1: civilian C/A code</span><span class="dtag">L2: military + dual-freq correction</span><span class="dtag">Signal power: −130 dBm at surface</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
+        </tr>
+        <tr data-status="taboo" data-min="1400.0000" data-max="1427.0000">
+          <td class="td-freq">1400 – 1427 MHz</td>
+          <td class="td-name">L-band radio astronomy</td>
+          <td class="td-use">Passive radio astronomy and remote sensing — zero active transmissions permitted by ITU/FCC</td>
+          <td class="td-detail"><strong>Hydrogen line passband</strong> — the 1420.405 MHz emission frequency of neutral hydrogen atoms is one of the most important in all of radio astronomy. Hydrogen is the most abundant element in the universe; mapping its Doppler-shifted emissions reveals galactic structure and the rotation curves that led astronomers to hypothesize dark matter. Even a single weak interfering signal from Earth can mask faint cosmic sources. SETI (Search for Extraterrestrial Intelligence) also monitors this band closely.
+            <span class="detail-sub"><span class="dtag">Hydrogen line: 1420.405 MHz</span><span class="dtag">Galactic structure mapping</span><span class="dtag">SETI observing band</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="1710.0000" data-max="2200.0000">
+          <td class="td-freq">1710 – 2200 MHz</td>
+          <td class="td-name">AWS / PCS / 3G/4G</td>
+          <td class="td-use">Cellular 3G/4G/LTE (AWS-1/3, PCS bands), federal radar secondary</td>
+          <td class="td-detail"><strong>AWS</strong> (Advanced Wireless Services) and <strong>PCS</strong> (Personal Communications Service) bands are the core mid-band cellular spectrum in the US. <strong>PCS (1850–1990 MHz)</strong> was the original 2G/3G band for GSM and CDMA. <strong>AWS-1 (1710–1755 / 2110–2155 MHz)</strong> was added for 3G/4G. These paired uplink/downlink allocations are why your phone transmits and receives on different frequencies simultaneously (FDD — Frequency Division Duplex).
+            <span class="detail-sub"><span class="dtag">PCS: 1850–1990 MHz</span><span class="dtag">AWS-1: Band 4</span><span class="dtag">FDD: separate uplink/downlink</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="unlicensed" data-min="2400.0000" data-max="2485.0000">
+          <td class="td-freq">2400 – 2485 MHz</td>
+          <td class="td-name">2.4 GHz ISM / Wi-Fi</td>
+          <td class="td-use">Wi-Fi 802.11b/g/n, Bluetooth, microwave ovens, ZigBee, baby monitors, cordless phones</td>
+          <td class="td-detail"><strong>2.4 GHz ISM band</strong> — the original ISM (Industrial, Scientific, Medical) unlicensed band. Massively congested in urban environments because nearly every wireless device defaults to it. Has only 3 non-overlapping Wi-Fi channels (1, 6, 11). Microwave ovens leak at 2.45 GHz (water's absorption frequency) and can disrupt nearby Wi-Fi. Bluetooth uses frequency-hopping across 79 channels to share the band. Despite congestion, 2.4 GHz has better range and wall penetration than 5 GHz.
+            <span class="detail-sub"><span class="dtag">3 non-overlapping channels</span><span class="dtag">Bluetooth: 79-channel hopping</span><span class="dtag">Microwave leakage at 2.45 GHz</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-unlicensed">Unlicensed</span></td>
+        </tr>
+        <tr data-status="guarded" data-min="2483.0000" data-max="2500.0000">
+          <td class="td-freq">2483 – 2500 MHz</td>
+          <td class="td-name">L-band MSS uplink</td>
+          <td class="td-use">Mobile satellite services (Globalstar, Iridium uplink), shared with ISM</td>
+          <td class="td-detail"><strong>Mobile Satellite Service (MSS) uplink</strong> — used by LEO satellite constellations like Globalstar for voice and data from handheld satellite phones. These systems use the band to transmit from Earth up to low-orbiting satellites. Because it overlaps with the ISM band edge, interference from unlicensed devices is a known issue. Globalstar operates a unique CDMA-based satellite phone system here; Iridium uses a different architecture with cross-links between satellites.
+            <span class="detail-sub"><span class="dtag">Globalstar LEO uplink</span><span class="dtag">Overlaps ISM band edge</span><span class="dtag">Satellite phone service</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
+        </tr>
+        <tr data-status="protected" data-min="2700.0000" data-max="2900.0000">
+          <td class="td-freq">2700 – 2900 MHz</td>
+          <td class="td-name">S-band weather radar</td>
+          <td class="td-use">FAA/NEXRAD weather radar, airport surveillance radar (ASR) — protected from interference</td>
+          <td class="td-detail"><strong>NEXRAD WSR-88D</strong> (Next-Generation Radar) is the backbone of US weather surveillance — 160 stations blanket the country. S-band radar (10 cm wavelength) can detect precipitation, measure wind speeds (Doppler), and track severe storms through heavy rain without significant signal attenuation. Airport Surveillance Radars (ASR) also operate here, sweeping 360° every 4–5 seconds to display aircraft positions to ATC controllers.
+            <span class="detail-sub"><span class="dtag">NEXRAD: 160 sites nationwide</span><span class="dtag">Doppler wind measurement</span><span class="dtag">10 cm wavelength: rain-resistant</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-protected">Protected</span></td>
+        </tr>
+
+        <tr class="section-hdr"><td colspan="5">SHF — Super High Frequency (microwave) · 3–6 GHz</td></tr>
+        <tr data-status="guarded" data-min="3100.0000" data-max="3500.0000">
+          <td class="td-freq">3.1 – 3.5 GHz</td>
+          <td class="td-name">S-band federal radar</td>
+          <td class="td-use">Federal government radar (Navy/Air Force), shipboard radar — commercial users secondary</td>
+          <td class="td-detail"><strong>S-band military and naval radar</strong> — used by US Navy ships and Air Force installations for air and sea surveillance. S-band (2–4 GHz) radar strikes a balance between range, resolution, and weather resistance. Shipboard radars use this for navigation and fire control. The commercial 5G/CBRS push to use adjacent spectrum has created tension with DoD, which operates classified radar systems here and has lobbied heavily against incumbent displacement.
+            <span class="detail-sub"><span class="dtag">Naval fire-control radar</span><span class="dtag">10 cm wavelength</span><span class="dtag">DoD incumbent — commercial must yield</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
+        </tr>
+        <tr data-status="guarded" data-min="3300.0000" data-max="3500.0000">
+          <td class="td-freq">3.3 – 3.5 GHz</td>
+          <td class="td-name">9 cm amateur band</td>
+          <td class="td-use">Amateur radio (secondary ITU Regions 1 &amp; 2), amateur satellite 3.4–3.41 GHz</td>
+          <td class="td-detail"><strong>9 centimetre amateur band</strong> — a microwave band used by technically advanced amateur operators for point-to-point links, weak-signal digital modes, and amateur satellite work. Equipment for this band is largely home-built or converted from surplus commercial gear. It is not available in the US (where federal radar holds primary rights across this range), but is used in Europe and parts of Asia. Propagation is essentially line-of-sight.
+            <span class="detail-sub"><span class="dtag">Not available in the US</span><span class="dtag">ITU Regions 1 &amp; 2 only</span><span class="dtag">Home-built / surplus equipment</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
+        </tr>
+        <tr data-status="guarded" data-min="3550.0000" data-max="3700.0000">
+          <td class="td-freq">3.55 – 3.7 GHz</td>
+          <td class="td-name">CBRS / 5G mid-band</td>
+          <td class="td-use">Citizens Broadband Radio Service — shared 5G, fixed wireless; federal radar is primary incumbent</td>
+          <td class="td-detail"><strong>CBRS</strong> (Citizens Broadband Radio Service) is a novel three-tier spectrum sharing system. Tier 1 = federal incumbents (Navy radar); Tier 2 = Priority Access Licenses (PAL) won at auction; Tier 3 = General Authorized Access (GAA), free to use when not occupied. An automated <strong>SAS</strong> (Spectrum Access System) manages real-time interference avoidance. Used for private 5G campus networks, fixed wireless broadband, and enterprise LTE.
+            <span class="detail-sub"><span class="dtag">Three-tier sharing model</span><span class="dtag">SAS automated coordination</span><span class="dtag">Private 5G / LTE campus nets</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
+        </tr>
+        <tr data-status="licensed" data-min="3700.0000" data-max="4200.0000">
+          <td class="td-freq">3.7 – 4.2 GHz</td>
+          <td class="td-name">C-band / 5G NR</td>
+          <td class="td-use">5G mid-band (primary post-2020), C-band satellite downlink, fixed microwave links</td>
+          <td class="td-detail"><strong>C-band</strong> — a crucial battleground in spectrum policy. Historically used for satellite TV downlinks (the big dish systems) and long-haul fixed microwave links. The FCC's 2020 C-band auction raised $81 billion — the largest in US history — reassigning 280 MHz to AT&amp;T and Verizon for 5G NR. Satellite operators were paid to repack into the upper portion. A dispute with the FAA over potential interference with radio altimeters (used in aircraft landing) temporarily delayed 5G deployment near major airports in 2022.
+            <span class="detail-sub"><span class="dtag">$81B FCC auction (2020)</span><span class="dtag">Verizon/AT&amp;T 5G NR</span><span class="dtag">Radio altimeter controversy</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-licensed">Licensed</span></td>
+        </tr>
+        <tr data-status="taboo" data-min="4940.0000" data-max="4990.0000">
+          <td class="td-freq">4.94 – 4.99 GHz</td>
+          <td class="td-name">Public safety broadband</td>
+          <td class="td-use">Dedicated to police, fire, and EMS private broadband networks only — no general commercial use</td>
+          <td class="td-detail"><strong>4.9 GHz public safety band</strong> — allocated exclusively for licensed public safety entities (police, fire, EMS, emergency management). Supports high-bandwidth applications: incident command video feeds, tactical communications, mobile command post networks, and temporary event coverage. Unlike FirstNet (which rides commercial infrastructure), 4.9 GHz supports fully independent local networks. Equipment is purpose-built and expensive; adoption has been slower than the FCC had hoped.
+            <span class="detail-sub"><span class="dtag">US public safety only</span><span class="dtag">Video surveillance backhaul</span><span class="dtag">Independent of commercial carriers</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
+        </tr>
+        <tr data-status="unlicensed" data-min="5150.0000" data-max="5350.0000">
+          <td class="td-freq">5.15 – 5.35 GHz</td>
+          <td class="td-name">U-NII-1 / Wi-Fi 5 GHz</td>
+          <td class="td-use">Wi-Fi 802.11a/n/ac (indoor low-power), U-NII-1 and U-NII-2A — indoor use only</td>
+          <td class="td-detail"><strong>U-NII</strong> (Unlicensed National Information Infrastructure) bands were created in 1997 specifically for wireless networking. <strong>U-NII-1 (5.15–5.25 GHz)</strong> is restricted to indoor use only and low power (200 mW max) to protect satellite downlinks. <strong>U-NII-2A (5.25–5.35 GHz)</strong> requires DFS (Dynamic Frequency Selection) — devices must scan for radar before transmitting and vacate within 10 seconds if radar is detected. These four 20 MHz non-overlapping channels are less congested than 2.4 GHz.
+            <span class="detail-sub"><span class="dtag">U-NII-1: indoor only</span><span class="dtag">U-NII-2A: DFS radar check required</span><span class="dtag">Wi-Fi ch. 36, 40, 44, 48</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-unlicensed">Unlicensed</span></td>
+        </tr>
+        <tr data-status="protected" data-min="5350.0000" data-max="5470.0000">
+          <td class="td-freq">5.35 – 5.47 GHz</td>
+          <td class="td-name">Federal radar (DFS zone)</td>
+          <td class="td-use">Federal radar protected — Wi-Fi devices must use DFS to detect and avoid; active radar takes priority</td>
+          <td class="td-detail"><strong>DFS exclusion zone</strong> — federal weather and military radars have primary rights here. Wi-Fi devices certified for this sub-band must implement DFS: listen for 60 seconds before transmitting on a channel, and clear the channel within 10 seconds if radar pulses are detected. This prevents Wi-Fi from jamming radar that the public never directly sees but depends on for weather forecasting and air defense. Many consumer routers skip these channels by default to avoid the DFS delay.
+            <span class="detail-sub"><span class="dtag">60-second pre-transmission scan</span><span class="dtag">10-second vacate on radar detect</span><span class="dtag">Many routers skip by default</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-protected">Protected</span></td>
+        </tr>
+        <tr data-status="unlicensed" data-min="5470.0000" data-max="5850.0000">
+          <td class="td-freq">5.47 – 5.85 GHz</td>
+          <td class="td-name">U-NII-2C / Wi-Fi</td>
+          <td class="td-use">Wi-Fi 802.11a/n/ac with DFS (radar avoidance required), outdoor allowed at higher power</td>
+          <td class="td-detail"><strong>U-NII-2C</strong> (also called U-NII-2 Extended) — the widest single U-NII sub-band at 380 MHz. DFS is still required (shared with weather radar), but outdoor use and higher power (up to 1 W EIRP) are permitted, making this useful for point-to-point building links and outdoor hotspots. Wi-Fi channels 100–144 live here and offer the widest 80/160 MHz channel bonding options used by 802.11ac/ax for maximum throughput.
+            <span class="detail-sub"><span class="dtag">DFS required</span><span class="dtag">Outdoor use OK (up to 1 W)</span><span class="dtag">Wi-Fi ch. 100–144</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-unlicensed">Unlicensed</span></td>
+        </tr>
+        <tr data-status="guarded" data-min="5850.0000" data-max="5925.0000">
+          <td class="td-freq">5.85 – 5.925 GHz</td>
+          <td class="td-name">U-NII-4 / V2X</td>
+          <td class="td-use">Vehicle-to-everything (V2X) communications, intelligent transportation (formerly DSRC 5.9 GHz)</td>
+          <td class="td-detail"><strong>5.9 GHz V2X band</strong> — originally reserved entirely for DSRC (Dedicated Short-Range Communications), a 802.11p-based system for car-to-car and car-to-infrastructure safety messaging (intersection warnings, emergency vehicle preemption). The FCC's 2020 order split the band: the lower 45 MHz was repurposed to Wi-Fi (U-NII-4), while the upper 30 MHz (5.895–5.925 GHz) is kept for V2X — now supporting both the legacy DSRC and the newer C-V2X (cellular-based) standard backed by automakers.
+            <span class="detail-sub"><span class="dtag">5.895–5.925 GHz: V2X only</span><span class="dtag">C-V2X vs DSRC debate ongoing</span><span class="dtag">Lower 45 MHz: now Wi-Fi</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
+        </tr>
+        <tr data-status="unlicensed" data-min="5925.0000" data-max="6000.0000">
+          <td class="td-freq">5.925 – 6.0 GHz</td>
+          <td class="td-name">Wi-Fi 6E / lower 6 GHz</td>
+          <td class="td-use">Wi-Fi 6E unlicensed (FCC 2020 ruling), fixed microwave links share on primary licensed basis</td>
+          <td class="td-detail"><strong>Wi-Fi 6E</strong> — the "E" stands for Extended, referring to the extension of Wi-Fi 6 (802.11ax) into the 6 GHz band. The FCC's 2020 decision opened 1.2 GHz of spectrum (5.925–7.125 GHz) for unlicensed use — the largest single unlicensed allocation in history. This lower slice (5.925–6.0 GHz) is shared with incumbent licensed fixed microwave links that have primary rights. Wi-Fi 6E offers up to 7 non-overlapping 160 MHz channels and dramatically less congestion than 2.4/5 GHz bands.
+            <span class="detail-sub"><span class="dtag">802.11ax (Wi-Fi 6E)</span><span class="dtag">1.2 GHz total opened (FCC 2020)</span><span class="dtag">Shares with fixed microwave (primary)</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-unlicensed">Unlicensed</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <div class="no-results" id="noResults">No bands match your search or filter.</div>
+</main>
+
+<footer>
+  <p>Sources: FCC 47 CFR Part 2 · NTIA US Frequency Allocation Chart · ITU Radio Regulations · Status reflects US allocations — international usage may differ.</p>
+  <p style="margin-top:4px;">Generated for reference only. Always verify with current FCC/NTIA publications before transmitting.</p>
+</footer>
+
+<script>
+  // ── Theme toggle ─────────────────────────────────────────────────────────
+  const html = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const label = document.getElementById('toggleLabel');
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    label.textContent = theme === 'dark' ? 'LIGHT' : 'DARK';
+    try { localStorage.setItem('rf-theme', theme); } catch(e) {}
+  }
+
+  toggle.addEventListener('click', () => {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+  toggle.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+  });
+
+  // Restore saved preference
+  try {
+    const saved = localStorage.getItem('rf-theme');
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  // ── Spectrum bar ─────────────────────────────────────────────────────────
+  const MIN_LOG = Math.log10(3), MAX_LOG = Math.log10(6000);
+  function pct(mhz) { return ((Math.log10(mhz) - MIN_LOG) / (MAX_LOG - MIN_LOG) * 100).toFixed(3); }
+  function w(a, b)  { return ((Math.log10(b) - Math.log10(a)) / (MAX_LOG - MIN_LOG) * 100).toFixed(3); }
+
+  const segs = [
+    { a:3,    b:30,   color:'#e3b341', label:'HF 3–30 MHz' },
+    { a:30,   b:300,  color:'#58a6ff', label:'VHF 30–300 MHz' },
+    { a:300,  b:3000, color:'#bc8cff', label:'UHF 300–3000 MHz' },
+    { a:3000, b:6000, color:'#3fb950', label:'SHF 3–6 GHz' },
+  ];
+  const tabooSegs = [
+    { a:108,  b:136,   label:'Aviation nav/comm' },
+    { a:406,  b:406.1, label:'EPIRB distress' },
+    { a:960,  b:1215,  label:'Aero radionavigation' },
+    { a:1227, b:1240,  label:'GPS L2' },
+    { a:1575, b:1578,  label:'GPS L1' },
+    { a:1400, b:1427,  label:'L-band RAS' },
+    { a:4940, b:4990,  label:'Public safety BB' },
+  ];
+
+  const bar = document.getElementById('specBar');
+  segs.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 's-seg';
+    el.title = s.label;
+    el.style.cssText = `left:${pct(s.a)}%;width:${w(s.a,s.b)}%;background:${s.color};opacity:0.55;`;
+    el.textContent = s.label;
+    bar.appendChild(el);
+  });
+  tabooSegs.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'taboo-bar';
+    el.title = '⚠ Taboo: ' + s.label;
+    el.style.cssText = `left:${pct(s.a)}%;width:max(${w(s.a,s.b)}%, 3px);background:rgba(248,81,73,0.65);`;
+    bar.appendChild(el);
+  });
+
+  // ── Filter, Toggle Switches, Range Slider & Search ──────────────────────────
+  const rows = Array.from(document.querySelectorAll('#tableBody tr[data-status]'));
+  const sectionRows = Array.from(document.querySelectorAll('#tableBody tr.section-hdr'));
+  let activeStatuses = new Set(['taboo','protected','guarded','licensed','unlicensed']);
+  let searchTerm = '';
+
+  // Log-scale mapping: slider 0–1000 maps to 3 MHz – 6000 MHz logarithmically
+  const SPEC_MIN = 3, SPEC_MAX = 6000;
+  const LOG_MIN = Math.log10(SPEC_MIN), LOG_MAX = Math.log10(SPEC_MAX);
+  function sliderToMHz(v) {
+    const t = v / 1000;
+    return Math.pow(10, LOG_MIN + t * (LOG_MAX - LOG_MIN));
+  }
+  function mhzToSlider(mhz) {
+    const t = (Math.log10(mhz) - LOG_MIN) / (LOG_MAX - LOG_MIN);
+    return t * 1000;
+  }
+  function fmtFreq(mhz) {
+    if (mhz >= 1000) return (mhz / 1000).toFixed(mhz % 1000 === 0 ? 0 : 2) + ' GHz';
+    return mhz >= 10 ? Math.round(mhz) + ' MHz' : mhz.toFixed(1) + ' MHz';
+  }
+
+  let rangeMinMHz = SPEC_MIN, rangeMaxMHz = SPEC_MAX;
+
+  const rangeMinEl = document.getElementById('rangeMin');
+  const rangeMaxEl = document.getElementById('rangeMax');
+  const rangeFill = document.getElementById('rangeTrackFill');
+  const rangeReadout = document.getElementById('rangeReadout');
+
+  function updateRangeUI() {
+    const minPct = (parseFloat(rangeMinEl.value) / 1000) * 100;
+    const maxPct = (parseFloat(rangeMaxEl.value) / 1000) * 100;
+    rangeFill.style.left = minPct + '%';
+    rangeFill.style.width = Math.max(0, maxPct - minPct) + '%';
+    rangeReadout.textContent = `${fmtFreq(rangeMinMHz)} – ${fmtFreq(rangeMaxMHz)}`;
+  }
+
+  function onRangeInput() {
+    let minV = parseFloat(rangeMinEl.value);
+    let maxV = parseFloat(rangeMaxEl.value);
+    if (minV > maxV) {
+      // keep handles from crossing — swap the one being dragged
+      if (document.activeElement === rangeMinEl) { maxV = minV; rangeMaxEl.value = maxV; }
+      else { minV = maxV; rangeMinEl.value = minV; }
+    }
+    rangeMinMHz = sliderToMHz(minV);
+    rangeMaxMHz = sliderToMHz(maxV);
+    updateRangeUI();
+    applyFilters();
+  }
+
+  rangeMinEl.addEventListener('input', onRangeInput);
+  rangeMaxEl.addEventListener('input', onRangeInput);
+
+  document.getElementById('rangeResetBtn').addEventListener('click', () => {
+    rangeMinEl.value = 0;
+    rangeMaxEl.value = 1000;
+    rangeMinMHz = SPEC_MIN;
+    rangeMaxMHz = SPEC_MAX;
+    updateRangeUI();
+    applyFilters();
+  });
+
+  updateRangeUI();
+
+  // ── Status toggle switches ──
+  const toggles = Array.from(document.querySelectorAll('.status-toggle'));
+  toggles.forEach(t => {
+    t.addEventListener('click', e => {
+      e.preventDefault();
+      const status = t.dataset.status;
+      if (activeStatuses.has(status)) {
+        activeStatuses.delete(status);
+        t.classList.remove('on');
+      } else {
+        activeStatuses.add(status);
+        t.classList.add('on');
+      }
+      updateToggleAllLabel();
+      applyFilters();
+    });
+  });
+
+  const toggleAllBtn = document.getElementById('toggleAllBtn');
+  function updateToggleAllLabel() {
+    toggleAllBtn.textContent = activeStatuses.size === 0 ? 'All on' : 'All off';
+  }
+  toggleAllBtn.addEventListener('click', () => {
+    if (activeStatuses.size === 0) {
+      toggles.forEach(t => { t.classList.add('on'); activeStatuses.add(t.dataset.status); });
+    } else {
+      toggles.forEach(t => t.classList.remove('on'));
+      activeStatuses.clear();
+    }
+    updateToggleAllLabel();
+    applyFilters();
+  });
+
+  function applyFilters() {
+    rows.forEach(r => {
+      const statusMatch = activeStatuses.has(r.dataset.status);
+      const searchMatch = !searchTerm || r.textContent.toLowerCase().includes(searchTerm);
+      const rMin = parseFloat(r.dataset.min), rMax = parseFloat(r.dataset.max);
+      const rangeMatch = !(isNaN(rMin) || isNaN(rMax)) ? (rMax >= rangeMinMHz && rMin <= rangeMaxMHz) : true;
+      r.classList.toggle('hidden', !(statusMatch && searchMatch && rangeMatch));
+    });
+    sectionRows.forEach(hdr => {
+      let next = hdr.nextElementSibling;
+      let anyVisible = false;
+      while (next && !next.classList.contains('section-hdr')) {
+        if (!next.classList.contains('hidden')) anyVisible = true;
+        next = next.nextElementSibling;
+      }
+      hdr.classList.toggle('hidden', !anyVisible);
+    });
+    document.getElementById('noResults').style.display =
+      rows.filter(r => !r.classList.contains('hidden')).length === 0 ? 'block' : 'none';
+  }
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+</script>
+
+</body>
+</html>

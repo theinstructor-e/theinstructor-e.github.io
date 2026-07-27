@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subnetting — Explained Simply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0f4ff;
+    --surface: #ffffff;
+    --surface2: #f7f9ff;
+    --border: #dde4f5;
+    --text: #1a1d2e;
+    --muted: #6b7280;
+    --blue: #3b6ef5;
+    --blue-light: #e8eefe;
+    --blue-dark: #1a3db5;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --green-dark: #14532d;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --amber-dark: #78350f;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --red-dark: #7f1d1d;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --purple-dark: #3b0764;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --teal-dark: #134e4a;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(59,110,245,0.08);
+    --shadow-md: 0 4px 24px rgba(59,110,245,0.13);
+  }
+
+  body.dark {
+    --bg: #0f1117;
+    --surface: #1a1d2e;
+    --surface2: #22263a;
+    --border: #2e3350;
+    --text: #e8eaf6;
+    --muted: #8b91b0;
+    --blue: #5b8af8;
+    --blue-light: #1c2554;
+    --blue-dark: #a5bcfc;
+    --green: #22c55e;
+    --green-light: #0d2d1a;
+    --green-dark: #86efac;
+    --amber: #f59e0b;
+    --amber-light: #2d1f07;
+    --amber-dark: #fcd34d;
+    --red: #f87171;
+    --red-light: #2d1010;
+    --red-dark: #fca5a5;
+    --purple: #a78bfa;
+    --purple-light: #1e1040;
+    --purple-dark: #c4b5fd;
+    --teal: #2dd4bf;
+    --teal-light: #0c2825;
+    --teal-dark: #5eead4;
+    --shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --shadow-md: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  /* Theme toggle button */
+  .theme-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.18s;
+    z-index: 10;
+  }
+  .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a3db5 0%, #3b6ef5 60%, #7c3aed 100%);
+    color: white;
+    padding: 3rem 1.5rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+  .hero p {
+    font-size: 1.1rem;
+    opacity: 0.85;
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  /* Nav */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 1rem;
+    box-shadow: var(--shadow);
+  }
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+    padding: 10px 0;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    white-space: nowrap;
+    padding: 7px 16px;
+    border-radius: 100px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { background: var(--blue-light); color: var(--blue-dark); }
+  .nav-btn.active {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+  .related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:var(--surface2);
+    border-bottom:1px solid var(--border);font-family:'Nunito',sans-serif;font-size:12.5px}
+  .related-label{color:var(--muted);font-weight:700;letter-spacing:.02em;white-space:nowrap}
+  .related-bar a{color:var(--blue-dark);text-decoration:none;border:1.5px solid var(--border);padding:4px 12px;
+    border-radius:100px;font-weight:700;transition:.18s;white-space:nowrap;background:var(--surface)}
+  .related-bar a:hover{border-color:var(--blue);background:var(--blue-light)}
+
+  /* Layout */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .emoji { font-size: 1.3rem; }
+
+  /* Analogy box */
+  .analogy {
+    background: var(--blue-light);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 15px;
+  }
+  .analogy-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--blue);
+    margin-bottom: 0.35rem;
+  }
+
+  /* Colored pills */
+  .pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .pill-blue { background: var(--blue-light); color: var(--blue-dark); }
+  .pill-green { background: var(--green-light); color: var(--green-dark); }
+  .pill-amber { background: var(--amber-light); color: var(--amber-dark); }
+  .pill-red { background: var(--red-light); color: var(--red-dark); }
+  .pill-purple { background: var(--purple-light); color: var(--purple-dark); }
+  .pill-teal { background: var(--teal-light); color: var(--teal-dark); }
+
+  /* IP address display */
+  .ip-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin: 0.75rem 0;
+  }
+  .ip-oct {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+  }
+  .ip-oct.net { background: var(--blue-light); color: var(--blue-dark); border-color: #93c5fd; }
+  .ip-oct.host { background: var(--green-light); color: var(--green-dark); border-color: #86efac; }
+  .ip-oct.mask { background: var(--amber-light); color: var(--amber-dark); border-color: #fcd34d; }
+  .ip-dot { font-size: 1.5rem; font-weight: 900; color: var(--muted); }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Neighborhood */
+  .neighborhood-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 1rem;
+  }
+  .house {
+    border-radius: var(--radius-sm);
+    padding: 12px 8px 10px;
+    text-align: center;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    transition: transform 0.15s;
+    cursor: default;
+  }
+  .house:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .house .h-icon { font-size: 26px; margin-bottom: 4px; }
+  .house .h-name { font-size: 12px; font-weight: 700; }
+  .house .h-addr { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'Space Mono', monospace; }
+  .house.h-network { background: var(--blue-light); border-color: #93c5fd; }
+  .house.h-network .h-name { color: var(--blue-dark); }
+  .house.h-broadcast { background: var(--amber-light); border-color: #fcd34d; }
+  .house.h-broadcast .h-name { color: var(--amber-dark); }
+
+  /* CIDR bar */
+  .cidr-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+  .cidr-item:last-child { border-bottom: none; }
+  .cidr-label { font-family: 'Space Mono', monospace; font-weight: 700; min-width: 44px; color: var(--blue-dark); }
+  .cidr-bar { flex: 1; height: 14px; border-radius: 7px; background: var(--bg); overflow: hidden; min-width: 100px; border: 1px solid var(--border); }
+  .cidr-fill { height: 100%; display: flex; }
+  .cidr-net-fill { background: var(--blue); }
+  .cidr-host-fill { background: var(--green); }
+  .cidr-hosts { font-size: 13px; color: var(--muted); min-width: 90px; text-align: right; }
+
+  /* Device table */
+  .device-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .device-table th { text-align: left; padding: 10px 12px; background: var(--surface2); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .device-table td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .device-table tr:last-child td { border-bottom: none; }
+  .device-table tr:hover td { background: var(--surface2); }
+
+  /* Info boxes */
+  .info-box {
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .info-box.blue { background: var(--blue-light); border: 1px solid #93c5fd; color: var(--blue-dark); }
+  .info-box.green { background: var(--green-light); border: 1px solid #86efac; color: var(--green-dark); }
+  .info-box.amber { background: var(--amber-light); border: 1px solid #fcd34d; color: var(--amber-dark); }
+  .info-box.red { background: var(--red-light); border: 1px solid #fca5a5; color: var(--red-dark); }
+  .info-box.purple { background: var(--purple-light); border: 1px solid #c4b5fd; color: var(--purple-dark); }
+  .info-box.teal { background: var(--teal-light); border: 1px solid #5eead4; color: var(--teal-dark); }
+  .info-box-title { font-weight: 800; margin-bottom: 0.35rem; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 12px; margin-top: 0.75rem; }
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-body { font-size: 14px; line-height: 1.65; }
+  .step-body strong { color: var(--blue-dark); }
+
+  /* Binary bits */
+  .bits {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    margin: 0.5rem 0;
+  }
+  .bit {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-weight: 700;
+    border: 1.5px solid transparent;
+  }
+  .bit.one { background: var(--blue-light); color: var(--blue-dark); border-color: #93c5fd; }
+  .bit.zero { background: var(--green-light); color: var(--green-dark); border-color: #86efac; }
+  .bit-sep { width: 4px; display: flex; align-items: center; color: var(--muted); font-size: 10px; }
+
+  /* Quiz */
+  .quiz-q { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.5; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 11px 16px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); }
+  .quiz-opt.correct { background: var(--green-light); border-color: #86efac; color: var(--green-dark); }
+  .quiz-opt.wrong { background: var(--red-light); border-color: #fca5a5; color: var(--red-dark); }
+  .quiz-feedback {
+    margin-top: 0.75rem;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.good { background: var(--green-light); color: var(--green-dark); border: 1px solid #86efac; }
+  .quiz-feedback.bad { background: var(--red-light); color: var(--red-dark); border: 1px solid #fca5a5; }
+  .btn {
+    display: inline-block;
+    padding: 9px 22px;
+    border-radius: 100px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 0.75rem;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-ghost { background: var(--surface); color: var(--blue); border: 1.5px solid var(--blue); }
+  .btn-ghost:hover { background: var(--blue-light); }
+  .quiz-progress { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 0.75rem; }
+  .quiz-done { text-align: center; padding: 2rem 1rem; }
+  .quiz-score-big { font-size: 3rem; font-weight: 900; color: var(--blue); }
+
+  /* Section header */
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+  .section-header h2 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+  }
+  .section-header p {
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Subnet calculator */
+  .calc-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .calc-input label { font-size: 14px; font-weight: 700; }
+  .calc-input input, .calc-input select {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .calc-input input:focus, .calc-input select:focus { outline: none; border-color: var(--blue); }
+  .calc-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 0.75rem; }
+  .calc-result-card {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    border: 1px solid var(--border);
+  }
+  .calc-result-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+  .calc-result-val { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--blue-dark); word-break: break-all; }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin: 0.75rem 0;
+  }
+  .flow-node {
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 90px;
+  }
+  .flow-arrow {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: var(--blue);
+    padding: 0 4px;
+  }
+  .flow-node.blue { background: var(--blue-light); border-color: #93c5fd; color: var(--blue-dark); }
+  .flow-node.green { background: var(--green-light); border-color: #86efac; color: var(--green-dark); }
+  .flow-node.amber { background: var(--amber-light); border-color: #fcd34d; color: var(--amber-dark); }
+  .flow-node.purple { background: var(--purple-light); border-color: #c4b5fd; color: var(--purple-dark); }
+
+  code {
+    font-family: 'Space Mono', monospace;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.9em;
+    color: var(--blue-dark);
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  @media (max-width: 480px) {
+    .ip-oct { font-size: 1rem; padding: 6px 10px; }
+    .hero h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark mode</button>
+  <div class="hero-badge">🌐 Networking for Everyone</div>
+  <h1>SUBNETTING</h1>
+  <p>From IP addresses to subnet masks — all broken down so simply, even a kid gets it.</p>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showSection('basics')">🏘️ Basics</button>
+    <button class="nav-btn" onclick="showSection('ip')">📬 IP Addresses</button>
+    <button class="nav-btn" onclick="showSection('mask')">🎭 Subnet Mask</button>
+    <button class="nav-btn" onclick="showSection('cidr')">📏 CIDR</button>
+    <button class="nav-btn" onclick="showSection('devices')">💻 Devices</button>
+    <button class="nav-btn" onclick="showSection('joining')">🔌 Joining a Network</button>
+    <button class="nav-btn" onclick="showSection('calculator')">🧮 Calculator</button>
+    <button class="nav-btn" onclick="showSection('quiz')">🧠 Quiz</button>
+  </div>
+</nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../networkguide/">📘 Networking Explained (guide)</a>
+  <a href="../network/">🖧 Network Interactive</a>
+  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../nettrace/">🔍 Traffic Analyzer</a>
+</div>
+
+<main>
+
+  <!-- ===== BASICS ===== -->
+  <div class="section active" id="sec-basics">
+    <div class="section-header">
+      <h2>What is a subnet?</h2>
+      <p>Let's start with the big picture — and a really familiar analogy.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏙️</span> The internet is like a giant city</div>
+      <div class="analogy">
+        <div class="analogy-label">🏡 Think of it this way</div>
+        Imagine a city with millions of houses. Every house has a unique address so mail can find it. The internet works exactly the same — every computer, phone, and smart device needs a unique address (called an <strong>IP address</strong>) so information can find the right machine.
+      </div>
+      <p style="font-size:15px">But cities have a problem: if every street-level decision had to go through city hall, it would be chaos. So cities are broken into <strong>neighborhoods</strong>. Networking does the same thing with <strong>subnets</strong> — subnetworks.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🔍</span> What exactly is a subnet?</div>
+      <p style="font-size:15px; margin-bottom: 0.75rem">A <strong>subnet</strong> (short for <em>subnetwork</em>) is a logical group of devices that share the same portion of an IP address. Devices on the same subnet can communicate with each other directly and quickly — no detours through a router.</p>
+      <div class="grid-2">
+        <div class="info-box blue">
+          <div class="info-box-title">🚀 Without subnets</div>
+          Every message would be like shouting in a stadium — everyone hears everything. With billions of devices, this would grind the internet to a halt.
+        </div>
+        <div class="info-box green">
+          <div class="info-box-title">✅ With subnets</div>
+          Devices talk directly within their group. Only messages meant for the outside world leave the subnet — like only going to the post office for out-of-town mail.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏘️</span> Why subnets matter</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body"><strong>Speed:</strong> Devices on the same subnet communicate directly through a switch — no router needed. This is much faster, like talking to your neighbor vs. sending a letter through the post office.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body"><strong>Security:</strong> Subnets act like walls. Your home network can be separated from your work devices. A hospital might keep patient records on a separate subnet from the guest Wi-Fi.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body"><strong>Organization:</strong> Just like sorting mail by ZIP code makes delivery faster, subnets group devices so network traffic is predictable and manageable.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body"><strong>Efficiency:</strong> Broadcast messages (sent to all devices at once) only travel within a subnet — not across the whole network. This prevents traffic jams.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🗺️</span> A sample subnet (your home network)</div>
+      <p style="font-size:14px; color: var(--muted); margin-bottom: 0.25rem">This subnet has room for 6 devices. Two special addresses are reserved.</p>
+      <div class="neighborhood-grid">
+        <div class="house h-network">
+          <div class="h-icon">🚪</div>
+          <div class="h-name">Network</div>
+          <div class="h-addr">.0</div>
+        </div>
+        <div class="house">
+          <div class="h-icon">🖥️</div>
+          <div class="h-name">Desktop</div>
+          <div class="h-addr">.1</div>
+        </div>
+        <div class="house">
+          <div class="h-icon">📱</div>
+          <div class="h-name">Phone</div>
+          <div class="h-addr">.2</div>
+        </div>
+        <div class="house">
+          <div class="h-icon">🖨️</div>
+          <div class="h-name">Printer</div>
+          <div class="h-addr">.3</div>
+        </div>
+        <div class="house">
+          <div class="h-icon">📺</div>
+          <div class="h-name">Smart TV</div>
+          <div class="h-addr">.4</div>
+        </div>
+        <div class="house">
+          <div class="h-icon">🎮</div>
+          <div class="h-name">Console</div>
+          <div class="h-addr">.5</div>
+        </div>
+        <div class="house">
+          <div class="h-icon">💡</div>
+          <div class="h-name">Smart Bulb</div>
+          <div class="h-addr">.6</div>
+        </div>
+        <div class="house h-broadcast">
+          <div class="h-icon">📢</div>
+          <div class="h-name">Broadcast</div>
+          <div class="h-addr">.7</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3b6ef5"></div> Network address — names the subnet</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div> Broadcast — sends to everyone at once</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== IP ADDRESSES ===== -->
+  <div class="section" id="sec-ip">
+    <div class="section-header">
+      <h2>IP addresses</h2>
+      <p>Every device gets a unique address — here's how to read one.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">📬</span> What is an IP address?</div>
+      <div class="analogy">
+        <div class="analogy-label">🏠 Real life</div>
+        An IP address is like a home address: <strong>123 Oak Street, Springfield, 62701</strong>. It uniquely identifies where something lives so messages can be routed there correctly.
+      </div>
+      <p style="font-size:15px">IP stands for <strong>Internet Protocol</strong>. An IPv4 address is four numbers (called <em>octets</em>) separated by dots. Each number ranges from 0 to 255.</p>
+      <div class="ip-row" style="margin-top:1rem">
+        <div class="ip-oct net">192</div><div class="ip-dot">.</div>
+        <div class="ip-oct net">168</div><div class="ip-dot">.</div>
+        <div class="ip-oct host">1</div><div class="ip-dot">.</div>
+        <div class="ip-oct host">50</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3b6ef5"></div> Network part (the street)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Host part (the house number)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🔢</span> Why 0–255?</div>
+      <p style="font-size:15px; margin-bottom:0.75rem">Each octet is stored as 8 <strong>bits</strong> (a bit is either a 0 or a 1). 8 bits can represent 256 different values — from 0 to 255.</p>
+      <p style="font-size:14px; color:var(--muted); margin-bottom:0.5rem">For example, <code>192</code> in binary looks like this:</p>
+      <div class="bits">
+        <div class="bit one">1</div>
+        <div class="bit one">1</div>
+        <div class="bit zero">0</div>
+        <div class="bit zero">0</div>
+        <div class="bit zero">0</div>
+        <div class="bit zero">0</div>
+        <div class="bit zero">0</div>
+        <div class="bit zero">0</div>
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin-top:0.5rem">All four octets together = 32 bits = about 4.3 billion unique addresses.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏷️</span> Special addresses inside a subnet</div>
+      <div class="grid-2">
+        <div class="info-box blue">
+          <div class="info-box-title">🚪 Network address (first)</div>
+          The very first address in a subnet. It identifies the subnet itself — not a device. It's like the street sign at the entrance of a road. You can't "live" at the street sign.
+        </div>
+        <div class="info-box amber">
+          <div class="info-box-title">📢 Broadcast address (last)</div>
+          The very last address. Any message sent here is delivered to <em>every single device</em> on the subnet. Like a loudspeaker announcement for the whole neighborhood.
+        </div>
+      </div>
+      <div class="info-box green" style="margin-top:0.75rem">
+        <div class="info-box-title">💻 Usable host addresses (everything in between)</div>
+        All addresses between the network address and broadcast address can be assigned to real devices — computers, phones, printers, cameras, smart bulbs, and more.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🌍</span> IPv4 vs IPv6</div>
+      <p style="font-size:15px; margin-bottom:0.75rem">We're running out of IPv4 addresses! With billions of devices, 4.3 billion isn't enough. IPv6 was invented to solve this.</p>
+      <div class="grid-2">
+        <div class="info-box blue">
+          <div class="info-box-title">IPv4 — the classic</div>
+          <code>192.168.1.50</code><br><br>
+          32 bits, ~4.3 billion addresses. Used everywhere but nearly exhausted.
+        </div>
+        <div class="info-box purple">
+          <div class="info-box-title">IPv6 — the future</div>
+          <code>2001:db8::1</code><br><br>
+          128 bits. Enough addresses for every grain of sand on every beach on Earth — many times over.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SUBNET MASK ===== -->
+  <div class="section" id="sec-mask">
+    <div class="section-header">
+      <h2>The subnet mask</h2>
+      <p>How your computer knows which part of an IP is the "street" and which is the "house number."</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🎭</span> What is a subnet mask?</div>
+      <div class="analogy">
+        <div class="analogy-label">🔦 Think of it like a highlighter</div>
+        Imagine an address written on paper. A subnet mask is like using a blue highlighter on the "street" part and a green highlighter on the "house number" part. Without the highlights, you'd have to guess where one ends and the other begins.
+      </div>
+      <p style="font-size:15px">A subnet mask is always 32 bits, just like an IP address. It uses <code>255</code> (all ones in binary) to mark the network part, and <code>0</code> (all zeros) to mark the host part.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🧪</span> Seeing it side by side</div>
+      <p style="font-size:14px; color:var(--muted); margin-bottom:4px">IP address:</p>
+      <div class="ip-row">
+        <div class="ip-oct net">192</div><div class="ip-dot">.</div>
+        <div class="ip-oct net">168</div><div class="ip-dot">.</div>
+        <div class="ip-oct net">1</div><div class="ip-dot">.</div>
+        <div class="ip-oct host">50</div>
+      </div>
+      <p style="font-size:14px; color:var(--muted); margin:0.5rem 0 4px">Subnet mask:</p>
+      <div class="ip-row">
+        <div class="ip-oct mask">255</div><div class="ip-dot">.</div>
+        <div class="ip-oct mask">255</div><div class="ip-dot">.</div>
+        <div class="ip-oct mask">255</div><div class="ip-dot">.</div>
+        <div class="ip-oct host">0</div>
+      </div>
+      <div class="legend" style="margin-top:0.5rem">
+        <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div>255 = network part — fixed, like a street name</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>0 = host part — flexible, like a house number</div>
+      </div>
+      <div class="info-box teal" style="margin-top:1rem">
+        So with this mask, <strong>192.168.1</strong> is the neighborhood name — any device with <code>192.168.1.X</code> is on the same subnet. The <strong>.50</strong> is the individual house number.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">⚙️</span> How it works — the AND operation</div>
+      <p style="font-size:15px; margin-bottom:0.75rem">To find out what subnet an IP belongs to, your computer does a bitwise AND between the IP and the mask. It's simpler than it sounds:</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">1</div>
+          <div class="step-body"><strong>For every "1" bit in the mask</strong> → keep the matching IP bit. This is the network part.</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--green)">0</div>
+          <div class="step-body"><strong>For every "0" bit in the mask</strong> → force that IP bit to 0. This is the host part.</div>
+        </div>
+      </div>
+      <div class="info-box blue" style="margin-top:0.75rem">
+        <div class="info-box-title">Result</div>
+        The result is the <strong>network address</strong> — the "street name" that all devices on the same subnet share.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">📐</span> Common subnet masks</div>
+      <table class="device-table">
+        <thead>
+          <tr>
+            <th>Mask</th>
+            <th>Hosts per subnet</th>
+            <th>Good for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>255.255.255.0</code></td>
+            <td><span class="pill pill-green">254</span></td>
+            <td>Home networks, small offices</td>
+          </tr>
+          <tr>
+            <td><code>255.255.255.128</code></td>
+            <td><span class="pill pill-blue">126</span></td>
+            <td>Splitting a network in half</td>
+          </tr>
+          <tr>
+            <td><code>255.255.255.192</code></td>
+            <td><span class="pill pill-purple">62</span></td>
+            <td>Small departments</td>
+          </tr>
+          <tr>
+            <td><code>255.255.255.240</code></td>
+            <td><span class="pill pill-amber">14</span></td>
+            <td>Very small groups</td>
+          </tr>
+          <tr>
+            <td><code>255.255.255.252</code></td>
+            <td><span class="pill pill-red">2</span></td>
+            <td>Point-to-point router links</td>
+          </tr>
+          <tr>
+            <td><code>255.255.0.0</code></td>
+            <td><span class="pill pill-teal">65,534</span></td>
+            <td>Large enterprise networks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== CIDR ===== -->
+  <div class="section" id="sec-cidr">
+    <div class="section-header">
+      <h2>CIDR notation</h2>
+      <p>A shorthand way to write subnet information — much faster than the full mask.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">📏</span> What is CIDR?</div>
+      <div class="analogy">
+        <div class="analogy-label">✏️ A shortcut</div>
+        Writing "255.255.255.0" every time is tedious. CIDR (Classless Inter-Domain Routing — say it "cider" 🍺) lets you write <code>/24</code> instead. The number after the slash tells you how many bits are "locked" for the network part.
+      </div>
+      <p style="font-size:15px">An IP with CIDR looks like: <code>192.168.1.0<strong>/24</strong></code></p>
+      <p style="font-size:14px; color:var(--muted); margin-top:0.4rem">The <strong>/24</strong> means 24 bits are locked for the network — leaving 8 bits (32 - 24) free for host addresses. That gives you 2⁸ = 256 addresses, minus 2 reserved = <strong>254 usable</strong>.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">📊</span> CIDR reference chart</div>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:0.75rem">
+        <span style="display:inline-block; width:12px; height:12px; background:var(--blue); border-radius:2px; vertical-align:middle; margin-right:4px"></span>Network bits (locked) &nbsp;
+        <span style="display:inline-block; width:12px; height:12px; background:var(--green); border-radius:2px; vertical-align:middle; margin-right:4px"></span>Host bits (free)
+      </p>
+      <div id="cidr-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🧮</span> How to calculate hosts from CIDR</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">Subtract the CIDR number from 32 to get the <strong>host bits</strong>. For /24: 32 − 24 = <strong>8 host bits</strong>.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">Raise 2 to the power of host bits: 2⁸ = <strong>256 total addresses</strong>.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">Subtract 2 (network address + broadcast address): 256 − 2 = <strong>254 usable host addresses</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🗂️</span> Private IP ranges (for home and offices)</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">These ranges are reserved for private networks — your home router uses one of these. They are <em>not</em> routable on the public internet.</p>
+      <table class="device-table">
+        <thead>
+          <tr><th>Range</th><th>CIDR</th><th>Addresses</th><th>Common use</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>10.0.0.0 – 10.255.255.255</code></td>
+            <td><span class="pill pill-blue">/8</span></td>
+            <td>16.7 million</td>
+            <td>Large companies, data centers</td>
+          </tr>
+          <tr>
+            <td><code>172.16.0.0 – 172.31.255.255</code></td>
+            <td><span class="pill pill-purple">/12</span></td>
+            <td>1 million</td>
+            <td>Medium-sized businesses</td>
+          </tr>
+          <tr>
+            <td><code>192.168.0.0 – 192.168.255.255</code></td>
+            <td><span class="pill pill-green">/16</span></td>
+            <td>65,534</td>
+            <td>Home routers, small offices</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== DEVICES ===== -->
+  <div class="section" id="sec-devices">
+    <div class="section-header">
+      <h2>What can go on a network?</h2>
+      <p>Almost anything with a network adapter — and here's why each one matters.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🔑</span> The golden rule</div>
+      <div class="analogy">
+        <div class="analogy-label">📋 One rule to remember</div>
+        Any device that needs to <strong>send or receive data over a network</strong> must have a network adapter (physical or wireless) and be assigned an IP address on the subnet. That's it! If it has an adapter and an address, it belongs.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🧱</span> Network infrastructure — the skeleton</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">These devices <em>build</em> the network itself. They usually get the first few IP addresses in a subnet.</p>
+      <table class="device-table">
+        <thead>
+          <tr><th>Device</th><th>IP needed?</th><th>Role</th><th>Why it goes on the subnet</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>📡 <strong>Router</strong></td>
+            <td><span class="pill pill-green">Yes</span></td>
+            <td>Gateway to the internet</td>
+            <td>Sits at the edge of the subnet. Usually gets .1 or .254. Everything talks through it to reach the outside world.</td>
+          </tr>
+          <tr>
+            <td>🔀 <strong>Switch</strong></td>
+            <td><span class="pill pill-amber">Optional</span></td>
+            <td>Connects devices in a subnet</td>
+            <td>Forwards data between devices on the same subnet. Basic switches don't need an IP, but managed switches do for configuration.</td>
+          </tr>
+          <tr>
+            <td>📶 <strong>Access Point (Wi-Fi)</strong></td>
+            <td><span class="pill pill-green">Yes</span></td>
+            <td>Wireless extension of the subnet</td>
+            <td>Gives wireless devices a way to join the same subnet. Needs an IP for management and configuration.</td>
+          </tr>
+          <tr>
+            <td>🔥 <strong>Firewall</strong></td>
+            <td><span class="pill pill-green">Yes</span></td>
+            <td>Security gatekeeper</td>
+            <td>Sits between subnets or between the network and the internet. Has an IP on each network it connects to.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">💻</span> End user devices</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">These are the devices people use every day. They get IP addresses from the router via DHCP (automatic) or manual assignment.</p>
+      <table class="device-table">
+        <thead>
+          <tr><th>Device</th><th>Typical IP</th><th>How it joins</th><th>What it does on the subnet</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🖥️ <strong>Desktop PC</strong></td>
+            <td><span class="pill pill-blue">Static or DHCP</span></td>
+            <td>Ethernet cable or Wi-Fi</td>
+            <td>Sends/receives web traffic, files, print jobs. Often given a static IP so you can always find it.</td>
+          </tr>
+          <tr>
+            <td>💻 <strong>Laptop</strong></td>
+            <td><span class="pill pill-blue">DHCP</span></td>
+            <td>Wi-Fi or Ethernet</td>
+            <td>Moves around, so usually gets a dynamic IP from DHCP each time it connects.</td>
+          </tr>
+          <tr>
+            <td>📱 <strong>Smartphone / Tablet</strong></td>
+            <td><span class="pill pill-blue">DHCP</span></td>
+            <td>Wi-Fi</td>
+            <td>Browses the web, streams media, syncs apps. Gets a temporary IP from the router.</td>
+          </tr>
+          <tr>
+            <td>🖨️ <strong>Printer</strong></td>
+            <td><span class="pill pill-green">Static</span></td>
+            <td>Ethernet or Wi-Fi</td>
+            <td>Given a fixed IP so computers always know exactly where to send print jobs. A changing IP would break printing.</td>
+          </tr>
+          <tr>
+            <td>📺 <strong>Smart TV</strong></td>
+            <td><span class="pill pill-blue">DHCP</span></td>
+            <td>Wi-Fi or Ethernet</td>
+            <td>Streams video from the internet and may receive media from other devices on the subnet via DLNA/Chromecast.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏠</span> Smart home & IoT devices</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">IoT (Internet of Things) — everyday objects that connect to the network. Security tip: many pros put these on a <strong>separate subnet</strong> from computers, so a hacked smart bulb can't touch your laptop!</p>
+      <table class="device-table">
+        <thead>
+          <tr><th>Device</th><th>Why it needs an IP</th><th>Best practice</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>💡 Smart bulb / plug</td>
+            <td>Receives on/off commands and reports status to the hub</td>
+            <td>Put on a separate IoT subnet</td>
+          </tr>
+          <tr>
+            <td>🔒 Smart lock / doorbell</td>
+            <td>Sends alerts and video to your phone</td>
+            <td>Separate subnet with strict firewall rules</td>
+          </tr>
+          <tr>
+            <td>🌡️ Smart thermostat</td>
+            <td>Receives temperature schedules, reports current temp</td>
+            <td>Separate IoT subnet</td>
+          </tr>
+          <tr>
+            <td>📷 IP Camera</td>
+            <td>Streams video to recording server or phone</td>
+            <td>Dedicated security camera subnet</td>
+          </tr>
+          <tr>
+            <td>🎮 Game console</td>
+            <td>Connects to online gaming servers, downloads updates</td>
+            <td>Main subnet, or a dedicated gaming VLAN</td>
+          </tr>
+          <tr>
+            <td>🔊 Smart speaker</td>
+            <td>Streams audio, sends voice data to cloud</td>
+            <td>IoT subnet — these always-on mics are risky</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏢</span> Servers — always-on devices</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">Servers provide services to other devices. They almost always get <strong>static IPs</strong> — you can't have your website moving to a new address every day!</p>
+      <table class="device-table">
+        <thead>
+          <tr><th>Server type</th><th>What it does on the subnet</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🌐 <strong>Web server</strong></td>
+            <td>Hosts websites. Needs a static IP (and usually a public IP or port forwarding)</td>
+          </tr>
+          <tr>
+            <td>🗂️ <strong>File server (NAS)</strong></td>
+            <td>Stores shared files. Other devices connect to it by its fixed IP address</td>
+          </tr>
+          <tr>
+            <td>📋 <strong>DHCP server</strong></td>
+            <td>Hands out IP addresses to devices that join the network — usually built into the router</td>
+          </tr>
+          <tr>
+            <td>🔍 <strong>DNS server</strong></td>
+            <td>Translates domain names (google.com) to IP addresses. Needs a fixed IP so devices can always find it</td>
+          </tr>
+          <tr>
+            <td>💾 <strong>Database server</strong></td>
+            <td>Stores application data. Usually on a private subnet, never directly exposed to the internet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== JOINING A NETWORK ===== -->
+  <div class="section" id="sec-joining">
+    <div class="section-header">
+      <h2>How devices join a network</h2>
+      <p>Step by step — from plugging in to sending your first packet.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🔌</span> Two ways to get an IP address</div>
+      <div class="grid-2">
+        <div class="info-box blue">
+          <div class="info-box-title">🤖 Automatic — DHCP</div>
+          The device asks the router: "Can I have an address?" The router (DHCP server) picks an available IP and hands it over — usually within milliseconds. This is how your phone joins Wi-Fi.
+        </div>
+        <div class="info-box green">
+          <div class="info-box-title">✍️ Manual — Static IP</div>
+          A person types in the IP address, subnet mask, gateway, and DNS settings directly. Used for servers and printers that must always have the same address.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🤝</span> The DHCP handshake — how automatic IP works</div>
+      <p style="font-size:14px; color:var(--muted); margin-bottom:0.75rem">When your laptop connects to Wi-Fi, this 4-step conversation happens in milliseconds:</p>
+      <div class="flow">
+        <div class="flow-node blue">📱<br><small>DISCOVER</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node amber">📡<br><small>OFFER</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node purple">📱<br><small>REQUEST</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node green">📡<br><small>ACK</small></div>
+      </div>
+      <div class="steps" style="margin-top:0.75rem">
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">D</div>
+          <div class="step-body"><strong>Discover:</strong> Device broadcasts: "Hello! Is there a DHCP server? I need an IP address!" (sent to every device on the subnet since it has no address yet)</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--amber)">O</div>
+          <div class="step-body"><strong>Offer:</strong> DHCP server replies: "I have an offer for you — how about 192.168.1.45? Here's also your subnet mask, gateway, and DNS."</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--purple)">R</div>
+          <div class="step-body"><strong>Request:</strong> Device says: "Yes! I'd like to accept 192.168.1.45 please." (It broadcasts this so all DHCP servers know which offer was accepted)</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--green)">A</div>
+          <div class="step-body"><strong>Acknowledge:</strong> DHCP server confirms: "It's yours! You have it for 24 hours (the lease). After that, you'll need to renew."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">📋</span> The four things every device needs</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">When a device joins a subnet, it needs these four settings to communicate properly:</p>
+      <table class="device-table">
+        <thead>
+          <tr><th>Setting</th><th>Example</th><th>What it's for</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>📬 <strong>IP address</strong></td>
+            <td><code>192.168.1.45</code></td>
+            <td>Your device's unique address on this network</td>
+          </tr>
+          <tr>
+            <td>🎭 <strong>Subnet mask</strong></td>
+            <td><code>255.255.255.0</code></td>
+            <td>Tells your device how big the local network is</td>
+          </tr>
+          <tr>
+            <td>🚪 <strong>Default gateway</strong></td>
+            <td><code>192.168.1.1</code></td>
+            <td>The router's address — where to send traffic destined for outside the subnet</td>
+          </tr>
+          <tr>
+            <td>🔍 <strong>DNS server</strong></td>
+            <td><code>8.8.8.8</code></td>
+            <td>Translates names like "google.com" into IP addresses your device can use</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🗺️</span> How data travels — local vs internet</div>
+      <p style="font-size:14px; margin-bottom:0.75rem">When your computer wants to send data, it first asks: "Is the destination on my subnet, or somewhere else?"</p>
+      <div class="grid-2">
+        <div>
+          <div class="info-box green">
+            <div class="info-box-title">🏘️ Destination is local (same subnet)</div>
+            Device sends data directly to the other device through the switch. Fast and direct — the router isn't involved at all.
+          </div>
+          <div class="flow" style="justify-content:center; margin-top:0.5rem; gap:6px">
+            <div class="flow-node" style="min-width:70px;font-size:12px">💻<br>You</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="min-width:70px;font-size:12px">🖨️<br>Printer</div>
+          </div>
+        </div>
+        <div>
+          <div class="info-box blue">
+            <div class="info-box-title">🌍 Destination is remote (internet)</div>
+            Device sends data to the default gateway (router). The router figures out where to send it next, hopping across the internet until it arrives.
+          </div>
+          <div class="flow" style="justify-content:center; margin-top:0.5rem; gap:4px">
+            <div class="flow-node" style="min-width:60px;font-size:11px">💻<br>You</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="min-width:60px;font-size:11px">📡<br>Router</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="min-width:60px;font-size:11px">🌐<br>Internet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🔒</span> Why some devices can't join (or shouldn't)</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--red)">!</div>
+          <div class="step-body"><strong>No network adapter:</strong> A device with no network hardware (NIC) physically cannot join. Think of it like a house with no mailbox — the mail carrier has nowhere to deliver.</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--amber)">!</div>
+          <div class="step-body"><strong>Wrong subnet configuration:</strong> If a device is given an IP outside the subnet range, it can't talk to others. Like having a house addressed "99 Oak Street" when all others are on "Main Street."</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--purple)">!</div>
+          <div class="step-body"><strong>Firewall / VLAN restrictions:</strong> Network admins can block certain devices deliberately — like a gated community that requires a key card. IoT devices are often kept in their own restricted subnet for security.</div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">!</div>
+          <div class="step-body"><strong>IP conflict:</strong> Two devices trying to use the same IP address causes chaos — both stop working. DHCP prevents this by tracking which IPs have been handed out. Static IP setups must be managed carefully.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏷️</span> MAC address — the physical ID</div>
+      <div class="analogy">
+        <div class="analogy-label">🪪 Think of it like a serial number</div>
+        Every network adapter has a <strong>MAC address</strong> — a permanent, unique ID burned into the hardware at the factory. It looks like: <code>A4:83:E7:2C:11:F0</code>. It never changes, unlike an IP address.
+      </div>
+      <p style="font-size:15px; margin-top:0.75rem">When a device joins a subnet, the router uses its MAC address to remember which IP it gave out (DHCP lease). You can also set up <strong>DHCP reservations</strong> — telling the router "always give this MAC address the same IP" — giving a device the convenience of DHCP with the reliability of a static IP.</p>
+    </div>
+  </div>
+
+  <!-- ===== CALCULATOR ===== -->
+  <div class="section" id="sec-calculator">
+    <div class="section-header">
+      <h2>Subnet calculator</h2>
+      <p>Enter an IP and CIDR to see all the key details of a subnet.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🧮</span> Calculate subnet details</div>
+      <div class="calc-input">
+        <label for="calc-ip">IP address:</label>
+        <input type="text" id="calc-ip" value="192.168.1.0" placeholder="e.g. 192.168.1.0" style="width:160px">
+        <label for="calc-cidr">/</label>
+        <select id="calc-cidr">
+          <option value="8">/8</option>
+          <option value="16">/16</option>
+          <option value="20">/20</option>
+          <option value="22">/22</option>
+          <option value="23">/23</option>
+          <option value="24" selected>/24</option>
+          <option value="25">/25</option>
+          <option value="26">/26</option>
+          <option value="27">/27</option>
+          <option value="28">/28</option>
+          <option value="29">/29</option>
+          <option value="30">/30</option>
+        </select>
+        <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+      </div>
+      <div id="calc-results" class="calc-results"></div>
+      <div id="calc-bits" style="margin-top:1rem; display:none">
+        <p style="font-size:13px; font-weight:700; margin-bottom:0.4rem; color:var(--muted)">Binary representation of subnet mask:</p>
+        <div id="bits-display" class="bits"></div>
+        <div class="legend" style="margin-top:0.5rem">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Network bits (1)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Host bits (0)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div class="section" id="sec-quiz">
+    <div class="section-header">
+      <h2>Quiz time!</h2>
+      <p>Test what you've learned. No pressure — you can read the tabs anytime.</p>
+    </div>
+
+    <div class="card" id="quiz-card">
+      <div class="quiz-progress" id="quiz-prog">Question 1 of 8</div>
+      <div class="quiz-q" id="quiz-q"></div>
+      <div class="quiz-opts" id="quiz-opts"></div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <button class="btn btn-primary" id="quiz-next" onclick="nextQ()" style="display:none">Next →</button>
+    </div>
+
+    <div id="quiz-done-card" style="display:none">
+      <div class="card quiz-done">
+        <div class="quiz-score-big" id="quiz-score-big"></div>
+        <div style="font-size:1.1rem; font-weight:700; margin:0.5rem 0" id="quiz-score-msg"></div>
+        <div style="font-size:14px; color:var(--muted); margin-bottom:1.25rem" id="quiz-score-sub"></div>
+        <button class="btn btn-primary" onclick="restartQuiz()">Try again 🔄</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ===== THEME =====
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  const btn = document.getElementById('theme-btn');
+  btn.textContent = isDark ? '☀️ Light mode' : '🌙 Dark mode';
+  localStorage.setItem('subnet-theme', isDark ? 'dark' : 'light');
+}
+(function() {
+  const saved = localStorage.getItem('subnet-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.body.classList.add('dark');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.textContent = '☀️ Light mode';
+    });
+  }
+})();
+
+// ===== NAV =====
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== CIDR CHART =====
+const cidrData = [
+  { cidr: '/8',  net: 8,  hosts: '16,777,214', mask: '255.0.0.0' },
+  { cidr: '/12', net: 12, hosts: '1,048,574',  mask: '255.240.0.0' },
+  { cidr: '/16', net: 16, hosts: '65,534',     mask: '255.255.0.0' },
+  { cidr: '/20', net: 20, hosts: '4,094',      mask: '255.255.240.0' },
+  { cidr: '/22', net: 22, hosts: '1,022',      mask: '255.255.252.0' },
+  { cidr: '/24', net: 24, hosts: '254',        mask: '255.255.255.0' },
+  { cidr: '/25', net: 25, hosts: '126',        mask: '255.255.255.128' },
+  { cidr: '/26', net: 26, hosts: '62',         mask: '255.255.255.192' },
+  { cidr: '/27', net: 27, hosts: '30',         mask: '255.255.255.224' },
+  { cidr: '/28', net: 28, hosts: '14',         mask: '255.255.255.240' },
+  { cidr: '/29', net: 29, hosts: '6',          mask: '255.255.255.248' },
+  { cidr: '/30', net: 30, hosts: '2',          mask: '255.255.255.252' },
+];
+
+const cidrList = document.getElementById('cidr-list');
+cidrData.forEach(d => {
+  const netPct = Math.round((d.net / 32) * 100);
+  const hostPct = 100 - netPct;
+  cidrList.innerHTML += `
+    <div class="cidr-item">
+      <span class="cidr-label">${d.cidr}</span>
+      <div class="cidr-bar">
+        <div class="cidr-fill">
+          <div class="cidr-net-fill" style="width:${netPct}%"></div>
+          <div class="cidr-host-fill" style="width:${hostPct}%"></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#6b7280;min-width:130px;text-align:right">${d.mask}</span>
+      <span class="cidr-hosts">${d.hosts} hosts</span>
+    </div>`;
+});
+
+// ===== SUBNET CALCULATOR =====
+function ipToNum(ip) {
+  return ip.split('.').reduce((acc, oct) => (acc << 8) + parseInt(oct), 0) >>> 0;
+}
+function numToIp(n) {
+  return [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+}
+function calculate() {
+  const ipStr = document.getElementById('calc-ip').value.trim();
+  const cidr = parseInt(document.getElementById('calc-cidr').value);
+  const parts = ipStr.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
+    alert('Please enter a valid IP address (e.g. 192.168.1.0)');
+    return;
+  }
+  const maskNum = cidr === 0 ? 0 : (0xFFFFFFFF << (32 - cidr)) >>> 0;
+  const ipNum = ipToNum(ipStr);
+  const netAddr = (ipNum & maskNum) >>> 0;
+  const broadcast = (netAddr | (~maskNum >>> 0)) >>> 0;
+  const totalHosts = Math.pow(2, 32 - cidr);
+  const usable = Math.max(0, totalHosts - 2);
+
+  const results = [
+    { label: 'Network address', val: numToIp(netAddr) },
+    { label: 'Broadcast address', val: numToIp(broadcast) },
+    { label: 'Subnet mask', val: numToIp(maskNum) },
+    { label: 'First usable IP', val: usable > 0 ? numToIp(netAddr + 1) : 'N/A' },
+    { label: 'Last usable IP',  val: usable > 0 ? numToIp(broadcast - 1) : 'N/A' },
+    { label: 'Usable hosts', val: usable.toLocaleString() },
+    { label: 'Total addresses', val: totalHosts.toLocaleString() },
+    { label: 'CIDR', val: ipStr.split('.').slice(0,4).join('.') + '/' + cidr },
+  ];
+
+  const resultsEl = document.getElementById('calc-results');
+  resultsEl.innerHTML = results.map(r => `
+    <div class="calc-result-card">
+      <div class="calc-result-label">${r.label}</div>
+      <div class="calc-result-val">${r.val}</div>
+    </div>`).join('');
+
+  // Bits display
+  const maskBin = maskNum.toString(2).padStart(32, '0');
+  const bitsEl = document.getElementById('bits-display');
+  bitsEl.innerHTML = '';
+  maskBin.split('').forEach((bit, i) => {
+    if (i > 0 && i % 8 === 0) {
+      const sep = document.createElement('span');
+      sep.className = 'bit-sep'; sep.textContent = '.';
+      bitsEl.appendChild(sep);
+    }
+    const b = document.createElement('div');
+    b.className = 'bit ' + (bit === '1' ? 'one' : 'zero');
+    b.textContent = bit;
+    bitsEl.appendChild(b);
+  });
+  document.getElementById('calc-bits').style.display = 'block';
+}
+calculate();
+
+// ===== QUIZ =====
+const questions = [
+  {
+    q: "What is a subnet like in real life?",
+    opts: ["A type of underwater cable", "A neighborhood of houses", "A kind of fish net", "A computer virus"],
+    ans: 1,
+    explain: "✅ Correct! A subnet is like a neighborhood — it groups devices together the same way houses on a street are grouped."
+  },
+  {
+    q: "What does the '0' in the subnet mask 255.255.255.0 mean?",
+    opts: ["That part is broken", "That part is the street name", "That part is free — it's the house number", "No devices are allowed"],
+    ans: 2,
+    explain: "✅ Right! A '0' octet in the mask means that part belongs to the host (device) — it's the part that changes per device."
+  },
+  {
+    q: "What is an IP address?",
+    opts: ["A secret password for websites", "A unique address that identifies a device on a network", "A type of internet cable", "A Wi-Fi password"],
+    ans: 1,
+    explain: "✅ Yes! An IP address is like a home address for your device — it lets data find the right machine."
+  },
+  {
+    q: "What does DHCP do?",
+    opts: ["Blocks hackers from the network", "Automatically gives IP addresses to devices that join", "Stores files on the network", "Speeds up your internet connection"],
+    ans: 1,
+    explain: "✅ Correct! DHCP automatically hands out IP addresses when devices join the network — like an automated receptionist handing out badges."
+  },
+  {
+    q: "Why should IoT devices (smart bulbs, cameras) go on a separate subnet?",
+    opts: ["They are too slow for the main network", "To keep them from using too much bandwidth", "For security — if one is hacked, it can't reach your computers", "Because they use different cables"],
+    ans: 2,
+    explain: "✅ Exactly! Putting IoT devices on their own subnet means a compromised smart bulb can't reach your bank files on your laptop."
+  },
+  {
+    q: "What is the broadcast address in a subnet?",
+    opts: ["The first address — names the subnet", "The router's address", "The last address — sends to ALL devices at once", "The DNS server address"],
+    ans: 2,
+    explain: "✅ Right! The broadcast address (last in the subnet) delivers a message to every device on that subnet simultaneously."
+  },
+  {
+    q: "A printer should usually have what kind of IP address?",
+    opts: ["Dynamic (DHCP) — changes often", "Static — always the same", "No IP — printers don't need one", "An IPv6 address only"],
+    ans: 1,
+    explain: "✅ Correct! Printers need static IPs so computers always know exactly where to send print jobs. A changing address would break printing."
+  },
+  {
+    q: "What does /24 mean in CIDR notation?",
+    opts: ["There are 24 computers on the network", "24 bits are locked for the network part, leaving 8 bits for hosts", "The network is 24 meters in size", "You need 24 switches to build this network"],
+    ans: 1,
+    explain: "✅ Perfect! /24 = 24 network bits locked, 8 host bits free → 2⁸ − 2 = 254 usable addresses."
+  }
+];
+
+let cur = 0, score = 0, answered = false;
+
+function loadQ() {
+  const q = questions[cur];
+  document.getElementById('quiz-prog').textContent = `Question ${cur + 1} of ${questions.length}`;
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-fb').className = 'quiz-feedback';
+  document.getElementById('quiz-fb').textContent = '';
+  document.getElementById('quiz-next').style.display = 'none';
+  answered = false;
+  const opts = document.getElementById('quiz-opts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = o;
+    btn.onclick = () => answerQ(i, btn);
+    opts.appendChild(btn);
+  });
+}
+
+function answerQ(i, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[cur];
+  document.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+  document.querySelectorAll('.quiz-opt')[q.ans].classList.add('correct');
+  const fb = document.getElementById('quiz-fb');
+  if (i === q.ans) {
+    score++;
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback show good';
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'quiz-feedback show bad';
+  }
+  fb.textContent = q.explain;
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQ() {
+  cur++;
+  if (cur >= questions.length) {
+    document.getElementById('quiz-card').style.display = 'none';
+    document.getElementById('quiz-done-card').style.display = 'block';
+    const pct = Math.round((score / questions.length) * 100);
+    document.getElementById('quiz-score-big').textContent = `${score} / ${questions.length}`;
+    const msgs = [
+      ['😅 Keep at it!', 'Review the tabs above — you\'ve got this!'],
+      ['👍 Getting there!', 'A few more reads and you\'ll nail it.'],
+      ['🌟 Nice work!', 'You know your subnets pretty well!'],
+      ['🏆 Subnet superstar!', 'You aced it! You clearly understand networking.'],
+    ];
+    const idx = score <= 2 ? 0 : score <= 4 ? 1 : score <= 6 ? 2 : 3;
+    document.getElementById('quiz-score-msg').textContent = msgs[idx][0];
+    document.getElementById('quiz-score-sub').textContent = msgs[idx][1] + ` (${pct}%)`;
+    return;
+  }
+  loadQ();
+}
+
+function restartQuiz() {
+  cur = 0; score = 0; answered = false;
+  document.getElementById('quiz-card').style.display = 'block';
+  document.getElementById('quiz-done-card').style.display = 'none';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>
