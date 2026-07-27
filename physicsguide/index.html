@@ -36,6 +36,11 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
 .qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
 .tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.related-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:.9rem;font-family:'Nunito',sans-serif;font-size:12px}
+.related-label{color:var(--hero-sub);font-weight:700;white-space:nowrap}
+.related-bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);padding:4px 12px;border-radius:999px;
+  background:rgba(255,255,255,.1);font-weight:700;transition:.18s;white-space:nowrap}
+.related-bar a:hover{background:rgba(255,255,255,.2);border-color:#fff}
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}
 .tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
@@ -93,6 +98,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab-btn" onclick="switchTab('travel',this)">🗺️ How Waves Travel</button>
     <button class="tab-btn" onclick="switchTab('loss',this)">📉 Fading &amp; Loss</button>
     <button class="tab-btn" onclick="switchTab('antenna',this)">📡 Antennas</button>
+  </div>
+  <div class="related-bar">
+    <span class="related-label">Related:</span>
+    <a href="../physics1/">⚡ AC Circuit Theory &amp; Impedance</a>
+    <a href="../Physics2/">🌊 Wave Behavior &amp; Propagation</a>
+    <a href="../physics3/">📶 Signal Quality &amp; Link Performance</a>
+    <a href="../rftheory/">📡 RF Theory Tool</a>
   </div>
 </header>
 

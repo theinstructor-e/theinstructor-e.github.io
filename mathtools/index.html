@@ -28,7 +28,7 @@
   --canvas-bg:#f8fafc;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s;flex-wrap:wrap}
 .header-left{display:flex;align-items:center;gap:16px}
@@ -42,6 +42,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .live{color:var(--amber);animation:blink 1.4s step-end infinite}
 @keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:.25}}
 .tab-nav{display:flex;gap:4px;flex-wrap:wrap;background:var(--panel);border-bottom:1px solid var(--border);padding:0 20px;position:sticky;top:57px;z-index:99}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .tab-btn .tnum{font-family:var(--mono);font-size:10px;color:inherit;opacity:.6}
 .tab-btn:hover{color:var(--text)}
@@ -121,6 +125,12 @@ canvas{display:block;width:100%;background:var(--canvas-bg);border:1px solid var
   <button class="tab-btn" onclick="switchTab('logs',this)"><span class="tnum">03</span> Logarithms</button>
   <button class="tab-btn" onclick="switchTab('db',this)"><span class="tnum">04</span> Decibels</button>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../mathguide/">📘 Math for EW Explained</a>
+  <a href="../math/">🧮 Fraction Calculator</a>
+  <a href="../physics1/">⚡ AC Circuit Theory &amp; Impedance</a>
+</div>
 
 <!-- TAB 1: ALGEBRA -->
 <div id="tab-algebra" class="tab-content active">

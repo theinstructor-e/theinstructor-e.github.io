@@ -28,7 +28,7 @@
   --canvas-bg:#f8fafc;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
 .header-left{display:flex;align-items:center;gap:16px}
@@ -239,7 +239,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
         <div class="readout amber"><div class="label">Usable Hosts</div><div class="val" id="r-hosts">254</div></div>
       </div>
       <canvas id="ip-canvas" height="90" style="margin-top:14px"></canvas>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:4px">GREEN = network bits &nbsp;|&nbsp; AMBER = host bits</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:4px">GREEN = network bits &nbsp;|&nbsp; AMBER = host bits</div>
       <div class="formula-box">
         <div class="eq">Usable hosts = 2^(32−CIDR) − 2</div>
         IPv4 = 32 bits (4 octets, 0–255 each)<br>
@@ -251,7 +251,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
       <div class="panel-title">Routing Process &amp; Address Type</div>
       <div class="detail-box" id="ip-type" style="margin-bottom:10px"><span class="dn" style="color:var(--amber)">Address Classification</span>Loading...</div>
       <canvas id="route-canvas" height="180"></canvas>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">Local vs remote routing decision &amp; next-hop forwarding</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px">Local vs remote routing decision &amp; next-hop forwarding</div>
       <div class="lesson-box">
         <div class="lb-head">◆ Lesson Alignment — E06 IP Addressing &amp; Routing</div>
         <div class="lb-body">Layer 3 moves packets between networks using hierarchical IP addresses. Routing: the host compares its IP+mask to the destination to decide local vs remote. If remote, it sends to the default gateway (found via ARP), which consults its routing table and forwards to the next hop. TTL decrements each hop to prevent loops. IPv6 (128-bit) solves IPv4 exhaustion.</div>
@@ -265,7 +265,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
         <div class="ctrl">
           <div class="ctrl-label"><span class="name">IPv6 Address</span></div>
           <input class="num-input" type="text" id="ipv6-input" value="2001:db8:85a3::8a2e:370:7334" oninput="updateIpv6()" style="width:100%;color:var(--amber);border-color:var(--amber)">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:3px">128-bit, 8 groups of 16-bit hex. Use :: for consecutive zero groups.</div>
+          <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:3px">128-bit, 8 groups of 16-bit hex. Use :: for consecutive zero groups.</div>
         </div>
         <div style="margin-top:10px">
           <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">FULLY EXPANDED (no shortcuts):</div>
@@ -314,7 +314,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
     <div class="panel purple">
       <div class="panel-title">Frequency Band Occupancy — where it operates</div>
       <canvas id="wifi-canvas" height="280"></canvas>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px">PURPLE band(s) = where the selected standard transmits across the RF spectrum</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px">PURPLE band(s) = where the selected standard transmits across the RF spectrum</div>
       <div class="callout"><span class="key">17E:</span> Each standard's frequency band and modulation (DSSS→OFDM→OFDMA) determines its RF signature and jamming/collection profile. 2.4 GHz penetrates better but is congested; 5/6 GHz offer speed but shorter range. 60 GHz (WiGig) is very high speed, very short range.</div>
     </div>
   </div>
@@ -384,7 +384,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
     <div class="panel green">
       <div class="panel-title">Topology Visualizer — <span id="nt-name-disp" style="color:var(--green)">Point-to-Point</span></div>
       <canvas id="nt-canvas" height="340"></canvas>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px" id="nt-legend">Click Send Unicast or Broadcast to animate traffic flow</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px" id="nt-legend">Click Send Unicast or Broadcast to animate traffic flow</div>
     </div>
   </div>
 </div>

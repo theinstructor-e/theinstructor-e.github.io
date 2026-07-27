@@ -28,7 +28,7 @@
   --canvas-bg:#eef3f7;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
 .header-left{display:flex;align-items:center;gap:16px}
@@ -42,6 +42,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .live{color:var(--amber);animation:blink 1.4s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 20px;gap:2px}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .tab-btn .tnum{font-family:var(--mono);font-size:10px;color:inherit;opacity:.6}
@@ -121,6 +125,11 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <button class="tab-btn" onclick="switchTab('engage',this)"><span class="tnum">03</span> Engagement Simulator</button>
   <button class="tab-btn" onclick="switchTab('chain',this)"><span class="tnum">04</span> C-UAS Kill Chain</button>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../cuas/">🛸 Drone Signal Spectrum</a>
+  <a href="../EW Principles/">📖 EW Principles</a>
+</div>
  
 <!-- TAB 1: RF LINKS -->
 <div id="tab-links" class="tab-content active">
@@ -156,7 +165,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <div class="panel amber">
     <div class="panel-title">Frequency Picture — where the links live</div>
     <canvas id="links-spectrum" height="150"></canvas>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:6px">Common small-UAS bands. Highlighted = the selected link.</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px">Common small-UAS bands. Highlighted = the selected link.</div>
   </div>
 </div>
  

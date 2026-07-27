@@ -22,7 +22,7 @@
   --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px}
 .header-left{display:flex;align-items:center;gap:16px}
@@ -104,7 +104,7 @@ header h1 span{color:var(--text-dim);font-weight:400}
 <div id="tab-practice" class="tab-content">
   <div class="panel">
     <div class="panel-title">Put the 8 steps in the correct order</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--text);margin-bottom:12px">Click the steps below in the order they occur. Correct picks lock into the slots; a wrong pick shakes and waits.</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--text);margin-bottom:12px">Click the steps below in the order they occur. Correct picks lock into the slots; a wrong pick shakes and waits.</div>
     <div class="pr-slots" id="pr-slots"></div>
     <div class="pool" id="pr-pool"></div>
     <div class="pr-status" id="pr-status">Click the first step to begin.</div>
@@ -115,7 +115,7 @@ header h1 span{color:var(--text-dim);font-weight:400}
 <div id="tab-mett" class="tab-content">
   <div class="panel cyan">
     <div class="panel-title">METT-TC \u2014 the mission-analysis framework (used in Step 3)</div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.7;margin-bottom:10px">When a leader makes the tentative plan, they analyze the situation across these factors. Newer doctrine adds <strong>(I) Informational considerations</strong> \u2192 METT-TC(I).</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:10px">When a leader makes the tentative plan, they analyze the situation across these factors. Newer doctrine adds <strong>(I) Informational considerations</strong> \u2192 METT-TC(I).</div>
     <div class="mett" id="mett-grid"></div>
     <div class="callout"><span class="key">USE IT:</span> METT-TC turns "what's the situation?" into a structured checklist so nothing is missed \u2014 it feeds the tentative plan and the coordinating instructions in your OPORD.</div>
   </div>

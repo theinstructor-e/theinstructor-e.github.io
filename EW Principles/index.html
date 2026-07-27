@@ -32,7 +32,7 @@
   --canvas-bg:#f8fafc;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--ui);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--ui);font-size:17px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
 .mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
@@ -45,6 +45,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .live{color:var(--red);animation:blink 1.2s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 16px;gap:1px}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:11px 16px;cursor:pointer;transition:color .18s,border-color .18s;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .tab-btn .tnum{font-family:var(--mono);font-size:9px;opacity:.55}
@@ -149,6 +153,13 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <button class="tab-btn" onclick="switchTab('ant',this)"><span class="tnum">02</span> Antenna Fundamentals</button>
   <button class="tab-btn" onclick="switchTab('ea',this)"><span class="tnum">03</span> Electronic Attack</button>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../rftheory/">📡 RF Theory</a>
+  <a href="../antenna/">📶 Antenna Trainer</a>
+  <a href="../df/">🎯 DF Trainer</a>
+  <a href="../cuas/">🛸 Counter-UAS</a>
+</div>
 
 
 <!-- TAB 1: EW PRINCIPLES -->
@@ -221,7 +232,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
     <div class="panel cyan">
       <div class="ptitle">Radiation Pattern (Azimuth) &amp; Polarization</div>
       <canvas id="ant-canvas" height="260"></canvas>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:6px" id="ant-pattern-legend">Azimuth cut — CYAN=main lobe, rings=-3/-10/-20dB, AMBER=polarization vector</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px" id="ant-pattern-legend">Azimuth cut — CYAN=main lobe, rings=-3/-10/-20dB, AMBER=polarization vector</div>
       <div class="fbox" id="ant-fbox" style="margin-top:10px">
         <div class="eq">lambda=c/f | L_dipole=lambda/2 | G(dBi)=10*log10(G_lin)</div>
         Dipole 2.15dBi | Yagi 6-15dBi | Horn 10-25dBi | Dish 20-50+dBi<br>

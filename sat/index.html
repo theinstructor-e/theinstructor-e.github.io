@@ -11,6 +11,16 @@
   --text:#e8eaf6;--muted:#7986cb;--accent:#4fc3f7;--warn:#ff7043;
   --leo:#64dc96;--meo:#64b4ff;--geo:#ffc850;--heo:#c882ff;--moon:#b0bec5;
 }
+[data-theme="light"]{
+  --bg:#eef2f7;--surface:rgba(0,0,0,0.03);--border:rgba(0,0,0,0.12);
+  --text:#1a1e2e;--muted:#4a5378;--accent:#0077aa;--warn:#cc4422;
+  --leo:#1a8a4c;--meo:#0d5aa8;--geo:#a87400;--heo:#7a3fbb;--moon:#5a6470;
+}
+[data-theme="light"] #star-bg{opacity:0.15}
+.theme-corner{position:fixed;top:14px;right:14px;z-index:200;background:var(--surface);border:1px solid var(--border);color:var(--muted);
+  font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:7px 15px;
+  cursor:pointer;transition:all .15s;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.theme-corner:hover{color:var(--text);border-color:var(--accent)}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;}
@@ -28,6 +38,10 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
 
 /* Tabs */
 .tabs{display:flex;gap:.5rem;justify-content:center;padding:.8rem 1rem;border-bottom:1px solid var(--border);}
+.related-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:8px 1rem;border-bottom:1px solid var(--border);font-size:12px}
+.related-label{color:var(--muted);font-weight:700;white-space:nowrap}
+.related-bar a{color:var(--text);text-decoration:none;border:1px solid var(--border);padding:4px 12px;border-radius:999px;transition:.18s;white-space:nowrap;background:var(--surface)}
+.related-bar a:hover{border-color:var(--accent);color:var(--accent)}
 .tab-btn{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.08em;
   padding:.45rem 1.3rem;border-radius:2rem;border:1px solid var(--border);
   background:var(--surface);color:var(--muted);cursor:pointer;transition:all .2s;}
@@ -403,6 +417,7 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
 </style>
 </head>
 <body>
+<button class="theme-corner" onclick="toggleTheme()" id="btn-theme">☀ Light Mode</button>
 <canvas id="star-bg"></canvas>
 <div class="app">
 
@@ -417,6 +432,11 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
   <button class="tab-btn" data-tab="view2d">2D Orbital Map</button>
   <button class="tab-btn" data-tab="view3d">3D Earth Model</button>
   <button class="tab-btn" data-tab="viewlbands">📡 L-Bands</button>
+</div>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../EW Principles/">📖 EW Principles</a>
+  <a href="../antenna/">📡 Antenna Trainer</a>
 </div>
 
 <!-- LEARN VIEW (first/default) -->
@@ -1551,6 +1571,12 @@ header p{color:var(--muted);font-size:.85rem;margin-top:.4rem;font-weight:300;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 'use strict';
+function toggleTheme(){
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  document.getElementById('btn-theme').textContent = isLight ? '☀ Light Mode' : '☾ Dark Mode';
+}
 
 /* ── Stars ── */
 (()=>{

@@ -15,7 +15,18 @@
   --txt:#7aacbc;--txtd:#2a4a5a;--txtb:#c8e4f0;
   --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
 }
-body{background:var(--bg);color:var(--txt);font-family:var(--ui);font-size:14px;padding:14px;min-height:100vh}
+[data-theme="light"]{
+  --bg:#eef2f0;--panel:#ffffff;--panel2:#f5f7f6;--b1:#d4dcd9;--b2:#b8c4c0;
+  --green:#00884a;--gdim:#00a05a;--gfaint:#e0f5e8;
+  --amber:#b3690a;--red:#cc2222;--blue:#0077bb;--cyan:#0088aa;--purple:#8855cc;
+  --orange:#b35a00;
+  --txt:#3a5560;--txtd:#8296a0;--txtb:#0a1a20;
+}
+.theme-corner{position:fixed;top:14px;right:14px;z-index:200;background:var(--panel);border:1px solid var(--b2);color:var(--txtd);
+  font-family:var(--ui);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:7px 15px;
+  cursor:pointer;transition:all .15s;border-radius:3px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.theme-corner:hover{color:var(--txt);border-color:#3a5266}
+body{background:var(--bg);color:var(--txt);font-family:var(--ui);font-size:17px;padding:14px;min-height:100vh}
 .hdr{margin-bottom:14px}
 .hdr-title{font-size:20px;font-weight:700;color:var(--txtb);letter-spacing:.07em;text-transform:uppercase}
 .hdr-sub{font-family:var(--mono);font-size:10px;color:var(--txtd);letter-spacing:.07em;margin-top:2px}
@@ -107,6 +118,7 @@ canvas.mapC{display:block;width:100%}
 </style>
 </head>
 <body>
+<button class="theme-corner" onclick="toggleTheme()" id="btn-theme">☀ Light Mode</button>
 
 <div class="hdr">
   <div class="hdr-title">GPS Jamming vs Spoofing — EW Effects Trainer</div>
@@ -241,6 +253,12 @@ canvas.mapC{display:block;width:100%}
 
 <script>
 'use strict';
+function toggleTheme(){
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  document.getElementById('btn-theme').textContent = isLight ? '☀ Light Mode' : '☾ Dark Mode';
+}
 /* ── STATE ──────────────────────────────────────── */
 let jamOn = false, spoofOn = false;
 let frame = 0;

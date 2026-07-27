@@ -28,7 +28,7 @@
   --canvas-bg:#f8fafc;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:15px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;overflow-x:hidden;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
 header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;transition:background .2s}
 .header-left{display:flex;align-items:center;gap:16px}
@@ -42,6 +42,10 @@ header h1 span{color:var(--text-dim);font-weight:400}
 .live{color:var(--red);animation:blink 1.4s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none;padding:0 20px;gap:2px}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border-bright);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--border-bright);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--cyan-dark)}
 .tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .tab-btn .tnum{font-family:var(--mono);font-size:10px;color:inherit;opacity:.6}
@@ -127,6 +131,13 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <button class="tab-btn" onclick="switchTab('snr',this)"><span class="tnum">03</span> Signal-to-Noise Ratio</button>
   <button class="tab-btn" onclick="switchTab('emi',this)"><span class="tnum">04</span> EMI &amp; Interference</button>
 </nav>
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../physics1/">⚡ AC Circuit Theory &amp; Impedance</a>
+  <a href="../Physics2/">🌊 Wave Behavior &amp; Propagation</a>
+  <a href="../physicsguide/">📘 RF Theory Explained</a>
+  <a href="../rftheory/">📡 RF Theory Tool</a>
+</div>
 
 <!-- TAB 1: HARMONICS -->
 <div id="tab-harm" class="tab-content active">
@@ -164,7 +175,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
     <div class="panel">
       <div class="panel-title">Spectrum — Fundamental &amp; Harmonics</div>
       <canvas id="harm-canvas" height="200"></canvas>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:6px">Harmonics appear at regular spacing, decreasing in amplitude</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px">Harmonics appear at regular spacing, decreasing in amplitude</div>
       <div class="callout"><span class="key">WHY IT MATTERS TO EW:</span> If you don't understand harmonics you might think there are multiple enemy transmitters when there's only one, sense the wrong frequency at lower power, or jam a harmonic and waste power — giving away your position. Verify: regularly-spaced peaks + amplitude drop = harmonics of one source.</div>
       <div class="callout amber"><span class="key">FIELD FIX (if you emit harmonics):</span> reduce power/input, use a better-matched load/antenna, insert a band-pass or low-pass filter, check connections/cables, and keep equipment cool — thermal stress pushes devices non-linear.</div>
     </div>
@@ -257,7 +268,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
     <div class="panel cyan">
       <div class="panel-title">Signal Above Noise Floor</div>
       <canvas id="snr-canvas" height="200"></canvas>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:6px" id="snr-legend">CYAN = signal peak &nbsp;|&nbsp; DIM = noise floor</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--text-dim);margin-top:6px" id="snr-legend">CYAN = signal peak &nbsp;|&nbsp; DIM = noise floor</div>
       <table class="dtable">
         <thead><tr><th>SNR</th><th>Capability</th></tr></thead>
         <tbody>

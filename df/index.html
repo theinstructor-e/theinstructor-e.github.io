@@ -26,7 +26,7 @@
 body{background:
   radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), transparent),
   var(--bg);
-  color:var(--txt);font-family:var(--ui);font-size:14px;padding:52px 16px 16px;min-height:100vh;-webkit-font-smoothing:antialiased}
+  color:var(--txt);font-family:var(--ui);font-size:17px;padding:52px 16px 16px;min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* header */
 .hdr{margin-bottom:14px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;
@@ -56,6 +56,10 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
 
 /* antenna picker (above map) */
 .antenna-picker{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--panel);border-bottom:1px solid var(--b2);flex-wrap:wrap}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--b2);font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--txtd);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--b2);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--panel2)}
 .ap-label{font-family:var(--mono);font-size:9.5px;color:var(--txtd);letter-spacing:.08em;text-transform:uppercase}
 .abtn{background:var(--panel2);border:1px solid var(--b2);color:var(--txt);font-family:var(--ui);font-size:11.5px;font-weight:600;
   padding:5px 12px;cursor:pointer;border-radius:3px;transition:all .15s;display:flex;align-items:center;gap:5px}
@@ -164,6 +168,13 @@ canvas#mapCanvas{display:block;width:100%;cursor:crosshair}
 </div>
 
 <button class="theme-corner" onclick="toggleTheme()" id="btn-theme">☀ Light Mode</button>
+
+<div class="related-bar">
+  <span class="related-label">Related:</span>
+  <a href="../antenna/">📡 Antenna Trainer</a>
+  <a href="../rftheory/">📶 RF Theory</a>
+  <a href="../EW Principles/">📖 EW Principles</a>
+</div>
 
 <div class="ref-strip show" id="refStrip">
   <div class="ref-strip-hdr" onclick="toggleRef()"><span>▸ DF FUNDAMENTALS REFERENCE</span><span class="chev">▶</span></div>
