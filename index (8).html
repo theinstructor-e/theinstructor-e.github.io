@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC, Transformers &amp; Machines Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#12325e;--hero-eyebrow:#8fb8e6;--hero-sub:#c2d9f2;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1f5f8a;--accent-soft:#e6f0f5;
+  --f-color:#c0392b;--f-soft:#fbe4e0;   /* frequency/waveform */
+  --t-color:#8a3fc0;--t-soft:#f0e4fb;   /* transformers */
+  --g-color:#1f8a4c;--g-soft:#e6f5ec;   /* generators */
+  --m-color:#d98a1f;--m-soft:#fbeed6;   /* motors */
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#a8a49c;--text-muted:#706d66;
+  --hero-bg:#0a1f3a;--hero-eyebrow:#6a9bcf;--hero-sub:#8fb4d9;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#5b9fd4;--accent-soft:#0c1f2a;
+  --f-color:#e0836f;--f-soft:#3a1712;
+  --t-color:#c08fef;--t-soft:#2a1a3a;
+  --g-color:#4cc07f;--g-soft:#0c2a19;
+  --m-color:#efaf4a;--m-soft:#3a2800;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);line-height:1.6;transition:background .2s,color .2s}
+.hero{background:linear-gradient(135deg,var(--hero-bg),color-mix(in srgb, var(--hero-bg) 80%, black));color:#fff;padding:2.4rem 1.5rem 1.6rem;text-align:center}
+.hero .eyebrow{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:8px}
+.hero h1{font-family:'Nunito',sans-serif;font-weight:800;font-size:clamp(24px,4vw,36px);margin-bottom:8px}
+.hero .sub{color:var(--hero-sub);font-size:15px;max-width:640px;margin:0 auto}
+.theme-toggle{position:absolute;top:16px;right:16px;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.3);
+  color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.hero-wrap{position:relative}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;
+  border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;transition:.18s}
+.tab-btn:hover{background:rgba(255,255,255,0.18)}
+.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.related-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:.9rem;font-family:'Nunito',sans-serif;font-size:12px}
+.related-label{color:var(--hero-sub);font-weight:700;white-space:nowrap}
+.related-bar a{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);padding:4px 12px;border-radius:999px;
+  background:rgba(255,255,255,.1);font-weight:700;transition:.18s;white-space:nowrap}
+.related-bar a:hover{background:rgba(255,255,255,.2);border-color:#fff}
+
+.section-wrap{max-width:820px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.tab-panel{display:none;animation:fadein .3s ease}
+.tab-panel.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:22px;margin:1.6rem 0 .7rem;color:var(--text-primary)}
+h2:first-child{margin-top:0}
+p{margin-bottom:.9rem;color:var(--text-secondary);font-size:15.5px}
+.lead{font-size:17px;color:var(--text-primary);font-weight:600;margin-bottom:1.2rem}
+
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:14px 0;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);transition:background .2s}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;margin:16px 0}
+.analogy .lbl{font-weight:800;color:var(--accent);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+
+.pill{display:inline-block;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin:2px}
+.pill-f{background:var(--f-soft);color:var(--f-color)}
+.pill-t{background:var(--t-soft);color:var(--t-color)}
+.pill-g{background:var(--g-soft);color:var(--g-color)}
+.pill-m{background:var(--m-soft);color:var(--m-color)}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th{background:var(--table-head-bg);text-align:left;padding:9px 12px;font-weight:800;border-bottom:2px solid var(--table-border)}
+td{padding:9px 12px;border-bottom:1px solid var(--table-border);color:var(--text-secondary)}
+tr:hover td{background:var(--table-row-hover)}
+
+.formula-box{background:var(--table-head-bg);border:1px dashed var(--border-hover);border-radius:10px;padding:14px 18px;
+  font-family:'Courier New',monospace;font-size:16px;text-align:center;margin:14px 0;font-weight:700;color:var(--text-primary)}
+
+.svg-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;text-align:center}
+.svg-wrap svg{max-width:100%;height:auto}
+.svg-cap{font-size:12.5px;color:var(--text-muted);margin-top:8px}
+
+.tryit{display:inline-flex;align-items:center;gap:6px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13.5px;
+  color:var(--accent);text-decoration:none;background:var(--accent-soft);padding:8px 16px;border-radius:999px;margin-top:8px}
+.tryit:hover{background:var(--accent);color:#fff}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="hero-wrap">
+  <div class="hero">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">&#9789; Dark Mode</button>
+    <div class="eyebrow">C BET &middot; Basic Electronics Training</div>
+    <h1>AC, Transformers &amp; Machines Explained</h1>
+    <div class="sub">Alternating current waveforms, transformers, generators, and motors — the fundamentals behind how power actually gets made, changed, and turned into motion.</div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('waveform',this)">&#128266; AC Waveforms</button>
+      <button class="tab-btn" onclick="switchTab('transformers',this)">&#128268; Transformers</button>
+      <button class="tab-btn" onclick="switchTab('generators',this)">&#9889; Generators</button>
+      <button class="tab-btn" onclick="switchTab('motors',this)">&#9881;&#65039; Motors</button>
+    </div>
+    <div class="related-bar">
+      <span class="related-label">Related:</span>
+      <a href="../betguide/">&#9889; Electricity Explained</a>
+      <a href="../aclab/">&#128202; AC &amp; Transformer Lab</a>
+      <a href="../bet/">&#128268; BET Components</a>
+      <a href="../betsim/">&#128295; Circuit Bench</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-wrap">
+
+  <!-- AC WAVEFORMS -->
+  <div class="tab-panel active" id="tab-waveform">
+    <div class="lead">DC flows one direction at a constant level. AC reverses direction over and over, tracing a wave — and that wave has its own vocabulary.</div>
+
+    <h2>The Sine Wave</h2>
+    <p>Picture a bicycle pedal going around in a circle at a steady speed, and someone recording only its <em>height</em> above the ground over time. That height traces out exactly the shape of an AC sine wave — up to a peak, back through zero, down to a trough, and back to zero again. One full trip around is one <span class="pill pill-f">cycle</span>.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="90" x2="470" y2="90" stroke="#999" stroke-width="1"/>
+        <path d="M 10 90 Q 70 10, 130 90 T 250 90 T 370 90 T 470 90" fill="none" stroke="#c0392b" stroke-width="3"/>
+        <line x1="130" y1="90" x2="130" y2="15" stroke="#c0392b" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="132" y="12" font-size="11" fill="#c0392b">Peak</text>
+        <line x1="10" y1="20" x2="10" y2="160" stroke="#999" stroke-width="1"/>
+        <text x="15" y="98" font-size="11" fill="#666">0</text>
+        <text x="230" y="175" font-size="12" fill="#666">&#8592; one full cycle (period) &#8594;</text>
+      </svg>
+      <div class="svg-cap">One cycle: zero &rarr; peak &rarr; zero &rarr; trough &rarr; zero</div>
+    </div>
+
+    <h2>Frequency &amp; Period</h2>
+    <p><span class="pill pill-f">Frequency</span> is how many complete cycles happen every second, measured in Hertz (Hz). U.S. household power runs at 60 Hz — 60 full cycles every second. <span class="pill pill-f">Period</span> is the flip side: how long one single cycle takes. They're mathematical opposites of each other.</p>
+    <div class="formula-box">Period (seconds) = 1 &divide; Frequency (Hz)</div>
+    <p>So 60 Hz power completes one cycle every 1/60th of a second — about 16.7 milliseconds.</p>
+
+    <h2>Peak, Peak-to-Peak &amp; RMS</h2>
+    <p>A sine wave doesn't sit at one voltage — it's constantly changing, which raises an obvious question: what number do you even call "the voltage" of an AC source?</p>
+    <table>
+      <tr><th>Term</th><th>What it means</th></tr>
+      <tr><td><b>Peak</b></td><td>The single highest point the wave reaches above zero</td></tr>
+      <tr><td><b>Peak-to-Peak</b></td><td>The full swing, from the top peak down to the bottom trough</td></tr>
+      <tr><td><b>RMS</b> (Root Mean Square)</td><td>The "effective" value — the DC-equivalent that would deliver the same real power</td></tr>
+    </table>
+    <div class="analogy">
+      <div class="lbl">Why RMS Exists</div>
+      A wave that's <em>at</em> its peak only for an instant obviously doesn't deliver the same continuous power as a steady DC source at that same peak value. RMS is the honest answer to "what's it really equivalent to" — it's why standard 120V household power actually peaks at about 170V, but nobody calls it a 170V outlet.
+    </div>
+    <div class="formula-box">RMS &asymp; Peak &times; 0.707</div>
+
+    <h2>Phase</h2>
+    <p><span class="pill pill-f">Phase</span> describes the timing relationship between two waveforms of the same frequency — whether they rise and fall together, or one is shifted ahead of or behind the other, measured in degrees (a full cycle = 360&deg;). Two waves that are perfectly aligned are <b>in phase</b>; if one is shifted by 180&deg; it's exactly upside-down relative to the other, called <b>out of phase</b>.</p>
+    <p style="font-size:13px;color:var(--text-muted)">This is the general wave concept. For how phase actually shifts between voltage and current inside a real circuit with capacitors and inductors — the "ELI the ICE man" relationship — see <a href="../physics1/">AC Circuit Theory &amp; Impedance</a>.</p>
+
+    <a class="tryit" href="../aclab/">Try the waveform visualizer &rarr;</a>
+  </div>
+
+  <!-- TRANSFORMERS -->
+  <div class="tab-panel" id="tab-transformers">
+    <div class="lead">A transformer trades voltage for current, or current for voltage — without any moving parts, using nothing but magnetism.</div>
+
+    <h2>How It Works</h2>
+    <p>A transformer is two coils of wire wound around a shared iron core, with no direct electrical connection between them. AC current in the first coil (the <b>primary</b>) creates a constantly changing magnetic field. That changing field induces a voltage in the second coil (the <b>secondary</b>) purely through that shared magnetism — a principle called mutual induction. This is exactly why transformers only work on AC: DC current creates a magnetic field that stops changing once it's established, so nothing new gets induced in the secondary.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="180" y="30" width="40" height="140" fill="none" stroke="#8a3fc0" stroke-width="6"/>
+        <path d="M 180 50 q -30 0 -30 20 q 0 20 30 20 q -30 0 -30 20 q 0 20 30 20 q -30 0 -30 20 q 0 20 30 20" fill="none" stroke="#1f5f8a" stroke-width="3"/>
+        <path d="M 220 50 q 30 0 30 20 q 0 20 -30 20 q 30 0 30 20 q 0 20 -30 20" fill="none" stroke="#c0392b" stroke-width="3"/>
+        <text x="90" y="45" font-size="13" fill="#1f5f8a" font-weight="bold">Primary</text>
+        <text x="300" y="45" font-size="13" fill="#c0392b" font-weight="bold">Secondary</text>
+        <text x="60" y="65" font-size="11" fill="#666">more turns</text>
+        <text x="290" y="65" font-size="11" fill="#666">fewer turns</text>
+        <text x="130" y="185" font-size="12" fill="#8a3fc0">Iron Core</text>
+      </svg>
+      <div class="svg-cap">Step-down transformer — more turns on the primary than the secondary</div>
+    </div>
+
+    <h2>Turns Ratio</h2>
+    <p>The ratio of primary turns to secondary turns sets exactly how much the voltage changes — and current changes by the exact opposite ratio, since a transformer can't create or destroy power out of nowhere.</p>
+    <div class="formula-box">V<sub>primary</sub> / V<sub>secondary</sub> = N<sub>primary</sub> / N<sub>secondary</sub></div>
+    <p>Fewer turns on the secondary than the primary makes a <span class="pill pill-t">step-down</span> transformer (lower voltage out); more turns on the secondary makes a <span class="pill pill-t">step-up</span> transformer (higher voltage out). Either way, whatever voltage is gained, current is lost in the same proportion — and vice versa.</p>
+
+    <div class="analogy">
+      <div class="lbl">The Lever Analogy</div>
+      Think of a see-saw: push down hard with a small motion on the long end, and the short end goes up with a small force but a huge motion. A transformer trades voltage and current against each other the exact same way — you can't get more of both out than you put in.
+    </div>
+
+    <a class="tryit" href="../aclab/">Try the turns-ratio calculator &rarr;</a>
+  </div>
+
+  <!-- GENERATORS -->
+  <div class="tab-panel" id="tab-generators">
+    <div class="lead">Every generator, no matter how large, comes down to the same core idea: move a wire through a magnetic field, and it produces voltage.</div>
+
+    <h2>Electromagnetic Induction</h2>
+    <p>This principle — first identified in the 1830s — is the foundation of essentially all commercial electrical power generation. Move a conductor through a magnetic field (or move the field past a stationary conductor), and a voltage is induced in that conductor. No physical contact between them is required — only relative motion and a magnetic field.</p>
+
+    <h2>The Rotating-Coil Generator</h2>
+    <p>Spin a loop of wire inside a magnetic field, and as it rotates, the angle between the wire and the field lines constantly changes — which changes how much voltage gets induced at each instant. The result is naturally a sine wave: maximum voltage when the coil cuts straight across the field lines, zero voltage when it's momentarily aligned with them.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="60" height="140" fill="none" stroke="#888" stroke-width="8"/>
+        <rect x="320" y="20" width="60" height="140" fill="none" stroke="#888" stroke-width="8"/>
+        <text x="30" y="15" font-size="12" fill="#666">N</text>
+        <text x="345" y="15" font-size="12" fill="#666">S</text>
+        <ellipse cx="200" cy="90" rx="60" ry="35" fill="none" stroke="#1f8a4c" stroke-width="4"/>
+        <line x1="140" y1="90" x2="80" y2="90" stroke="#1f8a4c" stroke-width="2"/>
+        <line x1="260" y1="90" x2="320" y2="90" stroke="#1f8a4c" stroke-width="2"/>
+        <text x="170" y="140" font-size="12" fill="#1f8a4c" font-weight="bold">Rotating coil</text>
+      </svg>
+      <div class="svg-cap">A coil spinning between magnetic poles — this is the physical source of AC</div>
+    </div>
+
+    <p>This is why utility-scale generation is fundamentally AC: it's simply the natural output of a spinning coil in a magnetic field. Getting DC out of a rotating generator requires additional hardware (a commutator, or a separate rectifier) to convert that naturally-occurring AC afterward.</p>
+
+    <h2>What Actually Spins the Coil</h2>
+    <p>The generator itself doesn't care what turns the shaft — a steam turbine, a diesel engine, falling water, or a gas turbine are all just different ways of supplying the mechanical rotation electromagnetic induction needs. The <span class="pill pill-g">generator</span> converts mechanical motion into electrical power; whatever spins it is a separate engineering problem.</p>
+  </div>
+
+  <!-- MOTORS -->
+  <div class="tab-panel" id="tab-motors">
+    <div class="lead">A motor is a generator running in reverse — instead of motion producing electricity, electricity produces motion.</div>
+
+    <h2>The Basic Principle</h2>
+    <p>Run current through a wire sitting inside a magnetic field, and that wire experiences a physical force pushing it — this is the same electromagnetic relationship as a generator, just used in the opposite direction. Arrange the wire as a loop able to rotate, and that force becomes continuous rotation: a motor.</p>
+
+    <div class="analogy">
+      <div class="lbl">Same Machine, Opposite Job</div>
+      Spin a generator's shaft and you get electricity out. Feed electricity into that exact same kind of machine and its shaft spins instead. Many real devices — like the alternator/starter systems in some vehicles — are built to do literally both jobs.
+    </div>
+
+    <h2>DC Motors vs. AC Motors</h2>
+    <table>
+      <tr><th></th><th>DC Motor</th><th>AC Motor</th></tr>
+      <tr><td><b>Needs a commutator?</b></td><td>Yes — mechanically reverses current direction each half-turn to keep torque going the same way</td><td>No — the AC supply itself already reverses direction on its own</td></tr>
+      <tr><td><b>Speed control</b></td><td>Straightforward — vary the supplied voltage</td><td>Tied closely to the AC supply's frequency</td></tr>
+      <tr><td><b>Common use case</b></td><td>Applications needing simple, precise variable-speed control</td><td>Most industrial and household motors — simpler, more rugged, less maintenance</td></tr>
+    </table>
+
+    <h2>Torque</h2>
+    <p><span class="pill pill-m">Torque</span> is the twisting/rotational force a motor produces — the thing that actually gets a load moving and keeps it moving against resistance. It depends on both the strength of the magnetic field and the amount of current flowing through the coil; more of either generally means more torque, up to the physical limits of the motor's design.</p>
+
+    <div class="card" style="margin-top:24px">
+      <h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2>
+      <p style="font-size:13px">This guide's scope and topic sequence follows the standard progression used in <b>NEETS (Navy Electricity and Electronics Training Series)</b>, specifically Module 2 (Alternating Current and Transformers) and Module 5 (Generators and Motors) — a public-domain U.S. Navy training series covering fundamentals common across many electrical/electronic occupations. All explanations, analogies, and diagrams above are original, written from general electrical-theory fundamentals rather than adapted from any single source.</p>
+      <p style="font-size:13px">NEETS modules are freely available for further self-study at: <a href="https://casperarc.net/library/NEETS/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">casperarc.net/library/NEETS</a></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, btn){
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function toggleTheme(){
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeBtn').innerHTML = isDark ? '&#9789; Dark Mode' : '&#9788; Light Mode';
+}
+</script>
+</body>
+</html>

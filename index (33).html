@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electromagnetic Warfare Interactive Tool (E-WIT)</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+h1 span{color:var(--text-dim);font-weight:400}
+.theme-btn{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:13px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
+.card:hover{border-color:var(--accent,var(--green));transform:translateY(-2px)}
+.card .cat{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.card .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.6}
+.card .go{font-family:var(--mono);font-size:11px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
+.tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
+.tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
+[data-theme="light"] .tag-guide{color:#5a3ccc}
+.card.is-guide{border-style:dashed}
+.card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
+.section-label{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:color .15s}
+.section-label:hover{color:var(--green)}
+.cat-chevron{font-size:9px;display:inline-block;transition:transform .15s}
+.cat-count{font-size:11px;color:var(--text-dim);letter-spacing:0;font-weight:400;margin-left:auto}
+.section-label:first-child{margin-top:0}
+.empty-cat{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
+.pagetabs{display:flex;gap:8px}
+.pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
+  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s}
+.pagetab:hover{border-color:var(--amber);color:var(--amber)}
+.pagetab.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.page{display:none}
+.page.on{display:block}
+.tag-slide{color:var(--amber);background:var(--amber-dark);border:1px solid var(--amber-dim)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Electromagnetic Warfare Interactive Tool (E-WIT)</h1>
+  </div>
+  <div class="hl">
+    <div class="pagetabs">
+      <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
+      <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
+      <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
+      <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
+    </div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
+</header>
+<div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Electromagnetic Warfare Specialist — Self-Contained Interactive References</div>
+
+<div id="page-tools" class="page on">
+<div class="wrap">
+  <div id="view-grid"></div>
+</div>
+</div>
+
+<div id="page-slides" class="page">
+<div class="wrap">
+  <div class="section-label">Lesson Slide Decks</div>
+  <div id="view-slides"></div>
+</div>
+</div>
+
+<div id="page-learning" class="page">
+<div class="wrap">
+  <div class="section-label">Additional Learning — Certifications &amp; Licenses</div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Self-study resources for career progression beyond this course — external links open in a new tab. Details below are current as of research, but always verify current requirements/costs directly with the certifying body before committing time or money.
+  </div>
+  <div id="view-learning"></div>
+</div>
+</div>
+
+<div id="page-wraven" class="page">
+<div class="wrap">
+  <div class="section-label">WRAVEN Training Modules</div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Self-paced WRAVEN modules — each opens as its own interactive lesson with inline quizzes, a final exam, and a printable certificate of completion.
+  </div>
+  <div id="view-wraven"></div>
+</div>
+</div>
+
+<script>
+// Section order. Empty sections still render (placeholder shown) so you can fill them later.
+const CATEGORIES=['B1 Math','B2 Physics','C BET','D Networking','E EW Theory','F Systems','G Planning'];
+// hrefs/labels match your existing site. Edit "file" if your paths change.
+const TOOLS=[
+  // B1 Math
+  {cat:'B1 Math',kind:'guide',nm:'Math Explained',ds:'Plain-language guide: algebra, trig, logarithms & decibels',file:'mathguide',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math for EW',ds:'Algebra, trigonometry, logarithms & decibels calculators',file:'mathtools',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math',ds:'Core math refresher for EW calculations',file:'math',color:'#ffb300'},
+  // B2 Physics
+  {cat:'B2 Physics',kind:'guide',nm:'Radio Waves Explained',ds:'Plain-language guide: waves, spectrum, propagation, loss & antennas',file:'physicsguide',color:'#00d4ff'},
+  {cat:'B2 Physics',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'AC Circuit Theory & Impedance',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
+  {cat:'B2 Physics',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'Signal Quality & Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
+  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff'},
+  // C BET
+  {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
+  {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
+  {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88'},
+  // E EW Theory
+  {cat:'E EW Theory',kind:'guide',nm:'Electromagnetic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
+  {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444'},
+  {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff'},
+  {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff'},
+  {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
+  {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
+  // D Networking
+  {cat:'D Networking',kind:'guide',nm:'Networking Explained',ds:'Plain-language guide: OSI, MAC/IP, subnetting, DHCP, TCP/UDP & ports, DNS/URLs, topologies & gear',file:'networkguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
+  {cat:'D Networking',kind:'guide',nm:'Wi-Fi Explained',ds:'Plain-language guide: Wi-Fi standards, bands & channels',file:'wifiguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
+  {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
+  {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
+  {cat:'D Networking',nm:'Network Test',ds:'243-question quiz: networking, wireless, cellular & PBQ-style practice scenarios',file:'nettest',color:'#bb88ff'},
+  {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
+  // F Systems
+  {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
+  {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
+  {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700'},
+  {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700'},
+  // G Planning
+  {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
+  {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff'},
+  {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff'},
+  {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff'},
+];
+function catId(cat){ return cat.replace(/[^a-zA-Z0-9]/g,'-'); }
+function render(){
+  // grouped launch cards — iterate CATEGORIES so empty sections still appear
+  let vh='';
+  CATEGORIES.forEach(cat=>{
+    // guides first, then interactives, within each module
+    const items=TOOLS.filter(t=>t.cat===cat).sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
+    const id=catId(cat);
+    vh+=`<div class="section-label" onclick="toggleCategory('${id}')" role="button" tabindex="0">
+      <span class="cat-chevron" id="chev-${id}">\u25BC</span> ${cat} <span class="cat-count">(${items.length})</span>
+    </div>`;
+    if(items.length===0){vh+=`<div class="empty-cat" id="cat-${id}">No tools yet \u2014 coming soon</div>`;return;}
+    vh+=`<div class="grid" id="cat-${id}">`;
+    items.forEach(t=>{
+      const guide=t.kind==='guide';
+      const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+      const go=guide?'READ \u2192':'LAUNCH \u2192';
+      vh+=`<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+        <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-grid').innerHTML=vh;
+}
+function toggleCategory(id){
+  const el=document.getElementById('cat-'+id);
+  const chev=document.getElementById('chev-'+id);
+  if(!el) return;
+  const collapsed=el.style.display==='none';
+  el.style.display=collapsed?'':'none';
+  if(chev) chev.textContent=collapsed?'\u25BC':'\u25B6';
+}
+// Lesson slide decks — 10-Day EW Networking Fundamentals course. Edit file paths once your .pptx files are uploaded to /slides/.
+const SLIDES=[
+  {nm:'TDY for Schools',ds:'A Soldier\u2019s guide to temporary duty for institutional training \u00b7 13 slides',file:'slides/tdy-for-schools.pptx'},
+  {nm:'Army Community Service',ds:'The support network you\u2019re already paying for \u00b7 25-min brief \u00b7 10 slides',file:'slides/army-community-service.pptx'},
+  {nm:'Education Benefits',ds:'A practical guide for 17E Soldiers \u00b7 30-min brief \u00b7 11 slides',file:'slides/education-benefits-17e.pptx'},
+  {nm:'Promotion Board Prep',ds:'Complete guide + Q&amp;A bank for Regular Army Soldiers \u00b7 extended session \u00b7 23 slides',file:'slides/promotion-board-prep.pptx'},
+  {nm:'Warrior Tasks &amp; Battle Drills',ds:'The skills every Soldier must own \u00b7 30-min brief \u00b7 12 slides',file:'slides/warrior-tasks-battle-drills.pptx'},
+  {nm:'Professional Development',ds:'Your 17E career map &amp; building your talent profile (Ref: DA PAM 600-25) \u00b7 30-min brief \u00b7 13 slides',file:'slides/career-map-17e.pptx'},
+  {nm:'Thrift Savings Plan',ds:'Building your financial mission readiness \u00b7 30-min brief for new Soldiers \u00b7 11 slides',file:'slides/tsp-briefing.pptx'},
+];
+function renderSlides(){
+  let vh='<div class="grid">';
+  SLIDES.forEach(s=>{
+    vh+=`<a class="card" href="${s.file}" download style="--accent:#ffb300">
+      <div class="cat">LESSON <span class="tag tag-slide">PPTX</span></div><div class="nm">${s.nm}</div>
+      <div class="ds">${s.ds}</div><div class="go">DOWNLOAD &#8595;</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-slides').innerHTML=vh;
+}
+
+// Additional Learning — certifications & licenses for self-study beyond this course.
+// Grouped by category; each links externally (opens in a new tab, doesn't navigate away from the toolkit).
+const LEARN=[
+  {cat:'IT / Cyber Certifications', nm:'CompTIA A+', tag:'CERT', color:'#00d4ff',
+    ds:'Foundational IT hardware, software & troubleshooting certification \u2014 a common first step before Network+ or Security+.',
+    url:'https://www.comptia.org/certifications/a'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 A+ Core 1 (220-1101)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The internet\u2019s most-used free A+ training series \u2014 full video course covering every Core 1 exam objective.',
+    embed:'playlist', embedId:'PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 A+ Core 2 (220-1102)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The companion Core 2 course \u2014 operating systems, security, software troubleshooting, and operational procedures.',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnna96gzhJrzkii4hH_mgW4b'},
+  {cat:'IT / Cyber Certifications', nm:'CompTIA Network+', tag:'CERT', color:'#00d4ff',
+    ds:'Vendor-neutral networking fundamentals \u2014 infrastructure, protocols, troubleshooting. Builds directly on this site\u2019s Networking modules.',
+    url:'https://www.comptia.org/certifications/network'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 Network+ (N10-009) Training Index', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'Free full video course covering the current N10-009 objectives \u2014 official course index with every video linked in order.',
+    url:'https://professormesser.link/n009videos'},
+  {cat:'IT / Cyber Certifications', nm:'CompTIA Security+', tag:'CERT', color:'#00d4ff',
+    ds:'Security fundamentals \u2014 commonly used to satisfy DoD 8140/8570 IAT Level II baseline certification requirements.',
+    url:'https://www.comptia.org/certifications/security'},
+  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 Security+ (SY0-701)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The current SY0-701 training course \u2014 121 videos, 15+ hours, covering every exam objective for free.',
+    embed:'playlist', embedId:'PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv'},
+
+  {cat:'DoD Baseline Certifications', nm:'DoD 8140.03 Cyber Workforce Framework', tag:'DoD', color:'#ffb300',
+    ds:'As of Feb 2023, DoDM 8140.03 supersedes the older 8570.01-M IA program, mapping roles to DCWF work roles (the old IAT/IAM/IASAE terms are still used informally). Check your specific role/level before assuming which certification applies \u2014 requirements vary by position.',
+    url:'https://dl.dod.cyber.mil/wp-content/uploads/8140/pdf/unclass-dod8570_ia_program_transition_dod8140_cwp.pdf'},
+  {cat:'DoD Baseline Certifications', nm:'Navigating DoD 8140 Qualifications', tag:'FREE TRAINING', color:'#ffb300',
+    ds:'A plain-language walkthrough of how the 8140 qualification and role-mapping process actually works in practice.',
+    embed:'video', embedId:'HgVQLTIyuh4',
+    url:'https://www.youtube.com/watch?v=HgVQLTIyuh4'},
+  {cat:'DoD Baseline Certifications', nm:'DoD 8140 Qualification Matrices (Official)', tag:'DoD', color:'#ffb300',
+    ds:'The official DoD Cyber Exchange page listing approved certifications and training by DCWF work role \u2014 the authoritative source, not a summary.',
+    url:'https://www.cyber.mil/dod-workforce-innovation-directorate/dod8140/qualification-matrices'},
+
+  {cat:'Amateur Radio Licenses', nm:'Technician Class', tag:'HAM', color:'#00ff88',
+    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Free, always-current practice tests pulled straight from the active FCC question pool.',
+    url:'https://hamstudy.org/'},
+];
+
+function renderLearning(){
+  const cats = [...new Set(LEARN.map(l=>l.cat))];
+  let vh='';
+  cats.forEach(cat=>{
+    vh+=`<div class="section-label" style="margin-top:18px">${cat}</div><div class="grid">`;
+    LEARN.filter(l=>l.cat===cat).forEach(l=>{
+      if(l.embed==='playlist' || l.embed==='video'){
+        const src = l.embed==='playlist'
+          ? `https://www.youtube.com/embed/videoseries?list=${l.embedId}`
+          : `https://www.youtube.com/embed/${l.embedId}`;
+        vh+=`<div class="card" style="--accent:${l.color};padding:0;overflow:hidden">
+          <div style="position:relative;padding-bottom:56.25%;height:0;background:#000">
+            <iframe src="${src}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div style="padding:16px 18px">
+            <div class="cat">${l.tag} <span class="tag tag-slide">YOUTUBE</span></div><div class="nm">${l.nm}</div>
+            <div class="ds">${l.ds}</div>
+            <a class="go" style="text-decoration:none;display:block;margin-top:8px" href="${l.url}" target="_blank" rel="noopener">OPEN FULL COURSE &#8599;</a>
+          </div>
+        </div>`;
+      } else if(l.tag === 'PENDING'){
+        vh+=`<div class="card" style="--accent:${l.color};opacity:.7;cursor:default">
+          <div class="cat">${l.tag}</div><div class="nm">${l.nm}</div>
+          <div class="ds">${l.ds}</div></div>`;
+      } else {
+        vh+=`<a class="card" href="${l.url}" target="_blank" rel="noopener" style="--accent:${l.color}">
+          <div class="cat">${l.tag} <span class="tag tag-slide">EXTERNAL LINK</span></div><div class="nm">${l.nm}</div>
+          <div class="ds">${l.ds}</div><div class="go">LEARN MORE &#8599;</div></a>`;
+      }
+    });
+    vh+='</div>';
+  });
+  document.getElementById('view-learning').innerHTML=vh;
+}
+
+// WRAVEN training modules — each is a self-contained interactive lesson (inline quizzes,
+// final exam, printable certificate). Add new modules here as they're built; the file
+// itself lives in /wraven/.
+const WRAVEN_MODULES=[
+  {nm:'Module 1: DC & Electrical Safety', ds:'Electrical safety and shock rescue, atomic structure, conductors/insulators, voltage/current/resistance, Ohm\u2019s Law, power, and series/parallel circuits \u2014 with inline quizzes and a final certification exam.', file:'wraven/module-1-dc-safety.html', color:'#3fb6ff'},
+];
+function renderWraven(){
+  let vh='<div class="grid">';
+  WRAVEN_MODULES.forEach(m=>{
+    vh+=`<a class="card" href="${m.file}" style="--accent:${m.color}">
+      <div class="cat">WRAVEN <span class="tag tag-int">MODULE</span></div><div class="nm">${m.nm}</div>
+      <div class="ds">${m.ds}</div><div class="go">BEGIN \u2192</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-wraven').innerHTML=vh;
+}
+
+function showPage(name){
+  document.getElementById('tab-tools').classList.toggle('on',name==='tools');
+  document.getElementById('tab-slides').classList.toggle('on',name==='slides');
+  document.getElementById('tab-learning').classList.toggle('on',name==='learning');
+  document.getElementById('tab-wraven').classList.toggle('on',name==='wraven');
+  document.getElementById('page-tools').classList.toggle('on',name==='tools');
+  document.getElementById('page-slides').classList.toggle('on',name==='slides');
+  document.getElementById('page-learning').classList.toggle('on',name==='learning');
+  document.getElementById('page-wraven').classList.toggle('on',name==='wraven');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+render();
+renderSlides();
+renderLearning();
+renderWraven();
+</script>
+</body>
+</html>
