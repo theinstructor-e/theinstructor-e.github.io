@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRAVEN - Module 7: Number Systems</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --accent:#3fb6ff; --accent2:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --txt:#e6edf3; --muted:#9aa6b2; --border:#2b3442;
+    --crt-green: #39ff14;
+    --crt-dark: #021102;
+    --crt-grid: #0f3b0f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(160deg,#0a0e14,#0d1117 40%,#10151d);
+    color:var(--txt); overflow:hidden;
+  }
+  #app{height:100vh;display:flex;flex-direction:column;}
+  
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 22px;background:var(--panel); border-bottom:1px solid var(--border);
+  }
+  header .brand{font-weight:700;color:var(--accent);font-size:15px;}
+  header .counter{font-size:13px;color:var(--muted);}
+  
+  #progressWrap{height:5px;background:#0a0e14;}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;}
+  
+  #slideArea{flex:1;overflow-y:auto;padding:34px 6vw 90px;}
+  .slide{display:none;animation:fade .4s ease;max-width:900px;margin:0 auto;}
+  .slide.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  
+  h1{font-size:28px;margin:0 0 6px;color:var(--accent);line-height:1.2;}
+  h2{font-size:20px;color:var(--accent2);margin:20px 0 10px;}
+  p,li{font-size:16px;line-height:1.6;color:var(--txt);}
+  .lead{font-size:18px;color:var(--muted);margin-bottom:18px;}
+  .kw{color:var(--accent);font-weight:600;}
+  .kw2{color:var(--accent2);font-weight:600;}
+  
+  .tag{display:inline-block;background:var(--panel2);color:var(--accent);
+    border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;
+    letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+  
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px; align-items: center;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  
+  .note{border-left:4px solid var(--accent);background:rgba(63,182,255,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .dangerbox{border-left:4px solid var(--bad);background:rgba(255,107,107,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .svg-graphic { display: block; margin: 20px auto; max-width: 100%; background: #070b10; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+
+  /* Math Tables */
+  .math-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 16px; }
+  .math-table th, .math-table td { border: 1px solid var(--border); padding: 12px; text-align: center; }
+  .math-table th { background: var(--panel2); color: var(--accent); }
+
+  /* Animation Specific for Slide 8 */
+  .anim-step { display: none; margin: 5px 0; }
+  .anim-step.visible { display: block; animation: fade 0.3s ease; }
+  .bin-cell { font-size: 24px; font-weight: bold; color: var(--txt); transition: color 0.3s ease; }
+  .bin-cell.active-1 { color: var(--accent2); }
+  .bin-cell.active-0 { color: var(--muted); }
+  .anim-btn { background: var(--accent); color: #000; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+  .anim-btn:hover { filter: brightness(1.1); }
+  .anim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Paste this styling right here: */
+  .project-owner-info {
+    max-width: 480px;
+    margin: 25px auto 10px;
+    padding: 15px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .project-owner-info div {
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .project-owner-info div strong {
+    color: var(--accent);
+    display: inline-block;
+    width: 150px;
+  }
+  .project-owner-info div span {
+    color: var(--txt);
+  }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+  .start-logo { display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.3)); }
+  .btn-start { background: #161b22; color:var(--crt-green); padding: 16px 36px; font-size:20px; font-weight:bold; border:2px solid var(--crt-green); border-radius:8px; cursor:pointer; margin-top:40px; transition: 0.2s; box-shadow: 0 0 15px rgba(57,255,20,0.2); text-transform: uppercase; letter-spacing: 1px;}
+  .btn-start:hover { background: rgba(57,255,20,0.1); transform: scale(1.05); box-shadow: 0 0 25px rgba(57,255,20,0.4);}
+  .start-title { font-size: 42px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0; color: #fff;}
+  .start-subtitle { font-size: 22px; color: var(--crt-green); margin-top: 10px; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  
+  @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #radar-sweep { transform-origin: 200px 200px; animation: sweep 4s linear infinite; }
+
+  /* Quizzes */
+  .quiz{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0;}
+  .quiz .q{font-weight:600;font-size:16px;margin-bottom:12px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:15px;transition:.15s;}
+  .opt:hover{border-color:var(--accent);background:#222b3a;}
+  .opt.correct{border-color:var(--accent2);background:rgba(126,231,135,.15);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.15);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:12px;font-size:14px;padding:11px 14px;border-radius:8px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(126,231,135,.12);border-left:4px solid var(--accent2);}
+  .fb.no{background:rgba(255,107,107,.12);border-left:4px solid var(--bad);}
+  
+  /* Exam Specific */
+  #examContainer input[type="text"]{width:100%;padding:12px;font-size:16px;background:var(--panel2);color:var(--txt);border:1px solid var(--accent);border-radius:8px;margin-bottom:20px;}
+  .exam-q{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px; transition: all 0.3s ease;}
+  .exam-opt{display:flex;align-items:center;margin:8px 0;cursor:pointer;}
+  .exam-opt input{width:auto;margin-right:10px;accent-color:var(--accent);}
+  .btn-submit{background:var(--accent2);color:#111;font-weight:bold;font-size:16px;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;}
+  .btn-submit:hover{filter:brightness(1.1);}
+  
+  /* =========================================
+     CERTIFICATE OF TRAINING 
+     ========================================= */
+  #certificate {
+    background: #fffdf8;
+    color: #111;
+    padding: 50px 60px;
+    border: 12px double #1a365d;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cert-title {
+    font-family: "Old English Text MT", "Engravers MT", "Playfair Display", Georgia, serif;
+    font-size: 48px;
+    color: #000;
+    margin: 10px 0 30px;
+    border-bottom: none;
+    font-weight: normal;
+  }
+  .cert-text {
+    font-size: 22px;
+    margin: 15px 0;
+    color: #333;
+    font-style: italic;
+  }
+  #certName {
+    font-size: 34px;
+    color: #000;
+    display: inline-block;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 1px solid #000;
+    min-width: 450px;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .cert-course {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #000;
+  }
+  #certDate {
+    font-size: 20px;
+    color: #333;
+    margin-top: 40px;
+  }
+  .print-btn {
+    background: var(--accent);
+    color: #111;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  @media print {
+    body, html { background: #fff; height: auto; overflow: visible; }
+    header, #progressWrap, #footerNav, .print-btn, #examContainer, .tag, #slideArea > .slide:not(#examSlide), .slide > h1, .slide > p.lead { display: none !important; }
+    #slideArea { padding: 0; overflow: visible; }
+    #certificate { 
+      display: block !important; 
+      position: absolute; 
+      top: 0; left: 0;
+      border: 8px double #000; 
+      box-shadow: none; 
+      width: 100%; 
+      margin: 0; 
+      padding: 60px; 
+    }
+  }
+
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:12px 22px;background:var(--panel);border-top:1px solid var(--border);}
+  .navbtn{background:var(--accent);color:#06121d;border:none;border-radius:8px;padding:10px 22px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .navbtn:hover{filter:brightness(1.12);}
+  .navbtn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ── Table of Contents sidebar — lets users jump to any topic freely ── */
+  #mainRow{flex:1;display:flex;overflow:hidden;min-height:0;}
+  #tocSidebar{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 0;transition:margin-left .25s ease;}
+  #tocSidebar .toc-group-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    padding:14px 20px 6px;font-weight:700;}
+  #tocSidebar .toc-group-label:first-child{padding-top:4px;}
+  .toc-item{padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;
+    transition:background .15s,color .15s;line-height:1.4;display:flex;gap:8px;align-items:flex-start;}
+  .toc-item .toc-num{color:var(--border);font-weight:700;flex-shrink:0;min-width:18px;}
+  .toc-item:hover{background:var(--panel2);color:var(--txt);}
+  .toc-item.active{border-left-color:var(--accent);background:var(--panel2);color:var(--accent);font-weight:600;}
+  .toc-item.active .toc-num{color:var(--accent);}
+  .toc-item.done .toc-num::after{content:' \2713';color:var(--accent2);}
+  #tocToggle{display:none;font-family:var(--mono, inherit);font-size:13px;background:var(--panel2);
+    border:1px solid var(--border);color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;}
+  #mainCol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  #tocOverlay{display:none;}
+  @media(max-width:860px){
+    #tocToggle{display:inline-block;}
+    #tocSidebar{position:fixed;top:0;left:0;bottom:0;z-index:500;margin-left:-270px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+    #tocSidebar.open{margin-left:0;}
+    #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 7</span></div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+  </header>
+  <div id="mainRow">
+    <div id="tocOverlay" onclick="closeToc()"></div>
+    <nav id="tocSidebar"></nav>
+    <div id="mainCol">
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      
+  <div id="slideArea">
+
+    <!-- START PAGE (SLIDE 0) -->
+    <section class="slide active">
+      <div class="start-container">
+        <!-- Animated CRT Radar Scope SVG -->
+        <svg class="start-logo" viewBox="0 0 400 400" width="280" height="280">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#39ff14" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
+              <stop offset="90%" stop-color="#021102" />
+              <stop offset="100%" stop-color="#0a1a0a" />
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="195" fill="url(#bezel)" stroke="#113311" stroke-width="10"/>
+          <g stroke="var(--crt-grid)" stroke-width="2">
+            <circle cx="200" cy="200" r="150" fill="none"/>
+            <circle cx="200" cy="200" r="100" fill="none"/>
+            <circle cx="200" cy="200" r="50" fill="none"/>
+            <line x1="200" y1="10" x2="200" y2="390"/>
+            <line x1="10" y1="200" x2="390" y2="200"/>
+            <line x1="65" y1="65" x2="335" y2="335"/>
+            <line x1="65" y1="335" x2="335" y2="65"/>
+          </g>
+          <circle cx="120" cy="140" r="4.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="280" cy="90" r="3" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="230" cy="300" r="5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="160" cy="250" r="2.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <g id="radar-sweep">
+            <path d="M 200 200 L 200 10 A 190 190 0 0 1 334 65 Z" fill="url(#sweep)" opacity="0.3"/>
+            <line x1="200" y1="200" x2="200" y2="10" stroke="var(--crt-green)" stroke-width="3" filter="url(#glow)"/>
+          </g>
+          <circle cx="200" cy="200" r="6" fill="var(--crt-green)" filter="url(#glow)"/>
+        </svg>
+
+        <h1 class="start-title">WRAVEN Training Program</h1>
+        <p class="start-subtitle">Module 7: Number Systems</p>
+<!-- Paste this HTML block right here: -->
+        <div class="project-owner-info">
+          <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
+          <div><strong>Location Address:</strong> <span>633 Barnes Ave</span></div>
+          <div><strong>Location City/ST/ZIP:</strong> <span>Fort Gordon, GA 30905</span></div>
+          <div><strong>Contact:</strong> <span>phillip.r.crandell.civ@army.mil</span></div>
+        </div>
+
+        <button class="btn-start" onclick="document.getElementById('nextBtn').click();">Begin Training</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <span class="tag">Section 1: Number Systems</span>
+      <h1>Why are numbers important?</h1>
+      <p class="lead">As human activities became more complex, numbers became vital for trade, time, distance, and engineering.</p>
+      <div class="card">
+        <p>In this module, you will learn about number systems in general, and dive deep into the <b>Binary, Octal, and Hexadecimal (Hex)</b> systems specifically.</p>
+        <p>You will learn the manual methods for converting numbers between these systems and our standard decimal system. These alternative number systems map perfectly to the electronic signals necessary for digital equipment, giving computers their unerring accuracy and speed.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <span class="tag">Section 1: Number Systems</span>
+      <h1>The Decimal System (Base-10)</h1>
+      <p class="lead">The decimal system is a positional numeral system using ten distinct digits (0–9).</p>
+      <div class="card">
+        <p>It is the most widely used system in daily life. Each digit in a decimal number has a place value determined by its position relative to the decimal point. For example, in the number <strong>1234</strong>:</p>
+        <ul>
+          <li><strong>4</strong> is in the ones place: 4 × 10⁰ = 4</li>
+          <li><strong>3</strong> is in the tens place: 3 × 10¹ = 30</li>
+          <li><strong>2</strong> is in the hundreds place: 2 × 10² = 200</li>
+          <li><strong>1</strong> is in the thousands place: 1 × 10³ = 1000</li>
+        </ul>
+        <p>Adding these values gives the total: 1234.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <span class="tag">Section 1: Number Systems</span>
+      <h1>Understanding Positional Notation</h1>
+      <p class="lead">Place Value Concept</p>
+      <div class="card">
+        <p>Each position in a number has a value equal to a <b>power of the base</b>. In the decimal system, the base is 10. The position determines whether the digit represents units, tens, hundreds, etc.</p>
+        <h3 style="color:var(--accent2);">Zero in Positional Notation</h3>
+        <p>The digit <strong>0</strong> acts as a placeholder, indicating that a particular power of 10 has no contribution in that position. This is essential for distinguishing numbers like 205 and 25.</p>
+        <p>Without zero acting as a placeholder, representing large numbers compactly and performing arithmetic efficiently would be nearly impossible.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <span class="tag">Section 1: Number Systems</span>
+      <h1>Summary of the Decimal System</h1>
+      <p class="lead">Positional notation is the backbone of the decimal system.</p>
+      <div class="card">
+        <p>It uses both the digit’s value and its position to determine its total contribution to the number. The digit 0 plays a crucial role as a placeholder to maintain the correct scale of each digit.</p>
+        <h3 style="color:var(--warn);">Key Takeaways:</h3>
+        <ul>
+          <li>Decimal system = Base-10 positional system.</li>
+          <li>Value of a digit = digit × (10<sup>position</sup>).</li>
+          <li>Zero is essential as a placeholder.</li>
+          <li>We use Base-10 simply because humans have 10 fingers. Machines do not.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide">
+      <span class="tag">Section 2: The Binary System</span>
+      <h1>Why Binary?</h1>
+      <p class="lead">Computers don't have ten fingers. They only have switches.</p>
+      <div class="card">
+        <p>Inside a microchip, there are billions of microscopic transistors acting as electronic switches. A switch only has two possible states: <b>ON</b> or <b>OFF</b>.</p>
+        <p>To a computer:</p>
+        <ul>
+          <li><b>High Voltage (ON)</b> = 1</li>
+          <li><b>Low Voltage / Ground (OFF)</b> = 0</li>
+        </ul>
+        <p>Because there are only two digits (0 and 1), this is a <span class="kw">Base-2 system</span>. We call this the Binary System.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <span class="tag">Section 2: The Binary System</span>
+      <h1>Binary Positional Notation</h1>
+      <p class="lead">Just like Base-10 uses powers of 10, Base-2 uses powers of 2.</p>
+      
+      <svg class="svg-graphic" viewBox="0 0 600 150" width="100%" height="150px">
+        <rect x="20" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="90" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="160" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="230" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="300" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="370" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="440" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        <rect x="510" y="50" width="60" height="60" fill="var(--panel2)" stroke="var(--accent)" stroke-width="2"/>
+        
+        <text x="35" y="35" fill="var(--muted)" font-size="14">2^7</text>
+        <text x="105" y="35" fill="var(--muted)" font-size="14">2^6</text>
+        <text x="175" y="35" fill="var(--muted)" font-size="14">2^5</text>
+        <text x="245" y="35" fill="var(--muted)" font-size="14">2^4</text>
+        <text x="315" y="35" fill="var(--muted)" font-size="14">2^3</text>
+        <text x="385" y="35" fill="var(--muted)" font-size="14">2^2</text>
+        <text x="455" y="35" fill="var(--muted)" font-size="14">2^1</text>
+        <text x="525" y="35" fill="var(--muted)" font-size="14">2^0</text>
+
+        <text x="35" y="88" fill="var(--accent)" font-size="20" font-weight="bold">128</text>
+        <text x="110" y="88" fill="var(--accent)" font-size="20" font-weight="bold">64</text>
+        <text x="180" y="88" fill="var(--accent)" font-size="20" font-weight="bold">32</text>
+        <text x="250" y="88" fill="var(--accent)" font-size="20" font-weight="bold">16</text>
+        <text x="325" y="88" fill="var(--accent)" font-size="20" font-weight="bold">8</text>
+        <text x="395" y="88" fill="var(--accent)" font-size="20" font-weight="bold">4</text>
+        <text x="465" y="88" fill="var(--accent)" font-size="20" font-weight="bold">2</text>
+        <text x="535" y="88" fill="var(--accent)" font-size="20" font-weight="bold">1</text>
+        
+        <text x="250" y="140" fill="var(--warn)" font-size="14">Reads Right to Left ➔</text>
+      </svg>
+      
+      <div class="card">
+        <p>Each box represents a single "Bit" (Binary Digit). In binary, you simply move from right to left, doubling the value of the place every time you move over.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <span class="tag">Section 2: The Binary System</span>
+      <h1>Converting Binary to Decimal</h1>
+      <p class="lead">If a slot has a 1, turn that value ON. If it has a 0, turn it OFF. Then add them up.</p>
+      
+      <table class="math-table">
+        <tr>
+          <th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th>
+        </tr>
+        <tr>
+          <td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td>
+        </tr>
+      </table>
+      
+      <div class="card">
+        <p>Looking at the binary number <span class="kw">01001011</span>:</p>
+        <ul>
+          <li>We have a 1 in the <b>64</b> slot.</li>
+          <li>We have a 1 in the <b>8</b> slot.</li>
+          <li>We have a 1 in the <b>2</b> slot.</li>
+          <li>We have a 1 in the <b>1</b> slot.</li>
+        </ul>
+        <p style="font-size:20px; text-align:center; font-weight:bold; color:var(--accent2);">64 + 8 + 2 + 1 = 75</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: ANIMATED CONVERSION -->
+    <section class="slide">
+      <span class="tag">Section 2: The Binary System</span>
+      <h1>Converting Decimal to Binary (Animated)</h1>
+      <p class="lead">The Subtraction Method: Let's convert the decimal number <b>45</b>.</p>
+      
+      <div class="card" style="text-align:center;">
+        <button id="stepBtn" class="anim-btn">Step Forward</button>
+        <button id="resetBtn" class="anim-btn" style="background:var(--panel2); color:var(--txt);">Reset</button>
+        
+        <!-- Live Table -->
+        <table class="math-table" style="margin-bottom: 20px;">
+          <tr>
+            <th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th>
+          </tr>
+          <tr>
+            <td id="b128" class="bin-cell">-</td>
+            <td id="b64" class="bin-cell">-</td>
+            <td id="b32" class="bin-cell">-</td>
+            <td id="b16" class="bin-cell">-</td>
+            <td id="b8" class="bin-cell">-</td>
+            <td id="b4" class="bin-cell">-</td>
+            <td id="b2" class="bin-cell">-</td>
+            <td id="b1" class="bin-cell">-</td>
+          </tr>
+        </table>
+        
+        <!-- Logic Steps -->
+        <div style="text-align:left; font-size:15px; min-height:200px;">
+          <div id="step1" class="anim-step">1. Can you take 128 out of 45? No. Put a <b style="color:var(--muted)">0</b>.</div>
+          <div id="step2" class="anim-step">2. Can you take 64 out of 45? No. Put a <b style="color:var(--muted)">0</b>.</div>
+          <div id="step3" class="anim-step">3. Can you take 32 out of 45? Yes. Put a <b style="color:var(--accent2)">1</b>. (45 - 32 = <b>13</b> remaining).</div>
+          <div id="step4" class="anim-step">4. Can you take 16 out of 13? No. Put a <b style="color:var(--muted)">0</b>.</div>
+          <div id="step5" class="anim-step">5. Can you take 8 out of 13? Yes. Put a <b style="color:var(--accent2)">1</b>. (13 - 8 = <b>5</b> remaining).</div>
+          <div id="step6" class="anim-step">6. Can you take 4 out of 5? Yes. Put a <b style="color:var(--accent2)">1</b>. (5 - 4 = <b>1</b> remaining).</div>
+          <div id="step7" class="anim-step">7. Can you take 2 out of 1? No. Put a <b style="color:var(--muted)">0</b>.</div>
+          <div id="step8" class="anim-step">8. Can you take 1 out of 1? Yes. Put a <b style="color:var(--accent2)">1</b>. (1 - 1 = <b>0</b>).</div>
+          <div id="step9" class="anim-step" style="margin-top:15px; font-size:18px; color:var(--accent2); font-weight:bold; text-align:center;">Final Binary Number: 00101101</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Practice: Binary Conversions</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: What is the decimal equivalent of the binary number 1010?</div>
+        <button class="opt">A. 12</button>
+        <button class="opt">B. 10</button>
+        <button class="opt">C. 8</button>
+        <button class="opt">D. 14</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: Convert the decimal number 9 into binary.</div>
+        <button class="opt">A. 0111</button>
+        <button class="opt">B. 1100</button>
+        <button class="opt">C. 1001</button>
+        <button class="opt">D. 1011</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide">
+      <span class="tag">Section 3: The Octal System</span>
+      <h1>The Octal System (Base-8)</h1>
+      <p class="lead">Binary gets very long, very fast. Octal was invented to shorten it.</p>
+      <div class="card">
+        <p>Because binary strings (like 110101110) are hard for humans to read and prone to transcription errors, early computer scientists created the Octal system. It is a Base-8 system, meaning it only uses the digits <b>0, 1, 2, 3, 4, 5, 6, and 7</b>.</p>
+        <p>Why Base-8? Because exactly three binary bits (the 4, 2, and 1 slots) can perfectly represent any number from 0 to 7.</p>
+        <table class="math-table" style="font-size:14px;">
+          <tr>
+            <th>Binary (4-2-1)</th><th>000</th><th>001</th><th>010</th><th>011</th><th>100</th><th>101</th><th>110</th><th>111</th>
+          </tr>
+          <tr>
+            <th>Octal Value</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide">
+      <span class="tag">Section 3: The Octal System</span>
+      <h1>Converting Binary to Octal</h1>
+      <p class="lead">Break the long binary string into manageable groups of three.</p>
+      <div class="card">
+        <p>To convert binary to octal, you simply group the binary bits into sets of three, starting from the right side, and translate each group independently using the (4, 2, 1) method.</p>
+        <p>Let's convert binary <span class="kw">101110</span> into Octal:</p>
+        <ol>
+          <li>Split it: <b>101</b> | <b>110</b></li>
+          <li>Read the first group (4+0+1): <b>5</b></li>
+          <li>Read the second group (4+2+0): <b>6</b></li>
+        </ol>
+        <p>The Octal equivalent is <b style="color:var(--accent2); font-size: 20px;">56</b>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 -->
+    <section class="slide">
+      <span class="tag">Section 3: The Octal System</span>
+      <h1>Converting Octal to Binary</h1>
+      <p class="lead">Just expand each digit back out into three bits.</p>
+      <div class="card">
+        <p>Going backward is just as easy. Expand each octal digit into its 3-bit binary equivalent.</p>
+        <p>Let's convert the Octal number <span class="kw">34</span> into Binary:</p>
+        <ol>
+          <li>Look at the first digit (3). How do you make 3 using (4, 2, 1)? You need the 2 and the 1. So, <b>011</b>.</li>
+          <li>Look at the second digit (4). How do you make 4? Just the 4. So, <b>100</b>.</li>
+        </ol>
+        <p>Push them together. The Binary equivalent is <b style="color:var(--accent2); font-size: 20px;">011100</b>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 13 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Practice: Octal Conversions</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: Convert the binary string 111000 into Octal.</div>
+        <button class="opt">A. 60</button>
+        <button class="opt">B. 70</button>
+        <button class="opt">C. 80</button>
+        <button class="opt">D. 30</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="3">
+        <div class="q">Q: Convert the Octal number 27 into binary.</div>
+        <button class="opt">A. 110111</button>
+        <button class="opt">B. 101011</button>
+        <button class="opt">C. 010101</button>
+        <button class="opt">D. 010111</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 14 -->
+    <section class="slide">
+      <span class="tag">Section 4: The Hexadecimal System</span>
+      <h1>Hexadecimal (Base-16)</h1>
+      <p class="lead">The modern standard for shortening binary code.</p>
+      <div class="card">
+        <p>Modern computers group data into 8-bit chunks called "Bytes". Octal (which groups in 3s) doesn't divide evenly into an 8-bit byte. But groups of 4 do perfectly.</p>
+        <p>A group of 4 binary bits (8, 4, 2, 1) can hold any value from 0 up to 15. Because we don't have single numbers for 10 through 15, <span class="kw">Hexadecimal uses letters</span> to represent them.</p>
+        <table class="math-table" style="font-size:14px;">
+          <tr>
+            <th>Decimal</th><td>0-9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td>
+          </tr>
+          <tr>
+            <th>Hex</th><td>0-9</td><td><b style="color:var(--accent2)">A</b></td><td><b style="color:var(--accent2)">B</b></td><td><b style="color:var(--accent2)">C</b></td><td><b style="color:var(--accent2)">D</b></td><td><b style="color:var(--accent2)">E</b></td><td><b style="color:var(--accent2)">F</b></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- SLIDE 15 -->
+    <section class="slide">
+      <span class="tag">Section 4: The Hexadecimal System</span>
+      <h1>Converting Binary to Hex</h1>
+      <p class="lead">Break the binary into groups of four (called Nibbles).</p>
+      <div class="card">
+        <p>Let's convert the 8-bit byte <span class="kw">10101111</span> into Hexadecimal:</p>
+        <ol>
+          <li>Split it into groups of four: <b>1010</b> | <b>1111</b></li>
+          <li>Read the first group (8+0+2+0): <b>10</b> (Which is <b>A</b> in Hex)</li>
+          <li>Read the second group (8+4+2+1): <b>15</b> (Which is <b>F</b> in Hex)</li>
+        </ol>
+        <p>The Hexadecimal equivalent is <b style="color:var(--accent2); font-size: 20px;">AF</b>.</p>
+      </div>
+      <div class="dangerbox">Whenever you see a MAC address (e.g., 00:1A:2B:3C) or an IPv6 address, you are looking at Hexadecimal.</div>
+    </section>
+
+    <!-- SLIDE 16 -->
+    <section class="slide">
+      <span class="tag">Section 4: The Hexadecimal System</span>
+      <h1>Converting Hex to Binary</h1>
+      <p class="lead">Expand each letter or number back into 4 bits.</p>
+      <div class="card">
+        <p>Let's convert the Hex code <span class="kw">C4</span> back into Binary.</p>
+        <ol>
+          <li>Look at the first character (C). We know C is 12. How do we make 12 using (8, 4, 2, 1)? We need the 8 and the 4. So, <b>1100</b>.</li>
+          <li>Look at the second character (4). How do we make 4? Just the 4. So, <b>0100</b>.</li>
+        </ol>
+        <p>Push them together. The Binary equivalent is <b style="color:var(--accent2); font-size: 20px;">11000100</b>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 17 -->
+    <section class="slide">
+      <span class="tag">Section 4: The Hexadecimal System</span>
+      <h1>Converting Hex to Decimal</h1>
+      <p class="lead">This is slightly harder, but uses the same positional logic.</p>
+      <div class="card">
+        <p>Because Hex is Base-16, the positional values are powers of 16 (1, 16, 256). </p>
+        <p>Let's convert Hex <span class="kw">2A</span> to Decimal:</p>
+        <ul>
+          <li>The 'A' is in the 1s column. A is worth 10. (10 x 1 = <b>10</b>).</li>
+          <li>The '2' is in the 16s column. (2 x 16 = <b>32</b>).</li>
+        </ul>
+        <p>Add them up: 32 + 10 = <b style="color:var(--accent2); font-size: 20px;">42</b>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 18 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Practice: Hex Conversions</h1>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: In the Hexadecimal system, what is the largest value that can be represented by a single digit?</div>
+        <button class="opt">A. 9</button>
+        <button class="opt">B. 10</button>
+        <button class="opt">C. F (15)</button>
+        <button class="opt">D. 16</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: Convert the Hexadecimal value "1F" into Decimal.</div>
+        <button class="opt">A. 31 (16 + 15)</button>
+        <button class="opt">B. 115</button>
+        <button class="opt">C. 25</button>
+        <button class="opt">D. 16</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 19 -->
+    <section class="slide">
+      <span class="tag">Module 7 Review</span>
+      <h1>Summary of Key Concepts</h1>
+      <div class="card">
+        <ul>
+          <li><b>Decimal (Base-10):</b> The human standard. Positional values are powers of 10.</li>
+          <li><b>Binary (Base-2):</b> The machine standard (ON/OFF). Positional values are powers of 2.</li>
+          <li><b>Octal (Base-8):</b> Groups binary into 3-bit chunks (4, 2, 1). Largely obsolete but still tested.</li>
+          <li><b>Hexadecimal (Base-16):</b> Groups binary into 4-bit chunks (8, 4, 2, 1). Uses letters A-F to represent 10-15. The modern standard for MAC addresses and memory addressing.</li>
+          <li><b>Zero:</b> In all of these systems, 0 acts as the critical placeholder.</li>
+        </ul>
+      </div>
+      <p class="lead" style="text-align:center;">Proceed to the final exam when ready.</p>
+    </section>
+
+    <!-- SLIDE 20: FINAL EXAM -->
+    <section class="slide" id="examSlide">
+      <span class="tag">Module 7 Evaluation</span>
+      <h1>Module 7: Final Exam</h1>
+      <p class="lead">You must score 100% to generate your Certificate.</p>
+      
+      <div class="card" id="examContainer" style="background:#070b10;">
+        <label for="studentName" style="font-weight:bold;margin-bottom:8px;display:block;color:var(--accent);">Enter Full Name for Certificate:</label>
+        <input type="text" id="studentName" placeholder="e.g., Jane Doe">
+        
+        <div id="questionsArea"></div>
+        <div id="examFeedback" class="fb"></div>
+        <button class="btn-submit" onclick="gradeExam()">Submit Exam</button>
+      </div>
+      
+      <!-- CERTIFICATE CONTAINER -->
+      <div id="certificate">
+        <h1 class="cert-title">Certificate of Training</h1>
+        <p class="cert-text">This is to certify that</p>
+        <span id="certName">STUDENT NAME</span>
+        
+        <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
+        <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
+        
+        <div class="cert-course">Module 7: Number Systems</div>
+        
+        <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
+        
+        <button class="print-btn" onclick="window.print()">Print Certificate</button>
+      </div>
+
+    </section>
+
+  </div>
+  
+  <footer id="footerNav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div id="navCounter" style="font-weight:bold;color:var(--accent);"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  
+  let slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  let total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let visited = new Set([0]);
+
+  // Table of Contents — grouped so users can jump straight to any topic instead of
+  // clicking through the whole deck. Titles are read straight from each slide's own <h1>.
+  const TOC_GROUPS = [
+    { label: 'Start', range: [0, 0] },
+    { label: 'Decimal & Binary', range: [1, 9] },
+    { label: 'Octal', range: [10, 13] },
+    { label: 'Hexadecimal', range: [14, 18] },
+    { label: 'Assessment', range: [19, 20] }
+  ];
+
+  function buildToc(){
+    const sidebar = document.getElementById('tocSidebar');
+    let html = '';
+    TOC_GROUPS.forEach(g => {
+      let groupHtml = '';
+      for(let i = g.range[0]; i <= g.range[1] && i < total; i++){
+        const h1 = slides[i].querySelector('h1');
+        const title = h1 ? h1.textContent.trim() : 'Welcome & Overview';
+        groupHtml += `<div class="toc-item" id="toc-${i}" onclick="jumpTo(${i})"><span class="toc-num">${i+1}</span><span>${title}</span></div>`;
+      }
+      if(groupHtml){ html += `<div class="toc-group-label">${g.label}</div>` + groupHtml; }
+    });
+    sidebar.innerHTML = html;
+  }
+
+  function toggleToc(){
+    document.getElementById('tocSidebar').classList.toggle('open');
+    document.getElementById('tocOverlay').classList.toggle('open');
+  }
+  function closeToc(){
+    document.getElementById('tocSidebar').classList.remove('open');
+    document.getElementById('tocOverlay').classList.remove('open');
+  }
+  function jumpTo(i){
+    idx = i;
+    render();
+    closeToc();
+  }
+  window.toggleToc = toggleToc;
+  window.closeToc = closeToc;
+  window.jumpTo = jumpTo;
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i===idx));
+    visited.add(idx);
+    
+    if(idx === 0) {
+        document.getElementById('navCounter').textContent = `Start Page`;
+    } else {
+        document.getElementById('navCounter').textContent = `Slide ${idx} of ${total - 1}`;
+    }
+    
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progressBar').style.width = ((idx)/(total-1)*100) + '%';
+    
+    document.getElementById('prevBtn').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.visibility = (idx === total - 1) ? 'hidden' : 'visible';
+    
+    document.getElementById('slideArea').scrollTop = 0;
+
+    document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+    visited.forEach(v => { const el = document.getElementById('toc-'+v); if(el) el.classList.add('done'); });
+    const activeEl = document.getElementById('toc-'+idx);
+    if(activeEl){ activeEl.classList.add('active'); activeEl.scrollIntoView({block:'nearest'}); }
+  }
+  
+  buildToc();
+  document.getElementById('nextBtn').addEventListener('click', () => { if(idx < total-1) { idx++; render(); }});
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0) { idx--; render(); }});
+  render();
+
+  // Custom Animation Logic for Slide 8 (Binary Conversion)
+  const animSteps = [
+    { el: 'step1', cell: 'b128', val: '0' },
+    { el: 'step2', cell: 'b64', val: '0' },
+    { el: 'step3', cell: 'b32', val: '1' },
+    { el: 'step4', cell: 'b16', val: '0' },
+    { el: 'step5', cell: 'b8', val: '1' },
+    { el: 'step6', cell: 'b4', val: '1' },
+    { el: 'step7', cell: 'b2', val: '0' },
+    { el: 'step8', cell: 'b1', val: '1' },
+    { el: 'step9', cell: null, val: null } // Final answer reveal
+  ];
+  let currentAnimStep = 0;
+
+  document.getElementById('stepBtn').addEventListener('click', function() {
+    if (currentAnimStep < animSteps.length) {
+      const stepObj = animSteps[currentAnimStep];
+      // Show the text block
+      document.getElementById(stepObj.el).classList.add('visible');
+      
+      // Update the table cell if applicable
+      if (stepObj.cell) {
+        const cell = document.getElementById(stepObj.cell);
+        cell.textContent = stepObj.val;
+        cell.classList.add('active-' + stepObj.val); // Colors it green(1) or grey(0)
+      }
+      
+      currentAnimStep++;
+      if (currentAnimStep === animSteps.length) {
+        this.disabled = true; // Disable button when done
+      }
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function() {
+    currentAnimStep = 0;
+    document.getElementById('stepBtn').disabled = false;
+    animSteps.forEach(step => {
+      document.getElementById(step.el).classList.remove('visible');
+      if (step.cell) {
+        const cell = document.getElementById(step.cell);
+        cell.textContent = '-';
+        cell.classList.remove('active-1', 'active-0');
+      }
+    });
+  });
+
+  // Inline Quizzes
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    let correct = parseInt(quiz.getAttribute('data-correct'), 10);
+    let opts = quiz.querySelectorAll('.opt');
+    let fb = quiz.querySelector('.fb');
+    opts.forEach((opt, oi) => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.disabled = true);
+        opts[correct].classList.add('correct');
+        if(oi === correct){
+          fb.textContent = "✅ Correct!"; fb.className = 'fb ok show';
+        } else {
+          opt.classList.add('wrong'); fb.textContent = "❌ Incorrect. Review the green answer."; fb.className = 'fb no show';
+        }
+      });
+    });
+  });
+
+  // MODULE 7 EXAM BANK (15 Questions specific to Number Systems)
+  const examBank = [
+    { q: "What is the base of the decimal number system?", o: ["10", "2", "8", "16"], a: "10" },
+    { q: "Why do digital electronics inherently use the binary system?", o: ["It perfectly matches the ON/OFF (1/0) state of transistors", "It uses less electrical power", "It is easier for humans to read", "It prevents electrical shorts"], a: "It perfectly matches the ON/OFF (1/0) state of transistors" },
+    { q: "What is the decimal equivalent of the binary number 1010?", o: ["10", "8", "12", "14"], a: "10" },
+    { q: "Convert the decimal number 15 into binary.", o: ["1111", "1010", "1001", "1100"], a: "1111" },
+    { q: "The Octal system uses which base?", o: ["Base-8", "Base-2", "Base-10", "Base-16"], a: "Base-8" },
+    { q: "In the Hexadecimal system, what is the largest value represented by a single digit/character?", o: ["F (15)", "9", "A (10)", "E (14)"], a: "F (15)" },
+    { q: "Convert the Hexadecimal value '1A' to Decimal.", o: ["26", "16", "31", "110"], a: "26" },
+    { q: "When converting Binary to Octal, you group the binary bits into sets of:", o: ["Three", "Four", "Eight", "Two"], a: "Three" },
+    { q: "When converting Binary to Hexadecimal, you group the binary bits into sets of:", o: ["Four", "Three", "Eight", "Sixteen"], a: "Four" },
+    { q: "Convert the binary string 110110 into Octal.", o: ["66", "55", "70", "33"], a: "66" },
+    { q: "Convert the Hex character 'A' into binary.", o: ["1010", "1100", "1111", "1001"], a: "1010" },
+    { q: "Convert the binary string 11110000 into Hexadecimal.", o: ["F0", "AA", "0F", "E1"], a: "F0" },
+    { q: "Convert the decimal number 8 into binary.", o: ["1000", "0111", "1001", "0100"], a: "1000" },
+    { q: "Why is the Hexadecimal system heavily used in modern computing?", o: ["It perfectly compresses 4 bits of binary into a single readable character", "It is the only system computers can physically read", "It prevents network packet loss", "It requires fewer transistors to process"], a: "It perfectly compresses 4 bits of binary into a single readable character" },
+    { q: "In positional notation across all number systems, what is the critical function of the digit 0?", o: ["It acts as a placeholder to maintain the scale of other digits", "It represents an open circuit", "It divides the number by 10", "It has no function"], a: "It acts as a placeholder to maintain the scale of other digits" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildExam() {
+    let area = document.getElementById('questionsArea');
+    area.innerHTML = '';
+    
+    let questions = shuffle([...examBank]);
+    
+    questions.forEach((qObj, index) => {
+      let qDiv = document.createElement('div');
+      qDiv.className = 'exam-q';
+      qDiv.id = `qDiv_${index}`;
+      qDiv.dataset.passed = "false"; 
+      qDiv.innerHTML = `<div class="q" id="qText_${index}"><b>${index + 1}.</b> ${qObj.q}</div>`;
+      
+      let options = shuffle([...qObj.o]);
+      options.forEach((optText, optIndex) => {
+        let isCorrect = (optText === qObj.a) ? "true" : "false";
+        qDiv.innerHTML += `
+          <label class="exam-opt">
+            <input type="radio" name="q${index}" value="${isCorrect}">
+            ${optText}
+          </label>
+        `;
+      });
+      area.appendChild(qDiv);
+    });
+  }
+
+  window.gradeExam = function() {
+    let nameInput = document.getElementById('studentName').value.trim();
+    let fb = document.getElementById('examFeedback');
+    
+    if(!nameInput) {
+      fb.textContent = "⚠️ Please enter your name for the certificate.";
+      fb.className = 'fb no show';
+      return;
+    }
+
+    let allPassed = true;
+    let answeredCount = 0;
+    let activeCount = 0;
+    
+    for(let i=0; i<examBank.length; i++) {
+      let qDiv = document.getElementById(`qDiv_${i}`);
+      
+      if(qDiv.dataset.passed === "true") continue; 
+      
+      activeCount++;
+      let radios = document.getElementsByName(`q${i}`);
+      let answered = false;
+      let isCorrect = false;
+      
+      for(let r of radios) {
+        if(r.checked) {
+          answered = true;
+          if(r.value === "true") isCorrect = true;
+        }
+      }
+
+      if(answered) {
+        answeredCount++;
+        if(isCorrect) {
+          qDiv.dataset.passed = "true";
+          qDiv.style.opacity = "0.5";
+          qDiv.style.pointerEvents = "none";
+          qDiv.style.borderLeft = "4px solid var(--accent2)";
+          qDiv.style.paddingLeft = "10px";
+          let qText = document.getElementById(`qText_${i}`);
+          if(!qText.innerHTML.includes('✅')) {
+            qText.innerHTML += ' <span style="color:var(--accent2); margin-left:10px;">✅ Correct</span>';
+          }
+        } else {
+          allPassed = false;
+          qDiv.style.borderLeft = "4px solid var(--bad)";
+          qDiv.style.paddingLeft = "10px";
+          for(let r of radios) r.checked = false;
+        }
+      } else {
+        allPassed = false;
+        qDiv.style.borderLeft = "4px solid var(--warn)";
+        qDiv.style.paddingLeft = "10px";
+      }
+    }
+
+    if(answeredCount < activeCount) {
+      fb.textContent = `⚠️ Please answer all remaining questions.`;
+      fb.className = 'fb no show';
+      return;
+    }
+
+    if(allPassed) {
+      document.getElementById('examContainer').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').textContent = nameInput.toUpperCase();
+      
+      let date = new Date();
+      let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certDate').textContent = "Date Completed: " + formattedDate;
+      fb.style.display = 'none';
+    } else {
+      fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
+      fb.className = 'fb no show';
+    }
+  }
+
+  buildExam();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRAVEN - Module 6: Wave Propagation</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --accent:#3fb6ff; --accent2:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --txt:#e6edf3; --muted:#9aa6b2; --border:#2b3442;
+    --crt-green: #39ff14;
+    --crt-dark: #021102;
+    --crt-grid: #0f3b0f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(160deg,#0a0e14,#0d1117 40%,#10151d);
+    color:var(--txt); overflow:hidden;
+  }
+  #app{height:100vh;display:flex;flex-direction:column;}
+  
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 22px;background:var(--panel); border-bottom:1px solid var(--border);
+  }
+  header .brand{font-weight:700;color:var(--accent);font-size:15px;}
+  header .counter{font-size:13px;color:var(--muted);}
+  
+  #progressWrap{height:5px;background:#0a0e14;}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;}
+  
+  #slideArea{flex:1;overflow-y:auto;padding:34px 6vw 90px;}
+  .slide{display:none;animation:fade .4s ease;max-width:900px;margin:0 auto;}
+  .slide.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  
+  h1{font-size:28px;margin:0 0 6px;color:var(--accent);line-height:1.2;}
+  h2{font-size:20px;color:var(--accent2);margin:20px 0 10px;}
+  p,li{font-size:16px;line-height:1.6;color:var(--txt);}
+  .lead{font-size:18px;color:var(--muted);margin-bottom:18px;}
+  .kw{color:var(--accent);font-weight:600;}
+  .kw2{color:var(--accent2);font-weight:600;}
+  
+  .tag{display:inline-block;background:var(--panel2);color:var(--accent);
+    border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;
+    letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+  
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px; align-items: center;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  
+  .note{border-left:4px solid var(--accent);background:rgba(63,182,255,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .dangerbox{border-left:4px solid var(--bad);background:rgba(255,107,107,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .svg-graphic { display: block; margin: 20px auto; max-width: 100%; background: #070b10; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+/* Paste this styling right here: */
+  .project-owner-info {
+    max-width: 480px;
+    margin: 25px auto 10px;
+    padding: 15px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .project-owner-info div {
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .project-owner-info div strong {
+    color: var(--accent);
+    display: inline-block;
+    width: 150px;
+  }
+  .project-owner-info div span {
+    color: var(--txt);
+  }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+  .start-logo { display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.3)); }
+  .btn-start { background: #161b22; color:var(--crt-green); padding: 16px 36px; font-size:20px; font-weight:bold; border:2px solid var(--crt-green); border-radius:8px; cursor:pointer; margin-top:40px; transition: 0.2s; box-shadow: 0 0 15px rgba(57,255,20,0.2); text-transform: uppercase; letter-spacing: 1px;}
+  .btn-start:hover { background: rgba(57,255,20,0.1); transform: scale(1.05); box-shadow: 0 0 25px rgba(57,255,20,0.4);}
+  .start-title { font-size: 42px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0; color: #fff;}
+  .start-subtitle { font-size: 22px; color: var(--crt-green); margin-top: 10px; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  
+  @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #radar-sweep { transform-origin: 200px 200px; animation: sweep 4s linear infinite; }
+
+  /* Quizzes */
+  .quiz{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0;}
+  .quiz .q{font-weight:600;font-size:16px;margin-bottom:12px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:15px;transition:.15s;}
+  .opt:hover{border-color:var(--accent);background:#222b3a;}
+  .opt.correct{border-color:var(--accent2);background:rgba(126,231,135,.15);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.15);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:12px;font-size:14px;padding:11px 14px;border-radius:8px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(126,231,135,.12);border-left:4px solid var(--accent2);}
+  .fb.no{background:rgba(255,107,107,.12);border-left:4px solid var(--bad);}
+  
+  /* Exam Specific */
+  #examContainer input[type="text"]{width:100%;padding:12px;font-size:16px;background:var(--panel2);color:var(--txt);border:1px solid var(--accent);border-radius:8px;margin-bottom:20px;}
+  .exam-q{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px; transition: all 0.3s ease;}
+  .exam-opt{display:flex;align-items:center;margin:8px 0;cursor:pointer;}
+  .exam-opt input{width:auto;margin-right:10px;accent-color:var(--accent);}
+  .btn-submit{background:var(--accent2);color:#111;font-weight:bold;font-size:16px;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;}
+  .btn-submit:hover{filter:brightness(1.1);}
+  
+  /* =========================================
+     CERTIFICATE OF TRAINING 
+     ========================================= */
+  #certificate {
+    background: #fffdf8;
+    color: #111;
+    padding: 50px 60px;
+    border: 12px double #1a365d;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cert-title {
+    font-family: "Old English Text MT", "Engravers MT", "Playfair Display", Georgia, serif;
+    font-size: 48px;
+    color: #000;
+    margin: 10px 0 30px;
+    border-bottom: none;
+    font-weight: normal;
+  }
+  .cert-text {
+    font-size: 22px;
+    margin: 15px 0;
+    color: #333;
+    font-style: italic;
+  }
+  #certName {
+    font-size: 34px;
+    color: #000;
+    display: inline-block;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 1px solid #000;
+    min-width: 450px;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .cert-course {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #000;
+  }
+  #certDate {
+    font-size: 20px;
+    color: #333;
+    margin-top: 40px;
+  }
+  .print-btn {
+    background: var(--accent);
+    color: #111;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  @media print {
+    body, html { background: #fff; height: auto; overflow: visible; }
+    header, #progressWrap, #footerNav, .print-btn, #examContainer, .tag, #slideArea > .slide:not(#examSlide), .slide > h1, .slide > p.lead { display: none !important; }
+    #slideArea { padding: 0; overflow: visible; }
+    #certificate { 
+      display: block !important; 
+      position: absolute; 
+      top: 0; left: 0;
+      border: 8px double #000; 
+      box-shadow: none; 
+      width: 100%; 
+      margin: 0; 
+      padding: 60px; 
+    }
+  }
+
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:12px 22px;background:var(--panel);border-top:1px solid var(--border);}
+  .navbtn{background:var(--accent);color:#06121d;border:none;border-radius:8px;padding:10px 22px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .navbtn:hover{filter:brightness(1.12);}
+  .navbtn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ── Table of Contents sidebar — lets users jump to any topic freely ── */
+  #mainRow{flex:1;display:flex;overflow:hidden;min-height:0;}
+  #tocSidebar{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 0;transition:margin-left .25s ease;}
+  #tocSidebar .toc-group-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    padding:14px 20px 6px;font-weight:700;}
+  #tocSidebar .toc-group-label:first-child{padding-top:4px;}
+  .toc-item{padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;
+    transition:background .15s,color .15s;line-height:1.4;display:flex;gap:8px;align-items:flex-start;}
+  .toc-item .toc-num{color:var(--border);font-weight:700;flex-shrink:0;min-width:18px;}
+  .toc-item:hover{background:var(--panel2);color:var(--txt);}
+  .toc-item.active{border-left-color:var(--accent);background:var(--panel2);color:var(--accent);font-weight:600;}
+  .toc-item.active .toc-num{color:var(--accent);}
+  .toc-item.done .toc-num::after{content:' \2713';color:var(--accent2);}
+  #tocToggle{display:none;font-family:var(--mono, inherit);font-size:13px;background:var(--panel2);
+    border:1px solid var(--border);color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;}
+  #mainCol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  #tocOverlay{display:none;}
+  @media(max-width:860px){
+    #tocToggle{display:inline-block;}
+    #tocSidebar{position:fixed;top:0;left:0;bottom:0;z-index:500;margin-left:-270px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+    #tocSidebar.open{margin-left:0;}
+    #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 6</span></div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+  </header>
+  <div id="mainRow">
+    <div id="tocOverlay" onclick="closeToc()"></div>
+    <nav id="tocSidebar"></nav>
+    <div id="mainCol">
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      
+  <div id="slideArea">
+
+    <!-- START PAGE (SLIDE 0) -->
+    <section class="slide active">
+      <div class="start-container">
+        <!-- Animated CRT Radar Scope SVG -->
+        <svg class="start-logo" viewBox="0 0 400 400" width="280" height="280">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#39ff14" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
+              <stop offset="90%" stop-color="#021102" />
+              <stop offset="100%" stop-color="#0a1a0a" />
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="195" fill="url(#bezel)" stroke="#113311" stroke-width="10"/>
+          <g stroke="var(--crt-grid)" stroke-width="2">
+            <circle cx="200" cy="200" r="150" fill="none"/>
+            <circle cx="200" cy="200" r="100" fill="none"/>
+            <circle cx="200" cy="200" r="50" fill="none"/>
+            <line x1="200" y1="10" x2="200" y2="390"/>
+            <line x1="10" y1="200" x2="390" y2="200"/>
+            <line x1="65" y1="65" x2="335" y2="335"/>
+            <line x1="65" y1="335" x2="335" y2="65"/>
+          </g>
+          <circle cx="120" cy="140" r="4.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="280" cy="90" r="3" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="230" cy="300" r="5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="160" cy="250" r="2.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <g id="radar-sweep">
+            <path d="M 200 200 L 200 10 A 190 190 0 0 1 334 65 Z" fill="url(#sweep)" opacity="0.3"/>
+            <line x1="200" y1="200" x2="200" y2="10" stroke="var(--crt-green)" stroke-width="3" filter="url(#glow)"/>
+          </g>
+          <circle cx="200" cy="200" r="6" fill="var(--crt-green)" filter="url(#glow)"/>
+        </svg>
+
+        <h1 class="start-title">WRAVEN Training Program</h1>
+        <p class="start-subtitle">Module 6: RF & Wave Propagation</p>
+<!-- Paste this HTML block right here: -->
+        <div class="project-owner-info">
+          <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
+          <div><strong>Location Address:</strong> <span>633 Barnes Ave</span></div>
+          <div><strong>Location City/ST/ZIP:</strong> <span>Fort Gordon, GA 30905</span></div>
+          <div><strong>Contact:</strong> <span>phillip.r.crandell.civ@army.mil</span></div>
+        </div>
+
+        <button class="btn-start" onclick="document.getElementById('nextBtn').click();">Begin Training</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromagnetic Physics</span>
+      <h1>Cutting the Cord</h1>
+      <p class="lead">Up to this point, all of our electrons have been trapped inside copper wires. How do we get signals to travel through empty space?</p>
+      <div class="card">
+        <p>When an alternating current (AC) flows through a wire, it naturally creates a magnetic field around it. If we push a very high-frequency AC signal into a specially designed wire (an antenna), the energy actually breaks free from the wire and radiates into space.</p>
+        <p>This radiated energy is called an <span class="kw">Electromagnetic (EM) Wave</span>. Radio, Radar, Wi-Fi, and even visible light are all just different frequencies of EM waves.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromagnetic Physics</span>
+      <h1>The Anatomy of an EM Wave</h1>
+      <p class="lead">An electromagnetic wave consists of two distinct fields traveling together.</p>
+      
+      <svg class="svg-graphic" viewBox="0 0 600 250" width="100%" height="220px">
+        <!-- Axes -->
+        <line x1="50" y1="125" x2="550" y2="125" stroke="#4a5568" stroke-width="2"/> 
+        <line x1="100" y1="20" x2="100" y2="230" stroke="#4a5568" stroke-width="2"/> 
+        <line x1="40" y1="165" x2="160" y2="85" stroke="#4a5568" stroke-width="2"/> 
+        
+        <!-- E-Field -->
+        <path d="M 100 125 Q 150 25, 200 125 T 300 125 T 400 125 T 500 125" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+        <!-- H-Field -->
+        <path d="M 100 125 Q 150 175, 200 125 T 300 125 T 400 125 T 500 125" fill="none" stroke="#3fb6ff" stroke-width="3"/>
+        
+        <!-- Labels -->
+        <text x="110" y="40" fill="#ff6b6b" font-size="16" font-weight="bold">Electric Field (E)</text>
+        <text x="140" y="190" fill="#3fb6ff" font-size="16" font-weight="bold">Magnetic Field (H)</text>
+        <text x="400" y="115" fill="#e6edf3" font-size="14" font-weight="bold">Direction of Travel ➔</text>
+      </svg>
+      
+      <div class="card">
+        <ul>
+          <li><span class="kw" style="color:#ff6b6b;">Electric Field (E-Field):</span> Created by the voltage in the antenna.</li>
+          <li><span class="kw" style="color:#3fb6ff;">Magnetic Field (H-Field):</span> Created by the current flowing through the antenna.</li>
+        </ul>
+        <p>These two fields are always <b>orthogonal</b> (at exactly 90-degree right angles) to each other, and they sustain each other as they travel through space.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromagnetic Physics</span>
+      <h1>Wavelength and Frequency</h1>
+      <p class="lead">Just like AC in a wire, EM waves have a Frequency (Hz) and a Wavelength (λ).</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Frequency (f)</h3>
+          <p>How many full wave cycles pass a given point in one second. Measured in Hertz (Hz).</p>
+          <p class="small">A 1 MHz signal has 1,000,000 cycles per second.</p>
+        </div>
+        <div class="card">
+          <h3>Wavelength (λ)</h3>
+          <p>The actual physical distance in space between one peak of the wave and the next peak. Measured in meters.</p>
+          <p class="small">Usually represented by the Greek letter Lambda (λ).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromagnetic Physics</span>
+      <h1>The Speed of Light</h1>
+      <p class="lead">All electromagnetic waves travel at the exact same speed in a vacuum: The Speed of Light.</p>
+      <div class="card">
+        <p>The speed of light (represented by 'c') is approximately <b>300,000,000 meters per second</b>.</p>
+        <p>Because the speed is a constant, Frequency and Wavelength are <b>inversely proportional</b>. The formula is:</p>
+        <div style="font-size:24px; color:var(--accent2); text-align:center; padding: 10px; font-weight:bold;">λ = c / f</div>
+        <br>
+        <ul>
+          <li><span class="kw">Low Frequency = Long Wavelength.</span> (e.g., VLF radio waves can be miles long).</li>
+          <li><span class="kw">High Frequency = Short Wavelength.</span> (e.g., Radar microwaves are only a few centimeters long).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromagnetic Physics</span>
+      <h1>Wave Polarization</h1>
+      <p class="lead">Polarization refers to the physical orientation of the EM wave as it travels.</p>
+      <div class="card">
+        <p>By definition, the polarization of a radio wave is determined strictly by the orientation of its <span class="kw">Electric Field (E-Field)</span>.</p>
+        <ul>
+          <li><b>Vertical Polarization:</b> The E-field is up and down. (Most walkie-talkies and AM radio towers).</li>
+          <li><b>Horizontal Polarization:</b> The E-field is flat/parallel to the ground. (Most television broadcast antennas).</li>
+        </ul>
+        <div class="dangerbox">⚠️ <b>Crucial Rule:</b> For maximum signal strength, the receiving antenna must be polarized in the exact same direction as the transmitting antenna. If they are crossed, you lose almost the entire signal (Cross-Polarization fade).</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromagnetic Physics</span>
+      <h1>Multi-Path Fading</h1>
+      <p class="lead">What happens when a signal bounces off a building and arrives late?</p>
+      <div class="card">
+        <p>If a direct Space Wave arrives at an antenna at the exact same time as a reflected wave (bounced off the ground or a building), they can interfere with each other.</p>
+        <ul>
+          <li><b>In-Phase:</b> If the peaks line up, they combine to make a stronger signal (Constructive Interference).</li>
+          <li><span class="kw2">Out-of-Phase:</span> If the peak of the direct wave hits at the exact same time as the trough of the reflected wave, they cancel each other out entirely (Destructive Interference).</li>
+        </ul>
+        <p>This constant shifting of signal strength is called <span class="kw">Multi-Path Fading</span>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <span class="tag">Section 2: Atmospheric Effects</span>
+      <h1>How Waves Travel</h1>
+      <p class="lead">Once the wave leaves the antenna, it takes three primary paths.</p>
+      <div class="card">
+        <ol>
+          <li><span class="kw">Ground Waves (Surface Waves):</span> Hug the surface of the Earth. Used heavily for VLF submarine comms.</li>
+          <li><span class="kw">Space Waves (Direct Waves):</span> Travel in a straight line of sight from antenna to antenna. Used for VHF, UHF, and Radar.</li>
+          <li><span class="kw">Sky Waves:</span> Shoot up into the atmosphere, bounce off the ionosphere, and return to Earth far over the horizon. Used for global HF comms.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide">
+      <span class="tag">Section 2: Atmospheric Effects</span>
+      <h1>The Ionosphere</h1>
+      <p class="lead">A layer of the upper atmosphere heavily bombarded by solar radiation.</p>
+      <div class="card">
+        <p>The sun's ultraviolet light knocks electrons loose from gas atoms high in the atmosphere, creating a massive shield of ionized gas called the <span class="kw">Ionosphere</span>.</p>
+        <p>When High Frequency (HF) radio signals hit this ionized layer, they act like light hitting water—they are <b>refracted</b> (bent) back down to Earth. This bending allows military HF radios to communicate globally without relying on satellites.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide">
+      <span class="tag">Section 2: Atmospheric Effects</span>
+      <h1>The Layers of the Ionosphere</h1>
+      <p class="lead">The ionosphere is not a single solid block. It is divided into distinct layers.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>The D & E Layers</h3>
+          <p>The lowest layers (approx 30-60 miles up).</p>
+          <p class="small">They only exist during the day when the sun is hitting them directly. They act as a sponge, <b>absorbing</b> lower frequency signals rather than bouncing them.</p>
+        </div>
+        <div class="card">
+          <h3>The F Layers (F1 & F2)</h3>
+          <p>The highest layers (up to 250 miles up).</p>
+          <p class="small">These are the primary layers used for long-distance sky wave bouncing. At night, F1 and F2 merge into a single layer, changing the bounce angles.</p>
+        </div>
+      </div>
+      <div class="note">This is why AM radio stations suddenly carry farther after sunset—the absorbing D layer vanishes, allowing signals to bounce off the higher F layer.</div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide">
+      <span class="tag">Section 2: Atmospheric Effects</span>
+      <h1>Critical Frequency & Angle</h1>
+      <p class="lead">Not every signal bounces back down.</p>
+      <div class="card">
+        <ul>
+          <li><b>Critical Frequency:</b> The absolute highest frequency that the ionosphere can bend back to Earth. If you transmit above this frequency (like VHF or UHF), the signal will simply punch a hole right through the ionosphere and shoot out into deep space.</li>
+          <li><b>Critical Angle:</b> If you aim an HF antenna straight straight up at 90 degrees, the wave might punch through. You must lower the angle of the antenna so the wave hits the ionosphere at a shallower angle, allowing it to "skip" off the layer.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide">
+      <span class="tag">Section 2: Atmospheric Effects</span>
+      <h1>The Skip Zone</h1>
+      <p class="lead">Bouncing signals creates dead zones where the radio cannot be heard.</p>
+      
+      <svg class="svg-graphic" viewBox="0 0 600 250" width="100%" height="220px">
+        <path d="M 0 250 Q 300 150, 600 250" fill="none" stroke="#4a5568" stroke-width="4"/>
+        <text x="280" y="240" fill="#4a5568" font-size="16">EARTH</text>
+        
+        <path d="M 0 80 Q 300 -20, 600 80" fill="none" stroke="#3fb6ff" stroke-width="20" stroke-dasharray="10,10" opacity="0.4"/>
+        <text x="250" y="30" fill="#3fb6ff" font-size="16">IONOSPHERE</text>
+        
+        <line x1="100" y1="220" x2="100" y2="180" stroke="#e6edf3" stroke-width="3"/>
+        <circle cx="100" cy="180" r="4" fill="#ffb454"/>
+        <text x="85" y="170" fill="#ffb454" font-size="14">TX</text>
+        
+        <line x1="500" y1="220" x2="500" y2="180" stroke="#e6edf3" stroke-width="3"/>
+        <circle cx="500" cy="180" r="4" fill="#7ee787"/>
+        <text x="490" y="170" fill="#7ee787" font-size="14">RX</text>
+        
+        <!-- Ground Wave -->
+        <path d="M 100 220 Q 150 200, 200 210" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+        <text x="120" y="235" fill="#ff6b6b" font-size="12">Ground Wave Ends</text>
+        
+        <!-- Sky Wave -->
+        <path d="M 100 180 L 300 50 L 500 180" fill="none" stroke="#ffb454" stroke-width="3"/>
+        
+        <!-- Skip Zone Bracket -->
+        <line x1="200" y1="215" x2="500" y2="215" stroke="var(--accent)" stroke-width="2"/>
+        <line x1="200" y1="210" x2="200" y2="220" stroke="var(--accent)" stroke-width="2"/>
+        <line x1="500" y1="210" x2="500" y2="220" stroke="var(--accent)" stroke-width="2"/>
+        <text x="320" y="235" fill="var(--accent)" font-size="14" font-weight="bold">SKIP ZONE</text>
+      </svg>
+      
+      <div class="card">
+        <p>The <span class="kw">Skip Zone</span> is the area of total silence between the exact spot the Ground Wave naturally dies out, and the exact spot where the refracted Sky Wave finally returns to Earth.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Mid-Module Review 1</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: What happens if a receiver's antenna is horizontally polarized, but the incoming wave is vertically polarized?</div>
+        <button class="opt">A. The signal is amplified</button>
+        <button class="opt">B. The signal is almost entirely lost (Cross-Polarization)</button>
+        <button class="opt">C. The frequency is halved</button>
+        <button class="opt">D. Nothing, polarization does not matter</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: Which ionospheric layer only exists during the day and acts as a sponge, absorbing low-frequency signals?</div>
+        <button class="opt">A. D Layer</button>
+        <button class="opt">B. F2 Layer</button>
+        <button class="opt">C. E Layer</button>
+        <button class="opt">D. Troposphere</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 13 -->
+    <section class="slide">
+      <span class="tag">Section 3: Transmission Lines</span>
+      <h1>Getting Power to the Antenna</h1>
+      <p class="lead">A transmitter is useless if the power burns up in the cables before reaching the antenna.</p>
+      <div class="card">
+        <p>We use <span class="kw">Transmission Lines</span> to safely carry high-frequency AC from the transmitter to the antenna.</p>
+        <ul>
+          <li><b>Two-Wire Open Line:</b> (Like old TV antenna ribbon). Cheap, but suffers massive radiation loss at high frequencies.</li>
+          <li><b>Coaxial Cable:</b> A center conductor surrounded by a dielectric insulator, wrapped in a braided metal shield. The outer shield traps the electromagnetic fields inside, preventing radiation loss.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 14 -->
+    <section class="slide">
+      <span class="tag">Section 3: Transmission Lines</span>
+      <h1>Characteristic Impedance (Zo)</h1>
+      <p class="lead">Cables aren't just empty pipes. They have their own electrical identity.</p>
+      <div class="card">
+        <p>Every transmission line has a <span class="kw">Characteristic Impedance (Z₀)</span> determined strictly by its physical dimensions (the diameter of the wire, the spacing, and the type of plastic insulation). It has nothing to do with the length of the cable.</p>
+        <p>For military and commercial RF gear, the standardized impedance is <b>50 Ohms (50Ω)</b>.</p>
+        <div class="dangerbox">⚠️ If the transmitter is 50Ω, the cable must be 50Ω, and the antenna must be 50Ω. This is called <span class="kw">Impedance Matching</span>. If they don't match, catastrophe ensues.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 15 -->
+    <section class="slide">
+      <span class="tag">Section 3: Transmission Lines</span>
+      <h1>Standing Wave Ratio (SWR)</h1>
+      <p class="lead">What happens when the impedance isn't matched perfectly?</p>
+      <div class="card">
+        <p>If a 50Ω transmitter pushes 100 Watts of power down a cable, but the antenna at the end is badly damaged and looks like 150Ω, the antenna cannot absorb all the power.</p>
+        <p>The rejected power <span class="kw">reflects</span> backward down the cable, colliding with the forward power. This creates a massive <b>Standing Wave</b> of voltage that can literally melt the cable or blow up the transmitter's final amplifier stage.</p>
+        <ul>
+          <li>A perfect SWR is <b>1:1</b> (All power radiated).</li>
+          <li>An SWR of <b>3:1</b> or higher means severe reflected power. Shut down the transmitter immediately and check the antenna cables.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 16 -->
+    <section class="slide">
+      <span class="tag">Section 3: Transmission Lines</span>
+      <h1>Waveguides</h1>
+      <p class="lead">At radar microwave frequencies, standard coaxial cable melts. We use hollow pipes instead.</p>
+      <div class="card">
+        <p>When frequencies exceed 3 GHz, the resistance of copper wire causes massive signal loss. To solve this, we remove the copper wire entirely.</p>
+        <p>A <span class="kw">Waveguide</span> is a hollow, rectangular metal pipe. Instead of electrons flowing through a wire, the electromagnetic waves bounce down the inside of the hollow tube. They are highly efficient but physically bulky, limiting them mostly to shipboard or fixed radar installations.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 17 -->
+    <section class="slide">
+      <span class="tag">Section 4: Antennas</span>
+      <h1>The Reciprocity Theorem</h1>
+      <p class="lead">A good transmitter is a good receiver.</p>
+      <div class="card">
+        <p>The <span class="kw">Reciprocity Theorem</span> states that the various properties of an antenna apply equally whether the antenna is transmitting or receiving.</p>
+        <ul>
+          <li>If an antenna focuses its transmit power in a narrow beam to the North, it is also "deaf" to signals coming from the South.</li>
+          <li>If an antenna has high gain for transmitting, it has the exact same high gain for pulling in weak signals.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 18 -->
+    <section class="slide">
+      <span class="tag">Section 4: Antennas</span>
+      <h1>The Hertz Antenna (Half-Wave Dipole)</h1>
+      <p class="lead">The fundamental building block of almost all complex antennas.</p>
+      <div class="grid2">
+        <div class="card">
+          <p>The <span class="kw">Hertz Antenna</span> is a wire cut to exactly one-half of a wavelength. It is split in the middle to allow the feedline to attach, creating two 1/4 wavelength elements (a Dipole).</p>
+          <p>It operates completely independently of the ground, making it perfect for high-frequency setups, aircraft, and space communications.</p>
+        </div>
+        
+        <!-- Dipole SVG FIXED -->
+        <svg class="svg-graphic" viewBox="0 0 250 200" width="100%" height="150px">
+          <!-- Coax feed -->
+          <line x1="125" y1="200" x2="125" y2="100" stroke="#e6edf3" stroke-width="4"/>
+          <!-- Split Elements -->
+          <line x1="120" y1="100" x2="20" y2="100" stroke="var(--accent)" stroke-width="6"/>
+          <line x1="130" y1="100" x2="230" y2="100" stroke="var(--accent2)" stroke-width="6"/>
+          <!-- Labels (Moved completely clear of the elements) -->
+          <text x="25" y="125" fill="var(--accent)" font-size="14">1/4 Wavelength</text>
+          <text x="135" y="125" fill="var(--accent2)" font-size="14">1/4 Wavelength</text>
+          <text x="60" y="160" fill="#e6edf3" font-size="14">Total: 1/2 Wavelength</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SLIDE 19 -->
+    <section class="slide">
+      <span class="tag">Section 4: Antennas</span>
+      <h1>The Marconi Antenna (Quarter-Wave)</h1>
+      <p class="lead">When a half-wavelength is physically too massive to build.</p>
+      <div class="card">
+        <p>If you are transmitting at very low frequencies (like AM Radio), a Half-Wave Hertz antenna could be thousands of feet long. This is physically impossible to suspend in the air.</p>
+        <p>The <span class="kw">Marconi Antenna</span> solves this. It is a single vertical wire cut to only <b>One-Quarter Wavelength (1/4 λ)</b>. It is mounted directly against the conductive earth.</p>
+        <p>The Earth acts as an electrical mirror, creating an "image" of the missing lower half, fooling the transmitter into thinking a full Half-Wave dipole exists.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 20 -->
+    <section class="slide">
+      <span class="tag">Section 4: Antennas</span>
+      <h1>Ground Planes & Radials</h1>
+      <p class="lead">What if you want to use a Marconi antenna on a truck or a rooftop where you don't have access to the physical earth?</p>
+      <div class="card">
+        <p>Because the Marconi relies on the ground to act as the "other half" of the antenna, you must provide an artificial ground if the earth isn't available.</p>
+        <p>A <span class="kw">Ground Plane</span> consists of metal rods (radials) or a flat metal sheet placed at the base of the quarter-wave vertical. This artificial ground perfectly reflects the RF energy, allowing the antenna to function correctly on vehicles or masts.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 21 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Mid-Module Review 2</h1>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: What is the standard Characteristic Impedance (Z₀) for military RF coaxial cables?</div>
+        <button class="opt">A. 120 Ohms</button>
+        <button class="opt">B. 75 Ohms</button>
+        <button class="opt">C. 50 Ohms</button>
+        <button class="opt">D. 300 Ohms</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: If a transmitter has a high Standing Wave Ratio (SWR), what is happening?</div>
+        <button class="opt">A. Power is reflecting backward off the antenna, risking damage to the transmitter.</button>
+        <button class="opt">B. The antenna is radiating with maximum efficiency.</button>
+        <button class="opt">C. The ground wave is traveling further than the sky wave.</button>
+        <button class="opt">D. The ionosphere is absorbing the signal.</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 22 -->
+    <section class="slide">
+      <span class="tag">Section 4: Antennas</span>
+      <h1>Directivity and Gain</h1>
+      <p class="lead">A standard dipole radiates energy like a donut—in all directions equally. For radar and comms, we want to focus that energy.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Directivity</h3>
+          <p>The ability of an antenna to focus its radiated energy into a specific, narrow beam (like turning a bare lightbulb into a flashlight).</p>
+        </div>
+        <div class="card">
+          <h3>Antenna Gain</h3>
+          <p>By focusing the energy into a narrow beam, the signal strength in that specific direction is massively increased, even without adding more power to the transmitter. This relative increase is called Gain.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 23 -->
+    <section class="slide">
+      <span class="tag">Section 4: Antennas</span>
+      <h1>Loading Coils</h1>
+      <p class="lead">How do you put a 30-foot antenna on a 10-foot truck?</p>
+      <div class="card">
+        <p>Sometimes you need to transmit on a low frequency (requiring a long wavelength), but physical constraints prevent you from using a full-sized antenna.</p>
+        <p>You can electrically "lengthen" an antenna by installing a <span class="kw">Loading Coil</span> (a large inductor) at the base or in the middle of the whip. The coil slows down the RF energy, tricking the transmitter into thinking the antenna is physically longer than it actually is. It reduces efficiency but allows for mobile operations.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 24 -->
+    <section class="slide">
+      <span class="tag">Section 5: RF Safety</span>
+      <h1>HERP: Hazards of EM Radiation to Personnel</h1>
+      <p class="lead">High power RF energy cooks from the inside out.</p>
+      <div class="card">
+        <p>Unlike X-rays, RF radiation is <span class="kw">Non-Ionizing</span>, meaning it doesn't cause immediate cellular mutation. Instead, it causes dielectric heating. It literally acts like a microwave oven on human tissue.</p>
+        <p>Because the body's internal organs (especially the eyes) have poor blood flow to carry away heat, prolonged exposure in front of a high-power radar dish can cause deep internal burns or cataracts before you even feel warm on your skin.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 25 -->
+    <section class="slide">
+      <span class="tag">Section 5: RF Safety</span>
+      <h1>HERO: Hazards of EM Radiation to Ordnance</h1>
+      <p class="lead">RF energy doesn't just heat tissue; it induces stray voltage.</p>
+      <div class="card">
+        <p>If you stand near a powerful transmitter holding a piece of ungrounded metal, the metal acts as an antenna and absorbs the RF energy. This can induce enough voltage to cause a spark.</p>
+        <p><b>HERO</b> is the strict safety protocol for handling explosives or firing caps near active antennas. The induced RF voltage can accidentally detonate explosive squibs or ignite fuel vapors (HERF).</p>
+      </div>
+      <div class="dangerbox">⚠️ Never handle blasting caps, ordnance, or perform fueling operations when HF or Radar transmitters are radiating nearby.</div>
+    </section>
+
+    <!-- SLIDE 26 -->
+    <section class="slide">
+      <span class="tag">Section 5: RF Safety</span>
+      <h1>Waveguide Safety</h1>
+      <p class="lead">A severed waveguide is a loaded gun.</p>
+      <div class="card">
+        <p>As discussed, waveguides are hollow pipes used to carry massive microwave energy to radar dishes.</p>
+        <p>If a waveguide is disconnected or broken while the transmitter is active, the open end acts as a highly focused, high-gain antenna, blasting lethal microwave energy directly into the workspace.</p>
+        <p><b>Rule:</b> NEVER look down an open waveguide. Always perform complete Lockout/Tagout (LOTO) on the transmitter before disconnecting any RF plumbing.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 27 -->
+    <section class="slide">
+      <span class="tag">Module 6 Review</span>
+      <h1>Summary of Key Concepts</h1>
+      <div class="card">
+        <ul>
+          <li><b>EM Waves:</b> Consist of an Electric field (E) and Magnetic field (H) at 90-degree angles.</li>
+          <li><b>Math:</b> Frequency and Wavelength are inversely proportional (λ = c / f).</li>
+          <li><b>SWR:</b> High standing wave ratio means power is reflecting back, threatening the transmitter.</li>
+          <li><b>Propagation:</b> Sky waves bounce off the ionosphere. Ground waves hug the earth.</li>
+          <li><b>Antennas:</b> A Hertz antenna is a Half-Wave dipole. A Marconi is a Quarter-Wave vertical requiring a ground plane.</li>
+          <li><b>Safety:</b> RF radiation causes deep internal heating (HERP) and can spark explosives (HERO).</li>
+        </ul>
+      </div>
+      <p class="lead" style="text-align:center;">Proceed to the final exam when ready.</p>
+    </section>
+
+    <!-- SLIDE 28: FINAL EXAM -->
+    <section class="slide" id="examSlide">
+      <span class="tag">Module 6 Evaluation</span>
+      <h1>Module 6: Final Exam</h1>
+      <p class="lead">You must score 100% to generate your Certificate.</p>
+      
+      <div class="card" id="examContainer" style="background:#070b10;">
+        <label for="studentName" style="font-weight:bold;margin-bottom:8px;display:block;color:var(--accent);">Enter Full Name for Certificate:</label>
+        <input type="text" id="studentName" placeholder="e.g., Jane Doe">
+        
+        <div id="questionsArea"></div>
+        <div id="examFeedback" class="fb"></div>
+        <button class="btn-submit" onclick="gradeExam()">Submit Exam</button>
+      </div>
+      
+      <!-- CERTIFICATE CONTAINER -->
+      <div id="certificate">
+        <h1 class="cert-title">Certificate of Training</h1>
+        <p class="cert-text">This is to certify that</p>
+        <span id="certName">STUDENT NAME</span>
+        
+        <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
+        <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
+        
+        <div class="cert-course">Module 6: Wave Propagation & Antennas</div>
+        
+        <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
+        
+        <button class="print-btn" onclick="window.print()">Print Certificate</button>
+      </div>
+
+    </section>
+
+  </div>
+  
+  <footer id="footerNav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div id="navCounter" style="font-weight:bold;color:var(--accent);"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  
+  let slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  let total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let visited = new Set([0]);
+
+  // Table of Contents — grouped so users can jump straight to any topic instead of
+  // clicking through the whole deck. Titles are read straight from each slide's own <h1>.
+  const TOC_GROUPS = [
+    { label: 'Start', range: [0, 0] },
+    { label: 'EM Wave Basics', range: [1, 6] },
+    { label: 'Propagation & Ionosphere', range: [7, 12] },
+    { label: 'Antenna Feed & Theory', range: [13, 21] },
+    { label: 'Gain & Safety', range: [22, 27] },
+    { label: 'Assessment', range: [28, 28] }
+  ];
+
+  function buildToc(){
+    const sidebar = document.getElementById('tocSidebar');
+    let html = '';
+    TOC_GROUPS.forEach(g => {
+      let groupHtml = '';
+      for(let i = g.range[0]; i <= g.range[1] && i < total; i++){
+        const h1 = slides[i].querySelector('h1');
+        const title = h1 ? h1.textContent.trim() : 'Welcome & Overview';
+        groupHtml += `<div class="toc-item" id="toc-${i}" onclick="jumpTo(${i})"><span class="toc-num">${i+1}</span><span>${title}</span></div>`;
+      }
+      if(groupHtml){ html += `<div class="toc-group-label">${g.label}</div>` + groupHtml; }
+    });
+    sidebar.innerHTML = html;
+  }
+
+  function toggleToc(){
+    document.getElementById('tocSidebar').classList.toggle('open');
+    document.getElementById('tocOverlay').classList.toggle('open');
+  }
+  function closeToc(){
+    document.getElementById('tocSidebar').classList.remove('open');
+    document.getElementById('tocOverlay').classList.remove('open');
+  }
+  function jumpTo(i){
+    idx = i;
+    render();
+    closeToc();
+  }
+  window.toggleToc = toggleToc;
+  window.closeToc = closeToc;
+  window.jumpTo = jumpTo;
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i===idx));
+    visited.add(idx);
+    
+    if(idx === 0) {
+        document.getElementById('navCounter').textContent = `Start Page`;
+    } else {
+        document.getElementById('navCounter').textContent = `Slide ${idx} of ${total - 1}`;
+    }
+    
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progressBar').style.width = ((idx)/(total-1)*100) + '%';
+    
+    document.getElementById('prevBtn').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.visibility = (idx === total - 1) ? 'hidden' : 'visible';
+    
+    document.getElementById('slideArea').scrollTop = 0;
+
+    document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+    visited.forEach(v => { const el = document.getElementById('toc-'+v); if(el) el.classList.add('done'); });
+    const activeEl = document.getElementById('toc-'+idx);
+    if(activeEl){ activeEl.classList.add('active'); activeEl.scrollIntoView({block:'nearest'}); }
+  }
+  
+  buildToc();
+  document.getElementById('nextBtn').addEventListener('click', () => { if(idx < total-1) { idx++; render(); }});
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0) { idx--; render(); }});
+  render();
+
+  // Inline Quizzes
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    let correct = parseInt(quiz.getAttribute('data-correct'), 10);
+    let opts = quiz.querySelectorAll('.opt');
+    let fb = quiz.querySelector('.fb');
+    opts.forEach((opt, oi) => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.disabled = true);
+        opts[correct].classList.add('correct');
+        if(oi === correct){
+          fb.textContent = "✅ Correct!"; fb.className = 'fb ok show';
+        } else {
+          opt.classList.add('wrong'); fb.textContent = "❌ Incorrect. Review the green answer."; fb.className = 'fb no show';
+        }
+      });
+    });
+  });
+
+  // MODULE 6 EXAM BANK (15 Questions)
+  const examBank = [
+    { q: "Electromagnetic waves consist of which two fields?", o: ["Electric and Magnetic", "Positive and Negative", "Voltage and Current", "Ground and Sky"], a: "Electric and Magnetic" },
+    { q: "What is the mathematical relationship between frequency and wavelength?", o: ["Inversely proportional", "Directly proportional", "Exponentially related", "They are identical"], a: "Inversely proportional" },
+    { q: "What determines the polarization of an electromagnetic wave?", o: ["The orientation of the Electric field (E-field)", "The orientation of the Magnetic field (H-field)", "The frequency of the wave", "The temperature of the atmosphere"], a: "The orientation of the Electric field (E-field)" },
+    { q: "Which atmospheric layer is responsible for refracting High Frequency (HF) sky waves back to Earth?", o: ["Ionosphere", "Troposphere", "Stratosphere", "Ozone Layer"], a: "Ionosphere" },
+    { q: "What is the area called between the end of the ground wave and the point where the sky wave returns to Earth?", o: ["Skip Zone", "Refraction Zone", "Dead Band", "Fresnel Zone"], a: "Skip Zone" },
+    { q: "A standard Hertz antenna is physically cut to what length?", o: ["Half-Wavelength", "Quarter-Wavelength", "Full-Wavelength", "One-Eighth Wavelength"], a: "Half-Wavelength" },
+    { q: "What type of antenna requires a highly conductive ground plane (the Earth) to function properly as its missing half?", o: ["Quarter-wave Marconi", "Half-wave Dipole", "Parabolic Reflector", "Yagi-Uda"], a: "Quarter-wave Marconi" },
+    { q: "What is the standard Characteristic Impedance (Z₀) for military and commercial RF coaxial cables?", o: ["50 Ohms", "75 Ohms", "120 Ohms", "300 Ohms"], a: "50 Ohms" },
+    { q: "If a transmitter has a high Standing Wave Ratio (SWR), what is occurring?", o: ["Power is reflecting backward off the antenna, risking damage to the transmitter", "The antenna is radiating with maximum efficiency", "The ground wave is traveling further than the sky wave", "The ionosphere is absorbing the signal"], a: "Power is reflecting backward off the antenna, risking damage to the transmitter" },
+    { q: "At extremely high microwave frequencies where coaxial cables melt or suffer massive loss, what is used instead to channel RF energy?", o: ["Waveguides", "Ribbon Cable", "Two-Wire Open Line", "Fiber Optics"], a: "Waveguides" },
+    { q: "Which theorem states that an antenna's properties (like gain and directivity) are identical whether it is transmitting or receiving?", o: ["Reciprocity Theorem", "Ohm's Law", "Faraday's Law", "Nyquist Theorem"], a: "Reciprocity Theorem" },
+    { q: "If you must use an antenna that is physically shorter than the required wavelength, what component can be added to electrically 'lengthen' it?", o: ["A Loading Coil", "A Capacitor", "A Fast-Blow Fuse", "A Diode"], a: "A Loading Coil" },
+    { q: "What happens when a direct space wave and a reflected wave arrive at a receiving antenna perfectly out of phase?", o: ["They cancel each other out (Destructive Interference)", "They combine to double the signal strength", "The polarization flips", "The frequency doubles"], a: "They cancel each other out (Destructive Interference)" },
+    { q: "The safety acronym HERO stands for:", o: ["Hazards of EM Radiation to Ordnance", "Hazards of EM Radiation to Operators", "High Energy RF Output", "Heavy Equipment Relay Override"], a: "Hazards of EM Radiation to Ordnance" },
+    { q: "Because RF radiation is Non-Ionizing, what is the primary biological hazard (HERP) to humans standing in front of a live radar dish?", o: ["Deep internal tissue heating", "Immediate cellular mutation", "Carbon monoxide poisoning", "Electric shock from the ground"], a: "Deep internal tissue heating" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildExam() {
+    let area = document.getElementById('questionsArea');
+    area.innerHTML = '';
+    
+    let questions = shuffle([...examBank]);
+    
+    questions.forEach((qObj, index) => {
+      let qDiv = document.createElement('div');
+      qDiv.className = 'exam-q';
+      qDiv.id = `qDiv_${index}`;
+      qDiv.dataset.passed = "false"; 
+      qDiv.innerHTML = `<div class="q" id="qText_${index}"><b>${index + 1}.</b> ${qObj.q}</div>`;
+      
+      let options = shuffle([...qObj.o]);
+      options.forEach((optText, optIndex) => {
+        let isCorrect = (optText === qObj.a) ? "true" : "false";
+        qDiv.innerHTML += `
+          <label class="exam-opt">
+            <input type="radio" name="q${index}" value="${isCorrect}">
+            ${optText}
+          </label>
+        `;
+      });
+      area.appendChild(qDiv);
+    });
+  }
+
+  window.gradeExam = function() {
+    let nameInput = document.getElementById('studentName').value.trim();
+    let fb = document.getElementById('examFeedback');
+    
+    if(!nameInput) {
+      fb.textContent = "⚠️ Please enter your name for the certificate.";
+      fb.className = 'fb no show';
+      return;
+    }
+
+    let allPassed = true;
+    let answeredCount = 0;
+    let activeCount = 0;
+    
+    for(let i=0; i<examBank.length; i++) {
+      let qDiv = document.getElementById(`qDiv_${i}`);
+      
+      if(qDiv.dataset.passed === "true") continue; 
+      
+      activeCount++;
+      let radios = document.getElementsByName(`q${i}`);
+      let answered = false;
+      let isCorrect = false;
+      
+      for(let r of radios) {
+        if(r.checked) {
+          answered = true;
+          if(r.value === "true") isCorrect = true;
+        }
+      }
+
+      if(answered) {
+        answeredCount++;
+        if(isCorrect) {
+          qDiv.dataset.passed = "true";
+          qDiv.style.opacity = "0.5";
+          qDiv.style.pointerEvents = "none";
+          qDiv.style.borderLeft = "4px solid var(--accent2)";
+          qDiv.style.paddingLeft = "10px";
+          let qText = document.getElementById(`qText_${i}`);
+          if(!qText.innerHTML.includes('✅')) {
+            qText.innerHTML += ' <span style="color:var(--accent2); margin-left:10px;">✅ Correct</span>';
+          }
+        } else {
+          allPassed = false;
+          qDiv.style.borderLeft = "4px solid var(--bad)";
+          qDiv.style.paddingLeft = "10px";
+          for(let r of radios) r.checked = false;
+        }
+      } else {
+        allPassed = false;
+        qDiv.style.borderLeft = "4px solid var(--warn)";
+        qDiv.style.paddingLeft = "10px";
+      }
+    }
+
+    if(answeredCount < activeCount) {
+      fb.textContent = `⚠️ Please answer all remaining questions.`;
+      fb.className = 'fb no show';
+      return;
+    }
+
+    if(allPassed) {
+      document.getElementById('examContainer').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').textContent = nameInput.toUpperCase();
+      
+      let date = new Date();
+      let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certDate').textContent = "Date Completed: " + formattedDate;
+      fb.style.display = 'none';
+    } else {
+      fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
+      fb.className = 'fb no show';
+    }
+  }
+
+  buildExam();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRAVEN - Module 5: Electronics</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --accent:#3fb6ff; --accent2:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --txt:#e6edf3; --muted:#9aa6b2; --border:#2b3442;
+    --crt-green: #39ff14;
+    --crt-dark: #021102;
+    --crt-grid: #0f3b0f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(160deg,#0a0e14,#0d1117 40%,#10151d);
+    color:var(--txt); overflow:hidden;
+  }
+  #app{height:100vh;display:flex;flex-direction:column;}
+  
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 22px;background:var(--panel); border-bottom:1px solid var(--border);
+  }
+  header .brand{font-weight:700;color:var(--accent);font-size:15px;}
+  header .counter{font-size:13px;color:var(--muted);}
+  
+  #progressWrap{height:5px;background:#0a0e14;}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;}
+  
+  #slideArea{flex:1;overflow-y:auto;padding:34px 6vw 90px;}
+  .slide{display:none;animation:fade .4s ease;max-width:900px;margin:0 auto;}
+  .slide.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  
+  h1{font-size:28px;margin:0 0 6px;color:var(--accent);line-height:1.2;}
+  h2{font-size:20px;color:var(--accent2);margin:20px 0 10px;}
+  p,li{font-size:16px;line-height:1.6;color:var(--txt);}
+  .lead{font-size:18px;color:var(--muted);margin-bottom:18px;}
+  .kw{color:var(--accent);font-weight:600;}
+  .kw2{color:var(--accent2);font-weight:600;}
+  
+  .tag{display:inline-block;background:var(--panel2);color:var(--accent);
+    border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;
+    letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+  
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px; align-items: center;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  
+  .note{border-left:4px solid var(--accent);background:rgba(63,182,255,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .dangerbox{border-left:4px solid var(--bad);background:rgba(255,107,107,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .svg-graphic { display: block; margin: 20px auto; max-width: 100%; background: #070b10; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+/* Paste this styling right here: */
+  .project-owner-info {
+    max-width: 480px;
+    margin: 25px auto 10px;
+    padding: 15px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .project-owner-info div {
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .project-owner-info div strong {
+    color: var(--accent);
+    display: inline-block;
+    width: 150px;
+  }
+  .project-owner-info div span {
+    color: var(--txt);
+  }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+  .start-logo { display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.3)); }
+  .btn-start { background: #161b22; color:var(--crt-green); padding: 16px 36px; font-size:20px; font-weight:bold; border:2px solid var(--crt-green); border-radius:8px; cursor:pointer; margin-top:40px; transition: 0.2s; box-shadow: 0 0 15px rgba(57,255,20,0.2); text-transform: uppercase; letter-spacing: 1px;}
+  .btn-start:hover { background: rgba(57,255,20,0.1); transform: scale(1.05); box-shadow: 0 0 25px rgba(57,255,20,0.4);}
+  .start-title { font-size: 42px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0; color: #fff;}
+  .start-subtitle { font-size: 22px; color: var(--crt-green); margin-top: 10px; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  
+  @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #radar-sweep { transform-origin: 200px 200px; animation: sweep 4s linear infinite; }
+
+  /* Resistor Table */
+  .resistor-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+  .resistor-table th, .resistor-table td { border: 1px solid var(--border); padding: 8px; text-align: center; }
+  .resistor-table th { background: var(--panel2); color: var(--accent); }
+  
+  /* Color dots */
+  .color-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;}
+  .c-dot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid #fff; }
+  .c-blk { background: #000; } .c-brn { background: #8B4513; } .c-red { background: #FF0000; }
+  .c-org { background: #FFA500; } .c-yel { background: #FFFF00; } .c-grn { background: #008000; }
+  .c-blu { background: #0000FF; } .c-vio { background: #EE82EE; } .c-gry { background: #808080; }
+  .c-wht { background: #FFFFFF; } .c-gld { background: #FFD700; } .c-slv { background: #C0C0C0; }
+
+  /* Quizzes */
+  .quiz{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0;}
+  .quiz .q{font-weight:600;font-size:16px;margin-bottom:12px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:15px;transition:.15s;}
+  .opt:hover{border-color:var(--accent);background:#222b3a;}
+  .opt.correct{border-color:var(--accent2);background:rgba(126,231,135,.15);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.15);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:12px;font-size:14px;padding:11px 14px;border-radius:8px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(126,231,135,.12);border-left:4px solid var(--accent2);}
+  .fb.no{background:rgba(255,107,107,.12);border-left:4px solid var(--bad);}
+  
+  /* Exam Specific */
+  #examContainer input[type="text"]{width:100%;padding:12px;font-size:16px;background:var(--panel2);color:var(--txt);border:1px solid var(--accent);border-radius:8px;margin-bottom:20px;}
+  .exam-q{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px; transition: all 0.3s ease;}
+  .exam-opt{display:flex;align-items:center;margin:8px 0;cursor:pointer;}
+  .exam-opt input{width:auto;margin-right:10px;accent-color:var(--accent);}
+  .btn-submit{background:var(--accent2);color:#111;font-weight:bold;font-size:16px;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;}
+  .btn-submit:hover{filter:brightness(1.1);}
+  
+  /* =========================================
+     CERTIFICATE OF TRAINING 
+     ========================================= */
+  #certificate {
+    background: #fffdf8;
+    color: #111;
+    padding: 50px 60px;
+    border: 12px double #1a365d;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cert-title {
+    font-family: "Old English Text MT", "Engravers MT", "Playfair Display", Georgia, serif;
+    font-size: 48px;
+    color: #000;
+    margin: 10px 0 30px;
+    border-bottom: none;
+    font-weight: normal;
+  }
+  .cert-text {
+    font-size: 22px;
+    margin: 15px 0;
+    color: #333;
+    font-style: italic;
+  }
+  #certName {
+    font-size: 34px;
+    color: #000;
+    display: inline-block;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 1px solid #000;
+    min-width: 450px;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .cert-course {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #000;
+  }
+  #certDate {
+    font-size: 20px;
+    color: #333;
+    margin-top: 40px;
+  }
+  .print-btn {
+    background: var(--accent);
+    color: #111;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  @media print {
+    body, html { background: #fff; height: auto; overflow: visible; }
+    header, #progressWrap, #footerNav, .print-btn, #examContainer, .tag, #slideArea > .slide:not(#examSlide), .slide > h1, .slide > p.lead { display: none !important; }
+    #slideArea { padding: 0; overflow: visible; }
+    #certificate { 
+      display: block !important; 
+      position: absolute; 
+      top: 0; left: 0;
+      border: 8px double #000; 
+      box-shadow: none; 
+      width: 100%; 
+      margin: 0; 
+      padding: 60px; 
+    }
+  }
+
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:12px 22px;background:var(--panel);border-top:1px solid var(--border);}
+  .navbtn{background:var(--accent);color:#06121d;border:none;border-radius:8px;padding:10px 22px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .navbtn:hover{filter:brightness(1.12);}
+  .navbtn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ── Table of Contents sidebar — lets users jump to any topic freely ── */
+  #mainRow{flex:1;display:flex;overflow:hidden;min-height:0;}
+  #tocSidebar{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 0;transition:margin-left .25s ease;}
+  #tocSidebar .toc-group-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    padding:14px 20px 6px;font-weight:700;}
+  #tocSidebar .toc-group-label:first-child{padding-top:4px;}
+  .toc-item{padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;
+    transition:background .15s,color .15s;line-height:1.4;display:flex;gap:8px;align-items:flex-start;}
+  .toc-item .toc-num{color:var(--border);font-weight:700;flex-shrink:0;min-width:18px;}
+  .toc-item:hover{background:var(--panel2);color:var(--txt);}
+  .toc-item.active{border-left-color:var(--accent);background:var(--panel2);color:var(--accent);font-weight:600;}
+  .toc-item.active .toc-num{color:var(--accent);}
+  .toc-item.done .toc-num::after{content:' \2713';color:var(--accent2);}
+  #tocToggle{display:none;font-family:var(--mono, inherit);font-size:13px;background:var(--panel2);
+    border:1px solid var(--border);color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;}
+  #mainCol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  #tocOverlay{display:none;}
+  @media(max-width:860px){
+    #tocToggle{display:inline-block;}
+    #tocSidebar{position:fixed;top:0;left:0;bottom:0;z-index:500;margin-left:-270px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+    #tocSidebar.open{margin-left:0;}
+    #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 5</span></div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+  </header>
+  <div id="mainRow">
+    <div id="tocOverlay" onclick="closeToc()"></div>
+    <nav id="tocSidebar"></nav>
+    <div id="mainCol">
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      
+  <div id="slideArea">
+
+    <!-- START PAGE (SLIDE 0) -->
+    <section class="slide active">
+      <div class="start-container">
+        <!-- Animated CRT Radar Scope SVG -->
+        <svg class="start-logo" viewBox="0 0 400 400" width="280" height="280">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#39ff14" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
+              <stop offset="90%" stop-color="#021102" />
+              <stop offset="100%" stop-color="#0a1a0a" />
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="195" fill="url(#bezel)" stroke="#113311" stroke-width="10"/>
+          <g stroke="var(--crt-grid)" stroke-width="2">
+            <circle cx="200" cy="200" r="150" fill="none"/>
+            <circle cx="200" cy="200" r="100" fill="none"/>
+            <circle cx="200" cy="200" r="50" fill="none"/>
+            <line x1="200" y1="10" x2="200" y2="390"/>
+            <line x1="10" y1="200" x2="390" y2="200"/>
+            <line x1="65" y1="65" x2="335" y2="335"/>
+            <line x1="65" y1="335" x2="335" y2="65"/>
+          </g>
+          <circle cx="120" cy="140" r="4.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="280" cy="90" r="3" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="230" cy="300" r="5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="160" cy="250" r="2.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <g id="radar-sweep">
+            <path d="M 200 200 L 200 10 A 190 190 0 0 1 334 65 Z" fill="url(#sweep)" opacity="0.3"/>
+            <line x1="200" y1="200" x2="200" y2="10" stroke="var(--crt-green)" stroke-width="3" filter="url(#glow)"/>
+          </g>
+          <circle cx="200" cy="200" r="6" fill="var(--crt-green)" filter="url(#glow)"/>
+        </svg>
+
+        <h1 class="start-title">WRAVEN Training Program</h1>
+        <p class="start-subtitle">Module 5: Introduction to Electronics</p>
+<!-- Paste this HTML block right here: -->
+        <div class="project-owner-info">
+          <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
+          <div><strong>Location Address:</strong> <span>633 Barnes Ave</span></div>
+          <div><strong>Location City/ST/ZIP:</strong> <span>Fort Gordon, GA 30905</span></div>
+          <div><strong>Contact:</strong> <span>phillip.r.crandell.civ@army.mil</span></div>
+        </div>
+
+        <button class="btn-start" onclick="document.getElementById('nextBtn').click();">Begin Training</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <span class="tag">Section 1: Active vs Passive</span>
+      <h1>Entering the World of Electronics</h1>
+      <p class="lead">Up until now, we have dealt with basic electrical circuits. Now we transition to true electronics.</p>
+      <div class="card">
+        <p>The distinction between "electrical" and "electronic" comes down to how we control the electrons.</p>
+        <ul>
+          <li><b>Passive Components:</b> Resistors, Capacitors, and Inductors. These simply react to voltage and current. They cannot amplify a signal or make logical decisions.</li>
+          <li><span class="kw">Active Components:</span> Diodes, Transistors, and Integrated Circuits (ICs). These components can actively control, switch, or amplify electron flow. They are the brains of modern systems.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <span class="tag">Section 1: Passive Components</span>
+      <h1>Resistors: The Foundation</h1>
+      <p class="lead">Before we can control active components, we must set their operating conditions using resistors.</p>
+      <div class="card">
+        <p>As discussed in Module 1, resistance opposes current flow. In electronic circuits, we use physical components called <b>Resistors</b> to deliberately drop voltage or limit current to protect sensitive chips.</p>
+        <p>Because these components are often too tiny to print numbers on, their resistance value in Ohms (Ω) is painted onto them using a universal <span class="kw2">Color Code</span>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <span class="tag">Section 1: Passive Components</span>
+      <h1>Decoding the Resistor Color Code</h1>
+      <p class="lead">Most common resistors use a 4-band color code system.</p>
+      
+      <!-- UPDATED INLINE SVG RESISTOR (Callout Lines added) -->
+      <svg class="svg-graphic" viewBox="0 0 600 230" width="100%" height="220px">
+        <!-- Wires -->
+        <line x1="50" y1="120" x2="150" y2="120" stroke="#a4b0be" stroke-width="8"/>
+        <line x1="450" y1="120" x2="550" y2="120" stroke="#a4b0be" stroke-width="8"/>
+        
+        <!-- Resistor Body -->
+        <rect x="150" y="80" width="300" height="80" fill="#f5cd79" rx="15"/>
+        <path d="M 150 80 Q 130 120, 150 160" fill="#f5cd79"/>
+        <path d="M 450 80 Q 470 120, 450 160" fill="#f5cd79"/>
+        
+        <!-- Color Bands -->
+        <rect x="180" y="80" width="20" height="80" fill="#8B4513"/> <!-- Band 1: Brown -->
+        <rect x="230" y="80" width="20" height="80" fill="#000000"/> <!-- Band 2: Black -->
+        <rect x="280" y="80" width="20" height="80" fill="#FF0000"/> <!-- Band 3: Red -->
+        <rect x="400" y="80" width="20" height="80" fill="#FFD700"/> <!-- Band 4: Gold -->
+        
+        <!-- Callout Lines and Text -->
+        <polyline points="190,80 190,40 150,40" fill="none" stroke="#e6edf3" stroke-width="2"/>
+        <text x="100" y="45" fill="#e6edf3" font-size="14" font-weight="bold">Digit 1</text>
+        
+        <polyline points="240,80 240,60 210,60" fill="none" stroke="#e6edf3" stroke-width="2"/>
+        <text x="160" y="65" fill="#e6edf3" font-size="14" font-weight="bold">Digit 2</text>
+        
+        <polyline points="290,80 290,60 320,60" fill="none" stroke="#e6edf3" stroke-width="2"/>
+        <text x="325" y="65" fill="#e6edf3" font-size="14" font-weight="bold">Multiplier</text>
+        
+        <polyline points="410,80 410,40 450,40" fill="none" stroke="#FFD700" stroke-width="2"/>
+        <text x="455" y="45" fill="#FFD700" font-size="14" font-weight="bold">Tolerance</text>
+        
+        <!-- Example Output -->
+        <text x="300" y="215" fill="var(--accent2)" font-size="22" font-weight="bold" text-anchor="middle">Example: 1 0 x 100 = 1,000 Ω (1kΩ)</text>
+      </svg>
+      
+      <div class="card">
+        <ol>
+          <li><b>Band 1 (1st Digit):</b> The first number.</li>
+          <li><b>Band 2 (2nd Digit):</b> The second number.</li>
+          <li><b>Band 3 (Multiplier):</b> How many zeros to add to the end.</li>
+          <li><b>Band 4 (Tolerance):</b> How accurate the resistor is (e.g., Gold = ±5%, Silver = ±10%).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <span class="tag">Section 1: Passive Components</span>
+      <h1>Resistor Color Value Chart</h1>
+      <p class="lead">You must memorize this sequence. It applies to capacitors and inductors as well.</p>
+      
+      <!-- UPDATED TABLE WITH FLEXBOX DOTS -->
+      <table class="resistor-table">
+        <tr>
+          <th>Color</th>
+          <th>Digit (Bands 1 & 2)</th>
+          <th>Multiplier (Band 3)</th>
+        </tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-blk"></span>Black</div></td><td>0</td><td>x 1</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-brn"></span>Brown</div></td><td>1</td><td>x 10</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-red"></span>Red</div></td><td>2</td><td>x 100</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-org"></span>Orange</div></td><td>3</td><td>x 1,000 (1k)</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-yel"></span>Yellow</div></td><td>4</td><td>x 10,000 (10k)</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-grn"></span>Green</div></td><td>5</td><td>x 100,000 (100k)</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-blu"></span>Blue</div></td><td>6</td><td>x 1,000,000 (1M)</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-vio"></span>Violet</div></td><td>7</td><td>x 10,000,000 (10M)</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-gry"></span>Gray</div></td><td>8</td><td>-</td></tr>
+        <tr><td><div class="color-wrap"><span class="c-dot c-wht"></span>White</div></td><td>9</td><td>-</td></tr>
+      </table>
+      
+      <div class="note"><b>Mnemonic:</b> Bad Boys Race Our Young Girls But Violet Generally Wins.</div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Practice: Color Codes</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: You find a resistor with the bands: Yellow, Violet, Red, Gold. What is its resistance?</div>
+        <button class="opt">A. 4,700,000 Ω (4.7MΩ)</button>
+        <button class="opt">B. 4,700 Ω (4.7kΩ)</button>
+        <button class="opt">C. 472 Ω</button>
+        <button class="opt">D. 380 Ω</button>
+        <div class="fb"></div>
+      </div>
+      <p class="small" style="text-align:center;"><i>Hint: Yellow = 4, Violet = 7, Red = Add 2 zeros.</i></p>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <span class="tag">Section 2: Semiconductors</span>
+      <h1>The Magic of Silicon</h1>
+      <p class="lead">To create active components, we use Semiconductor materials, primarily Silicon (Si).</p>
+      <div class="card">
+        <p>Pure silicon is actually a terrible conductor. Its atoms lock together in a rigid crystal lattice, leaving no "free electrons" to carry current.</p>
+        <p>To make it useful, engineers use a process called <span class="kw">Doping</span>. This involves injecting impurities into the pure silicon to alter its electrical properties.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <span class="tag">Section 2: Semiconductors</span>
+      <h1>N-Type and P-Type Material</h1>
+      <p class="lead">Doping creates two entirely different types of materials.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="color:var(--accent);">N-Type (Negative)</h3>
+          <p>Doped with elements like Phosphorus.</p>
+          <p>This creates an excess of <b>Free Electrons</b>. The primary carriers of current in this material are negative electrons.</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--bad);">P-Type (Positive)</h3>
+          <p>Doped with elements like Boron.</p>
+          <p>This creates empty spaces in the atomic structure called <b>"Holes."</b> A hole acts like a positive charge that attracts electrons.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide">
+      <span class="tag">Section 3: Diodes</span>
+      <h1>The P-N Junction</h1>
+      <p class="lead">The magic happens when you fuse a piece of P-type material to a piece of N-type material. This creates a Diode.</p>
+      
+      <!-- INLINE SVG P-N JUNCTION -->
+      <svg class="svg-graphic" viewBox="0 0 600 200" width="100%" height="200px">
+        <!-- P-Type Block -->
+        <rect x="100" y="50" width="150" height="100" fill="rgba(255,107,107,0.2)" stroke="#ff6b6b" stroke-width="4"/>
+        <text x="140" y="105" fill="#ff6b6b" font-size="24" font-weight="bold">P-Type</text>
+        <text x="135" y="130" fill="#ff6b6b" font-size="14">(Holes +)</text>
+        
+        <!-- N-Type Block -->
+        <rect x="350" y="50" width="150" height="100" fill="rgba(63,182,255,0.2)" stroke="#3fb6ff" stroke-width="4"/>
+        <text x="390" y="105" fill="#3fb6ff" font-size="24" font-weight="bold">N-Type</text>
+        <text x="375" y="130" fill="#3fb6ff" font-size="14">(Electrons -)</text>
+        
+        <!-- Depletion Region -->
+        <rect x="250" y="50" width="100" height="100" fill="#1c2330" stroke="#e6edf3" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="260" y="105" fill="#e6edf3" font-size="14">Depletion</text>
+        <text x="270" y="125" fill="#e6edf3" font-size="14">Region</text>
+        
+        <!-- Wires -->
+        <line x1="20" y1="100" x2="100" y2="100" stroke="#a4b0be" stroke-width="6"/>
+        <line x1="500" y1="100" x2="580" y2="100" stroke="#a4b0be" stroke-width="6"/>
+        <text x="30" y="90" fill="#a4b0be" font-size="14">Anode</text>
+        <text x="510" y="90" fill="#a4b0be" font-size="14">Cathode</text>
+      </svg>
+      
+      <div class="card">
+        <p>At the exact point they touch, electrons from the N-side fall into the holes on the P-side. This creates a neutral wall called the <span class="kw">Depletion Region</span>, which acts as a barrier to current flow.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide">
+      <span class="tag">Section 3: Diodes</span>
+      <h1>Biasing the Diode</h1>
+      <p class="lead">A diode acts as a one-way electrical valve based on how you apply voltage to it.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="color:var(--accent2);">Forward Bias (ON)</h3>
+          <p>If you connect a battery's Positive (+) terminal to the P-side (Anode) and Negative (-) to the N-side (Cathode), the pressure shrinks the depletion region. <br><br><b>Result:</b> Current flows freely.</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--bad);">Reverse Bias (OFF)</h3>
+          <p>If you connect the battery backward, the charges pull the electrons and holes further apart, widening the depletion region. <br><br><b>Result:</b> Current is blocked completely.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide">
+      <span class="tag">Section 3: Diodes</span>
+      <h1>Rectification: AC to DC</h1>
+      <p class="lead">The most common use for a diode is turning Alternating Current into Direct Current.</p>
+      
+      <!-- INLINE SVG RECTIFICATION -->
+      <svg class="svg-graphic" viewBox="0 0 600 200" width="100%" height="200px">
+        <!-- Input AC Wave -->
+        <text x="50" y="40" fill="#e6edf3" font-size="16">AC Input</text>
+        <line x1="20" y1="120" x2="200" y2="120" stroke="#4a5568" stroke-width="2"/>
+        <path d="M 20 120 Q 65 20, 110 120 T 200 120" fill="none" stroke="var(--accent)" stroke-width="3"/>
+        
+        <!-- Diode Symbol in middle -->
+        <line x1="220" y1="120" x2="280" y2="120" stroke="#ffb454" stroke-width="4"/>
+        <polygon points="280,100 280,140 320,120" fill="#ffb454"/>
+        <line x1="320" y1="100" x2="320" y2="140" stroke="#ffb454" stroke-width="4"/>
+        <line x1="320" y1="120" x2="380" y2="120" stroke="#ffb454" stroke-width="4"/>
+        <text x="270" y="90" fill="#ffb454" font-size="16">Diode</text>
+        
+        <!-- Output Pulsating DC Wave -->
+        <text x="430" y="40" fill="#e6edf3" font-size="16">Pulsating DC Output</text>
+        <line x1="400" y1="120" x2="580" y2="120" stroke="#4a5568" stroke-width="2"/>
+        <!-- Only top half makes it through -->
+        <path d="M 400 120 Q 445 20, 490 120" fill="none" stroke="var(--accent2)" stroke-width="3"/>
+        <line x1="490" y1="120" x2="580" y2="120" stroke="var(--bad)" stroke-width="3" stroke-dasharray="4,4"/>
+      </svg>
+      
+      <div class="card">
+        <p>Because AC constantly reverses direction, placing a diode in the circuit blocks the reverse half of the cycle (the negative trough). The output is a pulsing current that only flows in one direction: <span class="kw">Pulsating DC</span>. This is called Half-Wave Rectification.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Mid-Module Review</h1>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: What is the primary function of a standard Diode?</div>
+        <button class="opt">A. To allow current to flow in only one direction.</button>
+        <button class="opt">B. To amplify a weak signal.</button>
+        <button class="opt">C. To increase the resistance of a circuit.</button>
+        <button class="opt">D. To store an electrical charge.</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: N-Type semiconductor material has been doped to have an excess of what?</div>
+        <button class="opt">A. Protons</button>
+        <button class="opt">B. Holes</button>
+        <button class="opt">C. Free Electrons</button>
+        <button class="opt">D. Neutrons</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 -->
+    <section class="slide">
+      <span class="tag">Section 4: Transistors</span>
+      <h1>The Transistor: The Brain of Electronics</h1>
+      <p class="lead">If a diode is a one-way valve, a transistor is an electronically controlled throttle valve.</p>
+      <div class="card">
+        <p>A transistor is created by sandwiching three layers of doped semiconductor material together (either N-P-N or P-N-P). This creates a device with three distinct leads:</p>
+        <ol>
+          <li><b>Emitter:</b> The source of the electrons.</li>
+          <li><b>Base:</b> The thin middle layer. This is the "control gate."</li>
+          <li><b>Collector:</b> The destination where the electrons are gathered.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SLIDE 13 -->
+    <section class="slide">
+      <span class="tag">Section 4: Transistors</span>
+      <h1>Transistor Schematic Symbols</h1>
+      <p class="lead">You must know how to identify NPN and PNP transistors on a schematic.</p>
+      
+      <!-- UPDATED INLINE SVG TRANSISTORS -->
+      <svg class="svg-graphic" viewBox="0 0 650 250" width="100%" height="220px">
+        <!-- NPN Transistor -->
+        <text x="160" y="30" fill="var(--txt)" font-size="20" font-weight="bold" text-anchor="middle">NPN Transistor</text>
+        <circle cx="160" cy="140" r="60" fill="none" stroke="#4a5568" stroke-width="3"/>
+        <line x1="60" y1="140" x2="140" y2="140" stroke="#3fb6ff" stroke-width="4"/> <!-- Base -->
+        <line x1="140" y1="110" x2="140" y2="170" stroke="#3fb6ff" stroke-width="6"/> <!-- Base Plate -->
+        <line x1="140" y1="125" x2="190" y2="90" stroke="#3fb6ff" stroke-width="4"/> <!-- Collector -->
+        <line x1="140" y1="155" x2="190" y2="190" stroke="#3fb6ff" stroke-width="4"/> <!-- Emitter -->
+        <!-- NPN Arrow (Pointing OUT along the emitter line) -->
+        <polygon points="190,190 172,190 184,175" fill="#3fb6ff"/>
+        
+        <text x="50" y="130" fill="#3fb6ff" font-size="16" text-anchor="middle">Base (B)</text>
+        <text x="210" y="85" fill="#3fb6ff" font-size="16">Collector (C)</text>
+        <text x="210" y="205" fill="#3fb6ff" font-size="16">Emitter (E)</text>
+
+        <!-- PNP Transistor -->
+        <text x="490" y="30" fill="var(--txt)" font-size="20" font-weight="bold" text-anchor="middle">PNP Transistor</text>
+        <circle cx="490" cy="140" r="60" fill="none" stroke="#4a5568" stroke-width="3"/>
+        <line x1="390" y1="140" x2="470" y2="140" stroke="#ff6b6b" stroke-width="4"/> <!-- Base -->
+        <line x1="470" y1="110" x2="470" y2="170" stroke="#ff6b6b" stroke-width="6"/> <!-- Base Plate -->
+        <line x1="470" y1="125" x2="520" y2="90" stroke="#ff6b6b" stroke-width="4"/> <!-- Emitter -->
+        <line x1="470" y1="155" x2="520" y2="190" stroke="#ff6b6b" stroke-width="4"/> <!-- Collector -->
+        <!-- PNP Arrow (Pointing IN along the emitter line) -->
+        <polygon points="470,125 488,125 476,110" fill="#ff6b6b"/>
+        
+        <text x="380" y="130" fill="#ff6b6b" font-size="16" text-anchor="middle">Base (B)</text>
+        <text x="540" y="85" fill="#ff6b6b" font-size="16">Emitter (E)</text>
+        <text x="540" y="205" fill="#ff6b6b" font-size="16">Collector (C)</text>
+      </svg>
+      
+      <div class="note"><b>Memory Trick:</b> Look at the arrow on the Emitter. <br><b>NPN:</b> <b>N</b>ot <b>P</b>ointing i<b>N</b> (Arrow points out). <br><b>PNP:</b> <b>P</b>ointing i<b>N</b> <b>P</b>roudly (Arrow points in).</div>
+    </section>
+
+    <!-- SLIDE 14 -->
+    <section class="slide">
+      <span class="tag">Section 4: Transistors</span>
+      <h1>How a Transistor Works</h1>
+      <p class="lead">By applying a tiny current to the Base, you control a massive current flowing from the Emitter to the Collector.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="color:var(--accent);">As a Switch</h3>
+          <p>In digital electronics (computers), the transistor is fully ON or fully OFF.</p>
+          <p class="small">If voltage is applied to the Base, the "gate" flies open, and current flows (a digital "1"). If voltage is removed, the gate shuts (a digital "0"). Modern computer chips contain billions of these microscopic switches.</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--accent2);">As an Amplifier</h3>
+          <p>In analog electronics (radios, radar), the transistor operates partially open.</p>
+          <p class="small">A weak, fluctuating radio signal is fed into the Base. The transistor allows a massive, high-power current from a battery to flow through the Collector matching that exact same fluctuation, amplifying the signal perfectly.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 15 -->
+    <section class="slide">
+      <span class="tag">Section 5: Electron Tubes</span>
+      <h1>The Predecessor: Electron Tubes</h1>
+      <p class="lead">Before solid-state silicon, electronics relied on fragile glass vacuum tubes.</p>
+      <div class="card">
+        <p>Electron tubes (or Vacuum Tubes) operate on the principle of <span class="kw">Thermionic Emission</span>. When you heat a metal filament (the Cathode) inside a vacuum, it literally boils electrons off its surface into empty space. These free-floating electrons are then pulled across the vacuum to a positively charged plate (the Anode).</p>
+        <p>By placing a metal grid between the cathode and anode, engineers could control the flow of electrons through the vacuum—creating the first amplifiers and switches.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 16 -->
+    <section class="slide">
+      <span class="tag">Section 5: Electron Tubes</span>
+      <h1>So why do I care?</h1>
+      <p class="lead">Transistors replaced tubes because tubes were huge, fragile, and generated massive amounts of heat. So why do I care?</p>
+      <div class="card">
+        <p>Consumer electronics do not require or handle the massive power levels needed for military applications. While your smartphone uses billions of silicon transistors, military systems still rely heavily on specialized vacuum tubes like <span class="kw">Magnetrons, Klystrons, and Traveling-Wave Tubes (TWTs)</span>.</p>
+        <p><b>The Reason:</b> Solid-state silicon melts under extreme power loads. When a radar system needs to generate millions of watts of raw RF energy in a microsecond, specialized electron tubes are still the only devices physically capable of surviving the heat and voltage.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 17: FINAL EXAM -->
+    <section class="slide" id="examSlide">
+      <span class="tag">Module 5 Evaluation</span>
+      <h1>Module 5: Final Exam</h1>
+      <p class="lead">You must score 100% to generate your Certificate.</p>
+      
+      <div class="card" id="examContainer" style="background:#070b10;">
+        <label for="studentName" style="font-weight:bold;margin-bottom:8px;display:block;color:var(--accent);">Enter Full Name for Certificate:</label>
+        <input type="text" id="studentName" placeholder="e.g., Jane Doe">
+        
+        <div id="questionsArea"></div>
+        <div id="examFeedback" class="fb"></div>
+        <button class="btn-submit" onclick="gradeExam()">Submit Exam</button>
+      </div>
+      
+      <!-- CERTIFICATE CONTAINER -->
+      <div id="certificate">
+        <h1 class="cert-title">Certificate of Training</h1>
+        <p class="cert-text">This is to certify that</p>
+        <span id="certName">STUDENT NAME</span>
+        
+        <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
+        <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
+        
+        <div class="cert-course">Module 5: Electronics & Solid State Devices</div>
+        
+        <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
+        
+        <button class="print-btn" onclick="window.print()">Print Certificate</button>
+      </div>
+
+    </section>
+
+  </div>
+  
+  <footer id="footerNav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div id="navCounter" style="font-weight:bold;color:var(--accent);"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  
+  let slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  let total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let visited = new Set([0]);
+
+  // Table of Contents — grouped so users can jump straight to any topic instead of
+  // clicking through the whole deck. Titles are read straight from each slide's own <h1>.
+  const TOC_GROUPS = [
+    { label: 'Start', range: [0, 0] },
+    { label: 'Resistors', range: [1, 5] },
+    { label: 'Semiconductors', range: [6, 11] },
+    { label: 'Transistors & Tubes', range: [12, 16] },
+    { label: 'Assessment', range: [17, 17] }
+  ];
+
+  function buildToc(){
+    const sidebar = document.getElementById('tocSidebar');
+    let html = '';
+    TOC_GROUPS.forEach(g => {
+      let groupHtml = '';
+      for(let i = g.range[0]; i <= g.range[1] && i < total; i++){
+        const h1 = slides[i].querySelector('h1');
+        const title = h1 ? h1.textContent.trim() : 'Welcome & Overview';
+        groupHtml += `<div class="toc-item" id="toc-${i}" onclick="jumpTo(${i})"><span class="toc-num">${i+1}</span><span>${title}</span></div>`;
+      }
+      if(groupHtml){ html += `<div class="toc-group-label">${g.label}</div>` + groupHtml; }
+    });
+    sidebar.innerHTML = html;
+  }
+
+  function toggleToc(){
+    document.getElementById('tocSidebar').classList.toggle('open');
+    document.getElementById('tocOverlay').classList.toggle('open');
+  }
+  function closeToc(){
+    document.getElementById('tocSidebar').classList.remove('open');
+    document.getElementById('tocOverlay').classList.remove('open');
+  }
+  function jumpTo(i){
+    idx = i;
+    render();
+    closeToc();
+  }
+  window.toggleToc = toggleToc;
+  window.closeToc = closeToc;
+  window.jumpTo = jumpTo;
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i===idx));
+    visited.add(idx);
+    
+    if(idx === 0) {
+        document.getElementById('navCounter').textContent = `Start Page`;
+    } else {
+        document.getElementById('navCounter').textContent = `Slide ${idx} of ${total - 1}`;
+    }
+    
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progressBar').style.width = ((idx)/(total-1)*100) + '%';
+    
+    document.getElementById('prevBtn').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.visibility = (idx === total - 1) ? 'hidden' : 'visible';
+    
+    document.getElementById('slideArea').scrollTop = 0;
+
+    document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+    visited.forEach(v => { const el = document.getElementById('toc-'+v); if(el) el.classList.add('done'); });
+    const activeEl = document.getElementById('toc-'+idx);
+    if(activeEl){ activeEl.classList.add('active'); activeEl.scrollIntoView({block:'nearest'}); }
+  }
+  
+  buildToc();
+  document.getElementById('nextBtn').addEventListener('click', () => { if(idx < total-1) { idx++; render(); }});
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0) { idx--; render(); }});
+  render();
+
+  // Inline Quizzes
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    let correct = parseInt(quiz.getAttribute('data-correct'), 10);
+    let opts = quiz.querySelectorAll('.opt');
+    let fb = quiz.querySelector('.fb');
+    opts.forEach((opt, oi) => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.disabled = true);
+        opts[correct].classList.add('correct');
+        if(oi === correct){
+          fb.textContent = "✅ Correct!"; fb.className = 'fb ok show';
+        } else {
+          opt.classList.add('wrong'); fb.textContent = "❌ Incorrect. Review the green answer."; fb.className = 'fb no show';
+        }
+      });
+    });
+  });
+
+  // MODULE 5 EXAM BANK
+  const examBank = [
+    { q: "On a 4-band resistor, if the first two bands are Red and Red, what are the first two digits of its value?", o: ["2 and 2", "1 and 1", "0 and 0", "3 and 3"], a: "2 and 2" },
+    { q: "What is the primary function of a Diode?", o: ["To allow current to flow in only one direction", "To amplify a radio signal", "To step up voltage", "To store electrostatic energy"], a: "To allow current to flow in only one direction" },
+    { q: "In semiconductor physics, what is the term for injecting impurities into pure silicon to alter its electrical properties?", o: ["Doping", "Rectification", "Induction", "Thermionic Emission"], a: "Doping" },
+    { q: "When a P-N junction is 'Forward Biased', what happens to the depletion region?", o: ["It shrinks, allowing current to flow freely", "It widens, blocking all current flow", "It reverses the AC sine wave", "It heats up and boils off electrons"], a: "It shrinks, allowing current to flow freely" },
+    { q: "What are the three terminals of a bipolar junction transistor called?", o: ["Base, Collector, Emitter", "Anode, Cathode, Grid", "Primary, Secondary, Core", "Positive, Negative, Ground"], a: "Base, Collector, Emitter" },
+    { q: "In a schematic symbol, how can you identify an NPN transistor?", o: ["The arrow on the Emitter points OUT (Not Pointing iN)", "The arrow on the Emitter points IN (Pointing iN Proudly)", "It has a square body", "It has four wire leads"], a: "The arrow on the Emitter points OUT (Not Pointing iN)" },
+    { q: "What is the process of using a diode to convert Alternating Current (AC) into Pulsating Direct Current (DC) called?", o: ["Rectification", "Amplification", "Modulation", "Oscillation"], a: "Rectification" },
+    { q: "N-Type semiconductor material is doped to have an excess of what?", o: ["Free Electrons", "Holes", "Protons", "Neutrons"], a: "Free Electrons" },
+    { q: "What is the principle called where a heated metal filament in a vacuum boils off free electrons?", o: ["Thermionic Emission", "Piezoelectric Effect", "Mutual Induction", "Capacitive Reactance"], a: "Thermionic Emission" },
+    { q: "Why are fragile, heat-generating electron tubes (like Magnetrons) still used in modern military radar systems instead of solid-state silicon?", o: ["They can survive the extreme power and voltage required to generate massive RF energy", "They are cheaper to manufacture", "They use less electricity than transistors", "They are easier to program"], a: "They can survive the extreme power and voltage required to generate massive RF energy" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildExam() {
+    let area = document.getElementById('questionsArea');
+    area.innerHTML = '';
+    
+    let questions = shuffle([...examBank]);
+    
+    questions.forEach((qObj, index) => {
+      let qDiv = document.createElement('div');
+      qDiv.className = 'exam-q';
+      qDiv.id = `qDiv_${index}`;
+      qDiv.dataset.passed = "false"; 
+      qDiv.innerHTML = `<div class="q" id="qText_${index}"><b>${index + 1}.</b> ${qObj.q}</div>`;
+      
+      let options = shuffle([...qObj.o]);
+      options.forEach((optText, optIndex) => {
+        let isCorrect = (optText === qObj.a) ? "true" : "false";
+        qDiv.innerHTML += `
+          <label class="exam-opt">
+            <input type="radio" name="q${index}" value="${isCorrect}">
+            ${optText}
+          </label>
+        `;
+      });
+      area.appendChild(qDiv);
+    });
+  }
+
+  window.gradeExam = function() {
+    let nameInput = document.getElementById('studentName').value.trim();
+    let fb = document.getElementById('examFeedback');
+    
+    if(!nameInput) {
+      fb.textContent = "⚠️ Please enter your name for the certificate.";
+      fb.className = 'fb no show';
+      return;
+    }
+
+    let allPassed = true;
+    let answeredCount = 0;
+    let activeCount = 0;
+    
+    for(let i=0; i<examBank.length; i++) {
+      let qDiv = document.getElementById(`qDiv_${i}`);
+      
+      if(qDiv.dataset.passed === "true") continue; 
+      
+      activeCount++;
+      let radios = document.getElementsByName(`q${i}`);
+      let answered = false;
+      let isCorrect = false;
+      
+      for(let r of radios) {
+        if(r.checked) {
+          answered = true;
+          if(r.value === "true") isCorrect = true;
+        }
+      }
+
+      if(answered) {
+        answeredCount++;
+        if(isCorrect) {
+          qDiv.dataset.passed = "true";
+          qDiv.style.opacity = "0.5";
+          qDiv.style.pointerEvents = "none";
+          qDiv.style.borderLeft = "4px solid var(--accent2)";
+          qDiv.style.paddingLeft = "10px";
+          let qText = document.getElementById(`qText_${i}`);
+          if(!qText.innerHTML.includes('✅')) {
+            qText.innerHTML += ' <span style="color:var(--accent2); margin-left:10px;">✅ Correct</span>';
+          }
+        } else {
+          allPassed = false;
+          qDiv.style.borderLeft = "4px solid var(--bad)";
+          qDiv.style.paddingLeft = "10px";
+          for(let r of radios) r.checked = false;
+        }
+      } else {
+        allPassed = false;
+        qDiv.style.borderLeft = "4px solid var(--warn)";
+        qDiv.style.paddingLeft = "10px";
+      }
+    }
+
+    if(answeredCount < activeCount) {
+      fb.textContent = `⚠️ Please answer all remaining questions.`;
+      fb.className = 'fb no show';
+      return;
+    }
+
+    if(allPassed) {
+      document.getElementById('examContainer').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').textContent = nameInput.toUpperCase();
+      
+      let date = new Date();
+      let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certDate').textContent = "Date Completed: " + formattedDate;
+      fb.style.display = 'none';
+    } else {
+      fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
+      fb.className = 'fb no show';
+    }
+  }
+
+  buildExam();
+
+})();
+</script>
+</body>
+</html>

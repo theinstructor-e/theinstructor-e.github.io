@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRAVEN - Module 4: Generators & Motors</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --accent:#3fb6ff; --accent2:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --txt:#e6edf3; --muted:#9aa6b2; --border:#2b3442;
+    --crt-green: #39ff14;
+    --crt-dark: #021102;
+    --crt-grid: #0f3b0f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(160deg,#0a0e14,#0d1117 40%,#10151d);
+    color:var(--txt); overflow:hidden;
+  }
+  #app{height:100vh;display:flex;flex-direction:column;}
+  
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 22px;background:var(--panel); border-bottom:1px solid var(--border);
+  }
+  header .brand{font-weight:700;color:var(--accent);font-size:15px;}
+  header .counter{font-size:13px;color:var(--muted);}
+  
+  #progressWrap{height:5px;background:#0a0e14;}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;}
+  
+  #slideArea{flex:1;overflow-y:auto;padding:34px 6vw 90px;}
+  .slide{display:none;animation:fade .4s ease;max-width:900px;margin:0 auto;}
+  .slide.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  
+  h1{font-size:28px;margin:0 0 6px;color:var(--accent);line-height:1.2;}
+  h2{font-size:20px;color:var(--accent2);margin:20px 0 10px;}
+  p,li{font-size:16px;line-height:1.6;color:var(--txt);}
+  .lead{font-size:18px;color:var(--muted);margin-bottom:18px;}
+  .kw{color:var(--accent);font-weight:600;}
+  .kw2{color:var(--accent2);font-weight:600;}
+  
+  .tag{display:inline-block;background:var(--panel2);color:var(--accent);
+    border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;
+    letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+  
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px; align-items: center;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  
+  .note{border-left:4px solid var(--accent);background:rgba(63,182,255,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .dangerbox{border-left:4px solid var(--bad);background:rgba(255,107,107,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .svg-graphic { display: block; margin: 20px auto; max-width: 100%; background: #070b10; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+/* Paste this styling right here: */
+  .project-owner-info {
+    max-width: 480px;
+    margin: 25px auto 10px;
+    padding: 15px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .project-owner-info div {
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .project-owner-info div strong {
+    color: var(--accent);
+    display: inline-block;
+    width: 150px;
+  }
+  .project-owner-info div span {
+    color: var(--txt);
+  }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+  .start-logo { display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.3)); }
+  .btn-start { background: #161b22; color:var(--crt-green); padding: 16px 36px; font-size:20px; font-weight:bold; border:2px solid var(--crt-green); border-radius:8px; cursor:pointer; margin-top:40px; transition: 0.2s; box-shadow: 0 0 15px rgba(57,255,20,0.2); text-transform: uppercase; letter-spacing: 1px;}
+  .btn-start:hover { background: rgba(57,255,20,0.1); transform: scale(1.05); box-shadow: 0 0 25px rgba(57,255,20,0.4);}
+  .start-title { font-size: 42px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0; color: #fff;}
+  .start-subtitle { font-size: 22px; color: var(--crt-green); margin-top: 10px; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  
+  @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #radar-sweep { transform-origin: 200px 200px; animation: sweep 4s linear infinite; }
+
+  /* Quizzes */
+  .quiz{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0;}
+  .quiz .q{font-weight:600;font-size:16px;margin-bottom:12px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:15px;transition:.15s;}
+  .opt:hover{border-color:var(--accent);background:#222b3a;}
+  .opt.correct{border-color:var(--accent2);background:rgba(126,231,135,.15);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.15);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:12px;font-size:14px;padding:11px 14px;border-radius:8px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(126,231,135,.12);border-left:4px solid var(--accent2);}
+  .fb.no{background:rgba(255,107,107,.12);border-left:4px solid var(--bad);}
+  
+  /* Exam Specific */
+  #examContainer input[type="text"]{width:100%;padding:12px;font-size:16px;background:var(--panel2);color:var(--txt);border:1px solid var(--accent);border-radius:8px;margin-bottom:20px;}
+  .exam-q{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px; transition: all 0.3s ease;}
+  .exam-opt{display:flex;align-items:center;margin:8px 0;cursor:pointer;}
+  .exam-opt input{width:auto;margin-right:10px;accent-color:var(--accent);}
+  .btn-submit{background:var(--accent2);color:#111;font-weight:bold;font-size:16px;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;}
+  .btn-submit:hover{filter:brightness(1.1);}
+  
+  /* =========================================
+     CERTIFICATE OF TRAINING 
+     ========================================= */
+  #certificate {
+    background: #fffdf8;
+    color: #111;
+    padding: 50px 60px;
+    border: 12px double #1a365d;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cert-title {
+    font-family: "Old English Text MT", "Engravers MT", "Playfair Display", Georgia, serif;
+    font-size: 48px;
+    color: #000;
+    margin: 10px 0 30px;
+    border-bottom: none;
+    font-weight: normal;
+  }
+  .cert-text {
+    font-size: 22px;
+    margin: 15px 0;
+    color: #333;
+    font-style: italic;
+  }
+  #certName {
+    font-size: 34px;
+    color: #000;
+    display: inline-block;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 1px solid #000;
+    min-width: 450px;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .cert-course {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #000;
+  }
+  #certDate {
+    font-size: 20px;
+    color: #333;
+    margin-top: 40px;
+  }
+  .print-btn {
+    background: var(--accent);
+    color: #111;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  @media print {
+    body, html { background: #fff; height: auto; overflow: visible; }
+    header, #progressWrap, #footerNav, .print-btn, #examContainer, .tag, #slideArea > .slide:not(#examSlide), .slide > h1, .slide > p.lead { display: none !important; }
+    #slideArea { padding: 0; overflow: visible; }
+    #certificate { 
+      display: block !important; 
+      position: absolute; 
+      top: 0; left: 0;
+      border: 8px double #000; 
+      box-shadow: none; 
+      width: 100%; 
+      margin: 0; 
+      padding: 60px; 
+    }
+  }
+
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:12px 22px;background:var(--panel);border-top:1px solid var(--border);}
+  .navbtn{background:var(--accent);color:#06121d;border:none;border-radius:8px;padding:10px 22px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .navbtn:hover{filter:brightness(1.12);}
+  .navbtn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ── Table of Contents sidebar — lets users jump to any topic freely ── */
+  #mainRow{flex:1;display:flex;overflow:hidden;min-height:0;}
+  #tocSidebar{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 0;transition:margin-left .25s ease;}
+  #tocSidebar .toc-group-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    padding:14px 20px 6px;font-weight:700;}
+  #tocSidebar .toc-group-label:first-child{padding-top:4px;}
+  .toc-item{padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;
+    transition:background .15s,color .15s;line-height:1.4;display:flex;gap:8px;align-items:flex-start;}
+  .toc-item .toc-num{color:var(--border);font-weight:700;flex-shrink:0;min-width:18px;}
+  .toc-item:hover{background:var(--panel2);color:var(--txt);}
+  .toc-item.active{border-left-color:var(--accent);background:var(--panel2);color:var(--accent);font-weight:600;}
+  .toc-item.active .toc-num{color:var(--accent);}
+  .toc-item.done .toc-num::after{content:' \2713';color:var(--accent2);}
+  #tocToggle{display:none;font-family:var(--mono, inherit);font-size:13px;background:var(--panel2);
+    border:1px solid var(--border);color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;}
+  #mainCol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  #tocOverlay{display:none;}
+  @media(max-width:860px){
+    #tocToggle{display:inline-block;}
+    #tocSidebar{position:fixed;top:0;left:0;bottom:0;z-index:500;margin-left:-270px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+    #tocSidebar.open{margin-left:0;}
+    #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 4</span></div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+  </header>
+  <div id="mainRow">
+    <div id="tocOverlay" onclick="closeToc()"></div>
+    <nav id="tocSidebar"></nav>
+    <div id="mainCol">
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      
+  <div id="slideArea">
+
+    <!-- START PAGE (SLIDE 0) -->
+    <section class="slide active">
+      <div class="start-container">
+        <!-- Animated CRT Radar Scope SVG -->
+        <svg class="start-logo" viewBox="0 0 400 400" width="280" height="280">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#39ff14" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
+              <stop offset="90%" stop-color="#021102" />
+              <stop offset="100%" stop-color="#0a1a0a" />
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="195" fill="url(#bezel)" stroke="#113311" stroke-width="10"/>
+          <g stroke="var(--crt-grid)" stroke-width="2">
+            <circle cx="200" cy="200" r="150" fill="none"/>
+            <circle cx="200" cy="200" r="100" fill="none"/>
+            <circle cx="200" cy="200" r="50" fill="none"/>
+            <line x1="200" y1="10" x2="200" y2="390"/>
+            <line x1="10" y1="200" x2="390" y2="200"/>
+            <line x1="65" y1="65" x2="335" y2="335"/>
+            <line x1="65" y1="335" x2="335" y2="65"/>
+          </g>
+          <circle cx="120" cy="140" r="4.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="280" cy="90" r="3" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="230" cy="300" r="5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="160" cy="250" r="2.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <g id="radar-sweep">
+            <path d="M 200 200 L 200 10 A 190 190 0 0 1 334 65 Z" fill="url(#sweep)" opacity="0.3"/>
+            <line x1="200" y1="200" x2="200" y2="10" stroke="var(--crt-green)" stroke-width="3" filter="url(#glow)"/>
+          </g>
+          <circle cx="200" cy="200" r="6" fill="var(--crt-green)" filter="url(#glow)"/>
+        </svg>
+
+        <h1 class="start-title">WRAVEN Training Program</h1>
+        <p class="start-subtitle">Module 4: Generators & Motors</p>
+ <!-- Paste this HTML block right here: -->
+        <div class="project-owner-info">
+          <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
+          <div><strong>Location Address:</strong> <span>633 Barnes Ave</span></div>
+          <div><strong>Location City/ST/ZIP:</strong> <span>Fort Gordon, GA 30905</span></div>
+          <div><strong>Contact:</strong> <span>phillip.r.crandell.civ@army.mil</span></div>
+        </div>
+        <button class="btn-start" onclick="document.getElementById('nextBtn').click();">Begin Training</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromechanical Conversion</span>
+      <h1>Two Sides of the Same Coin</h1>
+      <p class="lead">Generators and motors are fundamentally the exact same type of machine, just operated in reverse.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="color:var(--accent);">Generators</h3>
+          <p>Convert <b>Mechanical Energy</b> into <b>Electrical Energy</b>.</p>
+          <p class="small">You turn a shaft using an engine, turbine, or hand-crank, and it pushes electrons out.</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--accent2);">Motors</h3>
+          <p>Convert <b>Electrical Energy</b> into <b>Mechanical Energy</b>.</p>
+          <p class="small">You push electrons in from a battery or power grid, and it turns a shaft.</p>
+        </div>
+      </div>
+      <div class="note">Both machines rely entirely on the relationship between electricity and magnetism.</div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <span class="tag">Section 1: Electromechanical Conversion</span>
+      <h1>The Rules of Induction</h1>
+      <p class="lead">To generate voltage, you need three things: a conductor, a magnetic field, and relative motion.</p>
+      <div class="card">
+        <p>If you take a copper wire (conductor) and move it so that it cuts across the invisible flux lines of a magnet, a voltage is induced in the wire.</p>
+        <p>The strength of this voltage depends on:</p>
+        <ol>
+          <li><b>The strength of the magnetic field:</b> Stronger magnets = more voltage.</li>
+          <li><b>The speed of the motion:</b> Faster movement = more voltage.</li>
+          <li><b>The number of conductors:</b> Coiling the wire so it cuts the field multiple times multiplies the voltage.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <span class="tag">Section 2: Generators</span>
+      <h1>The Left-Hand Rule for Generators</h1>
+      <p class="lead">How do we know which direction the current will flow when we spin a generator?</p>
+      <div class="card">
+        <p>The <b>Left-Hand Rule</b> dictates the direction of induced current in a generator. If you hold your left hand with the thumb, index finger, and middle finger at right angles to each other:</p>
+        <ul>
+          <li><b>THUMB:</b> Points in the direction of the conductor's <b>Motion</b> (Thrust).</li>
+          <li><b>INDEX FINGER:</b> Points in the direction of the <b>Magnetic Field</b> (North to South).</li>
+          <li><b>MIDDLE FINGER:</b> Points in the direction of the induced <b>Current</b> flow.</li>
+        </ul>
+      </div>
+      <div class="dangerbox">⚠️ <i>Do not confuse this with motors. Generators use the LEFT hand. Motors use the RIGHT hand.</i></div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <span class="tag">Section 2: Generators</span>
+      <h1>The Basic AC Generator (Alternator)</h1>
+      <p class="lead">If you spin a wire loop inside a magnetic field, it naturally generates Alternating Current (AC).</p>
+      
+      <!-- Slip Ring SVG -->
+      <svg class="svg-graphic" viewBox="0 0 500 200" width="100%" height="200px">
+        <!-- Magnets -->
+        <rect x="50" y="50" width="40" height="100" fill="#badc58"/>
+        <text x="60" y="105" fill="#111" font-size="20" font-weight="bold">N</text>
+        <rect x="350" y="50" width="40" height="100" fill="#ff6b6b"/>
+        <text x="360" y="105" fill="#111" font-size="20" font-weight="bold">S</text>
+        
+        <!-- Magnetic Flux Lines -->
+        <line x1="90" y1="100" x2="350" y2="100" stroke="#e6edf3" stroke-width="2" stroke-dasharray="5,5"/>
+        
+        <!-- Wire Loop -->
+        <path d="M 220 150 L 150 150 L 150 50 L 290 50 L 290 120" fill="none" stroke="var(--accent)" stroke-width="4"/>
+        
+        <!-- Slip Rings -->
+        <ellipse cx="220" cy="150" rx="10" ry="25" fill="none" stroke="#ffb454" stroke-width="4"/>
+        <ellipse cx="290" cy="150" rx="10" ry="25" fill="none" stroke="#ffb454" stroke-width="4"/>
+        <line x1="290" y1="120" x2="290" y2="150" stroke="var(--accent)" stroke-width="4"/>
+        
+        <!-- Brushes & Output -->
+        <rect x="225" y="165" width="15" height="10" fill="#a4b0be"/>
+        <rect x="295" y="165" width="15" height="10" fill="#a4b0be"/>
+        <polyline points="232,175 232,190 200,190" fill="none" stroke="#e6edf3" stroke-width="3"/>
+        <polyline points="302,175 302,190 330,190" fill="none" stroke="#e6edf3" stroke-width="3"/>
+        <text x="235" y="185" fill="var(--txt)" font-size="12">AC Output</text>
+      </svg>
+      
+      <div class="card">
+        <p>To get the electricity out of the spinning loop without tangling the wires, we use <span class="kw">Slip Rings</span>. These are two continuous brass rings mounted on the shaft. Stationary carbon blocks called <b>Brushes</b> ride against the rings to carry the AC current out to the circuit.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide">
+      <span class="tag">Section 2: Generators</span>
+      <h1>The Basic DC Generator</h1>
+      <p class="lead">If we want Direct Current (DC) from a spinning loop, we have to mechanically "rectify" the AC wave.</p>
+      
+      <!-- Commutator SVG -->
+      <svg class="svg-graphic" viewBox="0 0 500 200" width="100%" height="200px">
+        <!-- Magnets -->
+        <rect x="50" y="50" width="40" height="100" fill="#badc58"/>
+        <text x="60" y="105" fill="#111" font-size="20" font-weight="bold">N</text>
+        <rect x="350" y="50" width="40" height="100" fill="#ff6b6b"/>
+        <text x="360" y="105" fill="#111" font-size="20" font-weight="bold">S</text>
+        
+        <!-- Wire Loop -->
+        <path d="M 210 140 L 150 140 L 150 50 L 290 50 L 290 140 L 230 140" fill="none" stroke="var(--accent)" stroke-width="4"/>
+        
+        <!-- Commutator (Split Ring) -->
+        <path d="M 210 140 A 15 25 0 0 0 210 165" fill="none" stroke="#ffb454" stroke-width="5"/>
+        <path d="M 230 140 A 15 25 0 0 1 230 165" fill="none" stroke="#ffb454" stroke-width="5"/>
+        
+        <!-- Brushes & Output -->
+        <rect x="195" y="148" width="10" height="10" fill="#a4b0be"/>
+        <rect x="235" y="148" width="10" height="10" fill="#a4b0be"/>
+        <line x1="195" y1="153" x2="160" y2="153" stroke="#e6edf3" stroke-width="3"/>
+        <line x1="245" y1="153" x2="280" y2="153" stroke="#e6edf3" stroke-width="3"/>
+        <text x="180" y="180" fill="var(--txt)" font-size="12">Pulsating DC Output</text>
+      </svg>
+      
+      <div class="card">
+        <p>Instead of two continuous rings, a DC generator uses a <span class="kw">Commutator</span>. This is a single ring split down the middle. As the loop spins and the AC current reverses direction, the split ring also rotates, automatically switching which brush it touches. This keeps the output current flowing in only ONE direction.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <span class="tag">Section 2: Generators</span>
+      <h1>Generator Components</h1>
+      <p class="lead">Real generators aren't just single loops of wire. They are heavily engineered for maximum output.</p>
+      <div class="card">
+        <ul>
+          <li><span class="kw">Armature:</span> The part of the machine where the voltage is induced. In a DC generator, the armature spins. In large AC alternators, the armature is usually stationary.</li>
+          <li><span class="kw">Field Coils:</span> The electromagnets that produce the magnetic field. They are far stronger than permanent magnets.</li>
+          <li><span class="kw">Commutator / Slip Rings:</span> The mechanical connection to the spinning shaft.</li>
+          <li><span class="kw">Brushes:</span> Usually made of carbon. They press against the commutator or slip rings to pass the current. Because they rub against spinning metal, they wear out and are a primary point of maintenance.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <span class="tag">Section 2: Generators</span>
+      <h1>Types of DC Generators</h1>
+      <p class="lead">DC generators are categorized by how their field coils are wired in relation to their armature.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Series-Wound</h3>
+          <p>The field coil is wired in <i>series</i> with the armature. All current flows through both.</p>
+          <p class="small"><b>Result:</b> Voltage output fluctuates wildly as the load changes. Rarely used.</p>
+        </div>
+        <div class="card">
+          <h3>Shunt-Wound</h3>
+          <p>The field coil is wired in <i>parallel</i> (shunt) with the armature.</p>
+          <p class="small"><b>Result:</b> Provides a relatively constant output voltage across different loads.</p>
+        </div>
+      </div>
+      <div class="note"><b>Compound-Wound:</b> Has both series and shunt coils. It combines the best features of both to provide extremely stable voltage, making it the most common DC generator.</div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Mid-Module Review: Generators</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: What mechanical device is used in a DC generator to reverse the AC connections and output Direct Current?</div>
+        <button class="opt">A. Slip Rings</button>
+        <button class="opt">B. Commutator</button>
+        <button class="opt">C. Stator</button>
+        <button class="opt">D. Armature</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: Which finger points in the direction of the Magnetic Field (North to South) when using the Left-Hand Rule for Generators?</div>
+        <button class="opt">A. Thumb</button>
+        <button class="opt">B. Middle Finger</button>
+        <button class="opt">C. Index Finger</button>
+        <button class="opt">D. Pinky Finger</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide">
+      <span class="tag">Section 3: Motors</span>
+      <h1>Introduction to Motors</h1>
+      <p class="lead">Motors take electrical power and convert it into mechanical torque.</p>
+      <div class="card">
+        <p>Motor action relies on the fundamental rule of magnetism: <b>Like poles repel, and opposite poles attract.</b></p>
+        <p>If you place a magnetic field on a stationary housing (Stator), and create an electromagnet on the spinning shaft (Rotor), the rotor's magnetic poles will try to align with the stator's poles. Right before they align, the commutator reverses the current, flipping the rotor's poles. The rotor is forced to keep chasing the stator field forever, resulting in continuous rotation.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide">
+      <span class="tag">Section 3: Motors</span>
+      <h1>The Right-Hand Rule for Motors</h1>
+      <p class="lead">How do we know which way the motor will spin?</p>
+      <div class="card">
+        <p>The <b>Right-Hand Rule</b> dictates the direction of physical motion in a motor. Holding your right hand with the thumb, index finger, and middle finger at right angles:</p>
+        <ul>
+          <li><b>INDEX FINGER:</b> Points in the direction of the <b>Magnetic Field</b> (North to South).</li>
+          <li><b>MIDDLE FINGER:</b> Points in the direction of the supplied <b>Current</b> flow.</li>
+          <li><b>THUMB:</b> Points in the direction of the resulting physical <b>Motion</b> (Thrust/Rotation).</li>
+        </ul>
+      </div>
+      <div class="dangerbox">⚠️ <i>Generators = Left Hand. Motors = Right Hand.</i></div>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide">
+      <span class="tag">Section 3: Motors</span>
+      <h1>Counter-EMF (The Motor's Secret)</h1>
+      <p class="lead">When a motor spins, it accidentally acts as a generator at the same time.</p>
+      <div class="card">
+        <p>As the armature conductors spin through the magnetic field to create motion, they are physically cutting flux lines. This induces a voltage in the armature that pushes <i>backwards</i> against the incoming power supply.</p>
+        <p>This backward voltage is called <span class="kw">Counter-Electromotive Force (CEMF)</span>.</p>
+        <ul>
+          <li>When a motor is at a dead stop, CEMF is zero. The motor draws massive current (Inrush current).</li>
+          <li>As the motor speeds up, CEMF increases, fighting the supply voltage and dropping the total current draw to a safe operating level.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 -->
+    <section class="slide">
+      <span class="tag">Section 3: Motors</span>
+      <h1>Types of DC Motors: Series-Wound</h1>
+      <p class="lead">Just like generators, DC motors are categorized by their field coil wiring.</p>
+      <div class="card">
+        <h3>Series-Wound DC Motor</h3>
+        <p>The armature and field coils are wired in series. All current passes through both.</p>
+        <ul>
+          <li><b>Advantage:</b> Produces massive starting torque. Used for heavy loads that must be moved from a dead stop (like cranes, winches, and train locomotives).</li>
+          <li><b>Disadvantage:</b> If you run a series motor with no mechanical load attached, it will spin faster and faster until the centrifugal force literally tears the motor apart. <i>Never operate a series motor without a load!</i></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 13 -->
+    <section class="slide">
+      <span class="tag">Section 3: Motors</span>
+      <h1>Types of DC Motors: Shunt & Compound</h1>
+      <p class="lead">When you need speed control instead of raw lifting power.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Shunt-Wound DC Motor</h3>
+          <p>Wired in parallel. Provides excellent speed regulation.</p>
+          <p class="small">Even if the load changes (e.g., a drill press biting into tough metal), the motor will maintain a relatively constant RPM.</p>
+        </div>
+        <div class="card">
+          <h3>Compound-Wound DC Motor</h3>
+          <p>Combines series and shunt wiring.</p>
+          <p class="small">Offers high starting torque without the danger of running away and destroying itself under no-load conditions.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 14 -->
+    <section class="slide">
+      <span class="tag">Section 4: AC Motors</span>
+      <h1>Introduction to AC Motors</h1>
+      <p class="lead">AC motors are cheaper, more reliable, and require less maintenance than DC motors because they don't need a commutator.</p>
+      <div class="card">
+        <p>Instead of relying on a mechanical commutator to flip the magnetic poles, an AC motor uses the naturally alternating Sine Wave of the AC power supply.</p>
+        <p>The alternating current naturally creates a <b>Rotating Magnetic Field</b> in the stationary stator. The rotor simply chases this rotating field around in a circle.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 15 -->
+    <section class="slide">
+      <span class="tag">Section 4: AC Motors</span>
+      <h1>The Synchronous Motor</h1>
+      <p class="lead">A motor that locks into the exact frequency of the power grid.</p>
+      <div class="card">
+        <p>In a synchronous motor, the rotor spins at the exact same speed as the rotating magnetic field of the stator. There is zero "slip."</p>
+        <ul>
+          <li>If the AC power is 60 Hz, the motor turns at a speed mathematically locked to 60 Hz.</li>
+          <li><b>Advantage:</b> Perfect, constant speed. Used in clocks, timing devices, and precise radar dish rotation.</li>
+          <li><b>Disadvantage:</b> It cannot start by itself. It requires a secondary starter motor to get it up to speed before it can "lock in" to the AC frequency.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 16 -->
+    <section class="slide">
+      <span class="tag">Section 4: AC Motors</span>
+      <h1>The Induction Motor (Squirrel Cage)</h1>
+      <p class="lead">The most common motor in the world. Rugged, cheap, and self-starting.</p>
+      <div class="card">
+        <p>Instead of feeding power to the rotor through brushes, an induction motor uses <i>transformer action</i>. The alternating magnetic field of the stator induces a massive current directly into the solid metal bars of the rotor (which looks like a hamster wheel, hence "squirrel cage").</p>
+        <p>The induced current creates its own magnetic field, which is pushed by the stator's rotating field.</p>
+        <div class="note"><b>Slip:</b> The rotor in an induction motor must always spin slightly slower than the stator's magnetic field. If it caught up perfectly, induction would stop, and the motor would lose all torque.</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 17 -->
+    <section class="slide">
+      <span class="tag">Section 4: AC Motors</span>
+      <h1>Single-Phase vs. Three-Phase</h1>
+      <p class="lead">AC motors are classified by the type of AC power feeding them.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Single-Phase</h3>
+          <p>Uses standard household AC (one sine wave). Cannot create a true rotating magnetic field on its own.</p>
+          <p class="small">Requires start-capacitors or special wiring to "trick" the motor into turning initially. Used in small appliances.</p>
+        </div>
+        <div class="card">
+          <h3>Three-Phase</h3>
+          <p>Uses industrial AC (three sine waves offset by 120 degrees). Naturally creates a perfect rotating magnetic field.</p>
+          <p class="small">Self-starting, highly efficient, and incredibly powerful. Used in heavy industrial equipment.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 18 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Pre-Exam Review: Motors</h1>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: Which DC motor has massive starting torque but will tear itself apart if operated without a mechanical load?</div>
+        <button class="opt">A. Series-Wound Motor</button>
+        <button class="opt">B. Shunt-Wound Motor</button>
+        <button class="opt">C. Induction Motor</button>
+        <button class="opt">D. Synchronous Motor</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: In an induction motor, what is the term for the difference in speed between the rotating magnetic field and the actual physical rotor?</div>
+        <button class="opt">A. CEMF</button>
+        <button class="opt">B. Phase Shift</button>
+        <button class="opt">C. Slip</button>
+        <button class="opt">D. Commutation</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 19 -->
+    <section class="slide">
+      <span class="tag">Module 4 Review</span>
+      <h1>Summary of Key Concepts</h1>
+      <div class="card">
+        <ul>
+          <li><b>Generators</b> convert mechanical energy to electrical using the Left-Hand Rule.</li>
+          <li><b>Motors</b> convert electrical energy to mechanical using the Right-Hand Rule.</li>
+          <li><b>Slip Rings</b> output AC. <b>Commutators</b> output DC.</li>
+          <li><b>Brushes</b> are the wearable carbon blocks that touch the spinning rings.</li>
+          <li><b>CEMF (Counter-EMF)</b> protects a motor from drawing too much current once it is spinning.</li>
+          <li><b>Induction Motors</b> use transformer action to power a "squirrel cage" rotor, relying on "Slip" to generate torque.</li>
+        </ul>
+      </div>
+      <p class="lead" style="text-align:center;">Proceed to the final exam when ready.</p>
+    </section>
+
+    <!-- SLIDE 20: FINAL EXAM -->
+    <section class="slide" id="examSlide">
+      <span class="tag">Module 4 Evaluation</span>
+      <h1>Module 4: Final Exam</h1>
+      <p class="lead">You must score 100% to generate your Certificate.</p>
+      
+      <div class="card" id="examContainer" style="background:#070b10;">
+        <label for="studentName" style="font-weight:bold;margin-bottom:8px;display:block;color:var(--accent);">Enter Full Name for Certificate:</label>
+        <input type="text" id="studentName" placeholder="e.g., Jane Doe">
+        
+        <div id="questionsArea"></div>
+        <div id="examFeedback" class="fb"></div>
+        <button class="btn-submit" onclick="gradeExam()">Submit Exam</button>
+      </div>
+      
+      <!-- CERTIFICATE CONTAINER -->
+      <div id="certificate">
+        <h1 class="cert-title">Certificate of Training</h1>
+        <p class="cert-text">This is to certify that</p>
+        <span id="certName">STUDENT NAME</span>
+        
+        <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
+        <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
+        
+        <div class="cert-course">Module 4: Generators & Motors</div>
+        
+        <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
+        
+        <button class="print-btn" onclick="window.print()">Print Certificate</button>
+      </div>
+
+    </section>
+
+  </div>
+  
+  <footer id="footerNav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div id="navCounter" style="font-weight:bold;color:var(--accent);"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  
+  let slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  let total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let visited = new Set([0]);
+
+  // Table of Contents — grouped so users can jump straight to any topic instead of
+  // clicking through the whole deck. Titles are read straight from each slide's own <h1>.
+  const TOC_GROUPS = [
+    { label: 'Start', range: [0, 0] },
+    { label: 'Generators', range: [1, 8] },
+    { label: 'Motors', range: [9, 18] },
+    { label: 'Assessment', range: [19, 20] }
+  ];
+
+  function buildToc(){
+    const sidebar = document.getElementById('tocSidebar');
+    let html = '';
+    TOC_GROUPS.forEach(g => {
+      let groupHtml = '';
+      for(let i = g.range[0]; i <= g.range[1] && i < total; i++){
+        const h1 = slides[i].querySelector('h1');
+        const title = h1 ? h1.textContent.trim() : 'Welcome & Overview';
+        groupHtml += `<div class="toc-item" id="toc-${i}" onclick="jumpTo(${i})"><span class="toc-num">${i+1}</span><span>${title}</span></div>`;
+      }
+      if(groupHtml){ html += `<div class="toc-group-label">${g.label}</div>` + groupHtml; }
+    });
+    sidebar.innerHTML = html;
+  }
+
+  function toggleToc(){
+    document.getElementById('tocSidebar').classList.toggle('open');
+    document.getElementById('tocOverlay').classList.toggle('open');
+  }
+  function closeToc(){
+    document.getElementById('tocSidebar').classList.remove('open');
+    document.getElementById('tocOverlay').classList.remove('open');
+  }
+  function jumpTo(i){
+    idx = i;
+    render();
+    closeToc();
+  }
+  window.toggleToc = toggleToc;
+  window.closeToc = closeToc;
+  window.jumpTo = jumpTo;
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i===idx));
+    visited.add(idx);
+    
+    if(idx === 0) {
+        document.getElementById('navCounter').textContent = `Start Page`;
+    } else {
+        document.getElementById('navCounter').textContent = `Slide ${idx} of ${total - 1}`;
+    }
+    
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progressBar').style.width = ((idx)/(total-1)*100) + '%';
+    
+    document.getElementById('prevBtn').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.visibility = (idx === total - 1) ? 'hidden' : 'visible';
+    
+    document.getElementById('slideArea').scrollTop = 0;
+
+    document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+    visited.forEach(v => { const el = document.getElementById('toc-'+v); if(el) el.classList.add('done'); });
+    const activeEl = document.getElementById('toc-'+idx);
+    if(activeEl){ activeEl.classList.add('active'); activeEl.scrollIntoView({block:'nearest'}); }
+  }
+  
+  buildToc();
+  document.getElementById('nextBtn').addEventListener('click', () => { if(idx < total-1) { idx++; render(); }});
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0) { idx--; render(); }});
+  render();
+
+  // Inline Quizzes
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    let correct = parseInt(quiz.getAttribute('data-correct'), 10);
+    let opts = quiz.querySelectorAll('.opt');
+    let fb = quiz.querySelector('.fb');
+    opts.forEach((opt, oi) => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.disabled = true);
+        opts[correct].classList.add('correct');
+        if(oi === correct){
+          fb.textContent = "✅ Correct!"; fb.className = 'fb ok show';
+        } else {
+          opt.classList.add('wrong'); fb.textContent = "❌ Incorrect. Review the green answer."; fb.className = 'fb no show';
+        }
+      });
+    });
+  });
+
+  // MODULE 4 EXAM BANK
+  const examBank = [
+    { q: "Which hand rule is used to determine the direction of induced current in a Generator?", o: ["Left-Hand Rule", "Right-Hand Rule", "Fleming's Rule", "Ampere's Rule"], a: "Left-Hand Rule" },
+    { q: "What mechanical device is used in a DC generator to keep the output current flowing in one direction?", o: ["Commutator", "Slip Rings", "Stator", "Squirrel Cage"], a: "Commutator" },
+    { q: "What do Slip Rings output?", o: ["Alternating Current (AC)", "Direct Current (DC)", "Counter-EMF", "Mechanical Torque"], a: "Alternating Current (AC)" },
+    { q: "Which component rubs against the commutator or slip rings to transfer electricity to the moving shaft?", o: ["Brushes", "Armatures", "Stators", "Magnets"], a: "Brushes" },
+    { q: "What voltage is naturally induced inside a motor as it spins, pushing backward against the power supply?", o: ["Counter-EMF", "RMS Voltage", "Peak-to-Peak Voltage", "Static Voltage"], a: "Counter-EMF" },
+    { q: "Which DC motor type has the highest starting torque but will destroy itself if run without a load?", o: ["Series-Wound", "Shunt-Wound", "Compound-Wound", "Synchronous"], a: "Series-Wound" },
+    { q: "What type of AC motor requires zero slip and runs locked to the exact frequency of the power grid?", o: ["Synchronous Motor", "Induction Motor", "Series Motor", "Squirrel Cage Motor"], a: "Synchronous Motor" },
+    { q: "In an AC Induction Motor, how does electricity get into the rotor to create a magnetic field?", o: ["Through transformer action (Induction)", "Through carbon brushes", "Through a commutator", "Through a slip ring"], a: "Through transformer action (Induction)" },
+    { q: "What is the term for the difference in speed between the stator's rotating magnetic field and the physical rotor in an induction motor?", o: ["Slip", "Lag", "Phase Shift", "CEMF"], a: "Slip" },
+    { q: "Which finger points in the direction of the Magnetic Field (North to South) in both the Left and Right hand rules?", o: ["Index Finger", "Thumb", "Middle Finger", "Pinky Finger"], a: "Index Finger" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildExam() {
+    let area = document.getElementById('questionsArea');
+    area.innerHTML = '';
+    
+    let questions = shuffle([...examBank]);
+    
+    questions.forEach((qObj, index) => {
+      let qDiv = document.createElement('div');
+      qDiv.className = 'exam-q';
+      qDiv.id = `qDiv_${index}`;
+      qDiv.dataset.passed = "false"; 
+      qDiv.innerHTML = `<div class="q" id="qText_${index}"><b>${index + 1}.</b> ${qObj.q}</div>`;
+      
+      let options = shuffle([...qObj.o]);
+      options.forEach((optText, optIndex) => {
+        let isCorrect = (optText === qObj.a) ? "true" : "false";
+        qDiv.innerHTML += `
+          <label class="exam-opt">
+            <input type="radio" name="q${index}" value="${isCorrect}">
+            ${optText}
+          </label>
+        `;
+      });
+      area.appendChild(qDiv);
+    });
+  }
+
+  window.gradeExam = function() {
+    let nameInput = document.getElementById('studentName').value.trim();
+    let fb = document.getElementById('examFeedback');
+    
+    if(!nameInput) {
+      fb.textContent = "⚠️ Please enter your name for the certificate.";
+      fb.className = 'fb no show';
+      return;
+    }
+
+    let allPassed = true;
+    let answeredCount = 0;
+    let activeCount = 0;
+    
+    for(let i=0; i<examBank.length; i++) {
+      let qDiv = document.getElementById(`qDiv_${i}`);
+      
+      if(qDiv.dataset.passed === "true") continue; 
+      
+      activeCount++;
+      let radios = document.getElementsByName(`q${i}`);
+      let answered = false;
+      let isCorrect = false;
+      
+      for(let r of radios) {
+        if(r.checked) {
+          answered = true;
+          if(r.value === "true") isCorrect = true;
+        }
+      }
+
+      if(answered) {
+        answeredCount++;
+        if(isCorrect) {
+          qDiv.dataset.passed = "true";
+          qDiv.style.opacity = "0.5";
+          qDiv.style.pointerEvents = "none";
+          qDiv.style.borderLeft = "4px solid var(--accent2)";
+          qDiv.style.paddingLeft = "10px";
+          let qText = document.getElementById(`qText_${i}`);
+          if(!qText.innerHTML.includes('✅')) {
+            qText.innerHTML += ' <span style="color:var(--accent2); margin-left:10px;">✅ Correct</span>';
+          }
+        } else {
+          allPassed = false;
+          qDiv.style.borderLeft = "4px solid var(--bad)";
+          qDiv.style.paddingLeft = "10px";
+          for(let r of radios) r.checked = false;
+        }
+      } else {
+        allPassed = false;
+        qDiv.style.borderLeft = "4px solid var(--warn)";
+        qDiv.style.paddingLeft = "10px";
+      }
+    }
+
+    if(answeredCount < activeCount) {
+      fb.textContent = `⚠️ Please answer all remaining questions.`;
+      fb.className = 'fb no show';
+      return;
+    }
+
+    if(allPassed) {
+      document.getElementById('examContainer').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').textContent = nameInput.toUpperCase();
+      
+      let date = new Date();
+      let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certDate').textContent = "Date Completed: " + formattedDate;
+      fb.style.display = 'none';
+    } else {
+      fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
+      fb.className = 'fb no show';
+    }
+  }
+
+  buildExam();
+
+})();
+</script>
+</body>
+</html>

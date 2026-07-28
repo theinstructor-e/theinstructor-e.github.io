@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRAVEN - Module 2: AC & Transformers</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --accent:#3fb6ff; --accent2:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --txt:#e6edf3; --muted:#9aa6b2; --border:#2b3442;
+    --crt-green: #39ff14;
+    --crt-dark: #021102;
+    --crt-grid: #0f3b0f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(160deg,#0a0e14,#0d1117 40%,#10151d);
+    color:var(--txt); overflow:hidden;
+  }
+  #app{height:100vh;display:flex;flex-direction:column;}
+  
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 22px;background:var(--panel); border-bottom:1px solid var(--border);
+  }
+  header .brand{font-weight:700;color:var(--accent);font-size:15px;}
+  header .counter{font-size:13px;color:var(--muted);}
+  
+  #progressWrap{height:5px;background:#0a0e14;}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;}
+  
+  #slideArea{flex:1;overflow-y:auto;padding:34px 6vw 90px;}
+  .slide{display:none;animation:fade .4s ease;max-width:900px;margin:0 auto;}
+  .slide.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  
+  h1{font-size:28px;margin:0 0 6px;color:var(--accent);line-height:1.2;}
+  h2{font-size:20px;color:var(--accent2);margin:20px 0 10px;}
+  p,li{font-size:16px;line-height:1.6;color:var(--txt);}
+  .lead{font-size:18px;color:var(--muted);margin-bottom:18px;}
+  .kw{color:var(--accent);font-weight:600;}
+  .kw2{color:var(--accent2);font-weight:600;}
+  
+  .tag{display:inline-block;background:var(--panel2);color:var(--accent);
+    border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;
+    letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+  
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px; align-items: center;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  
+  .note{border-left:4px solid var(--accent);background:rgba(63,182,255,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .dangerbox{border-left:4px solid var(--bad);background:rgba(255,107,107,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .svg-graphic { display: block; margin: 20px auto; max-width: 100%; background: #070b10; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+  /* Paste this styling right here: */
+  .project-owner-info {
+    max-width: 480px;
+    margin: 25px auto 10px;
+    padding: 15px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .project-owner-info div {
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .project-owner-info div strong {
+    color: var(--accent);
+    display: inline-block;
+    width: 150px;
+  }
+  .project-owner-info div span {
+    color: var(--txt);
+  }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+  .start-logo { display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.3)); }
+  .btn-start { background: #161b22; color:var(--crt-green); padding: 16px 36px; font-size:20px; font-weight:bold; border:2px solid var(--crt-green); border-radius:8px; cursor:pointer; margin-top:40px; transition: 0.2s; box-shadow: 0 0 15px rgba(57,255,20,0.2); text-transform: uppercase; letter-spacing: 1px;}
+  .btn-start:hover { background: rgba(57,255,20,0.1); transform: scale(1.05); box-shadow: 0 0 25px rgba(57,255,20,0.4);}
+  .start-title { font-size: 42px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0; color: #fff;}
+  .start-subtitle { font-size: 22px; color: var(--crt-green); margin-top: 10px; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  
+  @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #radar-sweep { transform-origin: 200px 200px; animation: sweep 4s linear infinite; }
+
+  /* Quizzes */
+  .quiz{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0;}
+  .quiz .q{font-weight:600;font-size:16px;margin-bottom:12px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:15px;transition:.15s;}
+  .opt:hover{border-color:var(--accent);background:#222b3a;}
+  .opt.correct{border-color:var(--accent2);background:rgba(126,231,135,.15);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.15);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:12px;font-size:14px;padding:11px 14px;border-radius:8px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(126,231,135,.12);border-left:4px solid var(--accent2);}
+  .fb.no{background:rgba(255,107,107,.12);border-left:4px solid var(--bad);}
+  
+  /* Exam Specific */
+  #examContainer input[type="text"]{width:100%;padding:12px;font-size:16px;background:var(--panel2);color:var(--txt);border:1px solid var(--accent);border-radius:8px;margin-bottom:20px;}
+  .exam-q{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px; transition: all 0.3s ease;}
+  .exam-opt{display:flex;align-items:center;margin:8px 0;cursor:pointer;}
+  .exam-opt input{width:auto;margin-right:10px;accent-color:var(--accent);}
+  .btn-submit{background:var(--accent2);color:#111;font-weight:bold;font-size:16px;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;}
+  .btn-submit:hover{filter:brightness(1.1);}
+  
+  /* =========================================
+     CERTIFICATE OF TRAINING 
+     ========================================= */
+  #certificate {
+    background: #fffdf8;
+    color: #111;
+    padding: 50px 60px;
+    border: 12px double #1a365d;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cert-title {
+    font-family: "Old English Text MT", "Engravers MT", "Playfair Display", Georgia, serif;
+    font-size: 48px;
+    color: #000;
+    margin: 10px 0 30px;
+    border-bottom: none;
+    font-weight: normal;
+  }
+  .cert-text {
+    font-size: 22px;
+    margin: 15px 0;
+    color: #333;
+    font-style: italic;
+  }
+  #certName {
+    font-size: 34px;
+    color: #000;
+    display: inline-block;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 1px solid #000;
+    min-width: 450px;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .cert-course {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #000;
+  }
+  #certDate {
+    font-size: 20px;
+    color: #333;
+    margin-top: 40px;
+  }
+  .print-btn {
+    background: var(--accent);
+    color: #111;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  @media print {
+    body, html { background: #fff; height: auto; overflow: visible; }
+    header, #progressWrap, #footerNav, .print-btn, #examContainer, .tag, #slideArea > .slide:not(#examSlide), .slide > h1, .slide > p.lead { display: none !important; }
+    #slideArea { padding: 0; overflow: visible; }
+    #certificate { 
+      display: block !important; 
+      position: absolute; 
+      top: 0; left: 0;
+      border: 8px double #000; 
+      box-shadow: none; 
+      width: 100%; 
+      margin: 0; 
+      padding: 60px; 
+    }
+  }
+
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:12px 22px;background:var(--panel);border-top:1px solid var(--border);}
+  .navbtn{background:var(--accent);color:#06121d;border:none;border-radius:8px;padding:10px 22px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .navbtn:hover{filter:brightness(1.12);}
+  .navbtn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ── Table of Contents sidebar — lets users jump to any topic freely ── */
+  #mainRow{flex:1;display:flex;overflow:hidden;min-height:0;}
+  #tocSidebar{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 0;transition:margin-left .25s ease;}
+  #tocSidebar .toc-group-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    padding:14px 20px 6px;font-weight:700;}
+  #tocSidebar .toc-group-label:first-child{padding-top:4px;}
+  .toc-item{padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;
+    transition:background .15s,color .15s;line-height:1.4;display:flex;gap:8px;align-items:flex-start;}
+  .toc-item .toc-num{color:var(--border);font-weight:700;flex-shrink:0;min-width:18px;}
+  .toc-item:hover{background:var(--panel2);color:var(--txt);}
+  .toc-item.active{border-left-color:var(--accent);background:var(--panel2);color:var(--accent);font-weight:600;}
+  .toc-item.active .toc-num{color:var(--accent);}
+  .toc-item.done .toc-num::after{content:' \2713';color:var(--accent2);}
+  #tocToggle{display:none;font-family:var(--mono, inherit);font-size:13px;background:var(--panel2);
+    border:1px solid var(--border);color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;}
+  #mainCol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  #tocOverlay{display:none;}
+  @media(max-width:860px){
+    #tocToggle{display:inline-block;}
+    #tocSidebar{position:fixed;top:0;left:0;bottom:0;z-index:500;margin-left:-270px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+    #tocSidebar.open{margin-left:0;}
+    #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 2</span></div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+  </header>
+  <div id="mainRow">
+    <div id="tocOverlay" onclick="closeToc()"></div>
+    <nav id="tocSidebar"></nav>
+    <div id="mainCol">
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      
+  <div id="slideArea">
+
+    <!-- START PAGE (SLIDE 0) -->
+    <section class="slide active">
+      <div class="start-container">
+        <!-- Animated CRT Radar Scope SVG -->
+        <svg class="start-logo" viewBox="0 0 400 400" width="280" height="280">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#39ff14" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
+              <stop offset="90%" stop-color="#021102" />
+              <stop offset="100%" stop-color="#0a1a0a" />
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="195" fill="url(#bezel)" stroke="#113311" stroke-width="10"/>
+          <g stroke="var(--crt-grid)" stroke-width="2">
+            <circle cx="200" cy="200" r="150" fill="none"/>
+            <circle cx="200" cy="200" r="100" fill="none"/>
+            <circle cx="200" cy="200" r="50" fill="none"/>
+            <line x1="200" y1="10" x2="200" y2="390"/>
+            <line x1="10" y1="200" x2="390" y2="200"/>
+            <line x1="65" y1="65" x2="335" y2="335"/>
+            <line x1="65" y1="335" x2="335" y2="65"/>
+          </g>
+          <circle cx="120" cy="140" r="4.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="280" cy="90" r="3" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="230" cy="300" r="5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="160" cy="250" r="2.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <g id="radar-sweep">
+            <path d="M 200 200 L 200 10 A 190 190 0 0 1 334 65 Z" fill="url(#sweep)" opacity="0.3"/>
+            <line x1="200" y1="200" x2="200" y2="10" stroke="var(--crt-green)" stroke-width="3" filter="url(#glow)"/>
+          </g>
+          <circle cx="200" cy="200" r="6" fill="var(--crt-green)" filter="url(#glow)"/>
+        </svg>
+
+        <h1 class="start-title">WRAVEN Training Program</h1>
+        <p class="start-subtitle">Module 2: AC Current & Transformers</p>
+ <!-- Paste this HTML block right here: -->
+        <div class="project-owner-info">
+          <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
+          <div><strong>Location Address:</strong> <span>633 Barnes Ave</span></div>
+          <div><strong>Location City/ST/ZIP:</strong> <span>Fort Gordon, GA 30905</span></div>
+          <div><strong>Contact:</strong> <span>phillip.r.crandell.civ@army.mil</span></div>
+        </div>
+        <button class="btn-start" onclick="document.getElementById('nextBtn').click();">Begin Training</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <span class="tag">Section 1: Alternating Current</span>
+      <h1>Why Use Alternating Current?</h1>
+      <p class="lead">Module 1 covered Direct Current (DC), which flows constantly in one direction like water in a pipe. But the modern world runs on Alternating Current (AC).</p>
+      <div class="card">
+        <p>In AC circuits, the electrons constantly reverse direction. They flow forward, stop, flow backward, stop, and repeat.</p>
+        <p><b>The primary advantage:</b> AC voltage can be easily stepped up to extremely high voltages for long-distance power transmission (reducing power loss), and then stepped down to safe levels for equipment. Doing this with DC is incredibly difficult and expensive.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <span class="tag">Section 1: Alternating Current</span>
+      <h1>The Sine Wave</h1>
+      <p class="lead">The fundamental waveform of Alternating Current is the Sine Wave.</p>
+      
+      <svg class="svg-graphic" viewBox="0 0 500 280" width="100%" height="250px">
+        <!-- Axes -->
+        <line x1="20" y1="125" x2="480" y2="125" stroke="#4a5568" stroke-width="2" stroke-dasharray="5,5"/>
+        <line x1="50" y1="20" x2="50" y2="230" stroke="#4a5568" stroke-width="2"/>
+        <text x="10" y="30" fill="#4a5568" font-size="14">+V</text>
+        <text x="10" y="225" fill="#4a5568" font-size="14">-V</text>
+        <text x="460" y="115" fill="#4a5568" font-size="14">Time</text>
+        
+        <!-- The Sine Wave -->
+        <path d="M 50 125 C 100 25, 150 25, 200 125 C 250 225, 300 225, 350 125 C 400 25, 450 25, 500 125" fill="none" stroke="var(--accent)" stroke-width="4"/>
+        
+        <!-- Peak Amplitude Annotation -->
+        <line x1="125" y1="125" x2="125" y2="50" stroke="var(--accent2)" stroke-width="2"/>
+        <text x="135" y="90" fill="var(--accent2)" font-size="14">Peak Amplitude</text>
+        
+        <!-- Accurate One Full Cycle Annotation (Underneath) -->
+        <line x1="50" y1="260" x2="350" y2="260" stroke="var(--warn)" stroke-width="2"/>
+        <line x1="50" y1="250" x2="50" y2="270" stroke="var(--warn)" stroke-width="2"/>
+        <line x1="350" y1="250" x2="350" y2="270" stroke="var(--warn)" stroke-width="2"/>
+        <text x="155" y="255" fill="var(--warn)" font-size="14" font-weight="bold">One Full Cycle</text>
+        
+        <!-- Half Cycle marker -->
+        <line x1="200" y1="125" x2="200" y2="135" stroke="var(--accent)" stroke-width="2"/>
+        <text x="180" y="150" fill="var(--accent)" font-size="12">Half Cycle</text>
+      </svg>
+      
+      <div class="card">
+        <ul>
+          <li><b>Cycle:</b> One complete sequence of a positive alternation and a negative alternation.</li>
+          <li><b>Alternation:</b> Half of a cycle (the part above the zero line, or the part below it).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <span class="tag">Section 1: Alternating Current</span>
+      <h1>Frequency and Period</h1>
+      <p class="lead">How fast is the AC reversing direction?</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Frequency (f)</h3>
+          <p>The number of complete cycles that occur in one second. Measured in <span class="kw">Hertz (Hz)</span>.</p>
+          <p class="small">Standard US wall power is 60 Hz (60 full cycles per second). Aircraft and shipboard systems often use 400 Hz.</p>
+        </div>
+        <div class="card">
+          <h3>Period (T)</h3>
+          <p>The time it takes to complete exactly one cycle. Measured in seconds.</p>
+          <p class="small">Frequency and Period are inversely proportional: <br><b style="font-size:18px; color:var(--accent2);">T = 1 / f</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <span class="tag">Section 2: AC Values</span>
+      <h1>Measuring AC: Peak vs. RMS</h1>
+      <p class="lead">Because AC voltage is constantly changing from zero to maximum, how do we assign it a single number?</p>
+      <div class="card">
+        <ul>
+          <li><b>Peak Value:</b> The absolute highest voltage reached during the cycle.</li>
+          <li><b>Peak-to-Peak (P-P):</b> The voltage from the positive peak to the negative peak (2x the Peak value).</li>
+          <li><span class="kw">RMS (Effective) Value:</span> This is the most important measurement. It is the AC voltage that produces the <i>exact same heating effect</i> as an equivalent DC voltage. When a multimeter reads "120V AC", it is reading the RMS value.</li>
+        </ul>
+        <div class="note"><b>The Math:</b> RMS = Peak × 0.707</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide">
+      <span class="tag">Section 3: Circuit Properties</span>
+      <h1>Inductance (L)</h1>
+      <p class="lead">Wire coils (inductors) react uniquely to Alternating Current.</p>
+      <div class="card">
+        <p><b>Inductance</b> is the physical property of a circuit that <span class="kw2">opposes any change in CURRENT</span>.</p>
+        <p>When AC current flows through a coil, it creates an expanding and collapsing magnetic field. This shifting magnetic field induces a Counter-Electromotive Force (CEMF) back into the wire, which pushes back against the original current.</p>
+        <ul>
+          <li><b>Unit of Measurement:</b> Henry (H).</li>
+          <li><b>Effect on Phase:</b> Inductance causes the Current to lag behind the Voltage.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <span class="tag">Section 3: Circuit Properties</span>
+      <h1>Capacitance (C)</h1>
+      <p class="lead">Capacitors store energy in an electrostatic field between two plates.</p>
+      <div class="card">
+        <p><b>Capacitance</b> is the physical property of a circuit that <span class="kw2">opposes any change in VOLTAGE</span>.</p>
+        <p>When voltage pushes electrons onto one plate of a capacitor, it builds up a charge. The capacitor resists this changing voltage by acting as a temporary battery, absorbing energy as voltage rises, and releasing it as voltage falls.</p>
+        <ul>
+          <li><b>Unit of Measurement:</b> Farad (F).</li>
+          <li><b>Effect on Phase:</b> Capacitance causes the Voltage to lag behind the Current.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <span class="tag">Section 3: Circuit Properties</span>
+      <h1>Reactance & Impedance</h1>
+      <p class="lead">In an AC circuit, pure resistance isn't the only thing fighting the current.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Reactance (X)</h3>
+          <p>The opposition to AC current caused by Inductors and Capacitors. It is measured in Ohms, but unlike resistance, it does not dissipate power as heat.</p>
+          <ul>
+            <li>Inductive Reactance (X<sub>L</sub>)</li>
+            <li>Capacitive Reactance (X<sub>C</sub>)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Impedance (Z)</h3>
+          <p>The <b>total opposition</b> to alternating current. It is the combined effect of true Resistance (R) and Reactance (X).</p>
+          <p>Measured in Ohms (Ω). In AC electronics, we use Z in Ohm's Law instead of R (I = E / Z).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Mid-Module Review</h1>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: An AC wave has a Peak Voltage of 100 Volts. What is the RMS (Effective) Voltage that a multimeter would read?</div>
+        <button class="opt">A. 50 Volts</button>
+        <button class="opt">B. 141.4 Volts</button>
+        <button class="opt">C. 70.7 Volts</button>
+        <button class="opt">D. 100 Volts</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: What circuit property opposes any change in CURRENT and is measured in Henrys?</div>
+        <button class="opt">A. Inductance</button>
+        <button class="opt">B. Capacitance</button>
+        <button class="opt">C. True Resistance</button>
+        <button class="opt">D. Frequency</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide">
+      <span class="tag">Section 4: Transformers</span>
+      <h1>Introduction to Transformers</h1>
+      <p class="lead">Transformers transfer electrical energy from one circuit to another using magnetic fields, without any direct electrical connection.</p>
+      
+      <svg class="svg-graphic" viewBox="0 0 500 250" width="100%" height="220px">
+        <!-- Transformer Core (Square Donut) -->
+        <rect x="150" y="30" width="200" height="190" fill="none" stroke="#4a5568" stroke-width="40" rx="10"/>
+        
+        <!-- Primary Coil (Left) -->
+        <path d="M 80 80 Q 150 60, 150 100 Q 150 140, 80 120" fill="none" stroke="var(--accent)" stroke-width="4"/>
+        <path d="M 80 120 Q 150 100, 150 140 Q 150 180, 80 160" fill="none" stroke="var(--accent)" stroke-width="4"/>
+        <line x1="50" y1="80" x2="80" y2="80" stroke="var(--accent)" stroke-width="4"/>
+        <line x1="50" y1="160" x2="80" y2="160" stroke="var(--accent)" stroke-width="4"/>
+        
+        <!-- Secondary Coil (Right) -->
+        <path d="M 420 70 Q 350 50, 350 90 Q 350 130, 420 110" fill="none" stroke="var(--accent2)" stroke-width="4"/>
+        <path d="M 420 110 Q 350 90, 350 130 Q 350 170, 420 150" fill="none" stroke="var(--accent2)" stroke-width="4"/>
+        <path d="M 420 150 Q 350 130, 350 170 Q 350 210, 420 190" fill="none" stroke="var(--accent2)" stroke-width="4"/>
+        <line x1="420" y1="70" x2="450" y2="70" stroke="var(--accent2)" stroke-width="4"/>
+        <line x1="420" y1="190" x2="450" y2="190" stroke="var(--accent2)" stroke-width="4"/>
+        
+        <!-- Labels -->
+        <text x="60" y="50" fill="var(--accent)" font-size="16" font-weight="bold">PRIMARY</text>
+        <text x="60" y="200" fill="var(--accent)" font-size="12">AC Input</text>
+        
+        <text x="210" y="130" fill="#e6edf3" font-size="16" font-weight="bold">IRON CORE</text>
+        
+        <text x="360" y="50" fill="var(--accent2)" font-size="16" font-weight="bold">SECONDARY</text>
+        <text x="370" y="220" fill="var(--accent2)" font-size="12">AC Output</text>
+      </svg>
+      
+      <div class="card">
+        <p>AC voltage applied to the <b>Primary</b> coil creates a fluctuating magnetic field in the <b>Core</b>. This magnetic field cuts across the wires of the <b>Secondary</b> coil, inducing a new voltage into it. This process is called <span class="kw">Mutual Induction</span>.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide">
+      <span class="tag">Section 4: Transformers</span>
+      <h1>Turns Ratio & Voltage</h1>
+      <p class="lead">The ratio of wire wraps (turns) between the primary and secondary coils dictates the output voltage.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Step-Up Transformer</h3>
+          <p>Secondary has <b>MORE</b> turns than the Primary.</p>
+          <p>Output Voltage is <span class="kw">Higher</span> than input voltage.</p>
+        </div>
+        <div class="card">
+          <h3>Step-Down Transformer</h3>
+          <p>Secondary has <b>FEWER</b> turns than the Primary.</p>
+          <p>Output Voltage is <span class="kw">Lower</span> than input voltage.</p>
+        </div>
+      </div>
+      <div class="note">If the Primary has 100 turns, and the Secondary has 500 turns, the ratio is 1:5. If you input 10V AC, the output will be stepped-up to 50V AC.</div>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide">
+      <span class="tag">Section 4: Transformers</span>
+      <h1>Transformer Power and Current</h1>
+      <p class="lead">A transformer cannot create free energy. Power in equals Power out.</p>
+      <div class="card">
+        <p>Assuming a perfectly efficient transformer, the Power (Watts) on the primary side equals the Power on the secondary side.</p>
+        <p>Remember from Module 1 that <span class="kw2">Power = Voltage × Current</span>.</p>
+        <p>Because Power stays the same, <b>Voltage and Current have an inverse relationship</b> in a transformer:</p>
+        <ul>
+          <li>If a transformer <b>Steps-UP</b> the Voltage, it must <b>Step-DOWN</b> the Current.</li>
+          <li>If a transformer <b>Steps-DOWN</b> the Voltage, it <b>Steps-UP</b> the Current available.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Pre-Exam Review</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: In a transformer, what happens to the output current if the secondary coil has more turns than the primary coil (Step-Up)?</div>
+        <button class="opt">A. Current increases</button>
+        <button class="opt">B. Current decreases</button>
+        <button class="opt">C. Current stays the same</button>
+        <button class="opt">D. Current drops to zero</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: What is the total opposition to alternating current, combining both resistance and reactance, called?</div>
+        <button class="opt">A. Conductance</button>
+        <button class="opt">B. True Resistance</button>
+        <button class="opt">C. Impedance</button>
+        <button class="opt">D. Mutual Induction</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 13: FINAL EXAM -->
+    <section class="slide" id="examSlide">
+      <span class="tag">Module 2 Evaluation</span>
+      <h1>Module 2: Final Exam</h1>
+      <p class="lead">You must score 100% to generate your Certificate.</p>
+      
+      <div class="card" id="examContainer" style="background:#070b10;">
+        <label for="studentName" style="font-weight:bold;margin-bottom:8px;display:block;color:var(--accent);">Enter Full Name for Certificate:</label>
+        <input type="text" id="studentName" placeholder="e.g., Jane Doe">
+        
+        <div id="questionsArea"></div>
+        <div id="examFeedback" class="fb"></div>
+        <button class="btn-submit" onclick="gradeExam()">Submit Exam</button>
+      </div>
+      
+          <!-- CERTIFICATE CONTAINER -->
+      <div id="certificate">
+        <h1 class="cert-title">Certificate of Training</h1>
+        <p class="cert-text">This is to certify that</p>
+        <span id="certName">STUDENT NAME</span>
+        
+        <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
+        <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
+        
+        <!-- Just change the Module number/title for each file -->
+        <div class="cert-course">Module 3: Circuit Protection & Schematics</div>
+        
+        <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
+        
+        <button class="print-btn" onclick="window.print()">Print Certificate</button>
+      </div>
+
+
+    </section>
+
+  </div>
+  
+  <footer id="footerNav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div id="navCounter" style="font-weight:bold;color:var(--accent);"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  
+  let slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  let total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let visited = new Set([0]);
+
+  // Table of Contents — grouped so users can jump straight to any topic instead of
+  // clicking through the whole deck. Titles are read straight from each slide's own <h1>.
+  const TOC_GROUPS = [
+    { label: 'Start', range: [0, 0] },
+    { label: 'AC Fundamentals', range: [1, 4] },
+    { label: 'Reactive Components', range: [5, 8] },
+    { label: 'Transformers', range: [9, 11] },
+    { label: 'Assessment', range: [12, 13] }
+  ];
+
+  function buildToc(){
+    const sidebar = document.getElementById('tocSidebar');
+    let html = '';
+    TOC_GROUPS.forEach(g => {
+      let groupHtml = '';
+      for(let i = g.range[0]; i <= g.range[1] && i < total; i++){
+        const h1 = slides[i].querySelector('h1');
+        const title = h1 ? h1.textContent.trim() : 'Welcome & Overview';
+        groupHtml += `<div class="toc-item" id="toc-${i}" onclick="jumpTo(${i})"><span class="toc-num">${i+1}</span><span>${title}</span></div>`;
+      }
+      if(groupHtml){ html += `<div class="toc-group-label">${g.label}</div>` + groupHtml; }
+    });
+    sidebar.innerHTML = html;
+  }
+
+  function toggleToc(){
+    document.getElementById('tocSidebar').classList.toggle('open');
+    document.getElementById('tocOverlay').classList.toggle('open');
+  }
+  function closeToc(){
+    document.getElementById('tocSidebar').classList.remove('open');
+    document.getElementById('tocOverlay').classList.remove('open');
+  }
+  function jumpTo(i){
+    idx = i;
+    render();
+    closeToc();
+  }
+  window.toggleToc = toggleToc;
+  window.closeToc = closeToc;
+  window.jumpTo = jumpTo;
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i===idx));
+    visited.add(idx);
+    
+    if(idx === 0) {
+        document.getElementById('navCounter').textContent = `Start Page`;
+    } else {
+        document.getElementById('navCounter').textContent = `Slide ${idx} of ${total - 1}`;
+    }
+    
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progressBar').style.width = ((idx)/(total-1)*100) + '%';
+    
+    document.getElementById('prevBtn').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.visibility = (idx === total - 1) ? 'hidden' : 'visible';
+    
+    document.getElementById('slideArea').scrollTop = 0;
+
+    document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+    visited.forEach(v => { const el = document.getElementById('toc-'+v); if(el) el.classList.add('done'); });
+    const activeEl = document.getElementById('toc-'+idx);
+    if(activeEl){ activeEl.classList.add('active'); activeEl.scrollIntoView({block:'nearest'}); }
+  }
+  
+  buildToc();
+  document.getElementById('nextBtn').addEventListener('click', () => { if(idx < total-1) { idx++; render(); }});
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0) { idx--; render(); }});
+  render();
+
+  // Inline Quizzes
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    let correct = parseInt(quiz.getAttribute('data-correct'), 10);
+    let opts = quiz.querySelectorAll('.opt');
+    let fb = quiz.querySelector('.fb');
+    opts.forEach((opt, oi) => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.disabled = true);
+        opts[correct].classList.add('correct');
+        if(oi === correct){
+          fb.textContent = "✅ Correct!"; fb.className = 'fb ok show';
+        } else {
+          opt.classList.add('wrong'); fb.textContent = "❌ Incorrect. Review the green answer."; fb.className = 'fb no show';
+        }
+      });
+    });
+  });
+
+  // MODULE 2 EXAM BANK
+  const examBank = [
+    { q: "What is the unit of measurement for Frequency?", o: ["Hertz", "Ohms", "Farads", "Henrys"], a: "Hertz" },
+    { q: "Which AC value represents the equivalent DC heating effect?", o: ["RMS (Effective)", "Peak", "Peak-to-Peak", "Average"], a: "RMS (Effective)" },
+    { q: "What property of a circuit opposes a change in current?", o: ["Inductance", "Capacitance", "Resistance", "Frequency"], a: "Inductance" },
+    { q: "What unit is used to measure capacitance?", o: ["Farads", "Henrys", "Watts", "Joules"], a: "Farads" },
+    { q: "What is the mathematical relationship between the period and frequency of an AC wave?", o: ["Inversely proportional (T = 1/f)", "Directly proportional", "They are equal", "Exponential"], a: "Inversely proportional (T = 1/f)" },
+    { q: "In a transformer, if the secondary coil has more turns than the primary, it is a:", o: ["Step-up transformer", "Step-down transformer", "Isolation transformer", "Auto-transformer"], a: "Step-up transformer" },
+    { q: "Assuming a perfect transformer, how does power in the primary compare to power in the secondary?", o: ["They are equal", "Primary is higher", "Secondary is higher", "Power drops to zero"], a: "They are equal" },
+    { q: "If a step-up transformer increases voltage, what must happen to the current on the output?", o: ["It decreases", "It increases", "It stays the same", "It alternates faster"], a: "It decreases" },
+    { q: "What is the combined total opposition to AC current flow (resistance + reactance) called?", o: ["Impedance", "Admittance", "Conductance", "Reluctance"], a: "Impedance" },
+    { q: "RMS voltage is calculated by multiplying the Peak voltage by what constant?", o: ["0.707", "1.414", "3.14", "0.636"], a: "0.707" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildExam() {
+    let area = document.getElementById('questionsArea');
+    area.innerHTML = '';
+    
+    let questions = shuffle([...examBank]);
+    
+    questions.forEach((qObj, index) => {
+      let qDiv = document.createElement('div');
+      qDiv.className = 'exam-q';
+      qDiv.id = `qDiv_${index}`;
+      qDiv.dataset.passed = "false"; 
+      qDiv.innerHTML = `<div class="q" id="qText_${index}"><b>${index + 1}.</b> ${qObj.q}</div>`;
+      
+      let options = shuffle([...qObj.o]);
+      options.forEach((optText, optIndex) => {
+        let isCorrect = (optText === qObj.a) ? "true" : "false";
+        qDiv.innerHTML += `
+          <label class="exam-opt">
+            <input type="radio" name="q${index}" value="${isCorrect}">
+            ${optText}
+          </label>
+        `;
+      });
+      area.appendChild(qDiv);
+    });
+  }
+
+  window.gradeExam = function() {
+    let nameInput = document.getElementById('studentName').value.trim();
+    let fb = document.getElementById('examFeedback');
+    
+    if(!nameInput) {
+      fb.textContent = "⚠️ Please enter your name for the certificate.";
+      fb.className = 'fb no show';
+      return;
+    }
+
+    let allPassed = true;
+    let answeredCount = 0;
+    let activeCount = 0;
+    
+    for(let i=0; i<examBank.length; i++) {
+      let qDiv = document.getElementById(`qDiv_${i}`);
+      
+      if(qDiv.dataset.passed === "true") continue; 
+      
+      activeCount++;
+      let radios = document.getElementsByName(`q${i}`);
+      let answered = false;
+      let isCorrect = false;
+      
+      for(let r of radios) {
+        if(r.checked) {
+          answered = true;
+          if(r.value === "true") isCorrect = true;
+        }
+      }
+
+      if(answered) {
+        answeredCount++;
+        if(isCorrect) {
+          qDiv.dataset.passed = "true";
+          qDiv.style.opacity = "0.5";
+          qDiv.style.pointerEvents = "none";
+          qDiv.style.borderLeft = "4px solid var(--accent2)";
+          qDiv.style.paddingLeft = "10px";
+          let qText = document.getElementById(`qText_${i}`);
+          if(!qText.innerHTML.includes('✅')) {
+            qText.innerHTML += ' <span style="color:var(--accent2); margin-left:10px;">✅ Correct</span>';
+          }
+        } else {
+          allPassed = false;
+          qDiv.style.borderLeft = "4px solid var(--bad)";
+          qDiv.style.paddingLeft = "10px";
+          for(let r of radios) r.checked = false;
+        }
+      } else {
+        allPassed = false;
+        qDiv.style.borderLeft = "4px solid var(--warn)";
+        qDiv.style.paddingLeft = "10px";
+      }
+    }
+
+    if(answeredCount < activeCount) {
+      fb.textContent = `⚠️ Please answer all remaining questions.`;
+      fb.className = 'fb no show';
+      return;
+    }
+
+    if(allPassed) {
+      document.getElementById('examContainer').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').textContent = nameInput;
+      
+      let date = new Date();
+      let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certDate').textContent = "Date Completed: " + formattedDate;
+      fb.style.display = 'none';
+    } else {
+      fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
+      fb.className = 'fb no show';
+    }
+  }
+
+  buildExam();
+
+})();
+</script>
+</body>
+</html>

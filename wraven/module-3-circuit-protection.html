@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRAVEN - Module 3: Circuit Protection</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330;
+    --accent:#3fb6ff; --accent2:#7ee787; --warn:#ffb454; --bad:#ff6b6b;
+    --txt:#e6edf3; --muted:#9aa6b2; --border:#2b3442;
+    --crt-green: #39ff14;
+    --crt-dark: #021102;
+    --crt-grid: #0f3b0f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(160deg,#0a0e14,#0d1117 40%,#10151d);
+    color:var(--txt); overflow:hidden;
+  }
+  #app{height:100vh;display:flex;flex-direction:column;}
+  
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 22px;background:var(--panel); border-bottom:1px solid var(--border);
+  }
+  header .brand{font-weight:700;color:var(--accent);font-size:15px;}
+  header .counter{font-size:13px;color:var(--muted);}
+  
+  #progressWrap{height:5px;background:#0a0e14;}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;}
+  
+  #slideArea{flex:1;overflow-y:auto;padding:34px 6vw 90px;}
+  .slide{display:none;animation:fade .4s ease;max-width:900px;margin:0 auto;}
+  .slide.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  
+  h1{font-size:28px;margin:0 0 6px;color:var(--accent);line-height:1.2;}
+  h2{font-size:20px;color:var(--accent2);margin:20px 0 10px;}
+  p,li{font-size:16px;line-height:1.6;color:var(--txt);}
+  .lead{font-size:18px;color:var(--muted);margin-bottom:18px;}
+  .kw{color:var(--accent);font-weight:600;}
+  .kw2{color:var(--accent2);font-weight:600;}
+  
+  .tag{display:inline-block;background:var(--panel2);color:var(--accent);
+    border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:12px;
+    letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+  
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:18px 20px;margin:16px 0;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px; align-items: center;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  
+  .note{border-left:4px solid var(--accent);background:rgba(63,182,255,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .dangerbox{border-left:4px solid var(--bad);background:rgba(255,107,107,.08);padding:12px 16px;border-radius:6px;margin:14px 0;}
+  .svg-graphic { display: block; margin: 20px auto; max-width: 100%; background: #070b10; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+  /* Paste this styling right here: */
+  .project-owner-info {
+    max-width: 480px;
+    margin: 25px auto 10px;
+    padding: 15px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .project-owner-info div {
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  .project-owner-info div strong {
+    color: var(--accent);
+    display: inline-block;
+    width: 150px;
+  }
+  .project-owner-info div span {
+    color: var(--txt);
+  }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+
+  /* Start Page specific */
+  .start-container { text-align: center; margin-top: 20px; }
+  .start-logo { display: block; margin: 0 auto 30px; filter: drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.3)); }
+  .btn-start { background: #161b22; color:var(--crt-green); padding: 16px 36px; font-size:20px; font-weight:bold; border:2px solid var(--crt-green); border-radius:8px; cursor:pointer; margin-top:40px; transition: 0.2s; box-shadow: 0 0 15px rgba(57,255,20,0.2); text-transform: uppercase; letter-spacing: 1px;}
+  .btn-start:hover { background: rgba(57,255,20,0.1); transform: scale(1.05); box-shadow: 0 0 25px rgba(57,255,20,0.4);}
+  .start-title { font-size: 42px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0; color: #fff;}
+  .start-subtitle { font-size: 22px; color: var(--crt-green); margin-top: 10px; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+  
+  @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #radar-sweep { transform-origin: 200px 200px; animation: sweep 4s linear infinite; }
+
+  /* Quizzes */
+  .quiz{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0;}
+  .quiz .q{font-weight:600;font-size:16px;margin-bottom:12px;}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:15px;transition:.15s;}
+  .opt:hover{border-color:var(--accent);background:#222b3a;}
+  .opt.correct{border-color:var(--accent2);background:rgba(126,231,135,.15);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.15);}
+  .opt:disabled{cursor:default;}
+  .fb{margin-top:12px;font-size:14px;padding:11px 14px;border-radius:8px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(126,231,135,.12);border-left:4px solid var(--accent2);}
+  .fb.no{background:rgba(255,107,107,.12);border-left:4px solid var(--bad);}
+  
+  /* Exam Specific */
+  #examContainer input[type="text"]{width:100%;padding:12px;font-size:16px;background:var(--panel2);color:var(--txt);border:1px solid var(--accent);border-radius:8px;margin-bottom:20px;}
+  .exam-q{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px; transition: all 0.3s ease;}
+  .exam-opt{display:flex;align-items:center;margin:8px 0;cursor:pointer;}
+  .exam-opt input{width:auto;margin-right:10px;accent-color:var(--accent);}
+  .btn-submit{background:var(--accent2);color:#111;font-weight:bold;font-size:16px;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;}
+  .btn-submit:hover{filter:brightness(1.1);}
+  
+  /* =========================================
+     CERTIFICATE OF TRAINING 
+     ========================================= */
+  #certificate {
+    background: #fffdf8;
+    color: #111;
+    padding: 50px 60px;
+    border: 12px double #1a365d;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-family: "Times New Roman", Times, serif;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cert-title {
+    font-family: "Old English Text MT", "Engravers MT", "Playfair Display", Georgia, serif;
+    font-size: 48px;
+    color: #000;
+    margin: 10px 0 30px;
+    border-bottom: none;
+    font-weight: normal;
+  }
+  .cert-text {
+    font-size: 22px;
+    margin: 15px 0;
+    color: #333;
+    font-style: italic;
+  }
+  #certName {
+    font-size: 34px;
+    color: #000;
+    display: inline-block;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 1px solid #000;
+    min-width: 450px;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .cert-course {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #000;
+  }
+  #certDate {
+    font-size: 20px;
+    color: #333;
+    margin-top: 40px;
+  }
+  .print-btn {
+    background: var(--accent);
+    color: #111;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  @media print {
+    body, html { background: #fff; height: auto; overflow: visible; }
+    header, #progressWrap, #footerNav, .print-btn, #examContainer, .tag, #slideArea > .slide:not(#examSlide), .slide > h1, .slide > p.lead { display: none !important; }
+    #slideArea { padding: 0; overflow: visible; }
+    #certificate { 
+      display: block !important; 
+      position: absolute; 
+      top: 0; left: 0;
+      border: 8px double #000; 
+      box-shadow: none; 
+      width: 100%; 
+      margin: 0; 
+      padding: 60px; 
+    }
+  }
+
+  footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:12px 22px;background:var(--panel);border-top:1px solid var(--border);}
+  .navbtn{background:var(--accent);color:#06121d;border:none;border-radius:8px;padding:10px 22px;
+    font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .navbtn:hover{filter:brightness(1.12);}
+  .navbtn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ── Table of Contents sidebar — lets users jump to any topic freely ── */
+  #mainRow{flex:1;display:flex;overflow:hidden;min-height:0;}
+  #tocSidebar{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 0;transition:margin-left .25s ease;}
+  #tocSidebar .toc-group-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+    padding:14px 20px 6px;font-weight:700;}
+  #tocSidebar .toc-group-label:first-child{padding-top:4px;}
+  .toc-item{padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;
+    transition:background .15s,color .15s;line-height:1.4;display:flex;gap:8px;align-items:flex-start;}
+  .toc-item .toc-num{color:var(--border);font-weight:700;flex-shrink:0;min-width:18px;}
+  .toc-item:hover{background:var(--panel2);color:var(--txt);}
+  .toc-item.active{border-left-color:var(--accent);background:var(--panel2);color:var(--accent);font-weight:600;}
+  .toc-item.active .toc-num{color:var(--accent);}
+  .toc-item.done .toc-num::after{content:' \2713';color:var(--accent2);}
+  #tocToggle{display:none;font-family:var(--mono, inherit);font-size:13px;background:var(--panel2);
+    border:1px solid var(--border);color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;}
+  #mainCol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  #tocOverlay{display:none;}
+  @media(max-width:860px){
+    #tocToggle{display:inline-block;}
+    #tocSidebar{position:fixed;top:0;left:0;bottom:0;z-index:500;margin-left:-270px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+    #tocSidebar.open{margin-left:0;}
+    #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 3</span></div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+  </header>
+  <div id="mainRow">
+    <div id="tocOverlay" onclick="closeToc()"></div>
+    <nav id="tocSidebar"></nav>
+    <div id="mainCol">
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      
+  <div id="slideArea">
+
+    <!-- START PAGE (SLIDE 0) -->
+    <section class="slide active">
+      <div class="start-container">
+        <!-- Animated CRT Radar Scope SVG -->
+        <svg class="start-logo" viewBox="0 0 400 400" width="280" height="280">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#39ff14" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0" />
+            </linearGradient>
+            <radialGradient id="bezel" cx="50%" cy="50%" r="50%">
+              <stop offset="90%" stop-color="#021102" />
+              <stop offset="100%" stop-color="#0a1a0a" />
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="195" fill="url(#bezel)" stroke="#113311" stroke-width="10"/>
+          <g stroke="var(--crt-grid)" stroke-width="2">
+            <circle cx="200" cy="200" r="150" fill="none"/>
+            <circle cx="200" cy="200" r="100" fill="none"/>
+            <circle cx="200" cy="200" r="50" fill="none"/>
+            <line x1="200" y1="10" x2="200" y2="390"/>
+            <line x1="10" y1="200" x2="390" y2="200"/>
+            <line x1="65" y1="65" x2="335" y2="335"/>
+            <line x1="65" y1="335" x2="335" y2="65"/>
+          </g>
+          <circle cx="120" cy="140" r="4.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="280" cy="90" r="3" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="230" cy="300" r="5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <circle cx="160" cy="250" r="2.5" fill="var(--crt-green)" filter="url(#glow)"/>
+          <g id="radar-sweep">
+            <path d="M 200 200 L 200 10 A 190 190 0 0 1 334 65 Z" fill="url(#sweep)" opacity="0.3"/>
+            <line x1="200" y1="200" x2="200" y2="10" stroke="var(--crt-green)" stroke-width="3" filter="url(#glow)"/>
+          </g>
+          <circle cx="200" cy="200" r="6" fill="var(--crt-green)" filter="url(#glow)"/>
+        </svg>
+
+        <h1 class="start-title">WRAVEN Training Program</h1>
+        <p class="start-subtitle">Module 3: Circuit Protection & Schematics</p>
+ <!-- Paste this HTML block right here: -->
+        <div class="project-owner-info">
+          <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
+          <div><strong>Location Address:</strong> <span>633 Barnes Ave</span></div>
+          <div><strong>Location City/ST/ZIP:</strong> <span>Fort Gordon, GA 30905</span></div>
+          <div><strong>Contact:</strong> <span>phillip.r.crandell.civ@army.mil</span></div>
+        </div>
+
+        <button class="btn-start" onclick="document.getElementById('nextBtn').click();">Begin Training</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <span class="tag">Section 1: The Threat</span>
+      <h1>Why We Need Protection</h1>
+      <p class="lead">Without circuit protection, excess current will overheat wires, melt insulation, and start fires.</p>
+      <div class="card">
+        <p>There are two primary reasons a circuit draws too much current:</p>
+        <ul>
+          <li><span class="kw">Overload:</span> The circuit is trying to do too much work. Too many devices are plugged in, or a motor is jammed and pulling excess power trying to turn.</li>
+          <li><span class="kw2">Short Circuit:</span> A catastrophic failure. A wire breaks or insulation chafes away, creating a new, unintended path to Ground with near-zero resistance. According to Ohm's Law (I = E / R), as Resistance approaches zero, Current shoots up to dangerously high levels instantly.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <span class="tag">Section 2: Fuses</span>
+      <h1>Fuses: The Sacrificial Lamb</h1>
+      <p class="lead">A fuse is the simplest circuit protection device. It is designed to physically destroy itself to save the rest of the equipment.</p>
+      <div class="card">
+        <p>A fuse contains a thin strip of metal designed to melt at a specific current limit. Once it melts, the circuit is physically broken (open), stopping the flow of electricity.</p>
+        <h3>Two Main Types:</h3>
+        <ul>
+          <li><b>Standard (Fast-Blow):</b> Melts almost instantly when the current rating is exceeded. Great for sensitive electronics.</li>
+          <li><b>Time-Delay (Slow-Blow):</b> Can handle a massive surge of current for a fraction of a second without melting. Required for electric motors, which draw a massive "inrush" current right when they start up.</li>
+        </ul>
+      </div>
+      <div class="dangerbox">⚠️ Never replace a blown fuse with a piece of wire or a higher-rated fuse. You are removing the only thing preventing a fire.</div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <span class="tag">Section 2: Circuit Breakers</span>
+      <h1>Circuit Breakers: The Reusable Switch</h1>
+      <p class="lead">Unlike a fuse, a circuit breaker can be reset and reused after it trips.</p>
+      <div class="card">
+        <p>Breakers are more expensive than fuses, but necessary for critical systems where rapidly restoring power is essential.</p>
+        <h3>How they trip:</h3>
+        <ul>
+          <li><b>Thermal:</b> Uses a bimetallic strip. As current flows, it generates heat. If current exceeds the limit, the strip bends far enough to release a spring-loaded latch, opening the circuit.</li>
+          <li><b>Magnetic:</b> Uses an electromagnet (solenoid). A massive surge of current (like a short circuit) creates a magnetic field strong enough to pull the latch instantly.</li>
+          <li><b>Thermal-Magnetic:</b> The most common type. Uses the thermal strip for slow overloads, and the magnet for instant short-circuit protection.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <span class="tag">Section 3: Control</span>
+      <h1>Switches: Poles and Throws</h1>
+      <p class="lead">Switches allow us to control the flow of electricity. They are defined by their Poles and Throws.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Poles (Inputs)</h3>
+          <p>The number of separate circuits the switch can control simultaneously.</p>
+          <p>A "Single Pole" controls one wire. A "Double Pole" controls two entirely separate wires at the exact same time.</p>
+        </div>
+        <div class="card">
+          <h3>Throws (Outputs)</h3>
+          <p>The number of possible paths (positions) the switch can direct the current into.</p>
+          <p>A "Single Throw" is just ON or OFF. A "Double Throw" can route power to Path A <i>or</i> Path B.</p>
+        </div>
+      </div>
+      <div class="note"><b>Example:</b> SPST (Single-Pole, Single-Throw) is a basic light switch. DPDT (Double-Pole, Double-Throw) is complex, often used to reverse motor direction.</div>
+    </section>
+
+   <!-- SLIDE 5: FIXED RELAY SVG -->
+    <section class="slide">
+      <span class="tag">Section 3: Control</span>
+      <h1>Relays: The Electromagnetic Switch</h1>
+      <p class="lead">A relay is a switch that is operated by an electromagnet rather than a human finger.</p>
+      
+      <!-- RE-DRAWN INLINE SVG RELAY -->
+      <svg class="svg-graphic" viewBox="0 0 500 250" width="100%" height="250px">
+        <!-- Control Circuit (Left Side) -->
+        <text x="30" y="30" fill="#3fb6ff" font-size="14" font-weight="bold">LOW VOLTAGE CONTROL</text>
+        
+        <!-- Coil / Electromagnet -->
+        <rect x="70" y="80" width="60" height="100" fill="none" stroke="#3fb6ff" stroke-width="4" rx="5"/>
+        <path d="M 70 100 L 130 100 M 70 120 L 130 120 M 70 140 L 130 140 M 70 160 L 130 160" stroke="#3fb6ff" stroke-width="2"/>
+        <line x1="100" y1="180" x2="100" y2="220" stroke="#3fb6ff" stroke-width="3"/>
+        <line x1="100" y1="80" x2="100" y2="50" stroke="#3fb6ff" stroke-width="3"/>
+        <text x="50" y="240" fill="#3fb6ff" font-size="12">To Control Switch</text>
+        
+        <!-- Magnetic Field Lines (Dashed) -->
+        <path d="M 140 90 Q 180 130, 140 170" fill="none" stroke="#e6edf3" stroke-width="2" stroke-dasharray="5,5"/>
+        <path d="M 150 70 Q 200 130, 150 190" fill="none" stroke="#e6edf3" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="145" y="50" fill="#e6edf3" font-size="12" font-style="italic">Magnetic Field pulls Armature</text>
+
+        <!-- Load Circuit (Right Side) -->
+        <text x="300" y="30" fill="#7ee787" font-size="14" font-weight="bold">HIGH VOLTAGE LOAD</text>
+        
+        <!-- The Armature (Moving lever) -->
+        <line x1="220" y1="60" x2="220" y2="200" stroke="#4a5568" stroke-width="4"/> <!-- Pivot Mount -->
+        <circle cx="220" cy="80" r="5" fill="#e6edf3"/> <!-- Pivot Point -->
+        <line x1="220" y1="80" x2="300" y2="130" stroke="#7ee787" stroke-width="6"/> <!-- Moving Lever -->
+        
+        <!-- Contacts -->
+        <circle cx="310" cy="138" r="8" fill="#ffb454"/> <!-- Moving Contact -->
+        <circle cx="310" cy="160" r="8" fill="#ffb454"/> <!-- Stationary Contact -->
+        <text x="330" y="155" fill="#ffb454" font-size="12">Contacts (Currently Open)</text>
+        
+        <!-- Heavy Wires -->
+        <line x1="220" y1="80" x2="220" y2="50" stroke="#7ee787" stroke-width="4"/>
+        <line x1="220" y1="50" x2="450" y2="50" stroke="#7ee787" stroke-width="4"/>
+        
+        <line x1="310" y1="160" x2="310" y2="220" stroke="#7ee787" stroke-width="4"/>
+        <line x1="310" y1="220" x2="450" y2="220" stroke="#7ee787" stroke-width="4"/>
+        
+        <text x="380" y="140" fill="#7ee787" font-size="12">To Heavy Motor</text>
+      </svg>
+      
+      <div class="card">
+        <p><b>Why use them?</b> Relays allow a tiny, safe, low-voltage control circuit (like a microchip or a push-button) to control a massive, dangerous high-voltage circuit (like a radar motor).</p>
+        <p>When the low-voltage coil is energized, it becomes a magnet. The magnet physically pulls the heavy-duty switch contacts closed, turning on the main machinery.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Mid-Module Review</h1>
+      <div class="quiz" data-correct="0">
+        <div class="q">Q: Which type of fuse is best for a motor that draws a huge, temporary surge of current when it first turns on?</div>
+        <button class="opt">A. Time-Delay (Slow-Blow) Fuse</button>
+        <button class="opt">B. Fast-Blow Fuse</button>
+        <button class="opt">C. Thermal Circuit Breaker</button>
+        <button class="opt">D. Glass Cartridge Fuse</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="3">
+        <div class="q">Q: What is the primary advantage of using a Relay?</div>
+        <button class="opt">A. It generates backup power if the main generator fails.</button>
+        <button class="opt">B. It steps down AC voltage like a transformer.</button>
+        <button class="opt">C. It prevents a short circuit from starting a fire.</button>
+        <button class="opt">D. It allows a low-power circuit to safely control a high-power circuit.</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <span class="tag">Section 4: Conductors</span>
+      <h1>Wire and AWG</h1>
+      <p class="lead">Not all wire is created equal. The size of the wire determines how much current it can safely carry.</p>
+      <div class="card">
+        <p>Wire thickness is measured using the <b>American Wire Gauge (AWG)</b> standard.</p>
+        <p><b>The Counter-Intuitive Rule:</b> <span class="kw2">The LARGER the AWG number, the THINNER the wire.</span></p>
+        <ul>
+          <li><b>12 AWG:</b> Thick wire, very low resistance. Used for heavy wall outlets.</li>
+          <li><b>24 AWG:</b> Thin wire, higher resistance. Used for small electronics and networking.</li>
+        </ul>
+      </div>
+      <div class="note">If you push 20 Amps through a thin 24 AWG wire, the resistance will generate so much heat that the wire will glow red-hot and melt.</div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide">
+      <span class="tag">Section 4: Conductors</span>
+      <h1>Insulation Ratings</h1>
+      <p class="lead">The conductor carries the current; the insulation keeps the current where it belongs.</p>
+      <div class="card">
+        <p>When replacing wiring, you must match the insulation rating to the environment. Insulation is rated by two primary factors:</p>
+        <ol>
+          <li><b>Voltage Rating:</b> Insulation can only hold back so much electrical pressure. If you use wire rated for 300V in a 1000V circuit, the voltage will "punch through" the plastic and arc to ground.</li>
+          <li><b>Temperature Rating:</b> Engines, server racks, and outdoor gear get hot. If the ambient heat exceeds the insulation's rating, it will turn brittle, crack, and fail.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide">
+      <span class="tag">Section 5: Schematics</span>
+      <h1>Introduction to Schematics</h1>
+      <p class="lead">A schematic is the map of an electronic circuit. Without it, troubleshooting is just blind guessing.</p>
+      <div class="card">
+        <p>Schematics do <b>not</b> show you what the physical board looks like. Instead, they show the <i>logical path</i> of the electricity.</p>
+        <p>They use standardized symbols so a technician in Japan can read a blueprint drawn by an engineer in the United States without speaking the same language.</p>
+      </div>
+      <div class="dangerbox">⚠️ When troubleshooting a dead system, step one is always: Find the Schematic.</div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide">
+      <span class="tag">Section 5: Schematics</span>
+      <h1>Basic Schematic Symbols</h1>
+      <p class="lead">Memorize these core symbols. You will see them everywhere.</p>
+      
+      <!-- INLINE SVG SYMBOLS CHART -->
+      <svg class="svg-graphic" viewBox="0 0 600 300" width="100%" height="280px">
+        <!-- Resistor -->
+        <g transform="translate(50, 40)">
+          <polyline points="0,20 20,20 25,10 35,30 45,10 55,30 65,10 75,30 80,20 100,20" fill="none" stroke="var(--accent)" stroke-width="3"/>
+          <text x="25" y="55" fill="var(--txt)" font-size="16">Resistor</text>
+        </g>
+        
+        <!-- Capacitor -->
+        <g transform="translate(250, 40)">
+          <line x1="0" y1="20" x2="40" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="40" y1="5" x2="40" y2="35" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="60" y1="5" x2="60" y2="35" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="60" y1="20" x2="100" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <text x="15" y="55" fill="var(--txt)" font-size="16">Capacitor</text>
+        </g>
+        
+        <!-- Battery / DC Source -->
+        <g transform="translate(450, 40)">
+          <line x1="0" y1="20" x2="35" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="35" y1="0" x2="35" y2="40" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="50" y1="10" x2="50" y2="30" stroke="var(--accent)" stroke-width="4"/>
+          <line x1="65" y1="0" x2="65" y2="40" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="80" y1="10" x2="80" y2="30" stroke="var(--accent)" stroke-width="4"/>
+          <line x1="80" y1="20" x2="100" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <text x="25" y="10" fill="var(--accent)" font-size="16">+</text>
+          <text x="20" y="55" fill="var(--txt)" font-size="16">Battery</text>
+        </g>
+        
+        <!-- Ground -->
+        <g transform="translate(50, 180)">
+          <line x1="50" y1="0" x2="50" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="25" y1="20" x2="75" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="35" y1="30" x2="65" y2="30" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="45" y1="40" x2="55" y2="40" stroke="var(--accent)" stroke-width="3"/>
+          <text x="25" y="70" fill="var(--txt)" font-size="16">Ground</text>
+        </g>
+        
+        <!-- Switch (SPST) -->
+        <g transform="translate(250, 180)">
+          <circle cx="20" cy="20" r="4" fill="var(--accent)"/>
+          <circle cx="80" cy="20" r="4" fill="var(--accent)"/>
+          <line x1="0" y1="20" x2="16" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="84" y1="20" x2="100" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="20" y1="20" x2="70" y2="0" stroke="var(--accent)" stroke-width="3"/>
+          <text x="25" y="70" fill="var(--txt)" font-size="16">Switch</text>
+        </g>
+
+        <!-- Fuse -->
+        <g transform="translate(450, 180)">
+          <line x1="0" y1="20" x2="20" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <line x1="80" y1="20" x2="100" y2="20" stroke="var(--accent)" stroke-width="3"/>
+          <rect x="20" y="10" width="60" height="20" fill="none" stroke="var(--accent)" stroke-width="3"/>
+          <path d="M 20 20 Q 50 -5, 80 20" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <text x="35" y="70" fill="var(--txt)" font-size="16">Fuse</text>
+        </g>
+      </svg>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide">
+      <span class="tag">Knowledge Check</span>
+      <h1>Pre-Exam Review</h1>
+      <div class="quiz" data-correct="1">
+        <div class="q">Q: In the AWG system, which wire is thicker: 10 AWG or 22 AWG?</div>
+        <button class="opt">A. 22 AWG is thicker.</button>
+        <button class="opt">B. 10 AWG is thicker.</button>
+        <button class="opt">C. They are the same thickness.</button>
+        <button class="opt">D. AWG does not measure thickness.</button>
+        <div class="fb"></div>
+      </div>
+      <div class="quiz" data-correct="2">
+        <div class="q">Q: In switch terminology, what does the term "Pole" refer to?</div>
+        <button class="opt">A. The number of physical levers on the switch.</button>
+        <button class="opt">B. The number of output paths the current can take.</button>
+        <button class="opt">C. The number of separate input circuits the switch controls simultaneously.</button>
+        <button class="opt">D. The voltage rating of the switch.</button>
+        <div class="fb"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: FINAL EXAM -->
+    <section class="slide" id="examSlide">
+      <span class="tag">Module 3 Evaluation</span>
+      <h1>Module 3: Final Exam</h1>
+      <p class="lead">You must score 100% to generate your Certificate.</p>
+      
+      <div class="card" id="examContainer" style="background:#070b10;">
+        <label for="studentName" style="font-weight:bold;margin-bottom:8px;display:block;color:var(--accent);">Enter Full Name for Certificate:</label>
+        <input type="text" id="studentName" placeholder="e.g., Jane Doe">
+        
+        <div id="questionsArea"></div>
+        <div id="examFeedback" class="fb"></div>
+        <button class="btn-submit" onclick="gradeExam()">Submit Exam</button>
+      </div>
+      
+           <!-- CERTIFICATE CONTAINER -->
+      <div id="certificate">
+        <h1 class="cert-title">Certificate of Training</h1>
+        <p class="cert-text">This is to certify that</p>
+        <span id="certName">STUDENT NAME</span>
+        
+        <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
+        <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
+        
+        <!-- Just change the Module number/title for each file -->
+        <div class="cert-course">Module 3: Circuit Protection & Schematics</div>
+        
+        <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
+        
+        <button class="print-btn" onclick="window.print()">Print Certificate</button>
+      </div>
+
+
+    </section>
+
+  </div>
+  
+  <footer id="footerNav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div id="navCounter" style="font-weight:bold;color:var(--accent);"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  
+  let slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  let total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let visited = new Set([0]);
+
+  // Table of Contents — grouped so users can jump straight to any topic instead of
+  // clicking through the whole deck. Titles are read straight from each slide's own <h1>.
+  const TOC_GROUPS = [
+    { label: 'Start', range: [0, 0] },
+    { label: 'Protection Devices', range: [1, 6] },
+    { label: 'Wiring & Schematics', range: [7, 10] },
+    { label: 'Assessment', range: [11, 12] }
+  ];
+
+  function buildToc(){
+    const sidebar = document.getElementById('tocSidebar');
+    let html = '';
+    TOC_GROUPS.forEach(g => {
+      let groupHtml = '';
+      for(let i = g.range[0]; i <= g.range[1] && i < total; i++){
+        const h1 = slides[i].querySelector('h1');
+        const title = h1 ? h1.textContent.trim() : 'Welcome & Overview';
+        groupHtml += `<div class="toc-item" id="toc-${i}" onclick="jumpTo(${i})"><span class="toc-num">${i+1}</span><span>${title}</span></div>`;
+      }
+      if(groupHtml){ html += `<div class="toc-group-label">${g.label}</div>` + groupHtml; }
+    });
+    sidebar.innerHTML = html;
+  }
+
+  function toggleToc(){
+    document.getElementById('tocSidebar').classList.toggle('open');
+    document.getElementById('tocOverlay').classList.toggle('open');
+  }
+  function closeToc(){
+    document.getElementById('tocSidebar').classList.remove('open');
+    document.getElementById('tocOverlay').classList.remove('open');
+  }
+  function jumpTo(i){
+    idx = i;
+    render();
+    closeToc();
+  }
+  window.toggleToc = toggleToc;
+  window.closeToc = closeToc;
+  window.jumpTo = jumpTo;
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i===idx));
+    visited.add(idx);
+    
+    if(idx === 0) {
+        document.getElementById('navCounter').textContent = `Start Page`;
+    } else {
+        document.getElementById('navCounter').textContent = `Slide ${idx} of ${total - 1}`;
+    }
+    
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progressBar').style.width = ((idx)/(total-1)*100) + '%';
+    
+    document.getElementById('prevBtn').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.visibility = (idx === total - 1) ? 'hidden' : 'visible';
+    
+    document.getElementById('slideArea').scrollTop = 0;
+
+    document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+    visited.forEach(v => { const el = document.getElementById('toc-'+v); if(el) el.classList.add('done'); });
+    const activeEl = document.getElementById('toc-'+idx);
+    if(activeEl){ activeEl.classList.add('active'); activeEl.scrollIntoView({block:'nearest'}); }
+  }
+  
+  buildToc();
+  document.getElementById('nextBtn').addEventListener('click', () => { if(idx < total-1) { idx++; render(); }});
+  document.getElementById('prevBtn').addEventListener('click', () => { if(idx > 0) { idx--; render(); }});
+  render();
+
+  // Inline Quizzes
+  document.querySelectorAll('.quiz').forEach(quiz => {
+    let correct = parseInt(quiz.getAttribute('data-correct'), 10);
+    let opts = quiz.querySelectorAll('.opt');
+    let fb = quiz.querySelector('.fb');
+    opts.forEach((opt, oi) => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.disabled = true);
+        opts[correct].classList.add('correct');
+        if(oi === correct){
+          fb.textContent = "✅ Correct!"; fb.className = 'fb ok show';
+        } else {
+          opt.classList.add('wrong'); fb.textContent = "❌ Incorrect. Review the green answer."; fb.className = 'fb no show';
+        }
+      });
+    });
+  });
+
+  // MODULE 3 EXAM BANK
+  const examBank = [
+    { q: "What is the primary advantage of a circuit breaker over a standard fuse?", o: ["It can be reset and reused after tripping", "It handles much higher voltages", "It is cheaper to manufacture", "It operates faster than a fast-blow fuse"], a: "It can be reset and reused after tripping" },
+    { q: "Which circuit condition occurs when a broken wire creates an unintended path to ground with near-zero resistance?", o: ["Short Circuit", "Overload", "Open Circuit", "Capacitive Reactance"], a: "Short Circuit" },
+    { q: "What does the term 'Throw' refer to in switch terminology?", o: ["The number of possible output paths the current can take", "The physical distance the lever moves", "The number of separate circuits controlled simultaneously", "The voltage rating of the switch"], a: "The number of possible output paths the current can take" },
+    { q: "In the American Wire Gauge (AWG) system, what happens to the wire thickness as the gauge number increases?", o: ["The wire gets thinner", "The wire gets thicker", "The insulation gets thicker", "The wire thickness stays the same"], a: "The wire gets thinner" },
+    { q: "What component uses a small, low-voltage electromagnet coil to mechanically close contacts for a high-power circuit?", o: ["Relay", "Thermal Breaker", "SPST Switch", "Capacitor"], a: "Relay" },
+    { q: "Which type of fuse should be used for a heavy electric motor that draws a massive surge of current upon starting?", o: ["Time-Delay (Slow-Blow)", "Standard (Fast-Blow)", "Glass Cartridge", "Thermal-Magnetic"], a: "Time-Delay (Slow-Blow)" },
+    { q: "How does a Thermal circuit breaker sense an overcurrent condition?", o: ["A bimetallic strip heats up from the current and bends", "An electromagnet pulls the latch open", "A thin wire melts", "A microchip measures the voltage drop"], a: "A bimetallic strip heats up from the current and bends" },
+    { q: "Why is it dangerous to replace a blown fuse with a higher-rated fuse?", o: ["It removes the protection, allowing wires to overheat and cause a fire", "It will cause the equipment to run too fast", "It will lower the voltage of the circuit", "It will trip the main breaker immediately"], a: "It removes the protection, allowing wires to overheat and cause a fire" },
+    { q: "What are the two most critical ratings to check when selecting wire insulation for a repair?", o: ["Voltage and Temperature", "Amperage and Color", "Length and Weight", "Resistance and Reactance"], a: "Voltage and Temperature" },
+    { q: "A switch designated as 'DPDT' stands for what?", o: ["Double-Pole, Double-Throw", "Direct-Power, Direct-Throw", "Dual-Phase, Double-Terminal", "Double-Pole, Direct-Time"], a: "Double-Pole, Double-Throw" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function buildExam() {
+    let area = document.getElementById('questionsArea');
+    area.innerHTML = '';
+    
+    let questions = shuffle([...examBank]);
+    
+    questions.forEach((qObj, index) => {
+      let qDiv = document.createElement('div');
+      qDiv.className = 'exam-q';
+      qDiv.id = `qDiv_${index}`;
+      qDiv.dataset.passed = "false"; 
+      qDiv.innerHTML = `<div class="q" id="qText_${index}"><b>${index + 1}.</b> ${qObj.q}</div>`;
+      
+      let options = shuffle([...qObj.o]);
+      options.forEach((optText, optIndex) => {
+        let isCorrect = (optText === qObj.a) ? "true" : "false";
+        qDiv.innerHTML += `
+          <label class="exam-opt">
+            <input type="radio" name="q${index}" value="${isCorrect}">
+            ${optText}
+          </label>
+        `;
+      });
+      area.appendChild(qDiv);
+    });
+  }
+
+  window.gradeExam = function() {
+    let nameInput = document.getElementById('studentName').value.trim();
+    let fb = document.getElementById('examFeedback');
+    
+    if(!nameInput) {
+      fb.textContent = "⚠️ Please enter your name for the certificate.";
+      fb.className = 'fb no show';
+      return;
+    }
+
+    let allPassed = true;
+    let answeredCount = 0;
+    let activeCount = 0;
+    
+    for(let i=0; i<examBank.length; i++) {
+      let qDiv = document.getElementById(`qDiv_${i}`);
+      
+      if(qDiv.dataset.passed === "true") continue; 
+      
+      activeCount++;
+      let radios = document.getElementsByName(`q${i}`);
+      let answered = false;
+      let isCorrect = false;
+      
+      for(let r of radios) {
+        if(r.checked) {
+          answered = true;
+          if(r.value === "true") isCorrect = true;
+        }
+      }
+
+      if(answered) {
+        answeredCount++;
+        if(isCorrect) {
+          qDiv.dataset.passed = "true";
+          qDiv.style.opacity = "0.5";
+          qDiv.style.pointerEvents = "none";
+          qDiv.style.borderLeft = "4px solid var(--accent2)";
+          qDiv.style.paddingLeft = "10px";
+          let qText = document.getElementById(`qText_${i}`);
+          if(!qText.innerHTML.includes('✅')) {
+            qText.innerHTML += ' <span style="color:var(--accent2); margin-left:10px;">✅ Correct</span>';
+          }
+        } else {
+          allPassed = false;
+          qDiv.style.borderLeft = "4px solid var(--bad)";
+          qDiv.style.paddingLeft = "10px";
+          for(let r of radios) r.checked = false;
+        }
+      } else {
+        allPassed = false;
+        qDiv.style.borderLeft = "4px solid var(--warn)";
+        qDiv.style.paddingLeft = "10px";
+      }
+    }
+
+    if(answeredCount < activeCount) {
+      fb.textContent = `⚠️ Please answer all remaining questions.`;
+      fb.className = 'fb no show';
+      return;
+    }
+
+    if(allPassed) {
+      document.getElementById('examContainer').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').textContent = nameInput;
+      
+      let date = new Date();
+      let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('certDate').textContent = "Date Completed: " + formattedDate;
+      fb.style.display = 'none';
+    } else {
+      fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
+      fb.className = 'fb no show';
+    }
+  }
+
+  buildExam();
+
+})();
+</script>
+</body>
+</html>

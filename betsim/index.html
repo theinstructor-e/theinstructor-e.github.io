@@ -114,7 +114,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
         <div class="legend">
           <span><i class="dot" style="background:var(--red)"></i> higher voltage</span>
           <span><i class="dot" style="background:var(--cyan)"></i> lower / ground</span>
-          <span>▸ current flow (conventional)</span>
+          <span>▸ electron flow (\u2212 to +)</span>
           <span>batteries = long line +, short line \u2212</span>
         </div>
         <div class="hint" id="board-hint">Pick a component above, click a start dot, then an end dot. Start with a <strong>Battery</strong>, add a <strong>Resistor</strong> and an <strong>LED</strong>, and close the loop with <strong>Wire</strong>.</div>
@@ -363,7 +363,7 @@ function drawComp(g,c){
   }
   // current animation dots
   const I=c.I||0;if(Math.abs(I)>1e-6&&c.type!=='switch'){
-    const dir=I>=0?1:-1;const n=Math.max(2,Math.min(6,Math.round(Math.abs(I)*400+2)));
+    const dir=I>=0?-1:1;const n=Math.max(2,Math.min(6,Math.round(Math.abs(I)*400+2)));
     x.fillStyle=col('amber');
     for(let i=0;i<n;i++){let t=((animPhase*dir)+i/n)%1;if(t<0)t+=1;const px=t*L;x.beginPath();x.arc(px,0,2.5,0,Math.PI*2);x.fill();}
   }
