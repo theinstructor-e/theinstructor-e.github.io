@@ -119,6 +119,8 @@ table.compare tr:hover td{background:var(--table-row-hover)}
 
     <div class="fact-card"><span class="fact-card-emoji">📡</span><span class="fact-card-text"><strong>Voice used to be special.</strong> In 2G and 3G, voice calls ran on dedicated circuit-switched channels, separate from data. By 4G, voice itself became just another IP data stream (VoLTE) — the network stopped treating voice as a unique case.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>5G's real headline isn't just speed.</strong> Its biggest structural change is ultra-low latency and the ability to serve enormous numbers of connected devices per cell — the design target that makes things like large-scale IoT deployments realistic.</span></div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🚨</span><span class="fact-card-text"><strong>2G's weak encryption is still exploitable today.</strong> Because 2G's cipher is decades old and comparatively easy to break, devices can sometimes be tricked into falling back to a 2G connection by a fake cell tower (an "IMSI catcher" or "Stingray") — which is why some phones now let you disable 2G entirely, and why 2G shutdown is actively happening across carriers.</span></div>
   </div>
 
   <!-- ARCHITECTURE -->
@@ -146,6 +148,9 @@ table.compare tr:hover td{background:var(--table-row-hover)}
     <div class="fact-card"><span class="fact-card-emoji">🗼</span><span class="fact-card-text"><strong>UE</strong> stands for User Equipment — the generic term for "your phone" (or any cellular-connected device) used throughout cellular standards, regardless of generation.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Fewer boxes, more software.</strong> Notice the trend: 2G needed separate BTS and BSC hardware; by 4G, the eNodeB absorbed both jobs into one unit; the underlying trend across generations is pushing more function into fewer, smarter, more software-defined boxes.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📲</span><span class="fact-card-text"><strong>Handover (HO)</strong> is how a call or data session survives you moving from one cell's coverage to the next without dropping — the network hands your connection from one tower's controller to another, ideally before the old signal gets too weak.</span></div>
+
+    <h3>5G's new trick: network slicing</h3>
+    <p>Because the 5G core is almost entirely software-defined, it can carve out separate virtual "slices" of the same physical network, each tuned for a different job — one slice optimized for massive IoT sensor traffic (lots of devices, tiny amounts of data each), another for ultra-reliable low-latency traffic (like remote-controlled machinery), and another for standard mobile broadband — all running on the same towers and core hardware simultaneously, just configured differently underneath.</p>
   </div>
 
   <!-- IDENTIFIERS -->
@@ -167,6 +172,9 @@ table.compare tr:hover td{background:var(--table-row-hover)}
       <p style="margin-bottom:0">A temporary, reassignable ID the network gives your device instead of using your IMSI on every over-the-air exchange — a privacy measure so your permanent identity isn't constantly exposed.</p></div>
 
     <div class="fact-card"><span class="fact-card-emoji">🏗️</span><span class="fact-card-text"><strong>Cell-level identifiers scale with the network.</strong> Things like the Cell Global Identity (CGI) in older networks and the Physical Cell Identity (PCI) or NR Cell Identity (NCI) in newer ones all serve the same basic purpose: uniquely naming a specific cell/tower/sector so the network and your phone both know exactly which piece of radio coverage you're using.</span></div>
+
+    <h3>Why TMSI exists: connecting back to the IMSI catcher threat</h3>
+    <p>The Generations tab mentioned IMSI catchers tricking devices into a fake connection. TMSI is the network's actual defense against that exact scenario — by handing out a disposable, reassignable identifier instead of the permanent IMSI, a legitimate network limits how often your true identity is ever broadcast in the clear. A rogue tower posing as a real one, though, can still request the IMSI directly during initial attach — which is exactly the step real IMSI catchers exploit, since a device has limited ability to verify it's talking to a legitimate tower before that point.</p>
     <div class="tryit"><strong>▶ See it live:</strong> the <em>Cellular</em> interactive tool has a full identifier-breakdown module showing PLMN, CGI, BSIC, PCI, and NCI together.</div>
   </div>
 
@@ -188,6 +196,9 @@ table.compare tr:hover td{background:var(--table-row-hover)}
     <p>A device generally: (1) listens to the broadcast channel to learn about the network, (2) uses a random access channel to say "I'd like to connect," (3) gets assigned a dedicated control channel to complete setup, then (4) moves to a traffic channel for the actual call or data session.</p>
 
     <div class="fact-card"><span class="fact-card-emoji">🔄</span><span class="fact-card-text"><strong>The names change across generations, the concept doesn't.</strong> GSM's BCCH/PCH/RACH/SDCCH/TCH model has direct conceptual cousins in LTE (PRACH for random access, RRC signaling for control) and 5G NR (SSB for broadcast/synchronization, PDSCH for the actual data) — the channel <em>types</em> persist even as the specific channel <em>names</em> evolve.</span></div>
+
+    <h3>Why RACH specifically matters for EW</h3>
+    <p>Because RACH is how every new connection attempt starts, it's also a single point every device competing for the network has to pass through — multiple devices can try to access at nearly the same moment and collide, which is why RACH includes backoff/retry logic. It's also why denying just the RACH (rather than the whole traffic channel) is a meaningfully different EA effect: existing calls already on a traffic channel can keep running, while any new device trying to join the network gets locked out entirely.</p>
     <div class="tryit"><strong>▶ See it live:</strong> the <em>Cellular</em> interactive tool has a full BCCH/logical-channel map across 2G, 4G, and 5G side by side.</div>
   </div>
 </div>

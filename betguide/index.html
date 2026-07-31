@@ -137,6 +137,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🌡️</span><span class="fact-card-text"><strong>Resistance makes heat.</strong> When current fights through resistance, energy turns into heat. That's exactly how a toaster, a hair dryer, and an old light bulb work on purpose.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">⚠️</span><span class="fact-card-text"><strong>It's the current that hurts you</strong>, not the voltage alone. Voltage provides the push, but it's the amount of current through the body that's dangerous — which is why even low voltages can matter in the wrong conditions.</span></div>
 
+    <h3>Worked example: all four quantities in one circuit</h3>
+    <p>A 12V battery pushes current through a 4Ω resistor. Using Ohm's Law (covered fully in the next tab) to find current, then the power formula to find power:</p>
+    <div class="formula">I = V ÷ R = 12 ÷ 4 = 3A &nbsp;&nbsp;&nbsp;&nbsp; P = V × I = 12 × 3 = 36W</div>
+    <p>Every one of the "Big 4" shows up in that single circuit: 12V pushing, 3A flowing, 4Ω resisting, 36W of work being done (as heat, in a plain resistor). This is the exact calculation the Circuit Bench tool runs live every time you place a battery and resistor.</p>
+
     <div class="tryit"><strong>▶ Try the interactive:</strong> open the <em>BET Components</em> and <em>Circuit Bench</em> tools to see these quantities change live as you build circuits.</div>
   </div>
 
@@ -167,6 +172,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>Power (watts) is voltage times current. Because of Ohm's Law you can also write it as <strong>P = I²R</strong> or <strong>P = V²÷R</strong> — three doors to the same room. This is how you figure out if a resistor will run cool or cook itself.</p>
 
     <div class="fact-card"><span class="fact-card-emoji">🎓</span><span class="fact-card-text"><strong>Who was Ohm?</strong> Georg Ohm published this relationship in 1827. At first his work was dismissed — today his name is a unit of measurement used billions of times a day.</span></div>
+
+    <h3>Worked example: picking the right power formula</h3>
+    <p>Say you only know a resistor's value (220Ω) and the current through it (0.1A) — you don't have voltage directly. Rather than find voltage first, jump straight to the power formula that only needs the two values you already have:</p>
+    <div class="formula">P = I²R = (0.1)² × 220 = 0.01 × 220 = 2.2W</div>
+    <p>This is exactly why P = I²R and P = V²÷R exist alongside P = V × I — pick whichever formula matches the two quantities you actually have, instead of calculating an extra step you don't need. This also matters practically: it's how you check whether a resistor's wattage rating is high enough before it overheats.</p>
     <div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-emoji">🔬</span><div><div class="card-title">Ready for reactive circuits?</div><div class="card-sub">resistors, capacitors, inductors together</div></div></div><p style="margin-bottom:0">This page keeps Ohm's Law to simple resistive circuits. For capacitors, inductors, phase relationships, and impedance in AC circuits, the <a href="../physics1/">AC Circuit Theory &amp; Impedance</a> tool builds directly on this with a lesson-aligned interactive calculator.</p></div>
   </div>
 
@@ -225,6 +235,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><td><strong>One part fails</strong></td><td>Whole circuit stops</td><td>Only that branch stops</td></tr>
     </table>
 
+    <h3>Worked example: adding up resistance both ways</h3>
+    <p>Two 100Ω resistors in <strong>series</strong>: just add them directly.</p>
+    <div class="formula">R_total = 100 + 100 = 200Ω</div>
+    <p>The same two 100Ω resistors in <strong>parallel</strong>: use the parallel resistance formula instead, which is why parallel combinations always come out lower than either individual resistor.</p>
+    <div class="formula">R_total = (100 × 100) ÷ (100 + 100) = 10,000 ÷ 200 = 50Ω</div>
+    <p>Same two parts, same values — but wiring them differently gives 200Ω one way and 50Ω the other. That's the entire practical payoff of understanding series vs. parallel: it's a design choice that directly controls how much current a circuit draws.</p>
+
     <div class="tryit"><strong>▶ Build one:</strong> the <em>Circuit Bench</em> tool lets you wire resistors in series and parallel and watch the current split and the voltages drop in real time.</div>
   </div>
 
@@ -249,6 +266,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <p style="margin-bottom:0">A tiny electronic tap where a <em>small</em> signal controls a <em>large</em> one. It can switch things on/off or amplify a weak signal. Billions of them make up every computer chip.</p></div>
 
     <div class="fact-card"><span class="fact-card-emoji">🎨</span><span class="fact-card-text"><strong>Resistor color code:</strong> the bands read as digits and a multiplier. A handy mnemonic for 0–9 is <strong>B</strong>lack <strong>B</strong>rown <strong>R</strong>ed <strong>O</strong>range <strong>Y</strong>ellow <strong>G</strong>reen <strong>B</strong>lue <strong>V</strong>iolet <strong>G</strong>ray <strong>W</strong>hite.</span></div>
+
+    <h3>Worked example: reading a real resistor</h3>
+    <p>A resistor with bands <strong>Brown, Black, Red</strong>: the first two bands are digits (Brown=1, Black=0 → "10"), and the third band is the multiplier (Red = ×100).</p>
+    <div class="formula">10 × 100 = 1,000Ω = 1kΩ</div>
+    <p>That's it — the same three-step read (digit, digit, multiplier) works for every standard resistor, which is exactly why the Circuit Bench tool can show you a resistor's color bands and value side by side.</p>
     <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>Why LEDs need a resistor:</strong> an LED will grab as much current as it can and burn out. A small series resistor limits the current to a safe level — a classic first circuit to build.</span></div>
 
     <div class="tryit"><strong>▶ Play with these:</strong> the <em>BET Components</em> tool has interactive diodes, LED circuits, rectifiers, and a transistor you can switch on and off.</div>

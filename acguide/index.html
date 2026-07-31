@@ -196,6 +196,9 @@ tr:hover td{background:var(--table-row-hover)}
       Think of a see-saw: push down hard with a small motion on the long end, and the short end goes up with a small force but a huge motion. A transformer trades voltage and current against each other the exact same way — you can't get more of both out than you put in.
     </div>
 
+    <h3>Real transformers aren't perfectly ideal</h3>
+    <p>The turns-ratio math above assumes a perfect transformer — no losses at all. Real transformers lose a small amount of energy as heat, from two main sources: <strong>core losses</strong> (the iron core itself heats up slightly from the constantly-reversing magnetic field) and <strong>copper losses</strong> (ordinary resistive heating in the winding wire itself, following P=I²R from the electricity fundamentals). Well-designed transformers are still highly efficient — typically well above 90% — but "100% efficient" is always the simplified teaching model, not the literal real-world result.</p>
+
     <a class="tryit" href="../aclab/">Try the turns-ratio calculator &rarr;</a>
   </div>
 
@@ -225,6 +228,9 @@ tr:hover td{background:var(--table-row-hover)}
 
     <p>This is why utility-scale generation is fundamentally AC: it's simply the natural output of a spinning coil in a magnetic field. Getting DC out of a rotating generator requires additional hardware (a commutator, or a separate rectifier) to convert that naturally-occurring AC afterward.</p>
 
+    <h3>What controls how much voltage gets induced</h3>
+    <p>Three things directly increase the voltage a generator produces: a <strong>stronger magnetic field</strong>, <strong>more turns of wire</strong> in the coil, and <strong>faster rotation</strong>. This is exactly why a generator's output voltage sags under heavy mechanical load (the rotation slows slightly) and why generator design is a constant trade-off between magnet strength, coil size, and how fast the prime mover can realistically spin the shaft.</p>
+
     <h2>What Actually Spins the Coil</h2>
     <p>The generator itself doesn't care what turns the shaft — a steam turbine, a diesel engine, falling water, or a gas turbine are all just different ways of supplying the mechanical rotation electromagnetic induction needs. The <span class="pill pill-g">generator</span> converts mechanical motion into electrical power; whatever spins it is a separate engineering problem.</p>
   </div>
@@ -241,6 +247,9 @@ tr:hover td{background:var(--table-row-hover)}
       Spin a generator's shaft and you get electricity out. Feed electricity into that exact same kind of machine and its shaft spins instead. Many real devices — like the alternator/starter systems in some vehicles — are built to do literally both jobs.
     </div>
 
+    <h3>Back-EMF: the motor generating against itself</h3>
+    <p>Here's where the "same machine, opposite job" idea becomes measurable: a spinning motor is <em>also</em> a generator the whole time it's running, since its coil is moving through a magnetic field exactly like the Generators tab describes. That self-generated voltage — called <strong>back-EMF</strong> — opposes the voltage being fed into the motor. A motor at rest has no back-EMF and draws its highest current (this is exactly why motors draw a large inrush current at startup); as it spins faster, back-EMF rises and opposes more of the supply voltage, which is why running current settles much lower than starting current.</p>
+
     <h2>DC Motors vs. AC Motors</h2>
     <table>
       <tr><th></th><th>DC Motor</th><th>AC Motor</th></tr>
@@ -251,6 +260,9 @@ tr:hover td{background:var(--table-row-hover)}
 
     <h2>Torque</h2>
     <p><span class="pill pill-m">Torque</span> is the twisting/rotational force a motor produces — the thing that actually gets a load moving and keeps it moving against resistance. It depends on both the strength of the magnetic field and the amount of current flowing through the coil; more of either generally means more torque, up to the physical limits of the motor's design.</p>
+
+    <h3>Stalled = maximum torque, maximum risk</h3>
+    <p>Connect the back-EMF idea from earlier: if a motor's shaft is physically prevented from turning — jammed, overloaded, or stalled — back-EMF can never develop, since back-EMF only exists while the coil is actually moving through the field. With nothing opposing the supply voltage, current (and therefore torque) hits its absolute maximum. That's exactly why a stalled motor is a real hazard: it's producing its highest possible torque and drawing its highest possible current at the same moment, which is exactly the condition motor overload protection is designed to catch before windings overheat and burn out.</p>
 
     <div class="card" style="margin-top:24px">
       <h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2>

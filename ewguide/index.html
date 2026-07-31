@@ -117,6 +117,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <div class="fact-card"><span class="fact-card-emoji">🔇</span><span class="fact-card-text"><strong>The best signal is often no signal.</strong> If you transmit, you can be located. Good EW discipline (EMCON) means knowing when to stay silent so you don't hand the enemy your position.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>It's non-kinetic.</strong> EW can stop a drone or blind a radar without firing a shot — using energy and information instead of bullets.</span></div>
+    <h3>Spectrum management: your own side is crowded too</h3>
+    <p>The spectrum isn't just contested with the enemy — it's crowded with your own side's radios, radars, drones, and jammers all trying to use it at once. <strong>Electromagnetic spectrum management (EMSO)</strong> is the deconfliction process that assigns frequencies so friendly systems don't interfere with each other. A jammer that isn't coordinated with friendly radio nets can knock out your own communications just as easily as the enemy's — which is exactly why EW planning always happens alongside spectrum management, not separately from it.</p>
+
     <div class="fact-card"><span class="fact-card-emoji">📖</span><span class="fact-card-text"><strong>Doctrine:</strong> the core references are JP 3-85 (Joint Electromagnetic Spectrum Operations) and FM 3-12 (Cyberspace Operations and Electromagnetic Warfare). Always confirm the current version.</span></div>
   </div>
 
@@ -142,6 +145,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><td><strong style="color:var(--ea-color)">EA — Attack</strong></td><td>Deny the enemy the spectrum</td><td>Jamming, GPS spoofing, deception</td></tr>
       <tr><td><strong style="color:var(--ep-color)">EP — Protect</strong></td><td>Keep your own systems working</td><td>Frequency hopping, encryption, EMCON</td></tr>
     </table>
+
+    <h3>Worked scenario: a convoy under threat</h3>
+    <p>A patrol detects an unfamiliar signal on a frequency known to trigger roadside IEDs. <strong>ES</strong> identifies the frequency and rough bearing. <strong>EA</strong> jams that specific frequency band as the convoy passes the threat area. <strong>EP</strong> — built in beforehand — means the convoy's own radios were frequency-hopping and encrypted, so the friendly jamming doesn't knock out friendly communications in the process. Miss any one leg and the plan breaks: no ES means EA is jamming blind, no EP means the convoy's own radios go down right alongside the threat.</p>
 
     <div class="fact-card"><span class="fact-card-emoji">🔄</span><span class="fact-card-text"><strong>They work together.</strong> ES finds the target and hands it to EA to attack — while EP keeps your own gear running through the whole fight. It's a loop, not three separate boxes.</span></div>
 
@@ -173,6 +179,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><td><strong>Barrage</strong></td><td>Spreads power across a wide band</td><td>Covers many channels at once — but weaker on each one</td></tr>
     </table>
 
+    <h3>Worked example: will the signal burn through?</h3>
+    <p>A friendly radio transmits at a strength the enemy jammer can't overcome as long as the friendly transmitter stays close enough. As the friendly unit closes distance with its own base station, its signal gets stronger relative to the jammer (path loss favors whoever is closer) — at some point the wanted signal "burns through" the jamming even though the jammer's power never changed. This is exactly why jamming range and communication range are a moving target, not a fixed one: closing distance to your own station is itself a counter-jamming tactic.</p>
+
     <div class="fact-card"><span class="fact-card-emoji">🎯</span><span class="fact-card-text"><strong>Jamming cuts both ways.</strong> A jammer is a very loud transmitter — which makes it easy to detect and locate. Using EA can expose your own position, so it's a deliberate trade-off.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🚁</span><span class="fact-card-text"><strong>Counter-drone:</strong> jamming a drone's control link makes it lose contact with its pilot — then it falls back to its failsafe (return home, hover, or land). Jam its GPS too and it can't navigate at all.</span></div>
   </div>
@@ -195,6 +204,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
 
     <div class="fact-card"><span class="fact-card-emoji">📐</span><span class="fact-card-text"><strong>Geometry matters.</strong> If your sensors are almost in line with the target, the bearings cross at a shallow angle and the fix is fuzzy. Spread the sensors out and the intersection sharpens.</span></div>
+    <h3>Why geometry quality matters so much</h3>
+    <p>Two bearings crossing at close to 90° pin down a location tightly — a small bearing error only shifts the fix a little. But if both sensors sit almost on the same line from the target, the bearings cross at a very shallow angle, and that same small bearing error swings the fix wildly along the length of that shallow intersection. This is exactly why DF sensor placement is planned, not arbitrary — spreading sensors out to get closer to a 90° cut is worth more than adding a third sensor in a bad spot.</p>
+
     <div class="fact-card"><span class="fact-card-emoji">⏱️</span><span class="fact-card-text"><strong>Modern DF adds timing.</strong> Systems compare the tiny differences in <em>when</em> and <em>at what frequency</em> a signal arrives at each sensor (TDOA/FDOA) to pin a location to a precise grid.</span></div>
 
     <div class="tryit"><strong>▶ Practice it:</strong> the <em>DF Trainer</em> lets you place sensors and intersect bearings to locate an emitter yourself.</div>
@@ -222,6 +234,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </table>
 
     <div class="fact-card"><span class="fact-card-emoji">🛰️</span><span class="fact-card-text"><strong>Why GPS is so easy to overpower:</strong> the satellites are ~20,000 km away, so their signal arrives incredibly weak — below the background noise. A small transmitter nearby can easily drown it out or impersonate it.</span></div>
+
+    <h3>Defending against both</h3>
+    <p>Because jamming and spoofing exploit the same underlying weakness (a very faint, predictable signal), the countermeasures overlap too: military GPS receivers use encrypted signal formats that are far harder to convincingly fake, directional/null-steering antennas that can reject signals arriving from an unexpected direction (like a spoofer on the ground instead of satellites overhead), and cross-checking GPS position against inertial navigation or other sensors — so a receiver can flag "this doesn't match what my other instruments say" rather than blindly trusting a spoofed fix.</p>
     <div class="fact-card"><span class="fact-card-emoji">🛡️</span><span class="fact-card-text"><strong>Protection (EP):</strong> anti-jam antennas, inertial navigation as a backup, and signal-authentication techniques help systems resist GPS attacks.</span></div>
 
     <div class="tryit"><strong>▶ See the difference:</strong> the <em>GPS Jamming vs Spoofing</em> trainer shows both attacks side by side.</div>

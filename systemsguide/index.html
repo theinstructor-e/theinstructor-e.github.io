@@ -108,6 +108,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </table>
     <div class="fact-card"><span class="fact-card-emoji">🌐</span><span class="fact-card-text"><strong>GEO satellites look motionless.</strong> At about 35,786 km they orbit exactly once per day — matching Earth's spin — so from the ground they appear to hang in one place. That's why a satellite dish can be bolted down and never moved.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">⏱️</span><span class="fact-card-text"><strong>Higher = slower.</strong> A low satellite races around in ~90 minutes; a GEO satellite takes 24 hours. The farther out, the weaker gravity's pull and the slower it needs to go.</span></div>
+
+    <h3>Why this matters for tracking a satellite</h3>
+    <p>A 90-minute LEO orbit means the satellite crosses your entire sky and disappears again in just minutes — useful for quick imaging passes, but it also means you only get a brief window of contact before it's gone and you're waiting for the next pass. A GEO satellite trades that fast pass for a fixed, always-available link — no tracking required at all, which is exactly why it's the right choice for things like broadcast TV and always-on communications relays, while LEO is the right choice when you need to physically image a location up close.</p>
     <div class="tryit"><strong>▶ Explore it:</strong> the <em>Orbits</em> tool has a 2D map and a 3D Earth to spin.</div>
   </div>
 
@@ -126,6 +129,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><td><strong>Ka</strong></td><td>26–40 GHz</td><td>High-throughput broadband — most rain-sensitive</td></tr>
     </table>
     <div class="fact-card"><span class="fact-card-emoji">⏳</span><span class="fact-card-text"><strong>GEO has a noticeable delay.</strong> A signal to a GEO satellite and back travels ~72,000 km, adding about a quarter-second of lag each way — which is why some satellite calls feel "walkie-talkie" slow.</span></div>
+
+    <h3>Where that number actually comes from</h3>
+    <p>Radio waves travel at the speed of light — the same c=fλ relationship from the RF physics tools. One-way distance to GEO is ~35,786 km; round-trip through a relay is roughly double that plus the return leg, close to 72,000 km total:</p>
+    <div class="formula">delay = distance ÷ speed = 72,000 km ÷ 300,000 km/s ≈ 0.24 seconds</div>
+    <p>That's a single hop. A phone call bounced satellite-to-satellite-to-ground can stack multiple hops of this same delay, which is exactly why LEO constellations (much closer, much less delay per hop) have become attractive for latency-sensitive links despite needing many more satellites to maintain constant coverage.</p>
     <div class="fact-card"><span class="fact-card-emoji">🌧️</span><span class="fact-card-text"><strong>"Rain fade" is real.</strong> Higher bands (Ku, Ka) carry more data but are absorbed by heavy rain, so links can degrade in storms. Lower bands (L) are steadier.</span></div>
   </div>
 
@@ -141,6 +149,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="card" style="border-top:4px solid var(--c3)"><div class="card-head"><span class="card-emoji">🛰️</span><div><div class="card-title">GPS / navigation</div><div class="card-sub">~1.5 GHz, receive-only</div></div></div>
       <p style="margin-bottom:0">Lets the drone hold position and fly waypoints on its own. Deny it and an autonomous drone can't navigate.</p></div>
     <div class="fact-card"><span class="fact-card-emoji">🎯</span><span class="fact-card-text"><strong>The airframe isn't the target — its links are.</strong> You rarely need to shoot a drone down. Attack the radio links it depends on and it fails on its own.</span></div>
+
+    <h3>The harder case: pre-programmed missions</h3>
+    <p>Everything above assumes a drone actively depends on its links in real time — but a drone flying a <strong>pre-programmed waypoint mission</strong> only needed GPS and control links to load that mission beforehand. Once airborne and following its stored waypoints, jamming the control link does nothing (there's no live pilot connection to interrupt), and even jamming GPS may only push it onto dead-reckoning navigation rather than stopping it outright. This is exactly why "deny the links" isn't a universal counter-drone answer — the drone's actual autonomy level determines which link, if any, is still the weak point.</p>
   </div>
 
   <!-- CUAS -->
@@ -164,6 +175,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><td><strong>Spoof GPS</strong></td><td>Believes a false position → can be walked to a chosen spot</td></tr>
     </table>
     <div class="fact-card"><span class="fact-card-emoji">🤖</span><span class="fact-card-text"><strong>Jamming the control link isn't always enough.</strong> A fully autonomous drone flying on GPS ignores a control-link jammer — so you have to deny its GPS too. That's a favorite teaching point.</span></div>
+
+    <h3>Why "Decide" is really the hinge of the whole chain</h3>
+    <p>Detect, Track, and Identify can all be done wrong without hurting anyone directly — a missed detection just means the chain restarts. Decide is different: acting on bad identification, or without proper clearance, is exactly how friendly drones get shot down (fratricide) or civilian property gets damaged. That's the entire reason positive ID and RoE clearance sit as their own explicit steps rather than being folded into "defeat" — the chain is deliberately built so the irreversible action can't happen until everything upstream of it has been verified.</p>
     <div class="tryit"><strong>▶ Run the engagement:</strong> the <em>C-UAS Trainer</em> lets you pick an effect and watch the drone react.</div>
   </div>
 </div>

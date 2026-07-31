@@ -123,10 +123,18 @@ table.compare tr:hover td{background:var(--table-row-hover)}
 
     <div class="analogy alg">⚖️ <strong>The balance scale idea:</strong> think of an equation like a balance scale — both sides have to stay equal. Whatever you do to one side (add, subtract, multiply, divide), you have to do to the other side too, or the scale tips.</div>
 
+    <h3>Order of operations first</h3>
+    <p>Before rearranging anything, you need to know which operation happens first when a formula has several in a row. The standard order — often remembered as <strong>PEMDAS</strong> (Parentheses, Exponents, Multiplication/Division, Addition/Subtraction) — always goes: parentheses first, then exponents, then multiplication and division (left to right), then addition and subtraction (left to right). Get this wrong and you'll get a completely different, wrong answer even though every individual step looked correct.</p>
+
     <h3>Solving for an unknown</h3>
     <p>Take <strong>a·x + b = c</strong>. To get x by itself, undo the operations in reverse order — subtract b from both sides first, then divide by a:</p>
     <div class="formula">x = (c − b) ÷ a</div>
     <p>This exact pattern is how you'd solve Ohm's Law for resistance (R = V ÷ I) or rearrange a decibel formula to solve for a power ratio instead of the dB value.</p>
+
+    <h3>Worked example: rearranging Ohm's Law</h3>
+    <p>Say you know a circuit runs at <strong>12 volts</strong> and draws <strong>0.5 amps</strong>, and you need the resistance. Ohm's Law is normally written V = I × R, but resistance isn't isolated — so isolate it the same way as the a·x + b = c example above:</p>
+    <div class="formula">V = I × R &nbsp;&nbsp;→&nbsp;&nbsp; R = V ÷ I &nbsp;&nbsp;→&nbsp;&nbsp; R = 12 ÷ 0.5 = 24Ω</div>
+    <p>Notice the process: identify what's isolated (V), identify what you actually need (R), then undo whatever's standing between them (divide both sides by I). Every rearrangement in this whole course — decibels, link budgets, radar range — follows that same three-step logic.</p>
 
     <h3>Exponent rules</h3>
     <div class="quantities">
@@ -135,6 +143,7 @@ table.compare tr:hover td{background:var(--table-row-hover)}
       <div class="q-tile alg"><div class="q-sym">(bᵐ)ⁿ</div><div class="q-name">Power Rule</div><div class="q-desc">A power raised to a power: multiply the exponents. b⁽ᵐˣⁿ⁾</div></div>
       <div class="q-tile alg"><div class="q-sym">b⁻ⁿ</div><div class="q-name">Negative Exponent</div><div class="q-desc">Flips to a fraction: 1 ÷ bⁿ</div></div>
     </div>
+    <p>These rules matter here specifically because RF quantities are usually written in scientific notation — a wavelength might be expressed as 3×10⁸ ÷ 1×10⁹, and you can't simplify that cleanly without the quotient rule (subtract the exponents: 10⁸⁻⁹ = 10⁻¹).</p>
 
     <div class="tryit"><strong>Try it yourself →</strong> the "Math for EW" interactive tool has a live equation solver and exponent calculator on the Algebra tab — plug in your own numbers and watch it solve in real time.</div>
   </div>
@@ -161,6 +170,16 @@ table.compare tr:hover td{background:var(--table-row-hover)}
       <tr><td>Direction-finding (DF)</td><td>Where two bearing lines cross, using triangulation</td></tr>
       <tr><td>Signal phase</td><td>How far along a wave cycle a signal is at a given moment</td></tr>
     </table>
+
+    <h3>Working backwards: inverse trig</h3>
+    <p>SOHCAHTOA gets you a ratio if you already know the angle. But in the field, it's usually the other way around — you know two sides and need the <em>angle itself</em>. That's what the inverse functions are for: arcsin (sin⁻¹), arccos (cos⁻¹), and arctan (tan⁻¹) undo sine, cosine, and tangent to hand back the angle instead of the ratio.</p>
+    <div class="formula">angle = tan⁻¹(opposite ÷ adjacent)</div>
+
+    <h3>Worked example: finding a bearing</h3>
+    <p>A DF sensor sits 4 km north of a baseline and picks up an emitter 3 km east of that same point. What's the bearing angle off the baseline?</p>
+    <p>Opposite = 3 km (east), Adjacent = 4 km (north) — so:</p>
+    <div class="formula">angle = tan⁻¹(3 ÷ 4) = tan⁻¹(0.75) ≈ 36.9°</div>
+    <p>That's exactly the calculation running under the hood every time a DF tool draws a bearing line from a sensor toward a contact — it's arctan on the north/east offset, every time.</p>
 
     <div class="tryit"><strong>Try it yourself →</strong> the Trigonometry tab in the interactive tool draws a live right triangle as you adjust the angle and hypotenuse — watch sin, cos, and tan update in real time.</div>
   </div>
@@ -193,6 +212,14 @@ table.compare tr:hover td{background:var(--table-row-hover)}
     </div>
     <p>Multiplication turns into addition, and division turns into subtraction — this is exactly why logs made hand calculation of huge numbers manageable for centuries before calculators existed, and it's why they show up in decibels next.</p>
 
+    <h3>Which base — and why "ln" shows up too</h3>
+    <p>Log base 10 (written log₁₀ or often just "log") is the natural fit for decibels, since our number system is base 10. But you'll also see <strong>ln</strong> — the natural log, base <em>e</em> (≈2.718) — in formulas describing exponential growth or decay, like signal attenuation over distance or capacitor charge/discharge curves. Same underlying idea, different base for a different kind of problem.</p>
+
+    <h3>Worked example: converting a formula</h3>
+    <p>Suppose you're told a value is log₂(32) and need it in log₁₀ terms for a different formula. Using the change-of-base relationship, any log can be rewritten as a ratio of two log₁₀ values:</p>
+    <div class="formula">log₂(32) = log₁₀(32) ÷ log₁₀(2) = 1.505 ÷ 0.301 = 5</div>
+    <p>Which checks out — 2⁵ = 32. You won't need to do this by hand often, but recognizing that any log can be converted this way explains why calculators only need one "log" button to handle every base.</p>
+
     <div class="tryit"><strong>Try it yourself →</strong> the Logarithms tab in the interactive tool lets you switch between log base 10, natural log (ln), and log base 2, then punch in any number to see the result live.</div>
   </div>
 
@@ -220,6 +247,12 @@ table.compare tr:hover td{background:var(--table-row-hover)}
 
     <h3>dBm, dBi, and friends</h3>
     <p><strong>dBm</strong> is power measured relative to 1 milliwatt — 0 dBm is exactly 1 mW. <strong>dBi</strong> is antenna gain measured relative to a theoretical isotropic radiator (one that spreads energy perfectly evenly in all directions). Both use the exact same dB math from above — they just pick a different reference point to measure against.</p>
+
+    <h3>Why dB is the real workhorse: cascading a signal chain</h3>
+    <p>Here's the payoff for all of this: once a value is in dB, gains and losses down an entire signal chain just <strong>add and subtract</strong> instead of multiplying and dividing — exactly like the log rules from the last tab predicted. That's the whole reason the RF world runs on dB instead of raw watts.</p>
+    <p>Say a transmitter puts out <strong>30 dBm</strong>, loses <strong>3 dB</strong> in a cable, gains <strong>10 dBi</strong> from the antenna, then loses <strong>6 dB</strong> to free-space path loss by the time it reaches a receiver:</p>
+    <div class="formula">30 − 3 + 10 − 6 = 31 dBm at the receiver</div>
+    <p>Try doing that same chain in raw watts — you'd be multiplying and dividing four separate ratios instead of just adding four numbers. This is exactly the math behind the Power Budget concept covered in the Systems/Space guide.</p>
 
     <div class="tryit"><strong>Try it yourself →</strong> the Decibels tab in the interactive tool has a live ratio-to-dB calculator plus a dBm converter — enter watts or milliwatts and see the dB value update instantly.</div>
   </div>

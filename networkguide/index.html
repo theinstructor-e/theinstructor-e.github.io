@@ -124,6 +124,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="layers" id="osi-layers"></div>
     <div class="fact-card"><span class="fact-card-emoji">🧠</span><span class="fact-card-text"><strong>Mnemonics help.</strong> Top-down (7→1): "<strong>A</strong>ll <strong>P</strong>eople <strong>S</strong>eem <strong>T</strong>o <strong>N</strong>eed <strong>D</strong>ata <strong>P</strong>rocessing." Bottom-up (1→7): "<strong>P</strong>lease <strong>D</strong>o <strong>N</strong>ot <strong>T</strong>hrow <strong>S</strong>ausage <strong>P</strong>izza <strong>A</strong>way."</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📦</span><span class="fact-card-text"><strong>The data changes names as it goes down:</strong> it's called <em>Data</em> up top, a <em>Segment</em> at Transport, a <em>Packet</em> at Network, a <em>Frame</em> at Data Link, and raw <em>Bits</em> at Physical.</span></div>
+
+    <h3>What lives at each layer</h3>
+    <table class="compare">
+      <tr><th>Layer</th><th>Example protocol/device</th></tr>
+      <tr><td>7 — Application</td><td>HTTP, DNS, the app itself</td></tr>
+      <tr><td>6 — Presentation</td><td>Encryption (TLS), compression, character encoding</td></tr>
+      <tr><td>5 — Session</td><td>Keeping a login session alive across requests</td></tr>
+      <tr><td>4 — Transport</td><td>TCP, UDP — covered in depth on the TCP/UDP tab</td></tr>
+      <tr><td>3 — Network</td><td>IP addressing, routers</td></tr>
+      <tr><td>2 — Data Link</td><td>MAC addressing, switches</td></tr>
+      <tr><td>1 — Physical</td><td>Cables, radio waves, actual voltage on a wire</td></tr>
+    </table>
+    <p>Knowing the layer a problem lives at tells you where to actually look: "the page won't load" could be Layer 7 (the app is down), Layer 3 (no route to the server), or Layer 1 (the cable's unplugged) — and the fix is completely different depending on which.</p>
     <div class="tryit"><strong>▶ Walk the layers:</strong> the <em>Networking</em> tool animates data moving down and up the OSI stack.</div>
   </div>
 
@@ -148,6 +161,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </table>
 
     <div class="fact-card"><span class="fact-card-emoji">🌍</span><span class="fact-card-text"><strong>We ran out of IPv4.</strong> With only ~4.3 billion addresses, the world outgrew IPv4. IPv6 uses 128 bits — written as 8 groups of hex digits like <span class="addr">2001:0db8:85a3::8a2e:0370:7334</span> — enough for an almost unimaginable number of devices.</span></div>
+    <h3>How MAC and IP actually connect: ARP</h3>
+    <p>A device knows the destination IP address, but Layer 2 needs a MAC address to actually deliver a frame on the local network. <strong>ARP (Address Resolution Protocol)</strong> is the "who has this IP?" broadcast that solves that gap — a device shouts the question to everyone on the segment, and whoever owns that IP replies with its MAC address. That answer gets cached briefly so the same question doesn't need repeating for every packet.</p>
+
     <div class="fact-card"><span class="fact-card-emoji">🔁</span><span class="fact-card-text"><strong>TTL stops loops.</strong> Each packet carries a "time to live" that drops by one at every router. Hit zero and it's discarded — so a mis-routed packet can't circle forever.</span></div>
   </div>
 
@@ -180,6 +196,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <div class="fact-card"><span class="fact-card-emoji">➖</span><span class="fact-card-text"><strong>Why "minus 2"?</strong> Usable hosts = 2^(host bits) − 2. Two addresses are reserved in every subnet: the first (the network ID) and the last (the broadcast).</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🚫</span><span class="fact-card-text"><strong>Different subnet = no direct chat.</strong> 192.168.<strong>1</strong>.10 and 192.168.<strong>2</strong>.10 with a /24 mask are on different networks — they can't talk directly without a router, no matter how close they are.</span></div>
+    <h3>Worked example: how many hosts fit?</h3>
+    <p>A /26 network leaves 6 bits for hosts (32 − 26 = 6). The number of addresses is 2⁶ = 64 — but two are always reserved (the network address itself, and the broadcast address), leaving 62 usable host addresses. That same math — 2^(host bits) − 2 — works for any mask size.</p>
+
     <div class="tryit"><strong>▶ Crunch it:</strong> the <em>Subnetting</em> tool is a full CIDR calculator with worked examples.</div>
   </div>
 
@@ -210,6 +229,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <div class="fact-card"><span class="fact-card-emoji">⏳</span><span class="fact-card-text"><strong>Leases expire.</strong> If your device stays connected, it quietly renews its lease before it runs out. If it disconnects for a long time, the address can be handed to someone else — which is why your IP sometimes changes after being off the network a while.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🛠️</span><span class="fact-card-text"><strong>Static vs. dynamic.</strong> Most devices use DHCP (dynamic) and just get whatever's available. Servers and network gear often use a fixed, manually configured "static" address instead, so their address never changes.</span></div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🚨</span><span class="fact-card-text"><strong>A rogue DHCP server is a real attack.</strong> Because the DORA process trusts whoever answers first, a rogue server on the network can hand out its own gateway/DNS answers instead — quietly routing a victim's traffic through an attacker-controlled path. It's exactly why "which device is answering DHCP requests" matters on a network you're securing.</span></div>
   </div>
 
   <!-- TCP/UDP & PORTS -->
@@ -276,6 +297,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
 
     <div class="fact-card"><span class="fact-card-emoji">💾</span><span class="fact-card-text"><strong>DNS caching speeds things up.</strong> Once your device (or its network) looks up a name, it remembers the answer for a while instead of asking again every time — that's why the second visit to a site is often faster to connect than the first.</span></div>
+
+    <div class="fact-card"><span class="fact-card-emoji">🚨</span><span class="fact-card-text"><strong>DNS spoofing exploits that trust.</strong> If an attacker can answer a DNS query before the real server does, they can hand back a false IP address — quietly redirecting a device to the wrong destination while it thinks it reached the real one. Same underlying weakness as the rogue DHCP server on the previous tab: whoever answers first, wins.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔒</span><span class="fact-card-text"><strong>HTTP vs. HTTPS.</strong> The "S" means the connection is encrypted — anyone intercepting the traffic sees scrambled data instead of readable content. Always prefer HTTPS when it's available.</span></div>
   </div>
 

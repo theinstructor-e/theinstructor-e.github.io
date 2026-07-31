@@ -181,6 +181,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🌧️</span><span class="fact-card-text"><strong>Weather &amp; obstacles:</strong> rain, foliage, walls, and terrain all absorb or block energy — worse at higher frequencies.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Multipath:</strong> a signal can reach you by several bounced paths at once. When they arrive out of step they can partly cancel, causing the signal to flutter or drop — that's fading.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📊</span><span class="fact-card-text"><strong>What matters is signal-to-noise.</strong> A link works when the wanted signal is comfortably above the background noise floor. It's not about raw power — it's about the <em>ratio</em>.</span></div>
+    <h3>The actual formula</h3>
+    <p>The "6 dB per doubling" rule of thumb comes from the <strong>Free-Space Path Loss</strong> formula — the same idea, just precise enough to actually calculate with:</p>
+    <div class="formula">FSPL (dB) = 20·log₁₀(d) + 20·log₁₀(f) + 32.44</div>
+    <p>where d is distance in kilometers and f is frequency in MHz. Both distance <em>and</em> frequency show up with a factor of 20 — meaning doubling either one costs the same ~6 dB, which is exactly where that shortcut rule came from.</p>
+
+    <h3>Worked example</h3>
+    <p>A 100 MHz link at 10 km:</p>
+    <div class="formula">FSPL = 20·log₁₀(10) + 20·log₁₀(100) + 32.44 = 20(1) + 20(2) + 32.44 = 92.44 dB</div>
+    <p>That 92.44 dB is how much weaker the signal arrives compared to how strong it left — this is the number a link budget (from the Decibels math guide) has to overcome with transmit power and antenna gain.</p>
+
+    <h3>Fade margin: the safety cushion</h3>
+    <p>A link "just barely" closing on paper is a bad plan — weather, terrain, and multipath (below) all eat into that margin in practice. <strong>Fade margin</strong> is the extra dB of headroom built in above the minimum needed, specifically to absorb those real-world losses without the link dropping. More margin means a more reliable link, at the cost of needing more transmit power, gain, or a shorter range.</p>
+
     <div class="tryit"><strong>▶ Run the numbers:</strong> the <em>Link Performance</em> tool computes path loss, SNR, and link margin for you.</div>
   </div>
 
@@ -195,6 +208,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <p style="margin-bottom:0">A Yagi (the classic "TV antenna" shape) or dish concentrates energy toward one direction. Much longer reach and better rejection of interference — but you have to aim it.</p></div>
     <div class="fact-card"><span class="fact-card-emoji">➕</span><span class="fact-card-text"><strong>Antennas don't make power — they focus it.</strong> "Gain" (measured in dBi) means concentrating energy into a direction, not creating more of it. A high-gain antenna is just a very good flashlight.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">↕️</span><span class="fact-card-text"><strong>Polarization matters.</strong> If one antenna is vertical and the other horizontal, they hear each other poorly. Matching polarization keeps the link strong — a mismatch can cost 20 dB.</span></div>
+
+    <h3>Beamwidth: the tradeoff for gain</h3>
+    <p>Gain isn't free — it's traded directly against coverage angle. A high-gain directional antenna squeezes energy into a narrow cone (its <strong>beamwidth</strong>), which is exactly why it reaches farther in that direction but hears nothing outside it. Roughly speaking, the higher the gain, the narrower the beamwidth: a wide-coverage antenna might have a 60° beamwidth and modest gain, while a dish antenna might narrow that down to a few degrees for very high gain.</p>
+
+    <h3>Worked example: gain vs. range</h3>
+    <p>Doubling an antenna's gain (a +3 dB improvement) has the same effect on link budget as doubling transmit power — both add 3 dB to the signal arriving at the far end. The difference: transmit power costs more battery and heat; gain costs beamwidth (aiming precision) instead. That's the real decision behind choosing a directional antenna over an omni: you're trading "must aim it" for "reaches farther without more power."</p>
+
+    <h3>Beyond vertical and horizontal: circular polarization</h3>
+    <p>Some systems (GPS and satellite links, notably) use <strong>circular polarization</strong> instead — the wave's orientation rotates continuously as it travels, rather than staying fixed vertical or horizontal. This makes the link far less sensitive to the receiving antenna's exact rotation or to reflections that would otherwise scramble a linear signal's orientation — a major reason GPS satellites transmit circularly polarized signals despite the added antenna complexity.</p>
     <div class="tryit"><strong>▶ Build one:</strong> the <em>Antenna Builder</em> designs a Yagi and shows its gain and pattern.</div>
   </div>
 </div>
