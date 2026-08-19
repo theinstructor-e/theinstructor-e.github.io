@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal ID Trainer — Identify Emissions by Spectral Characteristics</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070a0c;--panel:#0d1318;--panel2:#101820;--b1:#1c2a36;--b2:#25384a;
+  --green:#00ff88;--gdim:#00883a;--gfaint:#001a0d;
+  --amber:#ffb830;--amber-dark:#331e00;--red:#ff4a4a;--blue:#30aaff;--cyan:#00d4ff;--purple:#cc88ff;
+  --txt:#7fa8b8;--txtd:#33505f;--txtb:#d8ecf5;
+  --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+  --glow-g:0 0 12px rgba(0,255,136,.15);
+}
+[data-theme="light"]{
+  --bg:#eef2f0;--panel:#ffffff;--panel2:#f5f7f6;--b1:#d4dcd9;--b2:#b8c4c0;
+  --green:#00884a;--gdim:#00a05a;--gfaint:#e0f5e8;
+  --amber:#b3690a;--amber-dark:#fdeecc;--red:#cc2222;--blue:#0077bb;--cyan:#0088aa;--purple:#8855cc;
+  --txt:#3a5560;--txtd:#8296a0;--txtb:#0a1a20;
+  --glow-g:0 0 12px rgba(0,136,74,.12);
+}
+body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), transparent),var(--bg);
+  color:var(--txt);font-family:var(--ui);font-size:17px;padding:52px 16px 16px;min-height:100vh;-webkit-font-smoothing:antialiased}
+.theme-corner{position:fixed;top:14px;right:14px;z-index:200;background:var(--panel);border:1px solid var(--b2);color:var(--txtd);
+  font-family:var(--ui);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:7px 15px;
+  cursor:pointer;transition:all .15s;border-radius:3px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.theme-corner:hover{color:var(--txt);border-color:#3a5266}
+
+.hdr{margin-bottom:14px;border-bottom:1px solid var(--b2);padding-bottom:12px}
+.hdr .title{font-size:22px;font-weight:800;color:var(--txtb);letter-spacing:.04em}
+.hdr .title span{color:var(--green);text-shadow:var(--glow-g)}
+.hdr .sub{font-family:var(--mono);font-size:11px;color:var(--txtd);letter-spacing:.05em;margin-top:4px}
+.mode-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.mbtn{background:var(--panel);border:1px solid var(--b2);color:var(--txtd);font-family:var(--ui);
+  font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:8px 16px;cursor:pointer;
+  transition:all .15s;border-radius:3px}
+.mbtn:hover{color:var(--txt);border-color:#3a5266}
+.mbtn.act{color:var(--green);border-color:var(--gdim);background:var(--gfaint);box-shadow:var(--glow-g)}
+.related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 14px;font-family:var(--mono);font-size:10.5px}
+.related-label{color:var(--txtd);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.related-bar a{color:var(--cyan);text-decoration:none;border:1px solid var(--b2);padding:3px 10px;border-radius:12px;transition:.15s;white-space:nowrap}
+.related-bar a:hover{border-color:var(--cyan);background:var(--panel2)}
+
+.panel{display:none}
+.panel.act{display:block}
+.layout{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.main-col{flex:1;min-width:280px;max-width:100%;display:flex;flex-direction:column;gap:12px}
+.side-col{width:340px;max-width:100%;flex-shrink:0;display:flex;flex-direction:column;gap:9px}
+
+.card{background:var(--panel2);border:1px solid var(--b2);border-radius:5px;overflow:hidden}
+.card-hdr{background:var(--panel);border-bottom:1px solid var(--b2);padding:9px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card-title{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.07em}
+.card-body{padding:14px 16px}
+
+#waterfallCanvas{width:100%;height:auto;display:block;background:#000;cursor:default}
+
+.freq-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--txtd);
+  padding:4px 14px;border-top:1px solid var(--b1)}
+
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.choice-grid{grid-template-columns:1fr}}
+.choice-btn{background:var(--panel);border:1px solid var(--b2);color:var(--txt);font-family:var(--ui);
+  font-size:13px;font-weight:600;padding:10px 12px;cursor:pointer;transition:all .15s;border-radius:4px;text-align:left}
+.choice-btn:hover:not(:disabled){border-color:var(--cyan);color:var(--txtb)}
+.choice-btn:disabled{cursor:default}
+.choice-btn.correct{border-color:var(--gdim);background:var(--gfaint);color:var(--green)}
+.choice-btn.wrong{border-color:var(--red);background:rgba(255,74,74,.08);color:var(--red)}
+
+.reveal-box{display:none;margin-top:12px;padding:12px 14px;background:var(--panel);border:1px solid var(--b2);border-radius:4px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--txt)}
+.reveal-box.show{display:block}
+.reveal-box .rname{color:var(--txtb);font-size:14px;font-weight:700;margin-bottom:6px}
+.reveal-box .clue{padding-left:14px;position:relative;margin-top:3px}
+.reveal-box .clue::before{content:'▸';position:absolute;left:0;color:var(--cyan)}
+
+.score-row{display:flex;gap:10px}
+.score-box{flex:1;background:var(--panel);border:1px solid var(--b1);border-radius:4px;padding:10px 12px;text-align:center}
+.score-box .k{font-family:var(--mono);font-size:9.5px;color:var(--txtd);letter-spacing:.05em;text-transform:uppercase}
+.score-box .v{font-family:var(--mono);font-size:20px;color:var(--txtb);font-weight:700;margin-top:2px}
+
+.nextbtn{width:100%;background:var(--gfaint);border:1px solid var(--gdim);color:var(--green);font-family:var(--ui);
+  font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:11px;cursor:pointer;
+  border-radius:4px;margin-top:10px;display:none}
+.nextbtn.show{display:block}
+.nextbtn:hover{background:rgba(0,255,136,.12)}
+
+.instr{background:linear-gradient(180deg,#061008,#050c07);border:1px solid #1a4428;padding:11px 13px;border-radius:5px}
+[data-theme="light"] .instr{background:linear-gradient(180deg,#eefaf0,#e4f5e8);border-color:#a8d8b8}
+.instr-hdr{font-size:11px;font-weight:800;color:var(--green);letter-spacing:.05em;margin-bottom:7px;font-family:var(--mono)}
+.instr-body{font-size:12.5px;color:var(--txt);line-height:1.7}
+.instr-body strong{color:var(--amber)}
+.instr-body em{color:var(--cyan);font-style:normal}
+
+/* Reference tab */
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.ref-card{background:var(--panel2);border:1px solid var(--b2);border-radius:5px;padding:13px 15px}
+.ref-card .rc-name{font-size:14.5px;font-weight:700;color:var(--txtb);margin-bottom:6px}
+.ref-card .rc-row{font-family:var(--mono);font-size:11px;color:var(--txt);margin-top:4px;display:flex;gap:6px}
+.ref-card .rc-row b{color:var(--txtd);min-width:78px;flex-shrink:0;font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:9.5px}
+
+/* Explore tab */
+.explore-select{width:100%;background:var(--panel);border:1px solid var(--b2);color:var(--txtb);font-family:var(--ui);
+  font-size:14px;font-weight:600;padding:9px 12px;border-radius:4px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<button class="theme-corner" onclick="toggleTheme()" id="btn-theme">☀ Light Mode</button>
+
+<div class="hdr">
+  <div class="title">Signal ID Trainer <span>— Identify Emissions by Spectral Characteristics</span></div>
+  <div class="sub">Read the waterfall — bandwidth, duty cycle, and hopping behavior all tell you what you're looking at before you ever see a label</div>
+  <div class="mode-btns">
+    <button class="mbtn act" onclick="setPanel('quiz')" id="btn-quiz">ID Quiz</button>
+    <button class="mbtn" onclick="setPanel('reference')" id="btn-reference">Signal Reference</button>
+    <button class="mbtn" onclick="setPanel('explore')" id="btn-explore">Free Explore</button>
+  </div>
+  <div class="related-bar">
+    <span class="related-label">Related:</span>
+    <a href="../rfspect/">📊 RF Spectrum Reference</a>
+    <a href="../rftheory/">📡 RF Theory</a>
+    <a href="../EW Principles/">📖 EW Principles</a>
+    <a href="../Physics2/">🌊 Wave Behavior &amp; Propagation</a>
+  </div>
+</div>
+
+<!-- ID QUIZ -->
+<div class="panel act" id="panel-quiz">
+  <div class="layout">
+    <div class="main-col">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">WATERFALL DISPLAY — LIVE</span>
+          <span class="card-title" id="freqWindowLabel" style="color:var(--txt)"></span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <canvas id="waterfallCanvas" width="700" height="360"></canvas>
+          <div class="freq-axis">
+            <span id="freqLo">—</span>
+            <span id="freqMid">—</span>
+            <span id="freqHi">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="instr">
+        <div class="instr-hdr">▶ HOW TO READ IT</div>
+        <div class="instr-body">
+          Time scrolls downward — newest at the top. <strong>Width</strong> on the display is bandwidth. <strong>Gaps</strong> in time mean the emitter isn't transmitting continuously. A signal whose position <em>jumps around</em> between frames is hopping frequency. Watch a few seconds before answering — duty cycle and hopping behavior only show up over time, not in a single instant.
+        </div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="score-row">
+        <div class="score-box"><div class="k">Score</div><div class="v" id="scoreVal">0 / 0</div></div>
+        <div class="score-box"><div class="k">Streak</div><div class="v" id="streakVal">0</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">What is this signal?</span></div>
+        <div class="card-body">
+          <div class="choice-grid" id="choiceGrid"></div>
+          <div class="reveal-box" id="revealBox"></div>
+          <button class="nextbtn" id="nextBtn" onclick="nextQuestion()">Next Signal →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNAL REFERENCE -->
+<div class="panel" id="panel-reference">
+  <div class="instr" style="margin-bottom:12px">
+    <div class="instr-hdr">▶ ABOUT THIS REFERENCE</div>
+    <div class="instr-body">Every signal type used in the ID Quiz, with the characteristics that actually distinguish it — study this before testing yourself, or use it to check your reasoning afterward.</div>
+  </div>
+  <div class="ref-grid" id="refGrid"></div>
+</div>
+
+<!-- FREE EXPLORE -->
+<div class="panel" id="panel-explore">
+  <div class="layout">
+    <div class="main-col">
+      <select class="explore-select" id="exploreSelect" onchange="exploreChange()"></select>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">WATERFALL DISPLAY — LIVE</span></div>
+        <div class="card-body" style="padding:0">
+          <canvas id="exploreCanvas" width="700" height="360"></canvas>
+          <div class="freq-axis">
+            <span id="exFreqLo">—</span>
+            <span id="exFreqMid">—</span>
+            <span id="exFreqHi">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Characteristics</span></div>
+        <div class="card-body" id="exploreInfo" style="font-family:var(--mono);font-size:12.5px;line-height:1.8"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── SIGNAL LIBRARY ─────────────────────────────────────────────
+   Each signal defined by real, teachable characteristics. "pattern" drives
+   the waterfall renderer; everything else is for the reference/reveal panels. */
+const SIGNALS = [
+  { id:'am', name:'AM Broadcast Radio', freq:'530 kHz – 1.7 MHz', bw:'Narrow (~10 kHz)',
+    duty:'Continuous', pattern:'narrow-continuous',
+    clues:['Very narrow bandwidth — just wide enough for voice/music audio','Always on, 100% duty cycle','Fixed center frequency, never hops'] },
+  { id:'fm', name:'FM Broadcast Radio', freq:'88 – 108 MHz', bw:'Wide (~200 kHz)',
+    duty:'Continuous', pattern:'wide-continuous',
+    clues:['Noticeably wider than AM — FM trades bandwidth for better audio fidelity','Always on, 100% duty cycle','Fixed center frequency'] },
+  { id:'cw', name:'CW / Morse Carrier', freq:'Any (HF common)', bw:'Extremely narrow (<100 Hz)',
+    duty:'Keyed — irregular human-speed on/off', pattern:'thin-keyed',
+    clues:['The narrowest signal type on the display — barely a hairline','On/off pattern is irregular and slow — a human keying it by hand','No bandwidth to speak of; all the "information" is in the timing, not the width'] },
+  { id:'radar', name:'Pulsed Radar', freq:'Varies (S/C/X-band common)', bw:'Wide during each pulse',
+    duty:'Very low duty cycle, high PRF', pattern:'radar-pulse',
+    clues:['Regular, evenly-spaced horizontal pulses — that spacing is the Pulse Repetition Frequency (PRF)','Each individual pulse is brief but wideband','Off far more than it\'s on — classic low duty cycle'] },
+  { id:'lmr', name:'Land Mobile Radio (Push-to-Talk)', freq:'VHF/UHF (150–174, 450–470 MHz)', bw:'Narrowband FM (~12.5–25 kHz)',
+    duty:'Intermittent — keys on only while someone is talking', pattern:'narrow-intermittent',
+    clues:['Narrow like AM, but comes and goes in irregular blocks — not always-on','Each "on" block is much longer than a radar pulse — this is speech, not a pulse train','No hopping — stays on one channel'] },
+  { id:'wifi', name:'Wi-Fi (802.11)', freq:'2.4 GHz / 5 GHz', bw:'Wide (20–80 MHz channels)',
+    duty:'Bursty — packet by packet', pattern:'wide-bursty',
+    clues:['Wide channel, but broken into short, irregular bursts (individual packets)','Bursts are much shorter and more frequent than an LMR transmission','Stays on one channel — no hopping'] },
+  { id:'bt', name:'Bluetooth', freq:'2.4 GHz ISM band', bw:'Narrow per-hop (~1 MHz)',
+    duty:'Frequency-hopping — very fast, up to 1600 hops/sec', pattern:'freq-hop-fast',
+    clues:['Narrow at any instant, but the position jumps almost every single frame','Hopping is fast and covers nearly the whole ISM band','This rapid a hop rate is Bluetooth\'s signature — few things hop this fast'] },
+  { id:'lte', name:'Cellular (LTE/5G)', freq:'Multiple bands, 600 MHz – 6 GHz', bw:'Wide, structured (1.4–100 MHz)',
+    duty:'Continuous with frame structure', pattern:'wide-structured',
+    clues:['Wide and mostly continuous, but with a subtle repeating texture from frame structure','Doesn\'t fully go silent like Wi-Fi bursts do — closer to always-on','Occupies a defined, engineered channel width'] },
+  { id:'gps', name:'GPS L1', freq:'1575.42 MHz', bw:'Wide but extremely low power',
+    duty:'Continuous', pattern:'spread-faint',
+    clues:['Wide like a data signal, but very faint — deliberately spread thin, near the noise floor','Always on, never varies — satellites transmit continuously','This combination (wide + always-on + faint) is the giveaway for spread-spectrum nav signals'] },
+  { id:'satcom', name:'Satellite Downlink', freq:'Various (C/Ku/Ka-band common)', bw:'Narrow to moderate',
+    duty:'Continuous, very stable', pattern:'narrow-steady',
+    clues:['Narrow and rock-steady — none of the amplitude wobble a terrestrial signal often shows','Always on — satellites don\'t key up and down','Fixed position, no hopping'] },
+  { id:'jam', name:'Barrage Noise Jammer', freq:'Targets a specific band', bw:'Very wide, high power',
+    duty:'Continuous, fills the entire band', pattern:'wide-noise',
+    clues:['Fills nearly the whole displayed width — much wider than any legitimate narrowband user','Solid and continuous — brute-force power over finesse','The goal is denial, not communication, so there\'s no data structure to see'] },
+  { id:'fhss', name:'Frequency-Hopping Radio (Military)', freq:'Wide hopping range', bw:'Narrow per-hop',
+    duty:'Hopping — slower, more irregular than Bluetooth', pattern:'freq-hop-slow',
+    clues:['Narrow at any instant and jumps position — but slower and more irregular than Bluetooth\'s clockwork pattern','Hop timing is deliberately less predictable — that unpredictability is the anti-jam design goal','Covers a wide range over time despite being narrow at any given moment'] },
+];
+
+let quizIdx = -1;
+let score = 0, total = 0, streak = 0;
+let answered = false;
+let waterfallState = null; // {pattern, rows: [], hopX: null, hopCounter: 0}
+
+/* ── PANEL SWITCHING ─────────────────────────────────────────── */
+function setPanel(name){
+  ['quiz','reference','explore'].forEach(p=>{
+    document.getElementById('btn-'+p).classList.toggle('act', p===name);
+    document.getElementById('panel-'+p).classList.toggle('act', p===name);
+  });
+  if(name==='reference') buildReference();
+  if(name==='explore') initExplore();
+}
+
+/* ── WATERFALL RENDERING ─────────────────────────────────────── */
+function newWaterfallState(pattern){
+  return { pattern, rows: [], hopX: 0.5, hopCounter: 0, onBlockRemaining: 0, offBlockRemaining: 0, phase: 0 };
+}
+
+// Returns an array of {x0,x1,intensity} segments lit for this row, given the pattern and state
+function computeRow(state){
+  const p = state.pattern;
+  state.phase++;
+  const segs = [];
+
+  function pulse(x0,x1,inten){ segs.push({x0,x1,intensity:inten}); }
+
+  switch(p){
+    case 'narrow-continuous':
+      pulse(0.46,0.54,1.0); break;
+    case 'wide-continuous':
+      pulse(0.30,0.70,0.9); break;
+    case 'thin-keyed': {
+      if(state.onBlockRemaining<=0 && state.offBlockRemaining<=0){
+        if(Math.random()<0.5) state.onBlockRemaining = 2+Math.floor(Math.random()*5);
+        else state.offBlockRemaining = 2+Math.floor(Math.random()*6);
+      }
+      if(state.onBlockRemaining>0){ pulse(0.485,0.515,1.0); state.onBlockRemaining--; }
+      else state.offBlockRemaining--;
+      break;
+    }
+    case 'radar-pulse': {
+      const period = 6;
+      if(state.phase % period < 1){ pulse(0.25,0.75,1.0); }
+      break;
+    }
+    case 'narrow-intermittent': {
+      if(state.onBlockRemaining<=0 && state.offBlockRemaining<=0){
+        if(Math.random()<0.35) state.onBlockRemaining = 8+Math.floor(Math.random()*14);
+        else state.offBlockRemaining = 4+Math.floor(Math.random()*14);
+      }
+      if(state.onBlockRemaining>0){ pulse(0.44,0.56,0.95); state.onBlockRemaining--; }
+      else state.offBlockRemaining--;
+      break;
+    }
+    case 'wide-bursty': {
+      if(Math.random()<0.4){ pulse(0.30,0.70,0.85); }
+      break;
+    }
+    case 'freq-hop-fast': {
+      state.hopX = 0.12 + Math.random()*0.76;
+      pulse(state.hopX-0.02, state.hopX+0.02, 1.0);
+      break;
+    }
+    case 'wide-structured': {
+      const on = (state.phase % 9) !== 0;
+      if(on) pulse(0.28,0.72,0.8);
+      break;
+    }
+    case 'spread-faint':
+      pulse(0.22,0.78,0.28); break;
+    case 'narrow-steady':
+      pulse(0.47,0.53,0.85); break;
+    case 'wide-noise':
+      pulse(0.08,0.92,0.85); break;
+    case 'freq-hop-slow': {
+      if(state.hopCounter<=0){
+        state.hopX = 0.12 + Math.random()*0.76;
+        state.hopCounter = 3+Math.floor(Math.random()*7);
+      }
+      state.hopCounter--;
+      pulse(state.hopX-0.025, state.hopX+0.025, 0.95);
+      break;
+    }
+  }
+  return segs;
+}
+
+function stepWaterfall(state, maxRows){
+  state.rows.unshift(computeRow(state));
+  if(state.rows.length>maxRows) state.rows.pop();
+}
+
+function drawWaterfall(canvas, state){
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle = 'rgba(0,255,136,0.06)';
+  ctx.lineWidth = 1;
+  for(let i=1;i<8;i++){ const x=i/8*W; ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+
+  const rowH = H / state.rows.length;
+  state.rows.forEach((segs, i) => {
+    const y = i*rowH;
+    segs.forEach(seg => {
+      const x0 = seg.x0*W, x1 = seg.x1*W;
+      const g = Math.round(180 + 75*seg.intensity);
+      ctx.fillStyle = `rgba(0,${g},${Math.round(120*seg.intensity+40)},${0.55+0.45*seg.intensity})`;
+      ctx.fillRect(x0, y, Math.max(1.2,x1-x0), rowH+0.5);
+    });
+  });
+}
+
+let quizAnimId = null, exploreAnimId = null;
+
+function animateQuiz(){
+  if(waterfallState){
+    stepWaterfall(waterfallState, 90);
+    drawWaterfall(document.getElementById('waterfallCanvas'), waterfallState);
+  }
+  quizAnimId = requestAnimationFrame(()=>setTimeout(animateQuiz, 45));
+}
+
+let exploreState = null;
+function animateExplore(){
+  if(exploreState){
+    stepWaterfall(exploreState, 90);
+    drawWaterfall(document.getElementById('exploreCanvas'), exploreState);
+  }
+  exploreAnimId = requestAnimationFrame(()=>setTimeout(animateExplore, 45));
+}
+
+/* ── QUIZ LOGIC ──────────────────────────────────────────────── */
+function pickFreqWindow(){
+  const windows = [
+    ['500 kHz','1.1 MHz','1.7 MHz'], ['80 MHz','98 MHz','116 MHz'],
+    ['1.2 GHz','1.6 GHz','2.0 GHz'], ['2.3 GHz','2.4 GHz','2.5 GHz'],
+    ['3 GHz','5 GHz','7 GHz'], ['400 MHz','460 MHz','520 MHz'],
+  ];
+  return windows[Math.floor(Math.random()*windows.length)];
+}
+
+function nextQuestion(){
+  quizIdx = Math.floor(Math.random()*SIGNALS.length);
+  answered = false;
+  const sig = SIGNALS[quizIdx];
+
+  waterfallState = newWaterfallState(sig.pattern);
+  for(let i=0;i<90;i++) stepWaterfall(waterfallState, 90); // pre-fill so it doesn't start blank
+
+  const [lo,mid,hi] = pickFreqWindow();
+  document.getElementById('freqLo').textContent = lo;
+  document.getElementById('freqMid').textContent = mid;
+  document.getElementById('freqHi').textContent = hi;
+  document.getElementById('freqWindowLabel').textContent = '';
+
+  // Build 4 choices: correct + 3 random distractors
+  const others = SIGNALS.filter(s=>s.id!==sig.id);
+  const shuffled = others.sort(()=>Math.random()-0.5).slice(0,3);
+  const choices = [sig, ...shuffled].sort(()=>Math.random()-0.5);
+
+  const grid = document.getElementById('choiceGrid');
+  grid.innerHTML = '';
+  choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.name;
+    btn.onclick = () => selectAnswer(c.id, btn);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('revealBox').classList.remove('show');
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(chosenId, btnEl){
+  if(answered) return;
+  answered = true;
+  const sig = SIGNALS[quizIdx];
+  const correct = chosenId === sig.id;
+
+  total++;
+  if(correct){ score++; streak++; } else { streak = 0; }
+  document.getElementById('scoreVal').textContent = `${score} / ${total}`;
+  document.getElementById('streakVal').textContent = streak;
+
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if(b.textContent === sig.name) b.classList.add('correct');
+    else if(b === btnEl && !correct) b.classList.add('wrong');
+  });
+
+  const rb = document.getElementById('revealBox');
+  rb.innerHTML = `
+    <div class="rname">${correct?'✅ Correct':'❌'} — ${sig.name}</div>
+    <div>Freq: ${sig.freq} &nbsp;|&nbsp; BW: ${sig.bw} &nbsp;|&nbsp; Duty: ${sig.duty}</div>
+    ${sig.clues.map(c=>`<div class="clue">${c}</div>`).join('')}
+  `;
+  rb.classList.add('show');
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+/* ── REFERENCE TAB ───────────────────────────────────────────── */
+let refBuilt = false;
+function buildReference(){
+  if(refBuilt) return;
+  refBuilt = true;
+  const grid = document.getElementById('refGrid');
+  grid.innerHTML = SIGNALS.map(s => `
+    <div class="ref-card">
+      <div class="rc-name">${s.name}</div>
+      <div class="rc-row"><b>Frequency</b><span>${s.freq}</span></div>
+      <div class="rc-row"><b>Bandwidth</b><span>${s.bw}</span></div>
+      <div class="rc-row"><b>Duty Cycle</b><span>${s.duty}</span></div>
+    </div>
+  `).join('');
+}
+
+/* ── EXPLORE TAB ─────────────────────────────────────────────── */
+let exploreInited = false;
+function initExplore(){
+  if(!exploreInited){
+    exploreInited = true;
+    const sel = document.getElementById('exploreSelect');
+    sel.innerHTML = SIGNALS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  }
+  exploreChange();
+}
+function exploreChange(){
+  const id = document.getElementById('exploreSelect').value;
+  const sig = SIGNALS.find(s=>s.id===id);
+  exploreState = newWaterfallState(sig.pattern);
+  for(let i=0;i<90;i++) stepWaterfall(exploreState, 90);
+
+  const [lo,mid,hi] = pickFreqWindow();
+  document.getElementById('exFreqLo').textContent = lo;
+  document.getElementById('exFreqMid').textContent = mid;
+  document.getElementById('exFreqHi').textContent = hi;
+
+  document.getElementById('exploreInfo').innerHTML = `
+    <div style="color:var(--txtb);font-size:14px;font-weight:700;margin-bottom:8px">${sig.name}</div>
+    <div>Freq: ${sig.freq}</div>
+    <div>Bandwidth: ${sig.bw}</div>
+    <div>Duty Cycle: ${sig.duty}</div>
+    <div style="margin-top:10px;color:var(--txtd);font-size:11px;letter-spacing:.04em;text-transform:uppercase">Identifying Clues</div>
+    ${sig.clues.map(c=>`<div style="padding-left:14px;position:relative;margin-top:5px"><span style="position:absolute;left:0;color:var(--cyan)">▸</span>${c}</div>`).join('')}
+  `;
+}
+
+/* ── CANVAS RESIZE ───────────────────────────────────────────── */
+let lastCanvasWidth = 0;
+function resizeCanvases(){
+  const w = document.getElementById('waterfallCanvas').parentElement.clientWidth;
+  if(w === lastCanvasWidth) return;
+  lastCanvasWidth = w;
+  ['waterfallCanvas','exploreCanvas'].forEach(id=>{
+    const c = document.getElementById(id);
+    c.width = w;
+    c.height = Math.round(w * 360/700);
+  });
+}
+new ResizeObserver(entries=>{
+  requestAnimationFrame(()=>resizeCanvases());
+}).observe(document.body);
+
+/* ── THEME ───────────────────────────────────────────────────── */
+function toggleTheme(){
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  document.getElementById('btn-theme').textContent = isLight ? '☀ Light Mode' : '☾ Dark Mode';
+}
+
+/* ── INIT ────────────────────────────────────────────────────── */
+setTimeout(()=>{
+  resizeCanvases();
+  nextQuestion();
+  animateQuiz();
+}, 50);
+</script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+</body>
+</html>
