@@ -10,7 +10,7 @@
   --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
   --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
   --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
-  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
   --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
 }
 [data-theme="light"]{
@@ -59,6 +59,25 @@ h1 span{color:var(--text-dim);font-weight:400}
 .page{display:none}
 .page.on{display:block}
 .tag-slide{color:var(--amber);background:var(--amber-dark);border:1px solid var(--amber-dim)}
+.pagetabs-bar{background:var(--panel);border-bottom:1px solid var(--border-bright);padding:0 28px}
+.pagetabs-bar .pagetabs{max-width:1080px;margin:0 auto;padding:10px 0}
+
+/* ── Site-wide search bar (visible on every page tab) ──── */
+.global-search-bar{display:flex;gap:10px;align-items:center;padding:14px 28px;max-width:1080px;margin:0 auto;flex-wrap:wrap}
+.search-wrap{flex:1;min-width:220px;max-width:460px;position:relative}
+.search-wrap input{width:100%;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-bright);
+  font-family:var(--mono);font-size:13px;padding:9px 14px 9px 30px;letter-spacing:.4px}
+.search-wrap input:focus{outline:none;border-color:var(--green)}
+.search-wrap input::placeholder{color:var(--text-dim)}
+.search-wrap::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:14px;pointer-events:none}
+.search-count{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:.5px;white-space:nowrap}
+
+/* ── Category tabs (replaces stacked collapsible sections) ─ */
+.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--border-bright);margin-bottom:18px;scrollbar-width:thin}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:1.5px;color:var(--text-dim);background:none;border:none;
+  padding:11px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--green);border-bottom-color:var(--green)}
 </style>
 </head>
 <body>
@@ -67,44 +86,55 @@ h1 span{color:var(--text-dim);font-weight:400}
     <div class="mil-badge">MIL-SPEC</div>
     <h1>Electromagnetic Warfare Interactive Tool (E-WIT)</h1>
   </div>
-  <div class="hl">
-    <div class="pagetabs">
-      <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
-      <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
-      <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
-      <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
-    </div>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
-  </div>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
 </header>
 <div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Electromagnetic Warfare Specialist — Self-Contained Interactive References</div>
 
+<div class="global-search-bar">
+  <div class="search-wrap"><input id="globalSearch" placeholder="Search everything — tools, guides, quizzes, slides, learning..." oninput="globalSearch()"></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="pagetabs-bar">
+  <div class="pagetabs">
+    <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
+    <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
+    <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
+    <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
+  </div>
+</div>
+
 <div id="page-tools" class="page on">
 <div class="wrap">
+  <div class="tabs" id="tabs"></div>
   <div id="view-grid"></div>
+</div>
+</div>
+
+<div id="page-search" class="page">
+<div class="wrap">
+  <div id="view-search"></div>
 </div>
 </div>
 
 <div id="page-slides" class="page">
 <div class="wrap">
-  <div class="section-label">Lesson Slide Decks</div>
   <div id="view-slides"></div>
 </div>
 </div>
 
 <div id="page-learning" class="page">
 <div class="wrap">
-  <div class="section-label">Additional Learning — Certifications &amp; Licenses</div>
   <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
     Self-study resources for career progression beyond this course — external links open in a new tab. Details below are current as of research, but always verify current requirements/costs directly with the certifying body before committing time or money.
   </div>
+  <div class="tabs" id="tabsLearning"></div>
   <div id="view-learning"></div>
 </div>
 </div>
 
 <div id="page-wraven" class="page">
 <div class="wrap">
-  <div class="section-label">WRAVEN Training Modules</div>
   <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
     Self-paced WRAVEN modules — each opens as its own interactive lesson with inline quizzes, a final exam, and a printable certificate of completion.
   </div>
@@ -127,18 +157,18 @@ const TOOLS=[
   {cat:'B2 Physics',nm:'AC Circuit Theory & Impedance',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
   {cat:'B2 Physics',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
   {cat:'B2 Physics',nm:'Signal Quality & Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
-  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff'},
+  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff',kw:'signal identification waterfall frequency band spectrum analyzer emitter recognition'},
   // C BET
   {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
   {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
-  {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88'},
+  {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88',kw:'breadboard resistor capacitor circuit simulator schematic wiring electronics lab'},
   // E EW Theory
   {cat:'E EW Theory',kind:'guide',nm:'Electromagnetic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
-  {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444'},
-  {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff'},
-  {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff'},
-  {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff'},
-  {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff'},
+  {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444',kw:'electronic support electronic attack electronic protection jamming warfare framework'},
+  {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff',kw:'dipole yagi antenna gain radiation pattern element spacing directional'},
+  {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff',kw:'direction finding triangulation geolocation emitter location bearing lines terrain masking'},
+  {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff',kw:'satellite navigation jamming fake location signal deception position spoofing PNT denial'},
+  {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff',kw:'FHSS anti-jam frequency agility spread spectrum hopping sequence dwell time'},
   // D Networking
   {cat:'D Networking',kind:'guide',nm:'Networking Explained',ds:'Plain-language guide: OSI, MAC/IP, subnetting, DHCP, TCP/UDP & ports, DNS/URLs, topologies & gear',file:'networkguide',color:'#00d4ff'},
   {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
@@ -149,50 +179,116 @@ const TOOLS=[
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
   {cat:'D Networking',nm:'Network Test',ds:'D MOD Practice Test: 250-question master bank across E01\u2013E15, POP quizzes, timed scoring & leaderboard',file:'nettest',color:'#bb88ff'},
   {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
-  {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a'},
+  {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a',kw:'man in the middle attack mitm adversary-in-the-middle eavesdropping packet interception ssl strip downgrade fake certificate rogue access point ARP poisoning session hijacking'},
   // F Systems
   {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
   {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
-  {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700'},
-  {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700'},
+  {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700',kw:'counter drone anti-drone UAS defeat detection tracking'},
+  {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700',kw:'counter drone anti-drone UAS defeat engagement kill chain interceptor jamming'},
   // G Planning
   {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
-  {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff'},
-  {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff'},
-  {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff'},
+  {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff',kw:'troop leading procedures mission planning sequence order of operations METT-TC'},
+  {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff',kw:'operation order five paragraph order mission planning document'},
+  {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff',kw:'warrior tasks battle drills formations of movement squad tactics'},
 ];
 function catId(cat){ return cat.replace(/[^a-zA-Z0-9]/g,'-'); }
+
+let activeCat='ALL';
+
+function renderTabs(){
+  const tabs=['ALL',...CATEGORIES];
+  document.getElementById('tabs').innerHTML=tabs.map(c=>
+    `<button class="tab${c===activeCat?' on':''}" data-c="${c}" onclick="setCat('${c}')">${c==='ALL'?'ALL TOOLS':c}</button>`
+  ).join('');
+}
+function setCat(c){
+  activeCat=c;
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('on', el.dataset.c===c));
+  render();
+}
 function render(){
-  // grouped launch cards — iterate CATEGORIES so empty sections still appear
-  let vh='';
-  CATEGORIES.forEach(cat=>{
-    // guides first, then interactives, within each module
-    const items=TOOLS.filter(t=>t.cat===cat).sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
-    const id=catId(cat);
-    vh+=`<div class="section-label" onclick="toggleCategory('${id}')" role="button" tabindex="0">
-      <span class="cat-chevron" id="chev-${id}">\u25BC</span> ${cat} <span class="cat-count">(${items.length})</span>
-    </div>`;
-    if(items.length===0){vh+=`<div class="empty-cat" id="cat-${id}">No tools yet \u2014 coming soon</div>`;return;}
-    vh+=`<div class="grid" id="cat-${id}">`;
-    items.forEach(t=>{
-      const guide=t.kind==='guide';
-      const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
-      const go=guide?'READ \u2192':'LAUNCH \u2192';
-      vh+=`<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
-        <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
-        <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
-    });
-    vh+='</div>';
+  let items=activeCat==='ALL'?TOOLS:TOOLS.filter(t=>t.cat===activeCat);
+  items=items.slice().sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
+  if(!items.length){
+    document.getElementById('view-grid').innerHTML=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;
+    return;
+  }
+  let vh='<div class="grid">';
+  items.forEach(t=>{
+    const guide=t.kind==='guide';
+    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+    const go=guide?'READ \u2192':'LAUNCH \u2192';
+    vh+=`<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+      <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
+      <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
   });
+  vh+='</div>';
   document.getElementById('view-grid').innerHTML=vh;
 }
-function toggleCategory(id){
-  const el=document.getElementById('cat-'+id);
-  const chev=document.getElementById('chev-'+id);
-  if(!el) return;
-  const collapsed=el.style.display==='none';
-  el.style.display=collapsed?'':'none';
-  if(chev) chev.textContent=collapsed?'\u25BC':'\u25B6';
+renderTabs();
+
+/* ── Site-wide search across Tools, Guides, Slides, Learning & WRAVEN ── */
+let lastPage='tools';
+function normalize(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+function globalSearch(){
+  const q=normalize(document.getElementById('globalSearch').value);
+  const pages=['tools','slides','learning','wraven'];
+  if(!q){
+    document.getElementById('page-search').classList.remove('on');
+    pages.forEach(n=>{
+      document.getElementById('page-'+n).classList.toggle('on', n===lastPage);
+      document.getElementById('tab-'+n).classList.toggle('on', n===lastPage);
+    });
+    document.getElementById('searchCount').textContent='';
+    return;
+  }
+  pages.forEach(n=>{
+    document.getElementById('page-'+n).classList.remove('on');
+    document.getElementById('tab-'+n).classList.remove('on');
+  });
+  document.getElementById('page-search').classList.add('on');
+
+  let results=[];
+  TOOLS.forEach(t=>{
+    if(normalize(t.nm+' '+t.ds+' '+t.cat+' '+(t.kw||'')).includes(q)){
+      results.push({type:t.kind==='guide'?'GUIDE':'INTERACTIVE', typeClass:t.kind==='guide'?'tag-guide':'tag-int',
+        section:t.cat, nm:t.nm, ds:t.ds, href:t.file, color:t.color, go:t.kind==='guide'?'READ \u2192':'LAUNCH \u2192'});
+    }
+  });
+  SLIDES.forEach(s=>{
+    if(normalize(s.nm+' '+s.ds+' '+(s.kw||'')).includes(q)){
+      results.push({type:'PPTX', typeClass:'tag-slide', section:'Lesson Slide Deck', nm:s.nm, ds:s.ds,
+        href:s.file, color:'#ffb300', download:true, go:'DOWNLOAD \u2193'});
+    }
+  });
+  LEARN.forEach(l=>{
+    if(normalize(l.nm+' '+l.ds+' '+l.cat+' '+(l.kw||'')).includes(q)){
+      results.push({type:l.tag, typeClass:'tag-int', section:l.cat, nm:l.nm, ds:l.ds,
+        href:l.url, color:l.color, external:true, go:'OPEN \u2192'});
+    }
+  });
+  WRAVEN_MODULES.forEach(m=>{
+    if(normalize(m.nm+' '+m.ds+' '+(m.kw||'')).includes(q)){
+      results.push({type:'MODULE', typeClass:'tag-int', section:'WRAVEN', nm:m.nm, ds:m.ds,
+        href:m.file, color:m.color, go:'BEGIN \u2192'});
+    }
+  });
+
+  document.getElementById('searchCount').textContent=`${results.length} result${results.length===1?'':'s'} across the site`;
+
+  if(!results.length){
+    document.getElementById('view-search').innerHTML=`<div class="empty-cat">No matches for "${q}" anywhere on the site.</div>`;
+    return;
+  }
+  let vh='<div class="grid">';
+  results.forEach(r=>{
+    const attrs=(r.external?'target="_blank" rel="noopener" ':'')+(r.download?'download':'');
+    vh+=`<a class="card" href="${r.href}" ${attrs} style="--accent:${r.color}">
+      <div class="cat">${r.section} <span class="tag ${r.typeClass}">${r.type}</span></div><div class="nm">${r.nm}</div>
+      <div class="ds">${r.ds}</div><div class="go">${r.go}</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-search').innerHTML=vh;
 }
 // Lesson slide decks — 10-Day EW Networking Fundamentals course. Edit file paths once your .pptx files are uploaded to /slides/.
 const SLIDES=[
@@ -258,41 +354,51 @@ const LEARN=[
     url:'https://hamstudy.org/'},
 ];
 
+let activeLearnCat='ALL';
+function renderLearnTabs(){
+  const cats=['ALL',...new Set(LEARN.map(l=>l.cat))];
+  document.getElementById('tabsLearning').innerHTML=cats.map(c=>
+    `<button class="tab${c===activeLearnCat?' on':''}" data-c="${c}" onclick="setLearnCat('${c}')">${c==='ALL'?'ALL RESOURCES':c}</button>`
+  ).join('');
+}
+function setLearnCat(c){
+  activeLearnCat=c;
+  document.querySelectorAll('#tabsLearning .tab').forEach(el=>el.classList.toggle('on', el.dataset.c===c));
+  renderLearning();
+}
 function renderLearning(){
-  const cats = [...new Set(LEARN.map(l=>l.cat))];
-  let vh='';
-  cats.forEach(cat=>{
-    vh+=`<div class="section-label" style="margin-top:18px">${cat}</div><div class="grid">`;
-    LEARN.filter(l=>l.cat===cat).forEach(l=>{
-      if(l.embed==='playlist' || l.embed==='video'){
-        const src = l.embed==='playlist'
-          ? `https://www.youtube.com/embed/videoseries?list=${l.embedId}`
-          : `https://www.youtube.com/embed/${l.embedId}`;
-        vh+=`<div class="card" style="--accent:${l.color};padding:0;overflow:hidden">
-          <div style="position:relative;padding-bottom:56.25%;height:0;background:#000">
-            <iframe src="${src}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <div style="padding:16px 18px">
-            <div class="cat">${l.tag} <span class="tag tag-slide">YOUTUBE</span></div><div class="nm">${l.nm}</div>
-            <div class="ds">${l.ds}</div>
-            <a class="go" style="text-decoration:none;display:block;margin-top:8px" href="${l.url}" target="_blank" rel="noopener">OPEN FULL COURSE &#8599;</a>
-          </div>
-        </div>`;
-      } else if(l.tag === 'PENDING'){
-        vh+=`<div class="card" style="--accent:${l.color};opacity:.7;cursor:default">
-          <div class="cat">${l.tag}</div><div class="nm">${l.nm}</div>
-          <div class="ds">${l.ds}</div></div>`;
-      } else {
-        vh+=`<a class="card" href="${l.url}" target="_blank" rel="noopener" style="--accent:${l.color}">
-          <div class="cat">${l.tag} <span class="tag tag-slide">EXTERNAL LINK</span></div><div class="nm">${l.nm}</div>
-          <div class="ds">${l.ds}</div><div class="go">LEARN MORE &#8599;</div></a>`;
-      }
-    });
-    vh+='</div>';
+  const items=activeLearnCat==='ALL'?LEARN:LEARN.filter(l=>l.cat===activeLearnCat);
+  let vh='<div class="grid">';
+  items.forEach(l=>{
+    if(l.embed==='playlist' || l.embed==='video'){
+      const src = l.embed==='playlist'
+        ? `https://www.youtube.com/embed/videoseries?list=${l.embedId}`
+        : `https://www.youtube.com/embed/${l.embedId}`;
+      vh+=`<div class="card" style="--accent:${l.color};padding:0;overflow:hidden">
+        <div style="position:relative;padding-bottom:56.25%;height:0;background:#000">
+          <iframe src="${src}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div style="padding:16px 18px">
+          <div class="cat">${l.tag} <span class="tag tag-slide">YOUTUBE</span></div><div class="nm">${l.nm}</div>
+          <div class="ds">${l.ds}</div>
+          <a class="go" style="text-decoration:none;display:block;margin-top:8px" href="${l.url}" target="_blank" rel="noopener">OPEN FULL COURSE &#8599;</a>
+        </div>
+      </div>`;
+    } else if(l.tag === 'PENDING'){
+      vh+=`<div class="card" style="--accent:${l.color};opacity:.7;cursor:default">
+        <div class="cat">${l.tag}</div><div class="nm">${l.nm}</div>
+        <div class="ds">${l.ds}</div></div>`;
+    } else {
+      vh+=`<a class="card" href="${l.url}" target="_blank" rel="noopener" style="--accent:${l.color}">
+        <div class="cat">${l.tag} <span class="tag tag-slide">EXTERNAL LINK</span></div><div class="nm">${l.nm}</div>
+        <div class="ds">${l.ds}</div><div class="go">LEARN MORE &#8599;</div></a>`;
+    }
   });
+  vh+='</div>';
   document.getElementById('view-learning').innerHTML=vh;
 }
+renderLearnTabs();
 
 // WRAVEN training modules — each is a self-contained interactive lesson (inline quizzes,
 // final exam, printable certificate). Add new modules here as they're built; the file
@@ -320,6 +426,10 @@ function renderWraven(){
 
   
 function showPage(name){
+  lastPage=name;
+  document.getElementById('globalSearch').value='';
+  document.getElementById('searchCount').textContent='';
+  document.getElementById('page-search').classList.remove('on');
   document.getElementById('tab-tools').classList.toggle('on',name==='tools');
   document.getElementById('tab-slides').classList.toggle('on',name==='slides');
   document.getElementById('tab-learning').classList.toggle('on',name==='learning');
