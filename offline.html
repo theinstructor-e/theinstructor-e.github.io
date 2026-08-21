@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s;
+  display:flex;align-items:center;justify-content:center}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap;display:inline-block;margin-bottom:18px}
+.wrap{max-width:560px;padding:40px 32px;text-align:center}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.readout{font-family:var(--mono);font-size:13px;color:var(--text-dim);line-height:1.8;background:var(--panel);border:1px solid var(--border);padding:16px 18px;margin-bottom:26px;text-align:left}
+.readout .ln{display:flex;justify-content:space-between;gap:12px}
+.readout .lbl{color:var(--text-dim)}
+.readout .val{color:var(--cyan)}
+.note{font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.7;margin-bottom:26px}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text);
+  padding:10px 20px;cursor:pointer;letter-spacing:1px;text-decoration:none;display:inline-block;transition:all .15s}
+.btn:hover{border-color:var(--green);color:var(--green)}
+.btn.primary{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.theme-btn{position:fixed;top:18px;right:18px;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+<div class="wrap">
+  <div class="mil-badge">NO CONNECTION</div>
+  <h1>Offline</h1>
+  <div class="readout">
+    <div class="ln"><span class="lbl">STATUS</span><span class="val">NETWORK UNAVAILABLE</span></div>
+    <div class="ln"><span class="lbl">CACHED TOOLS</span><span class="val">AVAILABLE OFFLINE</span></div>
+    <div class="ln"><span class="lbl">NOT-YET-VISITED PAGES</span><span class="val">NEED CONNECTION FIRST</span></div>
+  </div>
+  <p class="note">Any tool you've already opened on this device should still work offline —
+    try going back and reopening it. Pages you haven't visited yet need one initial
+    connection before they're cached for later.</p>
+  <div class="actions">
+    <a class="btn primary" href="/">&larr; BACK TO E-WIT</a>
+    <button class="btn" onclick="location.reload()">RETRY CONNECTION</button>
+  </div>
+</div>
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').innerHTML=light?'&#9728; LIGHT MODE':'&#9790; DARK MODE';
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 :: SIGNAL LOST — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;--red-dark:#330000;
+  --text:#c8d8e8;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;--red-dark:#ffd8d8;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s;
+  display:flex;align-items:center;justify-content:center}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--red);border:1px solid var(--red);padding:4px 9px;letter-spacing:2px;background:var(--red-dark);white-space:nowrap;display:inline-block;margin-bottom:18px}
+.wrap{max-width:560px;padding:40px 32px;text-align:center}
+.code{font-family:var(--mono);font-size:72px;font-weight:700;color:var(--amber);letter-spacing:4px;line-height:1;margin-bottom:6px;text-shadow:0 0 18px rgba(255,179,0,.25)}
+h1{font-family:var(--display);font-size:24px;font-weight:700;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.readout{font-family:var(--mono);font-size:13px;color:var(--text-dim);line-height:1.8;background:var(--panel);border:1px solid var(--border);padding:16px 18px;margin-bottom:26px;text-align:left}
+.readout .ln{display:flex;justify-content:space-between;gap:12px}
+.readout .lbl{color:var(--text-dim)}
+.readout .val{color:var(--cyan)}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text);
+  padding:10px 20px;cursor:pointer;letter-spacing:1px;text-decoration:none;transition:all .15s;display:inline-block}
+.btn:hover{border-color:var(--green);color:var(--green)}
+.btn.primary{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.theme-btn{position:fixed;top:18px;right:18px;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+<div class="wrap">
+  <div class="mil-badge">SIGNAL LOST</div>
+  <div class="code">404</div>
+  <h1>Target Not Acquired</h1>
+  <div class="readout">
+    <div class="ln"><span class="lbl">STATUS</span><span class="val">NO ROUTE FOUND</span></div>
+    <div class="ln"><span class="lbl">REQUESTED PATH</span><span class="val" id="req-path">—</span></div>
+    <div class="ln"><span class="lbl">ACTION</span><span class="val">RETURN TO E-WIT HOME</span></div>
+  </div>
+  <div class="actions">
+    <a class="btn primary" href="/">&larr; BACK TO E-WIT</a>
+    <a class="btn" href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener">REPORT BROKEN LINK</a>
+  </div>
+</div>
+<script>
+document.getElementById('req-path').textContent = location.pathname || '/';
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').innerHTML=light?'&#9728; LIGHT MODE':'&#9790; DARK MODE';
+}
+</script>
+<script>
+  window.goatcounter = { path: function(p) { return '404' + location.pathname; } };
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>

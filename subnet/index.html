@@ -577,7 +577,7 @@
   <span class="related-label">Related:</span>
   <a href="../networkguide/">📘 Networking Explained (guide)</a>
   <a href="../network/">🖧 Network Interactive</a>
-  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../nettest/">📝 Practice Quiz &amp; Test</a>
   <a href="../nettrace/">🔍 Traffic Analyzer</a>
 </div>
 
@@ -1562,6 +1562,12 @@ function nextQ() {
     const idx = score <= 2 ? 0 : score <= 4 ? 1 : score <= 6 ? 2 : 3;
     document.getElementById('quiz-score-msg').textContent = msgs[idx][0];
     document.getElementById('quiz-score-sub').textContent = msgs[idx][1] + ` (${pct}%)`;
+    if(!sessionStorage.getItem('gc_subnet_complete')){
+      sessionStorage.setItem('gc_subnet_complete', '1');
+      if(window.goatcounter && window.goatcounter.count){
+        window.goatcounter.count({path:'subnet-complete', title:`Subnet Quiz Complete (${score}/${questions.length}, ${pct}%)`, event:true});
+      }
+    }
     return;
   }
   loadQ();
@@ -1580,5 +1586,14 @@ loadQ();
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
   <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

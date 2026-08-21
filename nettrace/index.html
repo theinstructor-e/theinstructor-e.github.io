@@ -121,6 +121,45 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
 .device-choice.correct{border-color:var(--green);background:var(--gfaint)}
 .device-choice.wrong{border-color:var(--red);background:rgba(255,74,74,.08)}
 .score-line{font-family:var(--mono);font-size:11px;color:var(--txtd);margin-top:6px}
+
+/* ── Completion tracking + certificate ───────────── */
+.cert-progress{font-family:var(--mono);font-size:11px;color:var(--txtd);margin-top:8px;padding-top:8px;border-top:1px dashed var(--b2)}
+.cert-progress .bar-track{background:var(--panel);border:1px solid var(--b2);border-radius:6px;height:6px;margin-top:5px;overflow:hidden}
+.cert-progress .bar-fill{background:var(--green);height:100%;box-shadow:var(--glow-g);transition:width .3s}
+.cert-unlock-card{display:none;background:var(--gfaint);border:1px solid var(--gdim);border-radius:5px;padding:12px 14px;margin-top:9px;text-align:center}
+.cert-unlock-card.show{display:block}
+.cert-unlock-card .cu-title{font-family:var(--ui);font-weight:800;color:var(--green);font-size:13px;letter-spacing:.03em;margin-bottom:4px}
+.cert-unlock-card .cu-sub{font-family:var(--mono);font-size:10.5px;color:var(--txtd);margin-bottom:9px}
+.cert-unlock-card .btn{margin-top:0}
+
+.cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:500;align-items:center;justify-content:center;padding:20px}
+.cert-overlay.show{display:flex}
+.cert-modal{background:var(--panel2);border:1px solid var(--b2);border-radius:6px;padding:24px;max-width:420px;width:100%}
+.cert-modal h3{font-family:var(--ui);color:var(--txtb);font-size:16px;margin-bottom:6px}
+.cert-modal p{font-family:var(--mono);font-size:11.5px;color:var(--txtd);margin-bottom:14px;line-height:1.6}
+.cert-modal input{width:100%;background:var(--panel);border:1px solid var(--b2);color:var(--txtb);font-family:var(--ui);
+  font-size:14px;padding:10px 12px;border-radius:4px;margin-bottom:12px}
+.cert-modal-actions{display:flex;gap:8px}
+.cert-modal-actions .btn{margin-top:0}
+.cert-modal-actions .btn.cancel{opacity:.7}
+
+#certificate{background:#fffdf8;color:#111;padding:44px 46px;border:10px double #1a365d;border-radius:4px;text-align:center;
+  display:none;font-family:"Times New Roman",Times,serif;box-shadow:0 0 25px rgba(0,0,0,.5);max-width:640px;margin:0 auto}
+#certificate.show{display:block}
+.cert-dept{font-size:15px;font-weight:bold;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;color:#333}
+.cert-title{font-family:Georgia,serif;font-size:36px;color:#000;margin:8px 0 22px}
+.cert-text{font-size:16px;margin:10px 0;color:#333;font-style:italic}
+#certName{font-size:26px;color:#000;display:inline-block;margin:10px 0;font-weight:bold;font-style:normal;
+  border-bottom:1px solid #000;min-width:320px;padding-bottom:4px;text-transform:uppercase}
+.cert-course{font-size:19px;font-weight:bold;margin:16px 0;color:#000}
+.print-btn{background:var(--green);color:#111;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;
+  margin-top:20px;font-weight:bold;font-size:13px;font-family:Arial,sans-serif}
+
+@media print{
+  body *{visibility:hidden}
+  #certificate, #certificate *{visibility:visible}
+  #certificate{position:absolute;top:0;left:0;box-shadow:none;display:block !important}
+}
 </style>
 </head>
 <body>
@@ -142,7 +181,8 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
   <a href="../networkguide/">📘 Networking Explained (guide)</a>
   <a href="../network/">🖧 Network Interactive</a>
   <a href="../subnet/">🧮 Subnetting Calculator</a>
-  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../nettest/">📝 Practice Quiz &amp; Test</a>
+  <a href="../mitm/">🕵️ MITM Simulator</a>
 </div>
 
 <div class="layout">
@@ -197,6 +237,15 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
     <div class="quiz-banner" id="quizBanner" style="display:none">
       <strong id="quizQ">Question text</strong>
       <div id="quizStatus"></div>
+      <div class="cert-progress" id="certProgress" style="display:none">
+        <span id="certProgressLabel">Certification: 0/10 correct</span>
+        <div class="bar-track"><div class="bar-fill" id="certProgressBar" style="width:0%"></div></div>
+      </div>
+      <div class="cert-unlock-card" id="certUnlockCard">
+        <div class="cu-title">🎖 Certification Complete</div>
+        <div class="cu-sub">You've correctly identified 10 devices from captured traffic.</div>
+        <button class="btn" onclick="openCertModal()">Claim Your Certificate</button>
+      </div>
     </div>
 
     <!-- Device legend -->
@@ -206,6 +255,31 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
     </div>
 
   </div>
+</div>
+
+<!-- Certificate name-entry modal -->
+<div class="cert-overlay" id="certModalOverlay">
+  <div class="cert-modal">
+    <h3>Claim Your Certificate</h3>
+    <p>Enter the name to print on your Certificate of Training for the Network Traffic Analyzer.</p>
+    <input type="text" id="certNameInput" placeholder="e.g., Jane Doe">
+    <div class="cert-modal-actions">
+      <button class="btn" onclick="generateCertificate()">Generate Certificate</button>
+      <button class="btn cancel" onclick="closeCertModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Printable certificate -->
+<div id="certificate">
+  <div class="cert-dept">Electromagnetic Warfare Interactive Tool — E-WIT</div>
+  <div class="cert-title">Certificate of Training</div>
+  <p class="cert-text">This is to certify that</p>
+  <span id="certName">STUDENT NAME</span>
+  <p class="cert-text" style="margin-bottom:5px">has successfully completed</p>
+  <div class="cert-course">Network Traffic Analyzer — Quiz Mode</div>
+  <p id="certDate" class="cert-text" style="margin-top:30px"></p>
+  <button class="print-btn" onclick="window.print()">Print Certificate</button>
 </div>
 
 <script>
@@ -519,6 +593,7 @@ function setMode(m){
       <strong>Step 2:</strong> once you've selected the right frame, choose which device actually sent it from the options that appear.<br><br>
       Score is tracked below the question.`;
     startQuiz();
+    updateCertProgress();
   } else {
     document.getElementById('instrText').innerHTML = `
       This is a <strong>pre-captured</strong> snapshot of traffic on a small LAN — click any device in the topology to filter the frame list to just that device's traffic, or leave it on <em>All Devices</em>.<br><br>
@@ -578,6 +653,7 @@ function answerDevice(deviceId, btnEl){
     quizScore++;
     btnEl.classList.add('correct');
     document.getElementById('quizStatus').innerHTML = `<span style="color:var(--green)">✓ Correct — ${DEVICES[currentQuizFrame.device].name} (${DEVICES[currentQuizFrame.device].ip}, ${DEVICES[currentQuizFrame.device].mac}) sent that traffic.</span><div class="score-line">Score: ${quizScore}/${quizTotal}</div>`;
+    updateCertProgress();
   } else {
     btnEl.classList.add('wrong');
     const correctBtn = Array.from(document.querySelectorAll('.device-choice')).find(b => b.textContent.includes(DEVICES[currentQuizFrame.device].name));
@@ -590,6 +666,49 @@ function answerDevice(deviceId, btnEl){
   nextBtn.textContent = 'Next Question →';
   nextBtn.onclick = startQuiz;
   document.getElementById('quizBanner').appendChild(nextBtn);
+}
+
+/* ── COMPLETION TRACKING + CERTIFICATE ────────────── */
+const CERT_THRESHOLD = 10;
+
+function updateCertProgress(){
+  const progressEl = document.getElementById('certProgress');
+  const unlockCard = document.getElementById('certUnlockCard');
+  if(quizScore >= CERT_THRESHOLD){
+    progressEl.style.display = 'none';
+    unlockCard.classList.add('show');
+    if(!sessionStorage.getItem('gc_nettrace_complete')){
+      sessionStorage.setItem('gc_nettrace_complete', '1');
+      if(window.goatcounter && window.goatcounter.count){
+        window.goatcounter.count({path:'nettrace-complete', title:'Nettrace Quiz Complete', event:true});
+      }
+    }
+  } else {
+    progressEl.style.display = 'block';
+    document.getElementById('certProgressLabel').textContent = `Certification: ${quizScore}/${CERT_THRESHOLD} correct`;
+    document.getElementById('certProgressBar').style.width = `${Math.min(100, (quizScore / CERT_THRESHOLD) * 100)}%`;
+  }
+}
+
+function openCertModal(){
+  document.getElementById('certModalOverlay').classList.add('show');
+  document.getElementById('certNameInput').focus();
+}
+function closeCertModal(){
+  document.getElementById('certModalOverlay').classList.remove('show');
+}
+function generateCertificate(){
+  const name = document.getElementById('certNameInput').value.trim();
+  if(!name){
+    document.getElementById('certNameInput').style.borderColor = 'var(--red)';
+    return;
+  }
+  document.getElementById('certName').textContent = name;
+  const today = new Date();
+  document.getElementById('certDate').textContent = today.toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+  closeCertModal();
+  document.getElementById('certificate').classList.add('show');
+  document.getElementById('certificate').scrollIntoView({behavior:'smooth'});
 }
 
 /* ── THEME ───────────────────────────────────────── */
@@ -609,5 +728,14 @@ renderLegend();
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
   <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

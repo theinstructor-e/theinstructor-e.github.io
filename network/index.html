@@ -142,8 +142,9 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   <span class="related-label">Related:</span>
   <a href="../networkguide/">📘 Networking Explained (guide)</a>
   <a href="../subnet/">🧮 Subnetting Calculator</a>
-  <a href="../nettest/">📝 Network Test (quiz)</a>
+  <a href="../nettest/">📝 Practice Quiz &amp; Test</a>
   <a href="../nettrace/">🔍 Traffic Analyzer</a>
+  <a href="../mitm/">🕵️ MITM Simulator</a>
 </div>
 
 <!-- TAB 1: OSI -->
@@ -955,6 +956,15 @@ window.addEventListener('resize',redrawActive);
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
   <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>
 

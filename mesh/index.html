@@ -615,6 +615,12 @@ function verifyExercise(){
     document.getElementById('quiz-score').textContent='Solved: '+exSolvedTotal;
     fb.className='quiz-feedback good show';
     fb.innerHTML='\u2713 <strong>NETWORK RESTORED.</strong> Every radio is powered on and connected in one mesh. All '+exFaults.length+' fault(s) repaired. Press New Exercise for another.';
+    if(exSolvedTotal>=3 && !sessionStorage.getItem('gc_mesh_complete')){
+      sessionStorage.setItem('gc_mesh_complete', '1');
+      if(window.goatcounter && window.goatcounter.count){
+        window.goatcounter.count({path:'mesh-complete', title:'Mesh Fault-Isolation Complete (3 exercises solved)', event:true});
+      }
+    }
     return;
   }
   // hints
@@ -639,5 +645,14 @@ window.addEventListener('resize',()=>{drawAll();});
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
   <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

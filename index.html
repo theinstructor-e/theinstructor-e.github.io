@@ -147,8 +147,9 @@ const TOOLS=[
   {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
   {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
-  {cat:'D Networking',nm:'Network Test',ds:'243-question quiz: networking, wireless, cellular & PBQ-style practice scenarios',file:'nettest',color:'#bb88ff'},
+  {cat:'D Networking',nm:'Network Test',ds:'D MOD Practice Test: 250-question master bank across E01\u2013E15, POP quizzes, timed scoring & leaderboard',file:'nettest',color:'#bb88ff'},
   {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
+  {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a'},
   // F Systems
   {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
   {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
@@ -343,5 +344,14 @@ renderWraven();
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
   <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

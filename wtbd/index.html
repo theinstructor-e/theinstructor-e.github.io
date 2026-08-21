@@ -486,7 +486,7 @@ const QUIZ=[
 let qi=0,qs=0,qDone=false;
 function renderQuiz(){
   const b=document.getElementById('quiz-body');
-  if(qi>=QUIZ.length){const pct=Math.round(qs/QUIZ.length*100);b.innerHTML='<div style="text-align:center;padding:14px"><div style="font-family:var(--mono);font-size:34px;color:var(--purple)">'+qs+'/'+QUIZ.length+'</div><div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin:8px 0 16px">'+pct+'%</div><button class="cbtn" onclick="restartQuiz()">\u21bb Retake</button></div>';document.getElementById('q-score').textContent='Score '+qs+'/'+QUIZ.length;return;}
+  if(qi>=QUIZ.length){const pct=Math.round(qs/QUIZ.length*100);b.innerHTML='<div style="text-align:center;padding:14px"><div style="font-family:var(--mono);font-size:34px;color:var(--purple)">'+qs+'/'+QUIZ.length+'</div><div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin:8px 0 16px">'+pct+'%</div><button class="cbtn" onclick="restartQuiz()">\u21bb Retake</button></div>';document.getElementById('q-score').textContent='Score '+qs+'/'+QUIZ.length;if(!sessionStorage.getItem('gc_wtbd_complete')){sessionStorage.setItem('gc_wtbd_complete','1');if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:'wtbd-complete',title:'WTBD Quiz Complete ('+qs+'/'+QUIZ.length+', '+pct+'%)',event:true});}}return;}
   const Q=QUIZ[qi];const opts=Q.o.map((t,i)=>({t:t,c:i===Q.a}));for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const tmp=opts[i];opts[i]=opts[j];opts[j]=tmp;}
   b.innerHTML='<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-bottom:8px">QUESTION '+(qi+1)+' OF '+QUIZ.length+'</div><div class="quiz-q">'+Q.q+'</div><div id="opts">'+opts.map(o=>'<button class="opt" onclick="ans(this,'+o.c+')">'+o.t+'</button>').join('')+'</div><div class="qfb" id="qfb"></div><div class="qnav"><button class="cbtn" id="qnext" onclick="qnext()" style="display:none">Next \u2192</button></div>';
   qDone=false;document.getElementById('q-score').textContent='Score '+qs+'/'+QUIZ.length;
@@ -505,5 +505,14 @@ window.addEventListener('resize',redrawAll);
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
   <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interception — A Man-in-the-Middle Simulator</title>
+<style>
+  :root{
+    --void:#0a0e14;
+    --panel:#0f1621;
+    --panel-2:#141d2b;
+    --wire:#1e2a3d;
+    --alice:#5cc8ff;      /* client — cool blue */
+    --bob:#7ee787;        /* server — green */
+    --mallory:#ff5c7a;    /* attacker — hot magenta-red */
+    --mallory-glow:rgba(255,92,122,.35);
+    --ink:#e6edf3;
+    --ink-dim:#8b98a9;
+    --ink-faint:#5a6675;
+    --gold:#ffcb6b;
+    --seal:#3fb950;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, #16233a 0%, transparent 55%),
+      var(--void);
+    color:var(--ink);
+    font-family:"SF Mono",ui-monospace,"Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    min-height:100vh;
+    line-height:1.5;
+    padding:clamp(16px,4vw,48px) clamp(12px,4vw,24px);
+    overflow-x:hidden;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* ---- Masthead ---- */
+  header{margin-bottom:34px}
+  .kicker{
+    font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--mallory);font-weight:600;margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .kicker::before{content:"";width:26px;height:1px;background:var(--mallory);display:inline-block}
+  h1{
+    font-family:Georgia,"Times New Roman",serif;
+    font-weight:400;
+    font-size:clamp(34px,7vw,64px);
+    line-height:.98;letter-spacing:-.02em;
+    margin-bottom:16px;
+  }
+  h1 em{font-style:italic;color:var(--mallory)}
+  .lede{
+    color:var(--ink-dim);max-width:60ch;font-size:14.5px;
+    border-left:2px solid var(--wire);padding-left:16px;
+  }
+  .pdu-key{
+    display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:18px;padding-left:16px;
+    font-size:11px;color:var(--ink-faint);letter-spacing:.02em;
+  }
+  .pdu-key b{font-size:10px;letter-spacing:.06em;margin-right:5px;padding:1px 5px;border-radius:3px;border:1px solid currentColor}
+  .pdu-key .k2{color:#c792ea} .pdu-key .k3{color:#82aaff} .pdu-key .k4{color:#f78c6c}
+  .pdu-key .k5{color:#7ee787} .pdu-key .k7{color:#ffcb6b}
+
+  /* ---- Stage ---- */
+  .stage{
+    background:linear-gradient(180deg,var(--panel) 0%,var(--void) 100%);
+    border:1px solid var(--wire);
+    border-radius:14px;
+    padding:clamp(18px,4vw,34px);
+    margin:28px 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .stage::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px);
+  }
+
+  .actors{
+    display:grid;grid-template-columns:1fr 1fr 1fr;
+    gap:8px;align-items:end;margin-bottom:8px;position:relative;z-index:2;
+  }
+  .actor{text-align:center}
+  .avatar{
+    width:clamp(52px,12vw,78px);height:clamp(52px,12vw,78px);
+    border-radius:50%;margin:0 auto 10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(22px,6vw,34px);position:relative;
+    border:2px solid;background:var(--panel-2);
+    transition:transform .25s,box-shadow .25s;
+  }
+  .a-alice .avatar{border-color:var(--alice);color:var(--alice)}
+  .a-bob .avatar{border-color:var(--bob);color:var(--bob)}
+  .a-mallory{position:relative}
+  .a-mallory .avatar{border-color:var(--mallory);color:var(--mallory)}
+  .actor .name{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  .actor .role{font-size:10.5px;color:var(--ink-faint);letter-spacing:.06em;margin-top:2px}
+  .a-alice .name{color:var(--alice)} .a-bob .name{color:var(--bob)} .a-mallory .name{color:var(--mallory)}
+
+  .a-mallory.lurking{opacity:.28;filter:grayscale(.6)}
+  .a-mallory.active .avatar{
+    box-shadow:0 0 0 4px var(--mallory-glow),0 0 34px var(--mallory-glow);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{50%{box-shadow:0 0 0 7px transparent,0 0 46px var(--mallory-glow)}}
+
+  /* wire / channel */
+  .channel{
+    position:relative;height:70px;margin:4px 0 6px;z-index:2;
+  }
+  .rail{
+    position:absolute;top:50%;left:8%;right:8%;height:2px;
+    background:var(--wire);transform:translateY(-50%);border-radius:2px;
+  }
+  .rail.tls{background:linear-gradient(90deg,var(--alice),var(--seal),var(--bob));box-shadow:0 0 14px rgba(63,185,80,.4)}
+  .rail.tapped{background:linear-gradient(90deg,var(--alice) 0%,var(--mallory) 50%,var(--bob) 100%);box-shadow:0 0 16px var(--mallory-glow)}
+  .tap-node{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:15px;height:15px;border-radius:50%;background:var(--mallory);
+    box-shadow:0 0 16px var(--mallory);opacity:0;transition:opacity .3s;z-index:3;
+  }
+  .tap-node.show{opacity:1;animation:pulse 1.6s ease-in-out infinite}
+
+  .packet{
+    position:absolute;top:50%;transform:translate(-50%,-50%);
+    padding:5px 11px;border-radius:7px;font-size:11px;font-weight:600;
+    white-space:nowrap;z-index:4;border:1px solid;
+    background:var(--panel-2);opacity:0;box-shadow:0 4px 16px rgba(0,0,0,.5);
+  }
+  .lock{margin-right:5px}
+
+  /* ---- Console ---- */
+  .console{
+    background:var(--void);border:1px solid var(--wire);border-radius:10px;
+    margin-top:18px;position:relative;z-index:2;overflow:hidden;
+  }
+  .console-bar{
+    display:flex;align-items:center;gap:8px;padding:9px 14px;
+    border-bottom:1px solid var(--wire);background:var(--panel);
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--wire)}
+  .console-bar .who{margin-left:auto;color:var(--mallory)}
+  /* column legend above the capture */
+  .legend{
+    display:flex;align-items:center;gap:0;padding:7px 16px;font-size:9.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);
+    border-bottom:1px solid var(--wire);background:rgba(255,255,255,.015);
+  }
+  .legend span{flex:0 0 auto}
+  .legend .l-no{width:34px} .legend .l-pdu{width:82px} .legend .l-layer{width:46px}
+  .legend .l-proto{width:66px} .legend .l-len{width:52px} .legend .l-info{flex:1}
+  @media(max-width:600px){.legend{display:none}}
+
+  .log{padding:10px 16px 14px;min-height:150px;font-size:12px;line-height:1.55}
+  .log .line{opacity:0;transform:translateY(4px);animation:rise .3s forwards;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.05)}
+  .log .line:last-child{border-bottom:none}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .log .t{color:var(--ink-faint);font-size:10px}
+  .c-alice{color:var(--alice)} .c-bob{color:var(--bob)} .c-mallory{color:var(--mallory)}
+  .c-sys{color:var(--ink-dim)} .c-warn{color:var(--gold)} .c-good{color:var(--seal)}
+  .log .steal{color:var(--mallory);font-weight:700;background:rgba(255,92,122,.1);padding:1px 6px;border-radius:4px}
+
+  /* detailed packet row */
+  .pkt-head{display:flex;align-items:baseline;gap:0;flex-wrap:nowrap}
+  .pkt-head .t{width:44px;flex:0 0 auto}
+  .pkt-head .no{width:34px;flex:0 0 auto;color:var(--ink-faint)}
+  .pkt-head .pdu{
+    width:78px;flex:0 0 auto;font-weight:700;font-size:10px;letter-spacing:.06em;
+    padding:1px 6px;border-radius:4px;border:1px solid currentColor;margin-right:4px;
+    text-align:center;
+  }
+  /* PDU tint by layer */
+  .pdu-l2{color:#c792ea;border-color:#c792ea55}
+  .pdu-l3{color:#82aaff;border-color:#82aaff55}
+  .pdu-l4{color:#f78c6c;border-color:#f78c6c55}
+  .pdu-l56{color:#7ee787;border-color:#7ee78755}
+  .pdu-l7{color:#ffcb6b;border-color:#ffcb6b55}
+  .pdu-,.pdu-undefined{color:var(--ink-faint);border-color:var(--wire)}
+  .pkt-head .layer{width:46px;flex:0 0 auto;color:var(--ink-faint);font-size:10.5px}
+  .pkt-head .proto{width:66px;flex:0 0 auto;color:var(--ink-dim);font-size:10.5px}
+  .pkt-head .len{width:52px;flex:0 0 auto;color:var(--ink-faint);font-size:10.5px}
+  .pkt-head .info{flex:1;min-width:0;color:inherit;font-weight:500}
+  .pkt-meta{display:flex;flex-wrap:wrap;gap:4px 16px;margin:3px 0 0 78px;font-size:10.5px}
+  .pkt-meta .hop{color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .pkt-meta .gloss{color:var(--ink-faint);font-style:italic}
+  .stack{margin:4px 0 0 78px;padding:6px 10px;background:rgba(255,255,255,.02);border-left:2px solid var(--wire);border-radius:0 4px 4px 0}
+  .stack .lyr{display:block;font-size:10.5px;color:var(--ink-dim);line-height:1.5}
+  .pnote{margin:4px 0 0 78px;font-size:10.5px;color:var(--ink-faint)}
+
+  .sysline{padding:9px 0}
+  .sysline .arw{margin:0 6px}
+  .sysline .sysmsg{font-weight:600}
+  .sysnote{margin:3px 0 0 30px;font-size:10.5px;color:var(--ink-faint);font-style:italic}
+
+  @media(max-width:600px){
+    .pkt-head{flex-wrap:wrap}
+    .pkt-head .info{flex-basis:100%;margin-top:3px;order:9}
+    .pkt-head .layer,.pkt-head .proto,.pkt-head .len{font-size:10px}
+    .pkt-meta,.stack,.pnote{margin-left:0}
+  }
+
+  /* ---- Controls ---- */
+  .scenarios{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:26px 0}
+  .card{
+    background:var(--panel);border:1px solid var(--wire);border-radius:11px;
+    padding:16px 16px 15px;cursor:pointer;text-align:left;color:inherit;font:inherit;
+    transition:border-color .2s,transform .12s,background .2s;position:relative;
+  }
+  .card:hover{border-color:var(--mallory);transform:translateY(-2px)}
+  .card:focus-visible{outline:2px solid var(--mallory);outline-offset:2px}
+  .card.on{border-color:var(--mallory);background:linear-gradient(180deg,rgba(255,92,122,.08),var(--panel))}
+  .card .num{font-size:10px;letter-spacing:.2em;color:var(--mallory);font-weight:700}
+  .card h3{font-size:14.5px;margin:6px 0 5px;font-weight:600;letter-spacing:.01em}
+  .card p{font-size:11.5px;color:var(--ink-dim);line-height:1.5}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px}
+  button.run{
+    background:var(--mallory);color:#1a0008;border:none;border-radius:8px;
+    padding:12px 26px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;
+    letter-spacing:.06em;text-transform:uppercase;transition:filter .15s,transform .1s;
+  }
+  button.run:hover{filter:brightness(1.12)} button.run:active{transform:translateY(1px)}
+  button.run:disabled{opacity:.4;cursor:not-allowed;filter:none}
+  button.ghost{
+    background:transparent;color:var(--ink-dim);border:1px solid var(--wire);
+    border-radius:8px;padding:11px 18px;font:inherit;font-size:12px;cursor:pointer;
+    letter-spacing:.04em;transition:border-color .15s,color .15s;
+  }
+  button.ghost:hover{border-color:var(--ink-dim);color:var(--ink)}
+  .status{font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em}
+
+  /* ---- Defense panel ---- */
+  .defense{
+    margin-top:26px;border:1px solid var(--wire);border-radius:12px;overflow:hidden;
+    background:var(--panel);
+  }
+  .defense .head{
+    padding:15px 18px;border-bottom:1px solid var(--wire);
+    display:flex;align-items:center;gap:10px;
+  }
+  .defense .head .shield{color:var(--seal);font-size:18px}
+  .defense .head h2{font-size:14px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  .defense .body{padding:6px 18px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px 26px}
+  .def-item{padding:13px 0;border-bottom:1px solid var(--wire)}
+  .def-item:last-child,.def-item:nth-last-child(2){border-bottom:none}
+  @media(max-width:560px){.def-item:nth-last-child(2){border-bottom:1px solid var(--wire)}}
+  .def-item h4{font-size:12.5px;color:var(--seal);margin-bottom:4px;letter-spacing:.03em}
+  .def-item p{font-size:11.5px;color:var(--ink-dim);line-height:1.55}
+
+  footer{margin-top:34px;font-size:10.5px;color:var(--ink-faint);letter-spacing:.05em;text-align:center;line-height:1.7}
+  .related-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;
+    font-family:"SF Mono",ui-monospace,monospace;font-size:11px}
+  .related-label{color:var(--ink-faint);letter-spacing:1px;text-transform:uppercase;white-space:nowrap;font-size:10px}
+  .related-bar a{color:var(--alice);text-decoration:none;border:1px solid var(--wire);padding:3px 10px;
+    border-radius:12px;transition:.15s;white-space:nowrap}
+  .related-bar a:hover{border-color:var(--alice);background:var(--panel-2)}
+
+  @media(max-width:520px){
+    .actor .role{display:none}
+    .console-bar .who{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="related-bar">
+    <span class="related-label">Related:</span>
+    <a href="../nettrace/">🔍 Traffic Analyzer</a>
+    <a href="../networkguide/">📘 Networking Explained</a>
+    <a href="../EW Principles/">📖 EW Principles</a>
+    <a href="../nettest/">📝 Practice Quiz &amp; Test</a>
+  </div>
+
+  <header>
+    <div class="kicker">Adversary-in-the-Middle · Training Model</div>
+    <h1>The <em>listener</em><br>on the wire.</h1>
+    <p class="lede">Two parties think they're talking to each other. A third sits silently between them, relaying every message — and reading, or rewriting, whatever passes through. Watch it happen, then watch encryption shut it down.</p>
+    <div class="pdu-key">
+      <span><b class="k2">FRAME</b> L2 · MAC→MAC · rewritten each hop</span>
+      <span><b class="k3">PACKET</b> L3 · IP→IP · end-to-end</span>
+      <span><b class="k4">SEGMENT</b> L4 · TCP ports</span>
+      <span><b class="k5">TLS RECORD</b> L5-6 · encrypted</span>
+      <span><b class="k7">HTTP</b> L7 · the payload</span>
+    </div>
+  </header>
+
+  <!-- STAGE -->
+  <div class="stage">
+    <div class="actors">
+      <div class="actor a-alice">
+        <div class="avatar">👤</div>
+        <div class="name">Alice</div>
+        <div class="role">Client</div>
+      </div>
+      <div class="actor a-mallory lurking" id="mallory">
+        <div class="avatar">🕵️</div>
+        <div class="name">Mallory</div>
+        <div class="role">In the middle</div>
+      </div>
+      <div class="actor a-bob">
+        <div class="avatar">🖥️</div>
+        <div class="name">Bob</div>
+        <div class="role">Server</div>
+      </div>
+    </div>
+
+    <div class="channel" id="channel">
+      <div class="rail" id="rail"></div>
+      <div class="tap-node" id="tapNode"></div>
+      <!-- packets injected here -->
+    </div>
+
+    <div class="console">
+      <div class="console-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span>packet&nbsp;capture</span>
+        <span class="who" id="mode">— select a scenario —</span>
+      </div>
+      <div class="legend">
+        <span class="l-no">#</span>
+        <span class="l-pdu">PDU / unit</span>
+        <span class="l-layer">layer</span>
+        <span class="l-proto">proto</span>
+        <span class="l-len">length</span>
+        <span class="l-info">info</span>
+      </div>
+      <div class="log" id="log">
+        <div class="line sysline c-sys"><span class="t">00:00</span> Idle. Choose a scenario below and press Intercept to begin.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div class="scenarios" id="scenarios"></div>
+
+  <div class="controls">
+    <button class="run" id="runBtn" disabled>▶ Intercept</button>
+    <button class="ghost" id="resetBtn">Reset</button>
+    <span class="status" id="status">No scenario loaded</span>
+  </div>
+
+  <!-- DEFENSE -->
+  <div class="defense">
+    <div class="head"><span class="shield">🛡</span><h2>Shutting the middle down</h2></div>
+    <div class="body">
+      <div class="def-item"><h4>Encryption in transit (TLS/HTTPS)</h4><p>If the payload is ciphertext, a relay can copy it but can't read or forge it. The lock icon means the tunnel is sealed end to end.</p></div>
+      <div class="def-item"><h4>Certificate validation</h4><p>The client checks that the server's certificate is signed by a trusted CA and matches the name. A swapped cert throws a warning — don't click past it.</p></div>
+      <div class="def-item"><h4>Certificate pinning</h4><p>The app hard-codes the exact cert or key it expects. Even a "valid" attacker cert is rejected outright.</p></div>
+      <div class="def-item"><h4>HSTS + preload</h4><p>Strict-Transport-Security tells the browser to only ever use HTTPS, killing the SSL-strip downgrade. Preloaded domains are protected even on the very first visit.</p></div>
+      <div class="def-item"><h4>Mutual authentication</h4><p>Both ends prove identity (client certs, signed tokens). The attacker can't impersonate a party it can't authenticate as.</p></div>
+      <div class="def-item"><h4>Trusted networks + VPN</h4><p>Avoid rogue Wi-Fi and unencrypted hotspots. A VPN wraps the whole session so the local network sees only ciphertext.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    Alice, Mallory, and Bob are the standard cryptographic cast.<br>
+    Built for security-awareness training, 2026. Concepts only — no real capture, no real traffic.
+  </footer>
+</div>
+
+<script>
+(function(){
+  // Addressing model for the simulated LAN + upstream.
+  // MACs are L2 (change every hop); IPs are L3 (end-to-end, unless a proxy re-originates).
+  const NET = {
+    alice:{mac:"a4:83:e7:11:2a:01", ip:"192.168.7.24",  name:"Alice"},
+    bob:  {mac:"—(via gateway)",     ip:"203.0.113.80",  name:"Bob"},
+    mallory:{mac:"de:ad:be:ef:00:07", ip:"192.168.7.66", name:"Mallory (rogue AP / gateway)"}
+  };
+
+  // Each step is an object. `pdu` names the primary teaching unit at the layer in play:
+  //   FRAME (L2) · PACKET (L3) · SEGMENT (L4) · TLS RECORD · L7 message
+  // `enc` is the encapsulation stack shown in the expandable detail.
+  const SCEN = [
+    {
+      id:"http", num:"01", title:"Open Wi-Fi, plain HTTP",
+      blurb:"No encryption. Alice logs in over a coffee-shop network. Mallory reads everything in the clear.",
+      mode:"UNENCRYPTED · Mallory reads all",
+      rail:"tapped", tap:true, mallory:"active",
+      steps:[
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"PACKET",proto:"HTTP",len:74,
+         from:"alice",toL2:"mallory",toL3:"bob",
+         info:"GET /login HTTP/1.1  Host: example.com",
+         enc:["Ethernet II — Alice → gateway MAC","IPv4 — 192.168.7.24 → 203.0.113.80","TCP :50314 → :80  [PSH,ACK]","HTTP: GET /login"],
+         note:"L7 payload is plaintext ASCII — anyone on the segment can read it."},
+        {who:"mallory",arrow:"··",cls:"c-mallory",pdu:"FRAME",proto:"relay",len:74,
+         from:"mallory",toL2:"bob",toL3:"bob",
+         info:"on-path relay — L2 rewritten, L3/L7 copied verbatim → Bob",
+         enc:["Ethernet II — Mallory → upstream MAC (new L2 header)","IPv4 — 192.168.7.24 → 203.0.113.80 (unchanged)","HTTP: GET /login (unchanged)"],
+         note:"Only the frame's MAC addresses change hop-to-hop. The packet and payload ride through untouched."},
+        {who:"bob",arrow:"←",cls:"c-bob",pdu:"PACKET",proto:"HTTP",len:512,
+         from:"bob",toL2:"mallory",toL3:"alice",
+         info:"HTTP/1.1 200 OK  (login form, text/html)",
+         enc:["Ethernet II — gateway → Mallory MAC","IPv4 — 203.0.113.80 → 192.168.7.24","TCP :80 → :50314  [PSH,ACK]","HTTP: 200 OK"],
+         note:"Response also plaintext on the return path."},
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"SEGMENT",proto:"HTTP",len:196,
+         from:"alice",toL2:"mallory",toL3:"bob",
+         info:"POST /auth  user=alice&pass=<span class='steal'>Summer2026!</span>",
+         enc:["Ethernet II — Alice → gateway MAC","IPv4 — 192.168.7.24 → 203.0.113.80","TCP :50314 → :80  [PSH,ACK] len=142","HTTP: POST /auth (form-urlencoded)"],
+         note:"Credentials sit in the TCP segment's data field as readable text."},
+        {who:"mallory",arrow:"!!",cls:"c-mallory",pdu:"CAPTURE",proto:"—",len:196,
+         from:"mallory",toL2:"mallory",toL3:"mallory",
+         info:"harvested from L7 payload → <span class='steal'>alice / Summer2026!</span>",
+         enc:["Frame received on wlan0 (monitor mode)","TCP reassembly → HTTP body","Extracted field: pass=Summer2026!"],
+         note:"No decryption needed — the attacker just reads the bytes."},
+        {who:"mallory",arrow:"··",cls:"c-mallory",pdu:"FRAME",proto:"relay",len:196,
+         from:"mallory",toL2:"bob",toL3:"bob",
+         info:"forwarded to Bob so the login still succeeds (victim sees nothing)",
+         enc:["Ethernet II — Mallory → upstream MAC","IPv4/TCP/HTTP — unchanged","POST /auth relayed"],
+         note:"Transparent relay keeps the session alive so the victim notices no failure."},
+        {who:"bob",arrow:"←",cls:"c-bob",pdu:"PACKET",proto:"HTTP",len:340,
+         from:"bob",toL2:"mallory",toL3:"alice",
+         info:"HTTP/1.1 200 OK  Set-Cookie: session=… ; welcome, Alice",
+         enc:["Ethernet II — gateway → Mallory MAC","IPv4 — 203.0.113.80 → 192.168.7.24","HTTP: 200 OK + session cookie"],
+         note:"Session cookie also captured — Mallory can now replay it."},
+        {who:"sys",arrow:"✖",cls:"c-warn",pdu:"",proto:"",
+         info:"Session compromised. Credentials and session cookie captured in plaintext.",
+         note:""}
+      ]
+    },
+    {
+      id:"strip", num:"02", title:"HTTPS downgrade (SSL strip)",
+      blurb:"Alice typed the site name, not https://. Mallory keeps her on plain HTTP while holding the real TLS session with Bob.",
+      mode:"DOWNGRADE · TLS stripped to HTTP",
+      rail:"tapped", tap:true, mallory:"active",
+      steps:[
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"PACKET",proto:"HTTP",len:66,
+         from:"alice",toL2:"mallory",toL3:"mallory",
+         info:"GET http://example.com/  (no scheme typed → defaults to :80)",
+         enc:["Ethernet II — Alice → gateway MAC","IPv4 — 192.168.7.24 → 192.168.7.66 (Mallory is the gateway)","TCP :50880 → :80","HTTP: GET / (cleartext)"],
+         note:"Because no https:// was typed, the first hop is plain HTTP — the window SSL-strip lives in."},
+        {who:"mallory",arrow:"··",cls:"c-mallory",pdu:"L7",proto:"HTTP↹TLS",len:66,
+         from:"mallory",toL2:"mallory",toL3:"mallory",
+         info:"terminates HTTP with Alice · strips redirect to HTTPS · no lock shown",
+         enc:["Frame terminated at Mallory (not forwarded as-is)","Rewrites 301→200, removes Upgrade/HSTS hints","Serves cleartext HTTP down to Alice"],
+         note:"Alice's leg stays HTTP; Mallory becomes the real HTTPS client to Bob."},
+        {who:"mallory",arrow:"→",cls:"c-mallory",pdu:"TLS RECORD",proto:"TLS 1.3",len:517,
+         from:"mallory",toL2:"bob",toL3:"bob",
+         info:"ClientHello → Bob  (Mallory ↔ Bob is genuinely encrypted)",
+         enc:["Ethernet II — Mallory → upstream MAC","IPv4 — 192.168.7.66 → 203.0.113.80","TCP :44120 → :443","TLS 1.3 ClientHello (SNI: example.com)"],
+         note:"New L3 identity: the packet now originates from Mallory's IP, not Alice's."},
+        {who:"bob",arrow:"←",cls:"c-bob",pdu:"TLS RECORD",proto:"TLS 1.3",len:1420,
+         from:"bob",toL2:"mallory",toL3:"mallory",
+         info:"🔒 ServerHello, Certificate, Finished — session with Mallory",
+         enc:["IPv4 — 203.0.113.80 → 192.168.7.66","TLS 1.3 handshake complete","Application data now encrypted (AEAD)"],
+         note:"Bob believes Mallory is the legitimate client. From Bob's side, all looks normal."},
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"SEGMENT",proto:"HTTP",len:210,
+         from:"alice",toL2:"mallory",toL3:"mallory",
+         info:"POST /pay  card=<span class='steal'>4111 1111 1111 1111</span>",
+         enc:["Ethernet II — Alice → Mallory MAC","IPv4/TCP :80 — cleartext","HTTP: POST /pay (form body)"],
+         note:"Alice's half is still HTTP, so the card number is plaintext to Mallory."},
+        {who:"mallory",arrow:"!!",cls:"c-mallory",pdu:"CAPTURE",proto:"—",len:210,
+         from:"mallory",toL2:"mallory",toL3:"mallory",
+         info:"read plaintext on Alice's leg → <span class='steal'>card captured</span>, then re-encrypt to Bob",
+         enc:["HTTP body parsed on Alice-side (cleartext)","Field: card=4111…","Re-wrapped in TLS record → Bob"],
+         note:"Mallory sits at the seam between the two legs — cleartext on one side, TLS on the other."},
+        {who:"sys",arrow:"✖",cls:"c-warn",pdu:"",proto:"",
+         info:"Alice's address bar showed http:// with no lock — that missing 🔒 was the only tell.",
+         note:""}
+      ]
+    },
+    {
+      id:"cert", num:"03", title:"Fake certificate",
+      blurb:"Alice uses HTTPS, but Mallory presents a bogus certificate. If Alice clicks past the warning, the session is compromised.",
+      mode:"FORGED CERT · trust decision matters",
+      rail:"tapped", tap:true, mallory:"active",
+      steps:[
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"TLS RECORD",proto:"TLS 1.3",len:517,
+         from:"alice",toL2:"mallory",toL3:"mallory",
+         info:"🔒 ClientHello → bob.example  (SNI, cipher suites)",
+         enc:["Ethernet II — Alice → gateway MAC (Mallory)","IPv4 — 192.168.7.24 → 192.168.7.66","TCP :51002 → :443","TLS 1.3 ClientHello"],
+         note:"Alice does the right thing — she requests HTTPS. The attack now hinges on trust."},
+        {who:"mallory",arrow:"··",cls:"c-mallory",pdu:"TLS RECORD",proto:"TLS 1.3",len:1180,
+         from:"mallory",toL2:"alice",toL3:"alice",
+         info:"ServerHello + Certificate (CN=bob.example, issuer: self-signed)",
+         enc:["TLS ServerHello","Certificate: subject=bob.example","Issuer: Mallory-Root (NOT in trust store)"],
+         note:"The cert names the right host but is signed by an untrusted issuer."},
+        {who:"sys",arrow:"⚠",cls:"c-warn",pdu:"",proto:"",
+         info:"Browser: NET::ERR_CERT_AUTHORITY_INVALID — certificate is not trusted.",
+         note:"Certificate validation is doing its job here — the warning is the defense firing."},
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"—",proto:"user",
+         from:"alice",toL2:"mallory",toL3:"mallory",
+         info:"...user clicks “Proceed anyway” (overrides the warning)",
+         enc:["No protocol event — a human trust decision","Browser accepts the forged cert","TLS handshake resumes to completion"],
+         note:"This is the failure point: the machine warned correctly; the person overrode it."},
+        {who:"mallory",arrow:"!!",cls:"c-mallory",pdu:"TLS RECORD",proto:"TLS 1.3",len:260,
+         from:"mallory",toL2:"mallory",toL3:"mallory",
+         info:"TLS terminates at Mallory → <span class='steal'>application data decrypted</span>",
+         enc:["Handshake finished (Alice ↔ Mallory)","Mallory holds the session keys","Decrypts every HTTP request/response"],
+         note:"Encryption exists on both legs, but Mallory owns the keys for Alice's leg."},
+        {who:"bob",arrow:"←",cls:"c-bob",pdu:"TLS RECORD",proto:"TLS 1.3",len:1420,
+         from:"bob",toL2:"mallory",toL3:"mallory",
+         info:"🔒 second, legitimate tunnel opened Mallory ↔ Bob",
+         enc:["Mallory ↔ Bob: valid TLS 1.3","Bob's real cert validated by Mallory","Two tunnels, one attacker in the seam"],
+         note:"Bob sees a normal client. Neither endpoint alone can detect the split."},
+        {who:"sys",arrow:"✖",cls:"c-warn",pdu:"",proto:"",
+         info:"Encryption was present, but trust was bypassed. Never click past a certificate warning.",
+         note:""}
+      ]
+    },
+    {
+      id:"tls", num:"04", title:"Valid HTTPS + pinning",
+      blurb:"Same attacker, same position — but Alice's client validates and pins the cert. The middle collapses.",
+      mode:"SECURED · interception fails",
+      rail:"tls", tap:false, mallory:"lurking",
+      steps:[
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"TLS RECORD",proto:"TLS 1.3",len:517,
+         from:"alice",toL2:"mallory",toL3:"bob",
+         info:"🔒 ClientHello → bob.example",
+         enc:["Ethernet II — Alice → gateway MAC","IPv4 — 192.168.7.24 → 203.0.113.80","TCP :51330 → :443","TLS 1.3 ClientHello (SNI: bob.example)"],
+         note:"Same starting frame as scenario 3 — the difference is what the client does with the cert."},
+        {who:"mallory",arrow:"··",cls:"c-mallory",pdu:"TLS RECORD",proto:"TLS 1.3",len:1180,
+         from:"mallory",toL2:"alice",toL3:"alice",
+         info:"attempts to inject forged cert (issuer: Mallory-Root)",
+         enc:["ServerHello + forged Certificate","Public key ≠ pinned key","Awaiting client verification"],
+         note:"Mallory tries the exact same move that worked in scenario 3."},
+        {who:"alice",arrow:"✔",cls:"c-good",pdu:"ALERT",proto:"TLS 1.3",len:7,
+         from:"alice",toL2:"mallory",toL3:"mallory",
+         info:"pinned key mismatch → TLS Alert (bad_certificate) → <b>connection refused</b>",
+         enc:["Client compares cert to pinned SPKI hash","Mismatch → fatal TLS alert","Socket closed before any app data sent"],
+         note:"Pinning gives no override button — the connection just dies. No human decision to exploit."},
+        {who:"mallory",arrow:"✖",cls:"c-mallory",pdu:"—",proto:"—",
+         from:"mallory",toL2:"mallory",toL3:"mallory",
+         info:"cannot read ciphertext, cannot forge a pinned identity",
+         enc:["No session keys obtained","Captured frames contain only AEAD ciphertext","Attack yields nothing usable"],
+         note:"Even a fully on-path attacker is reduced to copying random-looking bytes."},
+        {who:"alice",arrow:"→",cls:"c-alice",pdu:"TLS RECORD",proto:"TLS 1.3",len:517,
+         from:"alice",toL2:"mallory",toL3:"bob",
+         info:"🔒 retries — handshake completes directly with Bob's real cert",
+         enc:["ClientHello → Bob","Bob's real cert matches pinned key","Handshake OK — keys never leave the endpoints"],
+         note:"The frame still physically passes Mallory, but she holds none of the keys."},
+        {who:"bob",arrow:"←",cls:"c-bob",pdu:"TLS RECORD",proto:"TLS 1.3",len:1420,
+         from:"bob",toL2:"mallory",toL3:"alice",
+         info:"🔒 200 OK — sealed end to end (AEAD encrypted)",
+         enc:["IPv4 — 203.0.113.80 → 192.168.7.24","TLS 1.3 application data","Confidential + integrity-protected"],
+         note:"End-to-end confidentiality restored."},
+        {who:"sys",arrow:"✔",cls:"c-good",pdu:"",proto:"",
+         info:"Payload stays ciphertext the whole way. Mallory sees noise.",
+         note:""}
+      ]
+    }
+  ];
+
+  const $=s=>document.querySelector(s);
+  const log=$("#log"), rail=$("#rail"), tapNode=$("#tapNode"),
+        mallory=$("#mallory"), channel=$("#channel"),
+        runBtn=$("#runBtn"), resetBtn=$("#resetBtn"),
+        statusEl=$("#status"), modeEl=$("#mode"), scenBox=$("#scenarios");
+  let current=null, playing=false, timers=[];
+
+  // build cards
+  SCEN.forEach(s=>{
+    const b=document.createElement("button");
+    b.className="card"; b.setAttribute("aria-pressed","false");
+    b.innerHTML=`<span class="num">SCENARIO ${s.num}</span><h3>${s.title}</h3><p>${s.blurb}</p>`;
+    b.onclick=()=>select(s,b);
+    scenBox.appendChild(b);
+  });
+
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function stamp(i){const s=(i*1.4).toFixed(0).padStart(2,"0");return "00:"+s;}
+
+  function select(s,btn){
+    if(playing) return;
+    current=s;
+    document.querySelectorAll(".card").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-pressed","false");});
+    btn.classList.add("on"); btn.setAttribute("aria-pressed","true");
+    reset(true);
+    statusEl.textContent="Loaded — "+s.title;
+    modeEl.textContent=s.mode;
+    runBtn.disabled=false;
+  }
+
+  function reset(keepSel){
+    clearTimers(); playing=false;
+    channel.querySelectorAll(".packet").forEach(p=>p.remove());
+    rail.className="rail";
+    tapNode.classList.remove("show");
+    mallory.className="actor a-mallory lurking";
+    log.innerHTML='<div class="line sysline c-sys"><span class="t">00:00</span> Idle. Press Intercept to run the capture.</div>';
+    runBtn.textContent="▶ Intercept";
+    if(!keepSel){
+      current=null; runBtn.disabled=true;
+      statusEl.textContent="No scenario loaded";
+      modeEl.textContent="— select a scenario —";
+      document.querySelectorAll(".card").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-pressed","false");});
+    }else if(current){
+      // apply resting rail state for chosen scenario preview
+    }
+  }
+
+  function flyPacket(from,intercepted,label,cls){
+    const p=document.createElement("div");
+    p.className="packet";
+    p.style.borderColor=`var(--${cls.replace('c-','')==='alice'?'alice':cls.replace('c-','')==='bob'?'bob':cls.replace('c-','')==='mallory'?'mallory':'wire'})`;
+    p.style.color=p.style.borderColor;
+    p.innerHTML = (label||"PDU").replace(/<[^>]+>/g,''); // PDU type on the wire
+    channel.appendChild(p);
+    // positions
+    const start = from==="alice"?"12%":from==="bob"?"88%":"50%";
+    const mid = "50%";
+    const end = from==="alice"?"88%":"12%";
+    p.style.left=start; p.style.opacity="0";
+    requestAnimationFrame(()=>{
+      p.style.transition="left .7s ease, opacity .3s";
+      p.style.opacity="1";
+      p.style.left = intercepted ? mid : end;
+      if(intercepted){
+        setTimeout(()=>{ p.style.left=end; },760);
+        setTimeout(()=>{ p.style.opacity="0"; },1420);
+        setTimeout(()=>p.remove(),1720);
+      }else{
+        setTimeout(()=>{ p.style.opacity="0"; },820);
+        setTimeout(()=>p.remove(),1120);
+      }
+    });
+  }
+
+  // Maps the PDU label to the OSI layer it teaches + a short gloss.
+  const PDU_META = {
+    "FRAME":     {layer:"L2", gloss:"data-link unit · MAC-to-MAC · rewritten every hop"},
+    "PACKET":    {layer:"L3", gloss:"network unit · IP-to-IP · end-to-end addressing"},
+    "SEGMENT":   {layer:"L4", gloss:"transport unit · TCP ports + sequence"},
+    "TLS RECORD":{layer:"L5-6",gloss:"session/presentation · encrypted record"},
+    "ALERT":     {layer:"L5-6",gloss:"TLS control message · aborts the handshake"},
+    "L7":        {layer:"L7", gloss:"application message"},
+    "CAPTURE":   {layer:"—",  gloss:"attacker read/extract action"},
+    "—":         {layer:"—",  gloss:"no protocol data unit"},
+    "":          {layer:"",   gloss:""}
+  };
+
+  function addr(step){
+    // Build the src → dst string for the hop, distinguishing L2 (frame) vs L3 (packet).
+    const s=NET[step.from]; if(!s) return "";
+    const l2 = NET[step.toL2]||{}; const l3 = NET[step.toL3]||{};
+    const isFrameLevel = step.pdu==="FRAME";
+    if(isFrameLevel){
+      return `L2 ${s.mac} → ${l2.mac||"?"}  ·  L3 ${s.ip} → ${l3.ip||"?"}`;
+    }
+    if(step.pdu==="CAPTURE"||step.pdu==="—"||step.from===step.toL3){
+      return `local to ${s.name.split(" ")[0]}`;
+    }
+    return `${s.ip} → ${l3.ip||"?"}  (L2 next hop: ${(NET[step.toL2]||{}).mac||"?"})`;
+  }
+
+  function buildRow(st, i, no){
+    if(st.who==="sys"){
+      const d=document.createElement("div");
+      d.className="line sysline "+st.cls;
+      d.innerHTML=`<span class="t">${stamp(i)}</span><b class="arw">${st.arrow}</b> <span class="sysmsg">${st.info}</span>`
+        + (st.note?`<div class="sysnote">${st.note}</div>`:"");
+      return d;
+    }
+    const meta = PDU_META[st.pdu]||PDU_META["—"];
+    const wrap=document.createElement("div");
+    wrap.className="line pkt "+st.cls;
+    const lenTxt = st.len!=null ? `${st.len} B` : "";
+    wrap.innerHTML =
+      `<div class="pkt-head">`
+      +  `<span class="t">${stamp(i)}</span>`
+      +  `<span class="no">#${no}</span>`
+      +  `<span class="pdu pdu-${meta.layer.replace(/[^a-z0-9]/gi,'').toLowerCase()}">${st.pdu||"—"}</span>`
+      +  `<span class="layer">${meta.layer}</span>`
+      +  `<span class="proto">${st.proto||""}</span>`
+      +  `<span class="len">${lenTxt}</span>`
+      +  `<span class="info">${st.info}</span>`
+      + `</div>`
+      + `<div class="pkt-meta">`
+      +   `<span class="hop">${addr(st)}</span>`
+      +   (meta.gloss?`<span class="gloss">${st.pdu} = ${meta.gloss}</span>`:"")
+      + `</div>`
+      + (st.enc&&st.enc.length
+          ? `<div class="stack">`+st.enc.map((e,ix)=>`<span class="lyr" style="padding-left:${ix*12}px">${ix?"└ ":""}${e}</span>`).join("")+`</div>`
+          : "")
+      + (st.note?`<div class="pnote">▸ ${st.note}</div>`:"");
+    return wrap;
+  }
+
+  function run(){
+    if(!current||playing) return;
+    playing=true; runBtn.disabled=true; runBtn.textContent="● Capturing…";
+    statusEl.textContent="Running "+current.title+"…";
+    log.innerHTML="";
+
+    // set channel visual
+    rail.className="rail "+(current.rail||"");
+    if(current.tap) tapNode.classList.add("show"); else tapNode.classList.remove("show");
+    mallory.className="actor a-mallory "+(current.mallory||"lurking");
+
+    const steps=current.steps;
+    let no=0;
+    steps.forEach((st,i)=>{
+      timers.push(setTimeout(()=>{
+        log.appendChild(buildRow(st, i, st.who!=="sys" ? ++no : null));
+        log.scrollTop=log.scrollHeight;
+        if(st.who==="alice") flyPacket("alice", current.tap, st.pdu, st.cls);
+        else if(st.who==="bob") flyPacket("bob", current.tap, st.pdu, st.cls);
+      }, i*1450));
+    });
+
+    timers.push(setTimeout(()=>{
+      playing=false; runBtn.disabled=false; runBtn.textContent="↻ Replay";
+      statusEl.textContent="Done — "+current.title;
+
+      // Silent completion tracking: fire once all 4 scenarios have been played this session
+      try{
+        const seen=new Set(JSON.parse(sessionStorage.getItem('mitm_scenarios_seen')||'[]'));
+        seen.add(current.id);
+        sessionStorage.setItem('mitm_scenarios_seen', JSON.stringify([...seen]));
+        if(seen.size>=4 && !sessionStorage.getItem('gc_mitm_complete')){
+          sessionStorage.setItem('gc_mitm_complete','1');
+          if(window.goatcounter && window.goatcounter.count){
+            window.goatcounter.count({path:'mitm-complete', title:'MITM Simulator — All 4 Scenarios Viewed', event:true});
+          }
+        }
+      }catch(e){}
+    }, steps.length*1450+400));
+  }
+
+  runBtn.onclick=run;
+  resetBtn.onclick=()=>reset(true);
+})();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>

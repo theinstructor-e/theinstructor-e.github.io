@@ -1384,7 +1384,7 @@ table.cidr-table tr:hover td { background: var(--table-row-hover); }
     <a href="../networkguide/">📘 Networking Explained</a>
     <a href="../cellularguide/">📱 Cellular Explained</a>
     <a href="../network/">🖧 Network Interactive</a>
-    <a href="../nettest/">📝 Network Test (quiz)</a>
+    <a href="../nettest/">📝 Practice Quiz &amp; Test</a>
   </div>
 </header>
 
@@ -3734,5 +3734,14 @@ calculateSubnet();
   </ul>
 </div>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

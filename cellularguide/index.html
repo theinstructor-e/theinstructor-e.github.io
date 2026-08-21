@@ -89,7 +89,7 @@ table.compare tr:hover td{background:var(--table-row-hover)}
   <div class="related-bar">
     <span class="related-label">Related:</span>
     <a href="../cellular/">📱 Cellular Interactive</a>
-    <a href="../nettest/">📝 Network Test (quiz)</a>
+    <a href="../nettest/">📝 Practice Quiz &amp; Test</a>
     <a href="../networkguide/">📘 Networking Explained</a>
   </div>
 </header>
@@ -219,5 +219,14 @@ function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-t
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

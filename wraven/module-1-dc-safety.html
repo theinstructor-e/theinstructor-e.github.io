@@ -636,7 +636,7 @@
         <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
         
         <!-- Just change the Module number/title for each file -->
-        <div class="cert-course">Module 3: Circuit Protection & Schematics</div>
+        <div class="cert-course">Module 1: DC & Safety</div>
         
         <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
         
@@ -876,6 +876,14 @@
       let formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('certDate').textContent = formattedDate;
       fb.style.display = 'none';
+
+      // GoatCounter: log module completion (fires once per session)
+      if (!sessionStorage.getItem('gc_wraven1_complete')) {
+        sessionStorage.setItem('gc_wraven1_complete', '1');
+        if (window.goatcounter && window.goatcounter.count) {
+          window.goatcounter.count({path: 'wraven-module-1-complete', title: 'WRAVEN Module 1 Complete', event: true});
+        }
+      }
     } else {
       fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
       fb.className = 'fb no show';
@@ -885,6 +893,17 @@
   buildExam();
 
 })();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
 </script>
 </body>
 </html>
