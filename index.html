@@ -174,7 +174,7 @@ const TOOLS=[
   {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
   {cat:'D Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
   {cat:'D Networking',kind:'guide',nm:'Wi-Fi Explained',ds:'Plain-language guide: Wi-Fi standards, bands & channels',file:'wifiguide',color:'#00d4ff'},
-  {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh/index.html',color:'#00ff88'},
+  {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh',color:'#00ff88'},
   {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
   {cat:'D Networking',nm:'Network Test',ds:'D MOD Practice Test: 250-question master bank across E01\u2013E15, POP quizzes, timed scoring & leaderboard',file:'nettest',color:'#bb88ff'},
@@ -314,44 +314,93 @@ function renderSlides(){
 // Additional Learning — certifications & licenses for self-study beyond this course.
 // Grouped by category; each links externally (opens in a new tab, doesn't navigate away from the toolkit).
 const LEARN=[
-  {cat:'IT / Cyber Certifications', nm:'CompTIA A+', tag:'CERT', color:'#00d4ff',
+  // B1 Math
+  {cat:'B1 Math', nm:'Khan Academy \u2014 Algebra & Trigonometry', tag:'FREE TRAINING', color:'#3d7fd6',
+    ds:'Free, self-paced video lessons and practice problems covering the algebra and trig foundations this course\u2019s math modules build on \u2014 useful for shoring up any gaps before tackling decibels and RF calculations.',
+    url:'https://www.khanacademy.org/math'},
+
+  // B2 Physics
+  {cat:'B2 Physics', nm:'Technician Class', tag:'HAM', color:'#00ff88',
+    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Free, always-current practice tests pulled straight from the active FCC question pool.',
+    url:'https://hamstudy.org/'},
+  {cat:'B2 Physics', nm:'General Class', tag:'HAM', color:'#00ff88',
+    ds:'The upgrade from Technician \u2014 35-question exam, 74% to pass (26/35), roughly $15\u2013$50 total in fees. Opens most HF privileges (10\u2013160 meters), letting you actually work worldwide propagation instead of just reading about it.',
+    url:'https://www.arrl.org/upgrading-to-a-general-license'},
+  {cat:'B2 Physics', nm:'Amateur Extra Class', tag:'HAM', color:'#00ff88',
+    ds:'The top of the three-tier ham ladder \u2014 50-question exam, 74% to pass (37/50). Grants full privileges on every amateur band and mode, including exclusive HF sub-bands reserved for Extra-class operators.',
+    url:'https://www.arrl.org/general-and-amateur-extra-class-license-manuals'},
+  {cat:'B2 Physics', nm:'FCC General Radiotelephone Operator License (GROL)', tag:'FCC', color:'#00d4ff',
+    ds:'Two written exams (Element 1: 24 questions; Element 3: 100 questions, both 75% to pass), roughly $100 total, valid for life with no renewal. Required to adjust, maintain, or internally repair licensed transmitters in aviation, maritime, and international fixed public radio services \u2014 a direct civilian parallel to EW-adjacent RF maintenance work, and listed on Marine Corps COOL as a recognized credential.',
+    url:'https://www.fcc.gov/wireless/bureau-divisions/mobility-division/commercial-operator-license-program'},
+  {cat:'B2 Physics', nm:'W2AEW \u2014 RF & Test Equipment', tag:'YOUTUBE', color:'#00d4ff',
+    ds:'Alan Wolke\u2019s long-running channel on RF theory, oscilloscope/test-equipment technique, and ham radio \u2014 deep dives on Smith charts, VSWR, mixers, and antenna matching that go well beyond the basics.',
+    url:'https://www.youtube.com/@w2aew'},
+
+  // C BET
+  {cat:'C BET', nm:'EEVblog \u2014 Electronics Engineering', tag:'YOUTUBE', color:'#ffb300',
+    ds:'Dave Jones\u2019s widely-followed electronics engineering channel \u2014 component teardowns, test-gear reviews, and unscripted troubleshooting that reinforce the diode/transistor/circuit fundamentals from the BET modules.',
+    url:'https://www.youtube.com/channel/UC2DjFE7Xf11URZqWBigcVOQ'},
+
+  // D Networking
+  {cat:'D Networking', nm:'CompTIA A+', tag:'CERT', color:'#00d4ff',
     ds:'Foundational IT hardware, software & troubleshooting certification \u2014 a common first step before Network+ or Security+.',
     url:'https://www.comptia.org/certifications/a'},
-  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 A+ Core 1 (220-1101)', tag:'FREE TRAINING', color:'#00d4ff',
+  {cat:'D Networking', nm:'Professor Messer \u2014 A+ Core 1 (220-1101)', tag:'FREE TRAINING', color:'#00d4ff',
     ds:'The internet\u2019s most-used free A+ training series \u2014 full video course covering every Core 1 exam objective.',
     embed:'playlist', embedId:'PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC',
     url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC'},
-  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 A+ Core 2 (220-1102)', tag:'FREE TRAINING', color:'#00d4ff',
+  {cat:'D Networking', nm:'Professor Messer \u2014 A+ Core 2 (220-1102)', tag:'FREE TRAINING', color:'#00d4ff',
     ds:'The companion Core 2 course \u2014 operating systems, security, software troubleshooting, and operational procedures.',
     url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnna96gzhJrzkii4hH_mgW4b'},
-  {cat:'IT / Cyber Certifications', nm:'CompTIA Network+', tag:'CERT', color:'#00d4ff',
+  {cat:'D Networking', nm:'CompTIA Network+', tag:'CERT', color:'#00d4ff',
     ds:'Vendor-neutral networking fundamentals \u2014 infrastructure, protocols, troubleshooting. Builds directly on this site\u2019s Networking modules.',
     url:'https://www.comptia.org/certifications/network'},
-  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 Network+ (N10-009) Training Index', tag:'FREE TRAINING', color:'#00d4ff',
+  {cat:'D Networking', nm:'Professor Messer \u2014 Network+ (N10-009) Training Index', tag:'FREE TRAINING', color:'#00d4ff',
     ds:'Free full video course covering the current N10-009 objectives \u2014 official course index with every video linked in order.',
     url:'https://professormesser.link/n009videos'},
-  {cat:'IT / Cyber Certifications', nm:'CompTIA Security+', tag:'CERT', color:'#00d4ff',
+  {cat:'D Networking', nm:'CompTIA Security+', tag:'CERT', color:'#00d4ff',
     ds:'Security fundamentals \u2014 commonly used to satisfy DoD 8140/8570 IAT Level II baseline certification requirements.',
     url:'https://www.comptia.org/certifications/security'},
-  {cat:'IT / Cyber Certifications', nm:'Professor Messer \u2014 Security+ (SY0-701)', tag:'FREE TRAINING', color:'#00d4ff',
+  {cat:'D Networking', nm:'Professor Messer \u2014 Security+ (SY0-701)', tag:'FREE TRAINING', color:'#00d4ff',
     ds:'The current SY0-701 training course \u2014 121 videos, 15+ hours, covering every exam objective for free.',
     embed:'playlist', embedId:'PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv',
     url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv'},
+  {cat:'D Networking', nm:'CWNA \u2014 Certified Wireless Network Administrator', tag:'CERT', color:'#00d4ff',
+    ds:'Vendor-neutral foundation certification for enterprise Wi-Fi \u2014 60 questions, 90 minutes, 70% to pass. Covers RF fundamentals, 802.11 standards through Wi-Fi 6E/7, WLAN design, and WPA3 security, building directly on this course\u2019s Wi-Fi and RF theory modules.',
+    url:'https://www.cwnp.com/certifications/cwna/'},
 
-  {cat:'DoD Baseline Certifications', nm:'DoD 8140.03 Cyber Workforce Framework', tag:'DoD', color:'#ffb300',
+  // E EW Theory
+  {cat:'E EW Theory', nm:'CemaXecuter \u2014 Linux & SDR', tag:'YOUTUBE', color:'#ff4444',
+    ds:'Practical, hands-on videos on Linux and software-defined radio (SDR) \u2014 the same technology CEMA/EW operations lean on for spectrum monitoring, signal capture, and flexible tactical radios. A strong bridge between this course\u2019s theory and real SDR tooling.',
+    url:'https://www.youtube.com/@cemaxecuter'},
+
+  // F Systems
+  {cat:'F Systems', nm:'FAA Part 107 \u2014 Remote Pilot Certificate', tag:'FAA', color:'#ff7700',
+    ds:'The federal certificate required for any commercial or non-recreational drone flight \u2014 60-question knowledge test, $175 fee, in-person at an FAA-approved testing center. Never expires once earned, just free recurrent training every 24 months. A natural pairing with this course\u2019s C-UAS content \u2014 understanding how drones are legally and technically operated sharpens how you plan to counter them.',
+    url:'https://www.faa.gov/uas/commercial_operators'},
+
+  // G Planning
+  {cat:'G Planning', nm:'Army Publishing Directorate \u2014 Doctrine Library', tag:'FREE TRAINING', color:'#bb88ff',
+    ds:'The official source for current ADP, ATP, and FM doctrine \u2014 including the TLP, OPORD, and battle-drill publications this module\u2019s tools are built from. Always check here for the current version before citing a specific ADP/ATP number.',
+    url:'https://armypubs.army.mil/'},
+
+  // Career & Credentialing (spans the whole MOS, not tied to one module)
+  {cat:'Career & Credentialing', nm:'DoD 8140.03 Cyber Workforce Framework', tag:'DoD', color:'#ffb300',
     ds:'As of Feb 2023, DoDM 8140.03 supersedes the older 8570.01-M IA program, mapping roles to DCWF work roles (the old IAT/IAM/IASAE terms are still used informally). Check your specific role/level before assuming which certification applies \u2014 requirements vary by position.',
     url:'https://dl.dod.cyber.mil/wp-content/uploads/8140/pdf/unclass-dod8570_ia_program_transition_dod8140_cwp.pdf'},
-  {cat:'DoD Baseline Certifications', nm:'Navigating DoD 8140 Qualifications', tag:'FREE TRAINING', color:'#ffb300',
+  {cat:'Career & Credentialing', nm:'Navigating DoD 8140 Qualifications', tag:'FREE TRAINING', color:'#ffb300',
     ds:'A plain-language walkthrough of how the 8140 qualification and role-mapping process actually works in practice.',
     embed:'video', embedId:'HgVQLTIyuh4',
     url:'https://www.youtube.com/watch?v=HgVQLTIyuh4'},
-  {cat:'DoD Baseline Certifications', nm:'DoD 8140 Qualification Matrices (Official)', tag:'DoD', color:'#ffb300',
+  {cat:'Career & Credentialing', nm:'DoD 8140 Qualification Matrices (Official)', tag:'DoD', color:'#ffb300',
     ds:'The official DoD Cyber Exchange page listing approved certifications and training by DCWF work role \u2014 the authoritative source, not a summary.',
     url:'https://www.cyber.mil/dod-workforce-innovation-directorate/dod8140/qualification-matrices'},
-
-  {cat:'Amateur Radio Licenses', nm:'Technician Class', tag:'HAM', color:'#00ff88',
-    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Free, always-current practice tests pulled straight from the active FCC question pool.',
-    url:'https://hamstudy.org/'},
+  {cat:'Career & Credentialing', nm:'Army COOL \u2014 17E Credentialing (Official)', tag:'DoD', color:'#ffb300',
+    ds:'The Army\u2019s own Credentialing Opportunities On-Line page for 17E \u2014 lists the nationally recognized certifications mapped specifically to this MOS, plus Credentialing Assistance (CA) funding rules and how to apply through ArmyIgnitED.',
+    url:'https://www.cool.osd.mil/army/moc/index.html?moc=17e&tab=cred'},
+  {cat:'Career & Credentialing', nm:'GI Bill Comparison Tool \u2014 Degree Pathways', tag:'DEGREE', color:'#ffb300',
+    ds:'The VA\u2019s official tool for comparing schools and programs \u2014 tuition/fee coverage, housing allowance, and Yellow Ribbon participation, side by side. Use it to research electrical engineering, cybersecurity, or telecommunications degrees before committing GI Bill or Tuition Assistance funds; always verify a program\u2019s accreditation (CHEA/ABET) before enrolling.',
+    url:'https://www.va.gov/education/gi-bill-comparison-tool/'},
 ];
 
 let activeLearnCat='ALL';
