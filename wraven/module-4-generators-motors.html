@@ -228,9 +228,33 @@
     #tocSidebar.open{margin-left:0;}
     #tocOverlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;}
   }
+
+  /* ---- Roster gate (attendance log) ---- */
+  .roster-gate{position:fixed;inset:0;background:rgba(5,8,12,.92);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+  .roster-modal{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:32px;max-width:420px;width:100%}
+  .roster-badge{font-size:11px;letter-spacing:2px;color:var(--warn);border:1px solid var(--warn);display:inline-block;padding:3px 10px;border-radius:4px;margin-bottom:14px}
+  .roster-modal h2{margin:0 0 10px;font-size:20px;color:var(--txt)}
+  .roster-modal p{margin:0 0 18px;font-size:13px;color:var(--muted);line-height:1.6}
+  .roster-modal input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--txt);padding:11px 14px;border-radius:6px;margin-bottom:12px;font-size:14px;font-family:inherit}
+  .roster-modal input:focus{outline:none;border-color:var(--accent)}
+  .roster-err{color:var(--bad);font-size:12.5px;margin:-4px 0 12px;min-height:16px}
+  .roster-btn{width:100%;background:var(--accent2);color:#052012;border:none;padding:12px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+  .roster-btn:hover{opacity:.9}
 </style>
 </head>
 <body>
+<iframe name="rosterFrame" id="rosterFrame" style="display:none" title="roster submission"></iframe>
+<div class="roster-gate" id="rosterGate">
+  <div class="roster-modal">
+    <div class="roster-badge">ATTENDANCE LOG — REQUIRED</div>
+    <h2>Before You Begin</h2>
+    <p>Enter your name and MOS to start <strong>Module 4: Generators & Motors</strong>. This creates an attendance record for your instructor.</p>
+    <input type="text" id="rosterName" placeholder="Full name" autocomplete="name">
+    <input type="text" id="rosterMos" placeholder="MOS (e.g., 17E)" autocomplete="off">
+    <div class="roster-err" id="rosterErr"></div>
+    <button class="roster-btn" onclick="submitRosterStart()">Begin Module →</button>
+  </div>
+</div>
 <div id="app">
   <header>
     <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 4</span></div>
@@ -844,7 +868,65 @@
     });
   }
 
-  window.gradeExam = function() {
+  // ---- Roster (attendance log) — fill in ROSTER_FORM_URL / entry IDs after creating the Google Form ----
+const ROSTER_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSefJkQKDY3rA7pWqpy9PDT_gooELbwVLmW9d9iq3HKulaWa3w/formResponse';
+const ROSTER_ENTRY_NAME = 'entry.416366255';
+const ROSTER_ENTRY_MOS = 'entry.1944865718';
+const ROSTER_ENTRY_MODULE = 'entry.836736366';
+const ROSTER_ENTRY_EVENT = 'entry.2113594468';
+const MODULE_LABEL_4 = 'Module 4: Generators & Motors';
+
+function submitToRoster(eventType, name, mos) {
+  if (!ROSTER_FORM_URL.startsWith('http')) return; // not configured yet — safe no-op
+  const form = document.createElement('form');
+  form.action = ROSTER_FORM_URL;
+  form.method = 'POST';
+  form.target = 'rosterFrame';
+  form.style.display = 'none';
+  const fields = {};
+  fields[ROSTER_ENTRY_NAME] = name;
+  fields[ROSTER_ENTRY_MOS] = mos;
+  fields[ROSTER_ENTRY_MODULE] = MODULE_LABEL_4;
+  fields[ROSTER_ENTRY_EVENT] = eventType;
+  for (const key in fields) {
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.name = key; input.value = fields[key];
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(function() { form.remove(); }, 1500);
+}
+
+window.submitRosterStart = function() {
+  const name = document.getElementById('rosterName').value.trim();
+  const mos = document.getElementById('rosterMos').value.trim();
+  const err = document.getElementById('rosterErr');
+  if (!name || !mos) {
+    err.textContent = '\u26a0\ufe0f Both name and MOS are required to begin.';
+    return;
+  }
+  localStorage.setItem('roster_name', name);
+  localStorage.setItem('roster_mos', mos);
+  submitToRoster('Start', name, mos);
+  document.getElementById('rosterGate').style.display = 'none';
+  if (window.goatcounter && window.goatcounter.count) {
+    window.goatcounter.count({path: 'wraven-module-4-start', title: 'WRAVEN Module 4 Start', event: true});
+  }
+};
+
+(function() {
+  const savedName = localStorage.getItem('roster_name');
+  const savedMos = localStorage.getItem('roster_mos');
+  if (savedName) document.getElementById('rosterName').value = savedName;
+  if (savedMos) document.getElementById('rosterMos').value = savedMos;
+  if (savedName) {
+    const sn = document.getElementById('studentName');
+    if (sn) sn.value = savedName;
+  }
+})();
+
+window.gradeExam = function() {
     let nameInput = document.getElementById('studentName').value.trim();
     let fb = document.getElementById('examFeedback');
     
@@ -923,6 +1005,7 @@
           window.goatcounter.count({path: 'wraven-module-4-complete', title: 'WRAVEN Module 4 Complete', event: true});
         }
       }
+      submitToRoster('Complete', nameInput, localStorage.getItem('roster_mos') || '');
     } else {
       fb.textContent = "❌ You missed one or more questions. Try again on the highlighted questions.";
       fb.className = 'fb no show';
