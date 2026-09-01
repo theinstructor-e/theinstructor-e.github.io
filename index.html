@@ -208,21 +208,42 @@ function setCat(c){
 }
 function render(){
   let items=activeCat==='ALL'?TOOLS:TOOLS.filter(t=>t.cat===activeCat);
-  items=items.slice().sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
+  if(activeCat==='ALL'){
+    items=items.slice().sort((a,b)=>{
+      const catDiff=CATEGORIES.indexOf(a.cat)-CATEGORIES.indexOf(b.cat);
+      if(catDiff!==0) return catDiff;
+      return (a.kind==='guide'?0:1)-(b.kind==='guide'?0:1);
+    });
+  } else {
+    items=items.slice().sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
+  }
   if(!items.length){
     document.getElementById('view-grid').innerHTML=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;
     return;
   }
-  let vh='<div class="grid">';
-  items.forEach(t=>{
+  const cardHtml=t=>{
     const guide=t.kind==='guide';
     const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
     const go=guide?'READ \u2192':'LAUNCH \u2192';
-    vh+=`<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+    return `<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
       <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
       <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
-  });
-  vh+='</div>';
+  };
+  let vh='';
+  if(activeCat==='ALL'){
+    let lastCat=null;
+    items.forEach(t=>{
+      if(t.cat!==lastCat){
+        if(lastCat!==null) vh+='</div>';
+        vh+=`<div class="section-label" style="cursor:default;user-select:auto">${t.cat}</div><div class="grid">`;
+        lastCat=t.cat;
+      }
+      vh+=cardHtml(t);
+    });
+    vh+='</div>';
+  } else {
+    vh='<div class="grid">'+items.map(cardHtml).join('')+'</div>';
+  }
   document.getElementById('view-grid').innerHTML=vh;
 }
 renderTabs();
@@ -501,7 +522,7 @@ renderWraven();
   <script data-goatcounter="https://ewit-training.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
-  <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
 <script>
 if ('serviceWorker' in navigator) {
@@ -511,6 +532,34 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
 </script>
 </body>
 </html>
