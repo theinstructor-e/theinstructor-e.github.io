@@ -376,7 +376,7 @@ function ntFault(){
   ntPackets=[];ntDraw();
 }
 function ntReset(){ntFailed=-1;ntPackets=[];if(ntAnim){clearInterval(ntAnim);ntAnim=null;}document.getElementById('nt-legend').textContent='Reset — click Send or Broadcast to animate';ntDraw();}
-window.addEventListener('load',function(){selectTopo(curTopo);initNt();ntDraw();});
+window.addEventListener('load',function(){initNt();ntSelect(ntCur);});
 window.addEventListener('resize',redrawActive);
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
