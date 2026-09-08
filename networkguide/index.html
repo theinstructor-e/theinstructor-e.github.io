@@ -36,6 +36,13 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .related-bar a:hover{background:rgba(255,255,255,.2);border-color:#fff}
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
 .section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 .tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -138,7 +145,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </table>
     <p>Knowing the layer a problem lives at tells you where to actually look: "the page won't load" could be Layer 7 (the app is down), Layer 3 (no route to the server), or Layer 1 (the cable's unplugged) — and the fix is completely different depending on which.</p>
     <div class="tryit"><strong>▶ Walk the layers:</strong> the <em>Networking</em> tool animates data moving down and up the OSI stack.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn next" onclick="goToTab('addr')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🏷️ MAC & IP</span></button>
   </div>
+</div>
 
   <!-- ADDR -->
   <div class="tab-content" id="tab-addr">
@@ -165,7 +175,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>A device knows the destination IP address, but Layer 2 needs a MAC address to actually deliver a frame on the local network. <strong>ARP (Address Resolution Protocol)</strong> is the "who has this IP?" broadcast that solves that gap — a device shouts the question to everyone on the segment, and whoever owns that IP replies with its MAC address. That answer gets cached briefly so the same question doesn't need repeating for every packet.</p>
 
     <div class="fact-card"><span class="fact-card-emoji">🔁</span><span class="fact-card-text"><strong>TTL stops loops.</strong> Each packet carries a "time to live" that drops by one at every router. Hit zero and it's discarded — so a mis-routed packet can't circle forever.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('osi')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🎂 The OSI Layers</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('subnet')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✂️ Subnetting</span></button>
   </div>
+</div>
 
   <!-- SUBNET -->
   <div class="tab-content" id="tab-subnet">
@@ -200,7 +214,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>A /26 network leaves 6 bits for hosts (32 − 26 = 6). The number of addresses is 2⁶ = 64 — but two are always reserved (the network address itself, and the broadcast address), leaving 62 usable host addresses. That same math — 2^(host bits) − 2 — works for any mask size.</p>
 
     <div class="tryit"><strong>▶ Crunch it:</strong> the <em>Subnetting</em> tool is a full CIDR calculator with worked examples.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('addr')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🏷️ MAC & IP</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('dhcp')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📬 DHCP</span></button>
   </div>
+</div>
 
   <!-- DHCP -->
   <div class="tab-content" id="tab-dhcp">
@@ -231,7 +249,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🛠️</span><span class="fact-card-text"><strong>Static vs. dynamic.</strong> Most devices use DHCP (dynamic) and just get whatever's available. Servers and network gear often use a fixed, manually configured "static" address instead, so their address never changes.</span></div>
 
     <div class="fact-card"><span class="fact-card-emoji">🚨</span><span class="fact-card-text"><strong>A rogue DHCP server is a real attack.</strong> Because the DORA process trusts whoever answers first, a rogue server on the network can hand out its own gateway/DNS answers instead — quietly routing a victim's traffic through an attacker-controlled path. It's exactly why "which device is answering DHCP requests" matters on a network you're securing.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('subnet')"><span class="tj-label">&larr; Previous</span><span class="tj-title">✂️ Subnetting</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('tcp')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🤝 TCP/UDP & Ports</span></button>
   </div>
+</div>
 
   <!-- TCP/UDP & PORTS -->
   <div class="tab-content" id="tab-tcp">
@@ -269,7 +291,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </table>
 
     <div class="fact-card"><span class="fact-card-emoji">🔢</span><span class="fact-card-text"><strong>Ports 0–1023</strong> are "well-known" ports, reserved for standard services like the ones above. Anything above that is available for other applications to use freely.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('dhcp')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📬 DHCP</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('dns')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🔍 DNS & URLs</span></button>
   </div>
+</div>
 
   <!-- DNS & URLS -->
   <div class="tab-content" id="tab-dns">
@@ -300,7 +326,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <div class="fact-card"><span class="fact-card-emoji">🚨</span><span class="fact-card-text"><strong>DNS spoofing exploits that trust.</strong> If an attacker can answer a DNS query before the real server does, they can hand back a false IP address — quietly redirecting a device to the wrong destination while it thinks it reached the real one. Same underlying weakness as the rogue DHCP server on the previous tab: whoever answers first, wins.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔒</span><span class="fact-card-text"><strong>HTTP vs. HTTPS.</strong> The "S" means the connection is encrypted — anyone intercepting the traffic sees scrambled data instead of readable content. Always prefer HTTPS when it's available.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('tcp')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🤝 TCP/UDP & Ports</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('topo')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🕸️ Topologies</span></button>
   </div>
+</div>
 
   <!-- TOPO -->
   <div class="tab-content" id="tab-topo">
@@ -328,7 +358,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>Fiber carries the long-haul traffic.</strong> Once data leaves your building, it's likely traveling as pulses of light through fiber-optic cable for at least part of the journey — light in glass is what makes MAN/WAN-scale distances practical at high speed.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Mesh is why the internet survives.</strong> With many possible paths between points, losing one node or link just reroutes traffic — there's no single point of failure. It's also how tactical mesh radios stay connected.</span></div>
     <div class="tryit"><strong>▶ Build a mesh:</strong> the <em>Mesh Radio</em> tool lets you place radios and watch links form, break, and reroute.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('dns')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🔍 DNS & URLs</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('devices')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🔌 The Gear</span></button>
   </div>
+</div>
 
   <!-- DEVICES -->
   <div class="tab-content" id="tab-devices">
@@ -343,7 +377,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🤝</span><span class="fact-card-text"><strong>How devices avoid talking over each other:</strong> wired Ethernet uses CSMA/CD (detect collisions), while Wi-Fi uses CSMA/CA (avoid them) — because a wireless device can't reliably hear a collision while it's transmitting.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🧭</span><span class="fact-card-text"><strong>The journey of a click:</strong> your device → switch → router → across many routers on the internet → the server, and all the way back — usually in well under a second.</span></div>
     <div class="tryit"><strong>▶ Test comms:</strong> the <em>Networking</em> and <em>Mesh Radio</em> tools let you route real packets and see them hop.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('topo')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🕸️ Topologies</span></button>
   </div>
+</div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -357,10 +394,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </ul>
 </div>
 
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <div class="footer">Networking Explained · Companion guide to the Networking interactive tools · UNCLASSIFIED</div>
 
 <script>
 function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
 function cvar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 const OSI=[

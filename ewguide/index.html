@@ -43,6 +43,13 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}
 .tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
 .section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 .tab-content{display:none;animation:fade .3s}
 .tab-content.active{display:block}
@@ -121,7 +128,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>The spectrum isn't just contested with the enemy — it's crowded with your own side's radios, radars, drones, and jammers all trying to use it at once. <strong>Electromagnetic spectrum management (EMSO)</strong> is the deconfliction process that assigns frequencies so friendly systems don't interfere with each other. A jammer that isn't coordinated with friendly radio nets can knock out your own communications just as easily as the enemy's — which is exactly why EW planning always happens alongside spectrum management, not separately from it.</p>
 
     <div class="fact-card"><span class="fact-card-emoji">📖</span><span class="fact-card-text"><strong>Doctrine:</strong> the core references are JP 3-85 (Joint Electromagnetic Spectrum Operations) and FM 3-12 (Cyberspace Operations and Electromagnetic Warfare). Always confirm the current version.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn next" onclick="goToTab('triad')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⚔️ ES · EA · EP</span></button>
   </div>
+</div>
 
   <!-- ============ TRIAD ============ -->
   <div class="tab-content" id="tab-triad">
@@ -152,7 +162,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🔄</span><span class="fact-card-text"><strong>They work together.</strong> ES finds the target and hands it to EA to attack — while EP keeps your own gear running through the whole fight. It's a loop, not three separate boxes.</span></div>
 
     <div class="tryit"><strong>▶ Go deeper:</strong> the <em>EW Principles</em> interactive walks through ES/EA/EP, antennas, and electronic attack with a live spectrum analyzer.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('what')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📡 The Big Idea</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('jam')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📶 Jamming</span></button>
   </div>
+</div>
 
   <!-- ============ JAMMING ============ -->
   <div class="tab-content" id="tab-jam">
@@ -184,7 +198,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <div class="fact-card"><span class="fact-card-emoji">🎯</span><span class="fact-card-text"><strong>Jamming cuts both ways.</strong> A jammer is a very loud transmitter — which makes it easy to detect and locate. Using EA can expose your own position, so it's a deliberate trade-off.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🚁</span><span class="fact-card-text"><strong>Counter-drone:</strong> jamming a drone's control link makes it lose contact with its pilot — then it falls back to its failsafe (return home, hover, or land). Jam its GPS too and it can't navigate at all.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('triad')"><span class="tj-label">&larr; Previous</span><span class="tj-title">⚔️ ES · EA · EP</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('df')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧭 Finding Signals</span></button>
   </div>
+</div>
 
   <!-- ============ DF ============ -->
   <div class="tab-content" id="tab-df">
@@ -210,7 +228,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">⏱️</span><span class="fact-card-text"><strong>Modern DF adds timing.</strong> Systems compare the tiny differences in <em>when</em> and <em>at what frequency</em> a signal arrives at each sensor (TDOA/FDOA) to pin a location to a precise grid.</span></div>
 
     <div class="tryit"><strong>▶ Practice it:</strong> the <em>DF Trainer</em> lets you place sensors and intersect bearings to locate an emitter yourself.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('jam')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📶 Jamming</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('gps')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🛰️ GPS Attacks</span></button>
   </div>
+</div>
 
   <!-- ============ GPS ============ -->
   <div class="tab-content" id="tab-gps">
@@ -240,7 +262,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🛡️</span><span class="fact-card-text"><strong>Protection (EP):</strong> anti-jam antennas, inertial navigation as a backup, and signal-authentication techniques help systems resist GPS attacks.</span></div>
 
     <div class="tryit"><strong>▶ See the difference:</strong> the <em>GPS Jamming vs Spoofing</em> trainer shows both attacks side by side.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('df')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🧭 Finding Signals</span></button>
   </div>
+</div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -254,6 +279,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <p style="font-size:13px;color:var(--text-muted);margin-top:8px">Always confirm you're referencing the current version — doctrine publications get updated.</p>
 </div>
 
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <div class="footer">Electronic Warfare Explained · Companion guide to the EW Theory interactive tools · UNCLASSIFIED</div>
 
 <script>
@@ -263,6 +289,11 @@ function toggleTheme(){
   document.getElementById('t-icon').textContent=dark?'🌙':'☀️';
   document.getElementById('t-label').textContent=dark?'Dark mode':'Light mode';
   redraw();
+}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function switchTab(id,btn){
   document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));

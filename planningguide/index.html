@@ -32,6 +32,13 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
 .section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 .tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -107,7 +114,10 @@ table.compare tr:hover td{background:var(--table-row-hover)}
     <p>The steps are numbered, but real planning rarely goes cleanly 1→2→3. Recon (step 5) often reveals something that sends you back to refine the tentative plan (step 3) before you can complete it (step 6) — and "supervise and refine" (step 8) explicitly never stops, since new information during execution can force you right back into re-planning. Treating TLP as a strict one-way checklist is a common mistake; treating it as a loop you keep cycling through under time pressure is closer to how it actually works.</p>
 
     <div class="tryit"><strong>▶ Practice it:</strong> the <em>TLP Trainer</em> lets you put the 8 steps in order and drills METT-TC.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn next" onclick="goToTab('opord')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📄 The OPORD</span></button>
   </div>
+</div>
 
   <!-- OPORD -->
   <div class="tab-content" id="tab-opord">
@@ -127,7 +137,11 @@ table.compare tr:hover td{background:var(--table-row-hover)}
     <p>"1st Squad (who) conducts a reconnaissance patrol (what) NLT 0600 (when) at OBJ RAVEN (where) in order to confirm enemy strength prior to the platoon's assault (why)." Every single word in that sentence answers one of the five W's — nothing extra, nothing missing. That density is deliberate: paragraph 2 is supposed to be readable in one breath, because it's the one paragraph every subordinate leader has to be able to repeat back from memory.</p>
     <div class="fact-card"><span class="fact-card-emoji">📝</span><span class="fact-card-text"><strong>Related orders:</strong> a WARNORD is the early heads-up, and a FRAGORD (frag order) is a quick update that changes only part of an existing order.</span></div>
     <div class="tryit"><strong>▶ Write one:</strong> the <em>OPORD Builder</em> fills in all five paragraphs and assembles a clean order live.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('tlp')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📋 Troop Leading</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('drills')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⚔️ Battle Drills</span></button>
   </div>
+</div>
 
   <!-- DRILLS -->
   <div class="tab-content" id="tab-drills">
@@ -153,7 +167,11 @@ table.compare tr:hover td{background:var(--table-row-hover)}
       <span class="k">SALUTE</span><span>spot report: Size, Activity, Location, Unit, Time, Equipment</span>
     </div>
     <div class="tryit"><strong>▶ Watch them play out:</strong> the <em>WTBD &amp; FOOM</em> tool animates each battle drill step by step.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('opord')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📄 The OPORD</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('foom')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧭 Formations</span></button>
   </div>
+</div>
 
   <!-- FOOM -->
   <div class="tab-content" id="tab-foom">
@@ -178,7 +196,10 @@ table.compare tr:hover td{background:var(--table-row-hover)}
     <h3>Worked example: a patrol shifting techniques mid-route</h3>
     <p>A patrol starts in traveling overwatch crossing open, low-risk terrain — fast, but with a trail element ready to react. As it approaches a treeline where contact becomes likely, the leader shifts to bounding overwatch — slower, but now one element is always in a position to cover the other if contact happens the instant they enter the tree line. That's the whole point of having three separate techniques instead of one: the right choice isn't fixed for the whole patrol, it's read continuously against how likely contact is <em>right now</em>, and changes as that likelihood changes.</p>
     <div class="tryit"><strong>▶ Compare them:</strong> the <em>WTBD &amp; FOOM</em> tool draws each formation and animates the movement techniques.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('drills')"><span class="tj-label">&larr; Previous</span><span class="tj-title">⚔️ Battle Drills</span></button>
   </div>
+</div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -191,10 +212,16 @@ table.compare tr:hover td{background:var(--table-row-hover)}
   </ul>
 </div>
 
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <div class="footer">Planning &amp; Tactics Explained · Companion guide to the Planning interactive tools · UNCLASSIFIED</div>
 
 <script>
 function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

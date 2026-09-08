@@ -45,6 +45,13 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}
 .tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
 .section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 .tab-content{display:none;animation:fade .3s}
 .tab-content.active{display:block}
@@ -143,7 +150,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>Every one of the "Big 4" shows up in that single circuit: 12V pushing, 3A flowing, 4Ω resisting, 36W of work being done (as heat, in a plain resistor). This is the exact calculation the Circuit Bench tool runs live every time you place a battery and resistor.</p>
 
     <div class="tryit"><strong>▶ Try the interactive:</strong> open the <em>BET Components</em> and <em>Circuit Bench</em> tools to see these quantities change live as you build circuits.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn next" onclick="goToTab('ohm')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧮 Ohm's Law</span></button>
   </div>
+</div>
 
   <!-- ============ OHM'S LAW ============ -->
   <div class="tab-content" id="tab-ohm">
@@ -178,7 +188,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="formula">P = I²R = (0.1)² × 220 = 0.01 × 220 = 2.2W</div>
     <p>This is exactly why P = I²R and P = V²÷R exist alongside P = V × I — pick whichever formula matches the two quantities you actually have, instead of calculating an extra step you don't need. This also matters practically: it's how you check whether a resistor's wattage rating is high enough before it overheats.</p>
     <div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-emoji">🔬</span><div><div class="card-title">Ready for reactive circuits?</div><div class="card-sub">resistors, capacitors, inductors together</div></div></div><p style="margin-bottom:0">This page keeps Ohm's Law to simple resistive circuits. For capacitors, inductors, phase relationships, and impedance in AC circuits, the <a href="../physics1/">AC Circuit Theory &amp; Impedance</a> tool builds directly on this with a lesson-aligned interactive calculator.</p></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('basics')"><span class="tj-label">&larr; Previous</span><span class="tj-title">⚡ The Big 4</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('acdc')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🔄 AC vs DC</span></button>
   </div>
+</div>
 
   <!-- ============ AC vs DC ============ -->
   <div class="tab-content" id="tab-acdc">
@@ -208,7 +222,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>The "War of Currents."</strong> In the 1880s–90s, Edison pushed DC while Tesla and Westinghouse pushed AC. AC won for power delivery because it travels long distances with far less loss.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📻</span><span class="fact-card-text"><strong>Radio is just really fast AC.</strong> A 100 MHz FM signal is alternating current reversing 100 million times a second. That's why RF theory and basic AC are the same family.</span></div>
     <div class="card" style="margin-top:1rem"><div class="card-head"><span class="card-emoji">🔬</span><div><div class="card-title">Ready for the deeper AC math?</div><div class="card-sub">frequency, RMS, phase, impedance</div></div></div><p style="margin-bottom:0">This page keeps AC to the basic concept. For frequency/period/RMS math and transformers, see <a href="../acguide/">AC, Transformers &amp; Machines Explained</a>. For phase relationships and impedance in reactive circuits, see <a href="../physics1/">AC Circuit Theory &amp; Impedance</a>.</p></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('ohm')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🧮 Ohm's Law</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('circuits')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🔗 Series & Parallel</span></button>
   </div>
+</div>
 
   <!-- ============ SERIES & PARALLEL ============ -->
   <div class="tab-content" id="tab-circuits">
@@ -243,7 +261,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>Same two parts, same values — but wiring them differently gives 200Ω one way and 50Ω the other. That's the entire practical payoff of understanding series vs. parallel: it's a design choice that directly controls how much current a circuit draws.</p>
 
     <div class="tryit"><strong>▶ Build one:</strong> the <em>Circuit Bench</em> tool lets you wire resistors in series and parallel and watch the current split and the voltages drop in real time.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('acdc')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🔄 AC vs DC</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('parts')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🔩 Components</span></button>
   </div>
+</div>
 
   <!-- ============ COMPONENTS ============ -->
   <div class="tab-content" id="tab-parts">
@@ -274,7 +296,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>Why LEDs need a resistor:</strong> an LED will grab as much current as it can and burn out. A small series resistor limits the current to a safe level — a classic first circuit to build.</span></div>
 
     <div class="tryit"><strong>▶ Play with these:</strong> the <em>BET Components</em> tool has interactive diodes, LED circuits, rectifiers, and a transistor you can switch on and off.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('circuits')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🔗 Series & Parallel</span></button>
   </div>
+</div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -286,6 +311,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </ul>
 </div>
 
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <div class="footer">Electricity Explained · Companion guide to the BET interactive tools · UNCLASSIFIED</div>
 
 <script>
@@ -295,6 +321,11 @@ function toggleTheme(){
   document.getElementById('t-icon').textContent=dark?'🌙':'☀️';
   document.getElementById('t-label').textContent=dark?'Dark mode':'Light mode';
   drawACDC();
+}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function switchTab(id,btn){
   document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));

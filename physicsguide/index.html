@@ -44,6 +44,13 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}
 .tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
 .section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 .tab-content{display:none;animation:fade .3s}
 .tab-content.active{display:block}
@@ -128,7 +135,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>Because all radio waves travel at the same speed (the speed of light, about 300 million meters per second), frequency and wavelength are locked together. Know one, you can always find the other.</p>
     <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>They all move at light speed.</strong> A signal crosses a football field, or reaches a satellite, at 300,000 km per second. Frequency only changes the <em>size</em> of the wiggle, not its speed.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📏</span><span class="fact-card-text"><strong>Wavelength sets antenna size.</strong> A good antenna is a fraction of the wavelength long. That's why an FM antenna is a meter or so, but a Wi-Fi antenna is tiny — higher frequency, shorter wave, smaller antenna.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn next" onclick="goToTab('spectrum')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📻 The Spectrum</span></button>
   </div>
+</div>
 
   <!-- SPECTRUM -->
   <div class="tab-content" id="tab-spectrum">
@@ -144,7 +154,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">📡</span><span class="fact-card-text"><strong>Lower = farther, higher = faster.</strong> Low frequencies travel long distances and bend around terrain but carry less data. High frequencies carry huge data rates but need near line-of-sight.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🌍</span><span class="fact-card-text"><strong>HF can bounce off the sky.</strong> High-frequency signals can reflect off a layer of the upper atmosphere (the ionosphere) and skip thousands of miles — which is how shortwave reaches across oceans without satellites.</span></div>
     <div class="tryit"><strong>▶ Explore it:</strong> the <em>RF Spectrum</em> tool lets you tune across the bands and see who lives where.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('waves')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🌊 Waves & Frequency</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('travel')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🗺️ How Waves Travel</span></button>
   </div>
+</div>
 
   <!-- TRAVEL -->
   <div class="tab-content" id="tab-travel">
@@ -164,7 +178,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><td><strong>Diffraction</strong></td><td>Bends around the edge of an obstacle, filling in a bit of the "shadow"</td></tr>
     </table>
     <div class="analogy">🔦 <strong>Light does all of this too.</strong> Reflection is a mirror. Refraction is a straw looking "bent" in a glass of water. Diffraction is light spilling around a doorway. Radio waves obey the same rules — just at frequencies your eyes can't see.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('spectrum')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📻 The Spectrum</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('loss')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📉 Fading & Loss</span></button>
   </div>
+</div>
 
   <!-- LOSS -->
   <div class="tab-content" id="tab-loss">
@@ -195,7 +213,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <p>A link "just barely" closing on paper is a bad plan — weather, terrain, and multipath (below) all eat into that margin in practice. <strong>Fade margin</strong> is the extra dB of headroom built in above the minimum needed, specifically to absorb those real-world losses without the link dropping. More margin means a more reliable link, at the cost of needing more transmit power, gain, or a shorter range.</p>
 
     <div class="tryit"><strong>▶ Run the numbers:</strong> the <em>Link Performance</em> tool computes path loss, SNR, and link margin for you.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('travel')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🗺️ How Waves Travel</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('antenna')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📡 Antennas</span></button>
   </div>
+</div>
 
   <!-- ANTENNA -->
   <div class="tab-content" id="tab-antenna">
@@ -218,7 +240,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <h3>Beyond vertical and horizontal: circular polarization</h3>
     <p>Some systems (GPS and satellite links, notably) use <strong>circular polarization</strong> instead — the wave's orientation rotates continuously as it travels, rather than staying fixed vertical or horizontal. This makes the link far less sensitive to the receiving antenna's exact rotation or to reflections that would otherwise scramble a linear signal's orientation — a major reason GPS satellites transmit circularly polarized signals despite the added antenna complexity.</p>
     <div class="tryit"><strong>▶ Build one:</strong> the <em>Antenna Builder</em> designs a Yagi and shows its gain and pattern.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('loss')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📉 Fading & Loss</span></button>
   </div>
+</div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -231,10 +256,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </ul>
 </div>
 
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <div class="footer">Radio Waves Explained · Companion guide to the Physics &amp; RF interactive tools · UNCLASSIFIED</div>
 
 <script>
 function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';redraw();}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');redraw();}
 function cvar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 function calcWave(){

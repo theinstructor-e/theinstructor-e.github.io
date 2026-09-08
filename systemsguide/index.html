@@ -32,6 +32,13 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--
 .tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
 .tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
 .tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
 .section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 .tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -112,7 +119,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <h3>Why this matters for tracking a satellite</h3>
     <p>A 90-minute LEO orbit means the satellite crosses your entire sky and disappears again in just minutes — useful for quick imaging passes, but it also means you only get a brief window of contact before it's gone and you're waiting for the next pass. A GEO satellite trades that fast pass for a fixed, always-available link — no tracking required at all, which is exactly why it's the right choice for things like broadcast TV and always-on communications relays, while LEO is the right choice when you need to physically image a location up close.</p>
     <div class="tryit"><strong>▶ Explore it:</strong> the <em>Orbits</em> tool has a 2D map and a 3D Earth to spin.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn next" onclick="goToTab('satlink')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📡 Satellite Links</span></button>
   </div>
+</div>
 
   <!-- SATLINK -->
   <div class="tab-content" id="tab-satlink">
@@ -135,7 +145,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="formula">delay = distance ÷ speed = 72,000 km ÷ 300,000 km/s ≈ 0.24 seconds</div>
     <p>That's a single hop. A phone call bounced satellite-to-satellite-to-ground can stack multiple hops of this same delay, which is exactly why LEO constellations (much closer, much less delay per hop) have become attractive for latency-sensitive links despite needing many more satellites to maintain constant coverage.</p>
     <div class="fact-card"><span class="fact-card-emoji">🌧️</span><span class="fact-card-text"><strong>"Rain fade" is real.</strong> Higher bands (Ku, Ka) carry more data but are absorbed by heavy rain, so links can degrade in storms. Lower bands (L) are steadier.</span></div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('orbits')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🛰️ Orbits</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('drones')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🚁 Drones (UAS)</span></button>
   </div>
+</div>
 
   <!-- DRONES -->
   <div class="tab-content" id="tab-drones">
@@ -152,7 +166,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <h3>The harder case: pre-programmed missions</h3>
     <p>Everything above assumes a drone actively depends on its links in real time — but a drone flying a <strong>pre-programmed waypoint mission</strong> only needed GPS and control links to load that mission beforehand. Once airborne and following its stored waypoints, jamming the control link does nothing (there's no live pilot connection to interrupt), and even jamming GPS may only push it onto dead-reckoning navigation rather than stopping it outright. This is exactly why "deny the links" isn't a universal counter-drone answer — the drone's actual autonomy level determines which link, if any, is still the weak point.</p>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('satlink')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📡 Satellite Links</span></button>
+    <button class="tab-jump-btn next" onclick="goToTab('cuas')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🛡️ Counter-UAS</span></button>
   </div>
+</div>
 
   <!-- CUAS -->
   <div class="tab-content" id="tab-cuas">
@@ -179,7 +197,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <h3>Why "Decide" is really the hinge of the whole chain</h3>
     <p>Detect, Track, and Identify can all be done wrong without hurting anyone directly — a missed detection just means the chain restarts. Decide is different: acting on bad identification, or without proper clearance, is exactly how friendly drones get shot down (fratricide) or civilian property gets damaged. That's the entire reason positive ID and RoE clearance sit as their own explicit steps rather than being folded into "defeat" — the chain is deliberately built so the irreversible action can't happen until everything upstream of it has been verified.</p>
     <div class="tryit"><strong>▶ Run the engagement:</strong> the <em>C-UAS Trainer</em> lets you pick an effect and watch the drone react.</div>
+    <div class="tab-jump">
+    <button class="tab-jump-btn prev" onclick="goToTab('drones')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🚁 Drones (UAS)</span></button>
   </div>
+</div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -192,10 +213,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </ul>
 </div>
 
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <div class="footer">Space &amp; Drones Explained · Companion guide to the Systems interactive tools · UNCLASSIFIED</div>
 
 <script>
 function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';drawOrbit();}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');if(id==='orbits')drawOrbit();}
 function cvar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 function calcOrbit(){drawOrbit();}
