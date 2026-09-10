@@ -42,6 +42,7 @@ h1 span{color:var(--text-dim);font-weight:400}
 .tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
 .tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
 .tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
+.tag-quiz{color:#ffb300;background:rgba(255,179,0,.16);border:1px solid rgba(255,179,0,.4)}
 [data-theme="light"] .tag-guide{color:#5a3ccc}
 .card.is-guide{border-style:dashed}
 .card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
@@ -179,7 +180,7 @@ const TOOLS=[
   {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh',color:'#00ff88'},
   {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
-  {cat:'D Networking',nm:'Network Test',ds:'D MOD Practice Test: 250-question master bank across E01\u2013E15, POP quizzes, timed scoring & leaderboard',file:'nettest',color:'#bb88ff'},
+  {cat:'D Networking',kind:'quiz',nm:'Network Test',ds:'D MOD Practice Test: 250-question master bank across E01\u2013E15, POP quizzes, timed scoring & leaderboard',file:'nettest',color:'#bb88ff'},
   {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
   {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a',kw:'man in the middle attack mitm adversary-in-the-middle eavesdropping packet interception ssl strip downgrade fake certificate rogue access point ARP poisoning session hijacking'},
   // F Systems
@@ -208,16 +209,21 @@ function setCat(c){
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('on', el.dataset.c===c));
   render();
 }
+function sortWeight(t){
+  if(t.kind==='guide') return 0;
+  if(t.kind==='quiz') return 2;
+  return 1;
+}
 function render(){
   let items=activeCat==='ALL'?TOOLS:TOOLS.filter(t=>t.cat===activeCat);
   if(activeCat==='ALL'){
     items=items.slice().sort((a,b)=>{
       const catDiff=CATEGORIES.indexOf(a.cat)-CATEGORIES.indexOf(b.cat);
       if(catDiff!==0) return catDiff;
-      return (a.kind==='guide'?0:1)-(b.kind==='guide'?0:1);
+      return sortWeight(a)-sortWeight(b);
     });
   } else {
-    items=items.slice().sort((a,b)=>(a.kind==='guide'?0:1)-(b.kind==='guide'?0:1));
+    items=items.slice().sort((a,b)=>sortWeight(a)-sortWeight(b));
   }
   if(!items.length){
     document.getElementById('view-grid').innerHTML=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;
@@ -225,7 +231,8 @@ function render(){
   }
   const cardHtml=t=>{
     const guide=t.kind==='guide';
-    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+    const quiz=t.kind==='quiz';
+    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':'<span class="tag tag-int">INTERACTIVE</span>';
     const go=guide?'READ \u2192':'LAUNCH \u2192';
     return `<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
       <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
@@ -274,7 +281,9 @@ function globalSearch(){
   let results=[];
   TOOLS.forEach(t=>{
     if(normalize(t.nm+' '+t.ds+' '+t.cat+' '+(t.kw||'')).includes(q)){
-      results.push({type:t.kind==='guide'?'GUIDE':'INTERACTIVE', typeClass:t.kind==='guide'?'tag-guide':'tag-int',
+      const rType=t.kind==='guide'?'GUIDE':t.kind==='quiz'?'QUIZ':'INTERACTIVE';
+      const rClass=t.kind==='guide'?'tag-guide':t.kind==='quiz'?'tag-quiz':'tag-int';
+      results.push({type:rType, typeClass:rClass,
         section:t.cat, nm:t.nm, ds:t.ds, href:t.file, color:t.color, go:t.kind==='guide'?'READ \u2192':'LAUNCH \u2192'});
     }
   });
