@@ -56,6 +56,7 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
 .card-body{padding:14px 16px}
 
 #waterfallCanvas{width:100%;height:auto;display:block;background:#000;cursor:default}
+#exploreCanvas{width:100%;height:auto;display:block;background:#000;cursor:default}
 
 .freq-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--txtd);
   padding:4px 14px;border-top:1px solid var(--b1)}
@@ -97,6 +98,13 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
 /* Reference tab */
 .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .ref-card{background:var(--panel2);border:1px solid var(--b2);border-radius:5px;padding:13px 15px}
+
+/* ── Spectrum Survey panorama ─────────────────────────────── */
+.pano-band{position:absolute;top:0;height:146px;border-right:1px dashed var(--purple);opacity:.55}
+.pano-band-label{position:absolute;top:4px;left:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--purple);text-transform:uppercase;opacity:.9}
+.pano-tick{position:absolute;top:146px;height:24px;border-left:1px solid rgba(184,196,192,.35);font-family:var(--mono);font-size:8.5px;color:var(--txtd);padding-left:3px;padding-top:6px;white-space:nowrap}
+.pano-tick-major{border-left:1px solid var(--b2);font-size:9.5px;color:var(--txtb);font-weight:700}
+.ref-thumb{width:100%;height:auto;display:block;background:#000;border-radius:3px;margin-bottom:10px}
 .ref-card .rc-name{font-size:14.5px;font-weight:700;color:var(--txtb);margin-bottom:6px}
 .ref-card .rc-row{font-family:var(--mono);font-size:11px;color:var(--txt);margin-top:4px;display:flex;gap:6px}
 .ref-card .rc-row b{color:var(--txtd);min-width:78px;flex-shrink:0;font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:9.5px}
@@ -114,12 +122,13 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
   <div class="title">Signal ID Trainer <span>— Identify Emissions by Spectral Characteristics</span></div>
   <div class="sub">Read the waterfall — bandwidth, duty cycle, and hopping behavior all tell you what you're looking at before you ever see a label</div>
   <div class="mode-btns">
-    <button class="mbtn act" onclick="setPanel('quiz')" id="btn-quiz">ID Quiz</button>
-    <button class="mbtn" onclick="setPanel('reference')" id="btn-reference">Signal Reference</button>
+    <button class="mbtn act" onclick="setPanel('reference')" id="btn-reference">Signal Reference</button>
     <button class="mbtn" onclick="setPanel('explore')" id="btn-explore">Free Explore</button>
+    <button class="mbtn" onclick="setPanel('quiz')" id="btn-quiz">ID Quiz</button>
   </div>
   <div class="related-bar">
     <span class="related-label">Related:</span>
+    <a href="../sigidguide/">📘 Signal ID Explained</a>
     <a href="../rfspect/">📊 RF Spectrum Reference</a>
     <a href="../rftheory/">📡 RF Theory</a>
     <a href="../EW Principles/">📖 EW Principles</a>
@@ -128,7 +137,66 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
 </div>
 
 <!-- ID QUIZ -->
-<div class="panel act" id="panel-quiz">
+<div class="panel act" id="panel-reference">
+  <div class="instr" style="margin-bottom:12px">
+    <div class="instr-hdr">▶ ABOUT THIS REFERENCE</div>
+    <div class="instr-body">Every signal type used in the ID Quiz, with the characteristics that actually distinguish it — study this before testing yourself, or use it to check your reasoning afterward. Grouped by category — click a heading to expand it, or search to jump straight to a signal.</div>
+  </div>
+  <input type="text" id="refSearch" placeholder="Search by name or frequency..." oninput="renderReference()"
+    style="width:100%;background:var(--panel2);border:1px solid var(--b2);color:var(--txt);padding:10px 14px;border-radius:5px;font-size:14px;margin-bottom:14px;box-sizing:border-box;font-family:inherit">
+  <div id="refGrid"></div>
+</div>
+
+<!-- FREE EXPLORE -->
+<div class="panel" id="panel-explore">
+  <div class="mode-btns" style="margin-bottom:12px">
+    <button class="mbtn act" onclick="setExploreMode('sim')" id="btn-exsim">Our Simulation</button>
+    <button class="mbtn" onclick="setExploreMode('live')" id="btn-exlive">Live Public SDR</button>
+  </div>
+
+  <div id="explore-sim">
+    <div id="exploreDebug" style="font-family:var(--mono);font-size:10.5px;color:var(--amber);margin-bottom:10px;padding:6px 10px;background:var(--panel);border:1px solid var(--b2);border-radius:4px">Debug: waiting for first frame...</div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr"><span class="card-title">SPECTRUM VIEW — SCROLL, CLICK, OR PICK A SIGNAL</span></div>
+      <div class="card-body" style="padding:14px 16px">
+        <select class="explore-select" id="exploreSelect" onchange="selectSignal(this.value)" style="margin-bottom:12px">
+          <option value="" disabled selected>Select a signal…</option>
+        </select>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div id="panoScroll" style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;position:relative;scroll-behavior:smooth">
+          <div id="panoInner" style="position:relative;height:170px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hdr"><span class="card-title">Characteristics</span></div>
+      <div class="card-body" id="exploreInfo" style="font-family:var(--mono);font-size:12.5px;line-height:1.8">Click any signal in the spectrum view above to see its details here, and watch how it behaves over time in the waterfall below — that behavior is what actually identifies it.</div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">WATERFALL — <span id="wfSelectedName">click a signal above</span></span></div>
+      <div class="card-body" style="padding:0">
+        <canvas id="exploreCanvas" width="700" height="360"></canvas>
+        <div class="freq-axis">
+          <span id="exFreqLo">—</span>
+          <span id="exFreqMid">—</span>
+          <span id="exFreqHi">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="explore-live" style="display:none">
+    <div class="instr" style="margin-bottom:16px">
+      <div class="instr-hdr">⚠ EXTERNAL, COMMUNITY-RUN RECEIVERS</div>
+      <div class="instr-body">These open real, live, internet-connected radio receivers run by volunteers around the world — genuine RF, not a simulation. Availability, signal quality, and uptime aren't guaranteed since these are outside our control. Each one opens in a new tab.</div>
+    </div>
+    <div class="ref-grid" id="liveGrid"></div>
+  </div>
+</div>
+
+<!-- SIGNAL REFERENCE -->
+<div class="panel" id="panel-quiz">
   <div class="layout">
     <div class="main-col">
       <div class="card">
@@ -153,6 +221,10 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
       </div>
     </div>
     <div class="side-col">
+      <label style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--txtd);
+        background:var(--panel2);border:1px solid var(--b2);border-radius:5px;padding:9px 12px;margin-bottom:10px;cursor:pointer">
+        <input type="checkbox" id="anomalyToggle" style="width:auto;margin:0"> Include Anomalies (interference/jamming overlays)
+      </label>
       <div class="score-row">
         <div class="score-box"><div class="k">Score</div><div class="v" id="scoreVal">0 / 0</div></div>
         <div class="score-box"><div class="k">Streak</div><div class="v" id="streakVal">0</div></div>
@@ -169,41 +241,6 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
   </div>
 </div>
 
-<!-- SIGNAL REFERENCE -->
-<div class="panel" id="panel-reference">
-  <div class="instr" style="margin-bottom:12px">
-    <div class="instr-hdr">▶ ABOUT THIS REFERENCE</div>
-    <div class="instr-body">Every signal type used in the ID Quiz, with the characteristics that actually distinguish it — study this before testing yourself, or use it to check your reasoning afterward.</div>
-  </div>
-  <div class="ref-grid" id="refGrid"></div>
-</div>
-
-<!-- FREE EXPLORE -->
-<div class="panel" id="panel-explore">
-  <div class="layout">
-    <div class="main-col">
-      <select class="explore-select" id="exploreSelect" onchange="exploreChange()"></select>
-      <div class="card">
-        <div class="card-hdr"><span class="card-title">WATERFALL DISPLAY — LIVE</span></div>
-        <div class="card-body" style="padding:0">
-          <canvas id="exploreCanvas" width="700" height="360"></canvas>
-          <div class="freq-axis">
-            <span id="exFreqLo">—</span>
-            <span id="exFreqMid">—</span>
-            <span id="exFreqHi">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="side-col">
-      <div class="card">
-        <div class="card-hdr"><span class="card-title">Characteristics</span></div>
-        <div class="card-body" id="exploreInfo" style="font-family:var(--mono);font-size:12.5px;line-height:1.8"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 'use strict';
 
@@ -211,47 +248,429 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
    Each signal defined by real, teachable characteristics. "pattern" drives
    the waterfall renderer; everything else is for the reference/reveal panels. */
 const SIGNALS = [
-  { id:'am', name:'AM Broadcast Radio', freq:'530 kHz – 1.7 MHz', bw:'Narrow (~10 kHz)',
+  { id:'am', cat:'Broadcast', name:'AM Broadcast Radio', freq:'530 kHz – 1.7 MHz', bw:'Narrow (~10 kHz)',
     duty:'Continuous', pattern:'narrow-continuous',
     clues:['Very narrow bandwidth — just wide enough for voice/music audio','Always on, 100% duty cycle','Fixed center frequency, never hops'] },
-  { id:'fm', name:'FM Broadcast Radio', freq:'88 – 108 MHz', bw:'Wide (~200 kHz)',
+  { id:'fm', cat:'Broadcast', name:'FM Broadcast Radio', freq:'88 – 108 MHz', bw:'Wide (~200 kHz)',
     duty:'Continuous', pattern:'wide-continuous',
     clues:['Noticeably wider than AM — FM trades bandwidth for better audio fidelity','Always on, 100% duty cycle','Fixed center frequency'] },
-  { id:'cw', name:'CW / Morse Carrier', freq:'Any (HF common)', bw:'Extremely narrow (<100 Hz)',
+  { id:'cw', cat:'Amateur & Digital Modes', name:'CW / Morse Carrier', freq:'Any (HF common)', bw:'Extremely narrow (<100 Hz)',
     duty:'Keyed — irregular human-speed on/off', pattern:'thin-keyed',
     clues:['The narrowest signal type on the display — barely a hairline','On/off pattern is irregular and slow — a human keying it by hand','No bandwidth to speak of; all the "information" is in the timing, not the width'] },
-  { id:'radar', name:'Pulsed Radar', freq:'Varies (S/C/X-band common)', bw:'Wide during each pulse',
+  { id:'radar', cat:'Radar & EW', name:'Pulsed Radar', freq:'Varies (S/C/X-band common)', bw:'Wide during each pulse',
     duty:'Very low duty cycle, high PRF', pattern:'radar-pulse',
     clues:['Regular, evenly-spaced horizontal pulses — that spacing is the Pulse Repetition Frequency (PRF)','Each individual pulse is brief but wideband','Off far more than it\'s on — classic low duty cycle'] },
-  { id:'lmr', name:'Land Mobile Radio (Push-to-Talk)', freq:'VHF/UHF (150–174, 450–470 MHz)', bw:'Narrowband FM (~12.5–25 kHz)',
+  { id:'lmr', cat:'Land Mobile & Trunked', name:'Land Mobile Radio (Push-to-Talk)', freq:'VHF/UHF (150–174, 450–470 MHz)', bw:'Narrowband FM (~12.5–25 kHz)',
     duty:'Intermittent — keys on only while someone is talking', pattern:'narrow-intermittent',
     clues:['Narrow like AM, but comes and goes in irregular blocks — not always-on','Each "on" block is much longer than a radar pulse — this is speech, not a pulse train','No hopping — stays on one channel'] },
-  { id:'wifi', name:'Wi-Fi (802.11)', freq:'2.4 GHz / 5 GHz', bw:'Wide (20–80 MHz channels)',
+  { id:'wifi', cat:'Consumer & IoT (ISM)', name:'Wi-Fi (802.11)', freq:'2.4 GHz / 5 GHz', bw:'Wide (20–80 MHz channels)',
     duty:'Bursty — packet by packet', pattern:'wide-bursty',
     clues:['Wide channel, but broken into short, irregular bursts (individual packets)','Bursts are much shorter and more frequent than an LMR transmission','Stays on one channel — no hopping'] },
-  { id:'bt', name:'Bluetooth', freq:'2.4 GHz ISM band', bw:'Narrow per-hop (~1 MHz)',
+  { id:'bt', cat:'Consumer & IoT (ISM)', name:'Bluetooth', freq:'2.4 GHz ISM band', bw:'Narrow per-hop (~1 MHz)',
     duty:'Frequency-hopping — very fast, up to 1600 hops/sec', pattern:'freq-hop-fast',
     clues:['Narrow at any instant, but the position jumps almost every single frame','Hopping is fast and covers nearly the whole ISM band','This rapid a hop rate is Bluetooth\'s signature — few things hop this fast'] },
-  { id:'lte', name:'Cellular (LTE/5G)', freq:'Multiple bands, 600 MHz – 6 GHz', bw:'Wide, structured (1.4–100 MHz)',
+  { id:'lte', cat:'Cellular', name:'Cellular (LTE/5G)', freq:'Multiple bands, 600 MHz – 6 GHz', bw:'Wide, structured (1.4–100 MHz)',
     duty:'Continuous with frame structure', pattern:'wide-structured',
     clues:['Wide and mostly continuous, but with a subtle repeating texture from frame structure','Doesn\'t fully go silent like Wi-Fi bursts do — closer to always-on','Occupies a defined, engineered channel width'] },
-  { id:'gps', name:'GPS L1', freq:'1575.42 MHz', bw:'Wide but extremely low power',
+  { id:'gps', cat:'Satellite', name:'GPS L1', freq:'1575.42 MHz', bw:'Wide but extremely low power',
     duty:'Continuous', pattern:'spread-faint',
     clues:['Wide like a data signal, but very faint — deliberately spread thin, near the noise floor','Always on, never varies — satellites transmit continuously','This combination (wide + always-on + faint) is the giveaway for spread-spectrum nav signals'] },
-  { id:'satcom', name:'Satellite Downlink', freq:'Various (C/Ku/Ka-band common)', bw:'Narrow to moderate',
+  { id:'satcom', cat:'Satellite', name:'Satellite Downlink', freq:'Various (C/Ku/Ka-band common)', bw:'Narrow to moderate',
     duty:'Continuous, very stable', pattern:'narrow-steady',
     clues:['Narrow and rock-steady — none of the amplitude wobble a terrestrial signal often shows','Always on — satellites don\'t key up and down','Fixed position, no hopping'] },
-  { id:'jam', name:'Barrage Noise Jammer', freq:'Targets a specific band', bw:'Very wide, high power',
-    duty:'Continuous, fills the entire band', pattern:'wide-noise',
-    clues:['Fills nearly the whole displayed width — much wider than any legitimate narrowband user','Solid and continuous — brute-force power over finesse','The goal is denial, not communication, so there\'s no data structure to see'] },
-  { id:'fhss', name:'Frequency-Hopping Radio (Military)', freq:'Wide hopping range', bw:'Narrow per-hop',
+  { id:'fhss', cat:'Radar & EW', name:'Frequency-Hopping Radio (Military)', freq:'Wide hopping range', bw:'Narrow per-hop',
     duty:'Hopping — slower, more irregular than Bluetooth', pattern:'freq-hop-slow',
     clues:['Narrow at any instant and jumps position — but slower and more irregular than Bluetooth\'s clockwork pattern','Hop timing is deliberately less predictable — that unpredictability is the anti-jam design goal','Covers a wide range over time despite being narrow at any given moment'] },
+
+  { id:'chirp-radar', cat:'Radar & EW', name:'LFM / Chirp Pulse-Doppler Radar', freq:'Varies (S/X-band common)', bw:'Wide, but swept linearly within each pulse',
+    duty:'Low duty cycle, pulsed — each pulse is a frequency sweep, not a flat tone', pattern:'chirp-radar',
+    clues:['Each pulse shows as a diagonal streak, not a flat vertical block — that\'s the frequency being swept (chirped) during the pulse','This sweep compresses to a sharp range return on receive — the whole point of linear FM radar','Still low duty cycle like any pulsed radar, just with internal structure a flat-pulse radar doesn\'t have'] },
+  { id:'link16', cat:'Radar & EW', name:'Link 16 (Tactical Data Link)', freq:'960 – 1215 MHz (L-band)', bw:'Narrow per-hop, TDMA-structured',
+    duty:'Frequency-hopping with strict time-slot discipline (~51 hops/sec)', pattern:'freq-hop-fast',
+    clues:['Fast hopping like Bluetooth, but this is a military tactical data link, not a consumer protocol','Time-slot access (TDMA) underneath the hopping is what lets many aircraft/ships share the same net without colliding','L-band placement (960–1215 MHz) separates it from Bluetooth\'s 2.4 GHz ISM band even though the hop rate looks similar'] },
+
+  { id:'adsb', cat:'Aviation & Maritime', name:'ADS-B (Aircraft Transponder)', freq:'1090 MHz', bw:'Wide during each short pulse train',
+    duty:'Very low duty cycle — one short squitter about twice a second', pattern:'radar-pulse',
+    clues:['Regular, evenly-timed pulses like radar — but this one is a transponder replying/broadcasting, not a radar illuminating a target','Every civil aircraft with ADS-B Out squawks position/altitude on this exact frequency, unencrypted','Far lower power and shorter pulses than a search radar, but the same "brief pulse, low duty cycle" shape'] },
+  { id:'vor', cat:'Aviation & Maritime', name:'VOR (Aviation Navigation Beacon)', freq:'108 – 118 MHz', bw:'Narrow',
+    duty:'Continuous, rock-steady', pattern:'narrow-steady',
+    clues:['Narrow and always-on, just like a satellite downlink — ground navigation beacons don\'t key up and down either','Fixed frequency, no hopping — aircraft need it to be exactly where the chart says it is','Context (108–118 MHz, aviation band) is what separates this from a satcom downlink at the same waterfall shape'] },
+  { id:'ais', cat:'Aviation & Maritime', name:'AIS (Marine Vessel Tracking)', freq:'161.975 / 162.025 MHz (VHF)', bw:'Narrowband FM',
+    duty:'Intermittent — periodic position reports, not continuous', pattern:'narrow-intermittent',
+    clues:['Comes in short, irregular blocks like LMR push-to-talk — but this is an automated position report, not a human keying a mic','Nearly every commercial vessel broadcasts this on one of two fixed VHF channels','No hopping, no sweeping — just narrowband bursts on a known maritime frequency'] },
+
+  { id:'p25', cat:'Land Mobile & Trunked', name:'P25 / TETRA Trunked Digital Radio', freq:'VHF/UHF/700-800 MHz (public safety common)', bw:'Narrow, precisely-timed slots',
+    duty:'Regular, deterministic time slots — not random like Wi-Fi', pattern:'tdma-burst',
+    clues:['Bursty like Wi-Fi, but the timing is rigid and repeating — this is scheduled time-slot access (TDMA), not random packet contention','Trunked systems dynamically assign channels, so a single conversation may not even stay on one frequency the whole time','Common on public-safety and professional radio systems, and increasingly displacing analog LMR'] },
+  { id:'numbers', cat:'SIGINT & Utility', name:'Numbers Station (HF)', freq:'HF, varies (often 3–15 MHz)', bw:'Narrow (voice/tone bandwidth)',
+    duty:'Long scheduled broadcast blocks, then long silence', pattern:'scheduled-broadcast',
+    clues:['Comes on for a sustained stretch (voice or tones reading a message) then goes completely silent for a long period — not the quick on/off of push-to-talk','Fixed schedule, fixed frequency — these transmissions are meant to be found by a specific listener with the schedule in hand','Long-documented but rarely officially acknowledged SIGINT curiosity — still active on HF today'] },
+
+  { id:'cordless', cat:'Consumer & IoT (ISM)', name:'Cordless Phone / Baby Monitor (2.4 GHz ISM)', freq:'2.4 GHz ISM band', bw:'Narrowband FM',
+    duty:'Intermittent — active only while in use', pattern:'narrow-intermittent',
+    clues:['Same shape as LMR push-to-talk — narrow, irregular on/off blocks — but this is unlicensed consumer gear, not a radio net','Shares the crowded 2.4 GHz ISM band with Wi-Fi and Bluetooth, so interference in this range is common','A frequent source of "what is this?" moments during spectrum surveys near residential areas'] },
+  { id:'garage', cat:'Consumer & IoT (ISM)', name:'Garage / Gate Remote (OOK, 315/433 MHz)', freq:'315 MHz or 433 MHz', bw:'Extremely narrow',
+    duty:'Keyed — one brief burst per button press', pattern:'thin-keyed',
+    clues:['A single short, narrow burst rather than the irregular back-and-forth of a Morse operator — one press, one burst, done','On-Off Keying (OOK) is about as simple as digital modulation gets — the carrier is either on or off, nothing else','Extremely common in the 315/433 MHz ISM bands — garage doors, gate openers, tire-pressure sensors, and more'] },
+  { id:'fpv', cat:'Unmanned Systems', name:'sUAS / Drone Video Downlink', freq:'2.4 / 5.8 GHz common', bw:'Wide (video requires bandwidth)',
+    duty:'Bursty/continuous depending on codec, frame-by-frame structure', pattern:'wide-bursty',
+    clues:['Wide like Wi-Fi — video needs bandwidth — but this is a small unmanned aircraft\'s live camera feed, not a data network','Small hobby and tactical drones alike commonly use this exact band, overlapping Wi-Fi and Bluetooth spectrum','Recognizing this shape near where none should be is often the first sign of unauthorized or hostile drone activity'] },
+
+  { id:'noaaapt', cat:'Satellite', name:'NOAA APT Weather Satellite', freq:'137.1 – 137.9125 MHz', bw:'~34–40 kHz',
+    duty:'Continuous during each 10–15 minute overhead pass, silent between passes', pattern:'scheduled-broadcast',
+    clues:['On continuously for the length of an overhead pass (roughly 10–15 minutes), then silent until the next satellite comes over the horizon','Confirmed real users: NOAA-15, -18, and -19 — each transmits on its own fixed frequency in this band','FM, right-hand circularly polarized — a QFH or V-dipole antenna is the classic way hobbyists pull down live weather images from this exact signal'] },
+  { id:'iridium', cat:'Satellite', name:'Iridium Satellite Burst', freq:'1616 – 1626.5 MHz (L-band)', bw:'Narrow per-burst, TDMA/FDMA structured',
+    duty:'Regular short bursts — satellite phone/data traffic', pattern:'tdma-burst',
+    clues:['Regular structured bursts like trunked radio, but this is the L-band uplink/downlink for the Iridium satellite phone constellation','Low-Earth-orbit satellites mean the exact frequency and timing can shift slightly as a satellite passes overhead','A well-known "easy win" for SDR hobbyists — bursts are strong and frequent since dozens of satellites are always in view somewhere'] },
+  { id:'ft8', cat:'Amateur & Digital Modes', name:'FT8 (Amateur Digital Mode)', freq:'HF ham bands (e.g., 14.074 MHz on 20m)', bw:'~50 Hz tone spacing within ~2.5 kHz',
+    duty:'Precisely timed 15-second cycles: 12.64s transmit, 2.36s silence', pattern:'tdma-burst',
+    clues:['Extremely regular, clockwork timing — every transmission starts on an exact 15-second boundary, worldwide, synchronized to clock time','8-FSK weak-signal digital mode — can decode 20 dB below the noise floor, far below what a human ear or CW could pull out','By far the most active digital mode on the ham bands today — if you hear/see rapid regular narrowband bursts on an HF ham frequency, this is the first guess'] },
+  { id:'aprs', cat:'Amateur & Digital Modes', name:'APRS (Packet Position Reports)', freq:'144.390 MHz (North America)', bw:'~ 12.5 kHz (AFSK packet)',
+    duty:'Intermittent — irregular bursts whenever a station transmits a position/status update', pattern:'narrow-intermittent',
+    clues:['Irregular narrowband bursts, similar shape to LMR push-to-talk — but these are automated GPS position reports, not a human voice','A single shared frequency (144.390 MHz in North America) carries position beacons from thousands of independent stations','Common on vehicles, weather stations, and even the International Space Station\u2019s digipeater'] },
+  { id:'lora', cat:'Consumer & IoT (ISM)', name:'LoRa (Chirp Spread Spectrum IoT)', freq:'433 / 868 / 915 MHz ISM (region-dependent)', bw:'125 / 250 / 500 kHz typical',
+    duty:'Short transmissions, low duty cycle — battery-powered IoT sensors', pattern:'chirp-radar',
+    clues:['A diagonal chirp just like pulse-Doppler radar — but this is Chirp Spread Spectrum (CSS), a completely different application: long-range, low-power IoT','Confirmed to sweep the full channel bandwidth per symbol — the "spreading factor" trades data rate for range by using longer/slower chirps','Frequency band (433/868/915 MHz ISM) is the giveaway that separates it from a radar system using the same chirp technique'] },
+  { id:'rtty', cat:'Amateur & Digital Modes', name:'RTTY (Radio Teletype)', freq:'HF shortwave bands', bw:'~170 Hz shift (narrow)',
+    duty:'Continuous while transmitting — toggles between two closely-spaced tones', pattern:'narrow-continuous',
+    clues:['Narrow and steady like an unmodulated carrier, but it\'s actually two-tone FSK toggling within a tight ~170 Hz shift as text is sent','One of the oldest digital modes still active — Baudot/ITA2 encoding, standard ham speed is 45.45 baud','Gradually fading out in amateur use in favor of PSK31 and FT8, but still active on some maritime and utility HF frequencies'] },
+  { id:'radargun', cat:'Radar & EW', name:'Police Radar (Ka-band Doppler)', freq:'33.4 – 36.0 GHz (Ka-band)', bw:'Narrow, continuous-wave',
+    duty:'Brief keyed activations — only transmits while the operator takes a reading', pattern:'thin-keyed',
+    clues:['A brief keyed burst, similar shape to a garage remote or a single Morse element — one trigger-pull, one activation','Continuous-wave (CW) Doppler, not pulsed like search radar — the reflected signal\'s frequency shift directly indicates target speed','Ka-band placement (33–36 GHz) is well outside typical communications bands — radar detectors are built to watch exactly this range'] },
+  { id:'zigbee', cat:'Consumer & IoT (ISM)', name:'Zigbee (802.15.4 Mesh IoT)', freq:'2.4 GHz ISM (also 915/868 MHz variants)', bw:'~2 MHz per channel',
+    duty:'Intermittent — short mesh-networking packets', pattern:'narrow-intermittent',
+    clues:['Short irregular bursts, similar to Bluetooth\u2019s general shape, but Zigbee doesn\u2019t hop — it sits on one fixed channel and forms a mesh network instead','Common in smart-home devices: sensors, smart bulbs, and hubs that need low power and modest range rather than high bandwidth','IEEE 802.15.4 is the underlying standard — Zigbee is one of several protocols built on top of it'] },
+  { id:'tpms', cat:'Consumer & IoT (ISM)', name:'TPMS (Tire Pressure Sensor)', freq:'315 MHz (N. America) / 433 MHz (EU/Asia)', bw:'Narrow',
+    duty:'Very low duty cycle — a brief periodic burst from each wheel sensor', pattern:'thin-keyed',
+    clues:['A brief, narrow burst much like a garage remote — these sensors only transmit occasionally to conserve their sealed battery','Every wheel has its own sensor broadcasting independently, so a passing car can produce several distinct brief bursts in a row','Region matters here — 315 MHz in North America, 433 MHz in most of Europe and Asia, same basic concept'] },
+  { id:'dmr', cat:'Land Mobile & Trunked', name:'DMR (Digital Mobile Radio)', freq:'VHF/UHF land mobile bands', bw:'12.5 kHz channel, 2 TDMA slots',
+    duty:'Regular 2-slot TDMA timing — two independent conversations share one channel', pattern:'tdma-burst',
+    clues:['Regular clockwork timing like P25/TETRA, but DMR specifically splits each channel into exactly two alternating time slots','An open ETSI standard (unlike P25, which is more common in North American public safety) — widely used commercially and by amateur radio','Two completely independent conversations can ride the same frequency simultaneously by taking turns on alternating slots'] },
+
+  { id:'frs', cat:'Land Mobile & Trunked', name:'FRS / GMRS (Walkie-Talkie)', freq:'462.5625 – 467.7250 MHz', bw:'12.5 kHz (narrowband FM)',
+    duty:'Intermittent — push-to-talk, keyed only while speaking', pattern:'narrow-intermittent',
+    clues:['The classic "walkie-talkie" shape — short irregular narrowband bursts exactly like LMR, because it basically is LMR for consumers','FRS is unlicensed and limited to 2W; GMRS shares the same channels but allows up to 50W with a license','22 channels total, all shared between FRS and GMRS — the two services talk to each other directly'] },
+  { id:'cb', cat:'Land Mobile & Trunked', name:'CB Radio (Citizens Band)', freq:'26.965 – 27.405 MHz', bw:'~10 kHz per channel (AM), narrower for SSB',
+    duty:'Intermittent — push-to-talk voice', pattern:'narrow-intermittent',
+    clues:['Sits way down in the HF band (27 MHz) — a dead giveaway versus FRS/GMRS\'s UHF frequencies for what is otherwise a similar push-to-talk shape','40 channels, no license required in the US, 4W power limit — channel 19 (27.185 MHz) is the famous trucker/highway channel','Can skip enormous distances during good HF propagation, unlike FRS/GMRS which stay strictly local'] },
+
+  { id:'duga', cat:'Radar & EW', name:'Duga Radar ("Woodpecker")', freq:'7 – 19 MHz', bw:'40 – 800 kHz',
+    duty:'Repetitive broadband pulsed tapping', pattern:'radar-pulse',
+    clues:['Famous Cold War-era Soviet over-the-horizon radar — the rapid repetitive tapping earned it the nickname "the Woodpecker" among shortwave listeners worldwide','Now defunct, but a historically important example of an OTH radar\'s pulsed signature','Extremely wide and powerful in its day — regularly interfered with shortwave broadcasts and amateur radio globally'] },
+  { id:'kontainer', cat:'Radar & EW', name:'29B6 "Kontainer" OTH Radar', freq:'6.1 – 32 MHz', bw:'3.5 – 28 kHz',
+    duty:'Pulsed, FM-on-pulse structure', pattern:'radar-pulse',
+    clues:['A currently-active Russian over-the-horizon radar — this one is real and operating in Europe right now, not a Cold War relic','Uses 150 antenna masts at a single site to achieve very long-range aircraft and missile detection','Narrower bandwidth per pulse than you might expect for a radar this powerful — the range comes from the antenna array, not raw bandwidth'] },
+  { id:'jorn', cat:'Radar & EW', name:'Jindalee Operational Radar Network (JORN)', freq:'5.7 – 33 MHz', bw:'3 – 60 kHz',
+    duty:'Continuous frequency sweep (FMCW)', pattern:'chirp-radar',
+    clues:['Australia\'s over-the-horizon radar network — uniquely, its bursts include a distinct intro tone before each sweep, an identifying quirk','FMCW (frequency-modulated continuous-wave) means the sweep itself is the whole signal, not a gap between pulses','Covers an enormous area from just a few ground sites, watching approaches to Australia\'s northern coast'] },
+  { id:'rothr', cat:'Radar & EW', name:'ROTHR (Relocatable Over-the-Horizon Radar)', freq:'5 – 28 MHz', bw:'4 – 100 kHz',
+    duty:'Continuous frequency sweep (FMCW)', pattern:'chirp-radar',
+    clues:['US Navy OTH radar (AN/TPS-71) — "relocatable" means the whole system can be moved between sites, unlike a fixed installation','Uses bistatic ionospheric backscatter — the transmitter and receiver sites are in different locations, bouncing signal off the ionosphere','Same FMCW sweep signature as other OTH radars — recognizing the pattern matters more than which specific radar it is'] },
+
+  { id:'hfgcs', cat:'SIGINT & Utility', name:'HFGCS (High Frequency Global Communications System)', freq:'4.724 – 15.016 MHz', bw:'~2.95 kHz',
+    duty:'Intermittent scheduled broadcasts', pattern:'narrow-intermittent',
+    clues:['A US Air Force HF network best known for broadcasting EAMs (Emergency Action Messages) — the same system used to coordinate US strategic nuclear forces','Voice broadcasts of strings of letters/numbers read by a "voice of doom" style announcer, on a regular schedule','Narrowband voice, appears and disappears — nothing about the waterfall itself signals what it actually carries'] },
+  { id:'link11', cat:'Radar & EW', name:'Link-11 (Tactical Data Link)', freq:'2 – 30 MHz (HF); 225 – 400 MHz (UHF variant)', bw:'2.5 – 6 kHz',
+    duty:'Structured polling / roll-call cycle', pattern:'tdma-burst',
+    clues:['A NATO/US tactical data link (also called TADIL-A) used for maritime tactical data exchange between ships','Regular structured timing from its roll-call polling scheme — one participant transmits, then hands off to the next in sequence','Exists in both an HF version and a UHF version (carried on an FM carrier) — same underlying waveform, different band'] },
+  { id:'milstar', cat:'Radar & EW', name:'Milstar (Military SATCOM, FHSS)', freq:'243.785 – 243.822 MHz', bw:'50 kHz',
+    duty:'Fast frequency-hopping', pattern:'freq-hop-fast',
+    clues:['A US military satellite communications system specifically engineered to be jam-resistant — the fast hopping is a deliberate anti-jam feature, not incidental','Nicknamed "Waterdroplets" by SDR hobbyists for its distinctive hopping waveform and sound','Frequency-hopping SATCOM sitting in the UHF band — same core idea as Bluetooth\'s fast hop, applied to secure military satellite links'] },
+
+  { id:'amps', cat:'Cellular', name:'1G AMPS (Advanced Mobile Phone System)', freq:'824 – 894 MHz', bw:'10 – 30 kHz',
+    duty:'Continuous while a call is active', pattern:'narrow-continuous',
+    clues:['The very first generation of cellular — pure analog FM voice, no digital encoding at all','Narrow and steady for the duration of a call, just like an old analog radio — nothing hops, nothing bursts','Long retired in most of the world, but the historical starting point every later cellular generation built on'] },
+  { id:'gsm', cat:'Cellular', name:'2G GSM (Global System for Mobile)', freq:'850 – 1900 MHz (band-dependent)', bw:'200 kHz',
+    duty:'Regular TDMA time-slot structure', pattern:'tdma-burst',
+    clues:['The standard that made mobile phones a true global technology — still the default fallback network in much of the world today','GMSK modulation over strict TDMA timing — 8 time slots per 200 kHz channel, shared cleanly between users','Same underlying channel structure this course\'s Cellular tool explores in depth (BCCH, PCH, RACH, etc.)'] },
+  { id:'lte4g', cat:'Cellular', name:'4G LTE Network', freq:'450 – 3500 MHz (band-dependent)', bw:'1.4 – 20 MHz',
+    duty:'Bursty — packetized OFDM data', pattern:'wide-bursty',
+    clues:['Wideband OFDM carrying data instead of legacy circuit-switched voice — a fundamental architecture shift from 2G/3G','Channel bandwidth is flexible (1.4 to 20 MHz) depending on how much spectrum a carrier has available in that band','"LTE" stands for Long-Term Evolution — it was designed from day one to evolve, which is exactly what became 5G'] },
+  { id:'nr5g', cat:'Cellular', name:'5G NR (New Radio) Downlink', freq:'600 MHz – 50 GHz', bw:'5 – 400 MHz',
+    duty:'Bursty — packetized OFDM data', pattern:'wide-bursty',
+    clues:['5G\'s "New Radio" spans an enormous frequency range — from sub-1 GHz all the way to millimeter-wave bands near 50 GHz','Backward-compatible with 4G LTE architecture, but with wider channels (up to 400 MHz) enabling multi-gigabit speeds','CP-OFDM modulation with adaptive modulation schemes (QPSK through 256QAM) depending on signal quality'] },
+
+  { id:'atsc', cat:'Broadcast', name:'ATSC Broadcast (Digital TV)', freq:'54 – 700 MHz', bw:'6 MHz',
+    duty:'Continuous', pattern:'wide-continuous',
+    clues:['US digital television standard — 8VSB modulation packed into the same 6 MHz channel width analog TV used to occupy','Always-on continuous broadcast, unlike the bursty packet traffic of cellular or Wi-Fi in a similarly wide channel','Fixed 6 MHz width regardless of content — a defining giveaway versus other wideband signals with variable bandwidth'] },
+  { id:'wifi6', cat:'Consumer & IoT (ISM)', name:'802.11ax (Wi-Fi 6)', freq:'2.4 / 5 / 6 GHz', bw:'20 – 160 MHz',
+    duty:'Bursty — packet by packet', pattern:'wide-bursty',
+    clues:['The current mainstream Wi-Fi generation — adds the 6 GHz band on top of the legacy 2.4/5 GHz Wi-Fi already covered elsewhere in this reference','OFDMA lets the access point serve multiple devices in the same channel simultaneously, instead of one at a time','Same bursty packet shape as older Wi-Fi generations — what\'s changed is capacity and efficiency, not the basic waterfall signature'] },
+
+  { id:'acars', cat:'Aviation & Maritime', name:'ACARS (Aircraft Communications Addressing and Reporting System)', freq:'129 – 137 MHz', bw:'~5 kHz',
+    duty:'Intermittent — short data bursts', pattern:'narrow-intermittent',
+    clues:['A digital datalink for short text-style messages between aircraft and ground stations — flight plans, maintenance data, gate info','MSK modulation over VHF, or relayed via satellite for oceanic routes out of VHF range','Short narrowband bursts, similar shape to APRS — both are automated short-message systems, just for very different users'] },
+  { id:'ssr', cat:'Aviation & Maritime', name:'Secondary Surveillance Radar (SSR)', freq:'1030 MHz (interrogation)', bw:'~3 MHz',
+    duty:'Pulsed interrogation/reply', pattern:'radar-pulse',
+    clues:['The system air traffic control actually relies on day to day — not a primary radar bouncing energy off the aircraft\'s skin, but a request-and-reply exchange with a transponder onboard','1030 MHz up (interrogation), 1090 MHz down (reply) — the same 1090 MHz reply frequency ADS-B also broadcasts on','Pulse position modulation (PPM) encodes the reply — similar pulsed shape to ADS-B since they share the same transponder hardware'] },
+  { id:'radaralt', cat:'Radar & EW', name:'Radar Altimeter', freq:'4,200 – 4,300 MHz', bw:'20 MHz',
+    duty:'Continuous frequency sweep (FMCW)', pattern:'chirp-radar',
+    clues:['Tells an aircraft its precise height above the ground directly below it — critical for landing, not just general altitude like a barometric altimeter','FMCW sweep just like the OTH radars elsewhere in this reference, just at a vastly higher frequency and much shorter range','This exact band has been a source of real 5G interference concerns, since some 5G C-band deployments sit close to it'] },
+
+  { id:'nlk', cat:'SIGINT & Utility', name:'Jim Creek (NLK) — Navy VLF Submarine Comms', freq:'24.8 kHz', bw:'~300 Hz',
+    duty:'Continuous', pattern:'narrow-continuous',
+    clues:['A US Navy VLF station transmitting encrypted commands to submerged submarines — VLF penetrates seawater far better than higher frequencies, which is the whole reason it exists','Extremely narrow and always-on, sitting at an almost absurdly low frequency compared to nearly everything else in this reference','MSK modulation on a continuous carrier — submarines can receive it without surfacing or trailing an antenna far above the water'] },
 ];
 
+// Representative frequency (Hz) for each signal, used only to position it on the
+// Spectrum Survey panorama. Where a signal's real-world freq varies or spans a
+// generic band description, this is a reasonable mid-point, not a precise spec.
+const SIGNAL_FREQ_HZ = {
+  am: 1.0e6, fm: 100e6, cw: 10e6, radar: 3e9, lmr: 160e6, wifi: 2.4e9, bt: 2.4e9,
+  lte: 1.8e9, gps: 1575.42e6, satcom: 6e9, fhss: 900e6, 'chirp-radar': 9e9,
+  link16: 1080e6, adsb: 1090e6, vor: 113e6, ais: 162e6,
+  p25: 800e6, numbers: 8e6, cordless: 2.4e9, garage: 400e6, fpv: 5.8e9, noaaapt: 137.5e6,
+  iridium: 1.62e9, ft8: 14.074e6, aprs: 144.39e6, lora: 915e6, rtty: 10e6,
+  radargun: 34.7e9, zigbee: 2.4e9, tpms: 315e6, dmr: 450e6,
+  frs: 465e6, cb: 27.185e6, duga: 13e6, kontainer: 19e6, jorn: 19.4e6, rothr: 16.5e6,
+  hfgcs: 10e6, link11: 16e6, milstar: 243.8e6, amps: 859e6, gsm: 900e6, lte4g: 1.8e9,
+  nr5g: 3.5e9, atsc: 470e6, wifi6: 6e9, acars: 133e6, ssr: 1030e6, radaralt: 4250e6,
+  nlk: 24.8e3
+};
+const PANO_MIN_HZ = 2e4;   // 20 kHz (extended down to include VLF Navy comms)
+const PANO_MAX_HZ = 4e10;  // 40 GHz
+const PANO_PX_PER_DECADE = 480;
+const PANO_BANDS = [
+  {name:'VLF', lo:3e3, hi:3e4}, {name:'LF', lo:3e4, hi:3e5}, {name:'MF', lo:3e5, hi:3e6}, {name:'HF', lo:3e6, hi:3e7},
+  {name:'VHF', lo:3e7, hi:3e8}, {name:'UHF', lo:3e8, hi:3e9}, {name:'SHF', lo:3e9, hi:3e10},
+  {name:'EHF', lo:3e10, hi:3e11}
+];
+
+function panoX(hz){
+  const decades = Math.log10(PANO_MAX_HZ) - Math.log10(PANO_MIN_HZ);
+  const totalW = decades * PANO_PX_PER_DECADE;
+  return ((Math.log10(hz) - Math.log10(PANO_MIN_HZ)) / decades) * totalW;
+}
+function panoTotalWidth(){
+  return panoX(PANO_MAX_HZ);
+}
+function fmtHz(hz){
+  if(hz >= 1e9) return (hz/1e9).toFixed(hz>=10e9?0:1) + ' GHz';
+  if(hz >= 1e6) return (hz/1e6).toFixed(hz>=10e6?0:1) + ' MHz';
+  if(hz >= 1e3) return (hz/1e3).toFixed(0) + ' kHz';
+  return hz + ' Hz';
+}
+
+let panoBuilt = false;
+let panoAnimId = null;
+let panoSelectedId = null;
+const panoStates = {}; // one persistent, independently-ticking waterfall state per signal
+
+// A signal's live segments use fractional positions (0-1) within its own narrow zoomed
+// frequency window (the same window pickFreqWindow() computes). This converts a segment
+// into the actual pixel range it occupies on the wideband panorama.
+function segToPanoRange(sigId, seg){
+  const hz = SIGNAL_FREQ_HZ[sigId];
+  if(hz === undefined) return null;
+  const winLo = hz * 0.82, winHi = hz * 1.18;
+  const loHz = winLo + seg.x0*(winHi-winLo);
+  const hiHz = winLo + seg.x1*(winHi-winLo);
+  return [panoX(loHz), panoX(hiHz)];
+}
+function buildPanorama(){
+  if(panoBuilt) return;
+  panoBuilt = true;
+  const inner = document.getElementById('panoInner');
+  const totalW = panoTotalWidth();
+  inner.style.width = totalW + 'px';
+  inner.style.height = '170px';
+
+  // Every signal gets its own persistent, continuously-ticking pattern state — so the
+  // whole panorama comes alive with real duty-cycle/chirp behavior even before anything
+  // is clicked, not just a static placeholder bump.
+  SIGNALS.forEach(s=>{
+    if(SIGNAL_FREQ_HZ[s.id] === undefined) return;
+    panoStates[s.id] = newWaterfallState(s.pattern);
+    for(let i=0;i<3;i++) stepWaterfall(panoStates[s.id], 3); // small buffer, only the latest row is used
+  });
+
+  let html = '';
+  // Band zone backgrounds + labels (HTML, sits behind the canvas)
+  PANO_BANDS.forEach(b=>{
+    const x0 = Math.max(0, panoX(b.lo));
+    const x1 = Math.min(totalW, panoX(b.hi));
+    html += `<div class="pano-band" style="left:${x0}px;width:${x1-x0}px"><span class="pano-band-label">${b.name}</span></div>`;
+  });
+  // Tick marks — every decade, plus 2x/5x sub-marks so it doesn't jump straight
+  // from (say) 100 MHz to 1 GHz with nothing labeled in between
+  for(let d = Math.ceil(Math.log10(PANO_MIN_HZ)); d <= Math.floor(Math.log10(PANO_MAX_HZ)); d++){
+    [1,2,5].forEach(mult=>{
+      const hz = Math.pow(10, d) * mult;
+      if(hz > PANO_MAX_HZ) return;
+      const cls = mult===1 ? 'pano-tick pano-tick-major' : 'pano-tick';
+      html += `<div class="${cls}" style="left:${panoX(hz)}px">${fmtHz(hz)}</div>`;
+    });
+  }
+  // The live spectrum canvas itself — this IS the scrollable thing you click on.
+  // No text labels here by design — names only show in the dropdown and the
+  // Characteristics panel once a signal is actually selected.
+  html += `<canvas id="panoCanvas" width="${totalW}" height="146" style="position:absolute;top:0;left:0;cursor:pointer"></canvas>`;
+  inner.innerHTML = html;
+
+  const dbg = document.getElementById('exploreDebug');
+  if(dbg) dbg.textContent = `Debug: panorama built OK \u2014 ${SIGNALS.length} signals, width=${totalW.toFixed(0)}px. Click one to begin.`;
+
+  document.getElementById('panoCanvas').addEventListener('click', (e)=>{
+    const dbg = document.getElementById('exploreDebug');
+    try {
+      const rect = e.target.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const decades = Math.log10(PANO_MAX_HZ) - Math.log10(PANO_MIN_HZ);
+      const totalW2 = decades * PANO_PX_PER_DECADE;
+      const clickHz = Math.pow(10, Math.log10(PANO_MIN_HZ) + (clickX/totalW2)*decades);
+      let best = null, bestDist = Infinity;
+      SIGNALS.forEach(s=>{
+        const hz = SIGNAL_FREQ_HZ[s.id];
+        if(hz === undefined) return;
+        const dist = Math.abs(Math.log10(hz) - Math.log10(clickHz));
+        if(dist < bestDist){ bestDist = dist; best = s.id; }
+      });
+      if(dbg) dbg.textContent = `Debug: clicked x=${clickX.toFixed(0)}px \u2192 ~${fmtHz(clickHz)} \u2192 nearest: ${best || 'none found'}`;
+      if(best) selectSignal(best);
+      else if(dbg) dbg.style.color = '#ff4a4a';
+    } catch(err) {
+      if(dbg){ dbg.textContent = 'CLICK ERROR: ' + err.message; dbg.style.color = '#ff4a4a'; }
+      console.error('panoCanvas click error:', err);
+    }
+  });
+
+  requestAnimationFrame(drawPanoramaSpectrum);
+}
+
+function drawPanoramaSpectrum(){
+  const canvas = document.getElementById('panoCanvas');
+  if(canvas){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Fine grid — horizontal dB lines + vertical lines every ~2 sub-divisions per decade,
+    // giving it the "graph paper" look of a real spectrum analyzer
+    ctx.strokeStyle = 'rgba(216,236,245,0.06)';
+    ctx.lineWidth = 1;
+    for(let i=1;i<6;i++){ const y=i/6*H; ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
+    const decades = Math.log10(PANO_MAX_HZ) - Math.log10(PANO_MIN_HZ);
+    const totalW = decades * PANO_PX_PER_DECADE;
+    for(let d=Math.ceil(Math.log10(PANO_MIN_HZ)); d<=Math.floor(Math.log10(PANO_MAX_HZ)); d++){
+      [2,5].forEach(mult=>{
+        const x = panoX(Math.pow(10,d)*mult);
+        if(x>=0 && x<=totalW){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+      });
+    }
+
+    const spikeWidth = 7; // narrow, sharp peaks rather than soft rounded bumps
+
+    // Advance every signal's own persistent, independent pattern state one step —
+    // this is what makes the whole panorama "alive" (real duty-cycle gaps, real
+    // chirp sweeps) even before anything has been clicked.
+    SIGNALS.forEach(s=>{
+      if(s.id === panoSelectedId) return; // the selected one is stepped by animateExplore instead
+      const st = panoStates[s.id];
+      if(st) stepWaterfall(st, 3);
+    });
+
+    // Build one flat list of "active pixel ranges" from every signal's current live
+    // segments (selected signal included, reading straight from the shared exploreState
+    // so it stays perfectly in sync with the waterfall below).
+    const activeRanges = [];
+    SIGNALS.forEach(s=>{
+      const isSelected = s.id === panoSelectedId;
+      const segs = isSelected
+        ? (exploreState && exploreState.rows && exploreState.rows[0])
+        : (panoStates[s.id] && panoStates[s.id].rows[0]);
+      if(!segs) return;
+      segs.forEach(seg=>{
+        const range = segToPanoRange(s.id, seg);
+        if(!range) return;
+        activeRanges.push({lo: range[0], hi: range[1], intensity: seg.intensity});
+      });
+    });
+
+    // Noisy baseline + sharp signal spikes — real spectrum analyzers show a jagged
+    // noise floor, not a smooth line, so every point gets independent jitter.
+    const step = 2;
+    let path = [];
+    for(let x=0; x<=totalW; x+=step){
+      let a = 0.06 + Math.random()*0.08; // jagged noise floor
+      activeRanges.forEach(r=>{
+        if(x >= r.lo-1 && x <= r.hi+1){
+          const spike = r.intensity * (0.85+Math.random()*0.15);
+          if(spike > a) a = spike;
+        }
+      });
+      path.push(a);
+    }
+
+    ctx.beginPath();
+    path.forEach((a,i)=>{
+      const x = i*step;
+      const y = H - a*(H-6);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.strokeStyle = 'rgba(216,236,245,0.9)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // subtle fill under the trace, cooler tone than the line itself
+    ctx.lineTo(totalW,H); ctx.lineTo(0,H); ctx.closePath();
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'rgba(48,170,255,0.28)');
+    grad.addColorStop(1,'rgba(48,170,255,0.02)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Left/right bracket markers framing the currently-selected signal
+    if(panoSelectedId){
+      const hz = SIGNAL_FREQ_HZ[panoSelectedId];
+      if(hz !== undefined){
+        const cx = panoX(hz);
+        const markW = spikeWidth * 1.6;
+        [cx - markW, cx + markW].forEach(mx=>{
+          ctx.strokeStyle = '#ffb300';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(mx, 4);
+          ctx.lineTo(mx, H-4);
+          ctx.stroke();
+        });
+      }
+    }
+  }
+  panoAnimId = requestAnimationFrame(()=>setTimeout(drawPanoramaSpectrum, 60));
+}
+
+function selectSignal(id){
+  panoSelectedId = id;
+  const sel = document.getElementById('exploreSelect');
+  if(sel) sel.value = id;
+
+  try {
+    const hz = SIGNAL_FREQ_HZ[id];
+    const scrollBox = document.getElementById('panoScroll');
+    if(hz !== undefined && scrollBox){
+      const targetX = panoX(hz);
+      const centered = Math.max(0, targetX - scrollBox.clientWidth/2);
+      scrollBox.scrollLeft = centered;
+    }
+  } catch(err) {
+    console.error('spectrum auto-scroll failed (non-fatal):', err);
+  }
+
+  exploreChange(id);
+  document.getElementById('exploreInfo')?.scrollIntoView({behavior:'smooth', block:'center'});
+}
 let quizIdx = -1;
 let score = 0, total = 0, streak = 0;
 let answered = false;
+let hasAnomaly = false;
+
+function injectAnomaly(state){
+  // Anomaly overlays onto NEW rows as they're generated (not historical ones),
+  // so it stays visible regardless of how long the student takes to answer.
+  state.anomalyRemaining = 45; // ~2 seconds at 45ms/frame
+  state.anomalyCx = 0.15 + Math.random()*0.7;
+  state.anomalyWidth = 0.05 + Math.random()*0.1;
+}
 let waterfallState = null; // {pattern, rows: [], hopX: null, hopCounter: 0}
 
 /* ── PANEL SWITCHING ─────────────────────────────────────────── */
@@ -261,12 +680,21 @@ function setPanel(name){
     document.getElementById('panel-'+p).classList.toggle('act', p===name);
   });
   if(name==='reference') buildReference();
-  if(name==='explore') initExplore();
+  if(name==='explore'){
+    try {
+      initExplore();
+    } catch(err) {
+      console.error('initExplore/buildPanorama error:', err);
+      const dbg = document.getElementById('exploreDebug');
+      if(dbg){ dbg.textContent = 'INIT ERROR: ' + err.message; dbg.style.color = '#ff4a4a'; }
+    }
+    resizeCanvases(true);
+  }
 }
 
 /* ── WATERFALL RENDERING ─────────────────────────────────────── */
 function newWaterfallState(pattern){
-  return { pattern, rows: [], hopX: 0.5, hopCounter: 0, onBlockRemaining: 0, offBlockRemaining: 0, phase: 0 };
+  return { pattern, rows: [], hopX: 0.5, hopCounter: 0, onBlockRemaining: 0, offBlockRemaining: 0, phase: 0, anomalyRemaining: 0 };
 }
 
 // Returns an array of {x0,x1,intensity} segments lit for this row, given the pattern and state
@@ -276,6 +704,11 @@ function computeRow(state){
   const segs = [];
 
   function pulse(x0,x1,inten){ segs.push({x0,x1,intensity:inten}); }
+
+  if(state.anomalyRemaining > 0){
+    state.anomalyRemaining--;
+    pulse(state.anomalyCx-state.anomalyWidth/2, state.anomalyCx+state.anomalyWidth/2, 1.0);
+  }
 
   switch(p){
     case 'narrow-continuous':
@@ -323,8 +756,6 @@ function computeRow(state){
       pulse(0.22,0.78,0.28); break;
     case 'narrow-steady':
       pulse(0.47,0.53,0.85); break;
-    case 'wide-noise':
-      pulse(0.08,0.92,0.85); break;
     case 'freq-hop-slow': {
       if(state.hopCounter<=0){
         state.hopX = 0.12 + Math.random()*0.76;
@@ -332,6 +763,31 @@ function computeRow(state){
       }
       state.hopCounter--;
       pulse(state.hopX-0.025, state.hopX+0.025, 0.95);
+      break;
+    }
+    case 'chirp-radar': {
+      const period = 14, pulseLen = 5;
+      const posInCycle = state.phase % period;
+      if(posInCycle < pulseLen){
+        const t = posInCycle / (pulseLen-1);
+        const cx = 0.25 + t*0.5;
+        pulse(cx-0.03, cx+0.03, 1.0);
+      }
+      break;
+    }
+    case 'tdma-burst': {
+      const period = 8, onLen = 3;
+      const posInCycle = state.phase % period;
+      if(posInCycle < onLen){ pulse(0.45,0.55,0.9); }
+      break;
+    }
+    case 'scheduled-broadcast': {
+      if(state.onBlockRemaining<=0 && state.offBlockRemaining<=0){
+        if(Math.random()<0.4) state.onBlockRemaining = 25+Math.floor(Math.random()*25);
+        else state.offBlockRemaining = 20+Math.floor(Math.random()*25);
+      }
+      if(state.onBlockRemaining>0){ pulse(0.47,0.53,0.9); state.onBlockRemaining--; }
+      else state.offBlockRemaining--;
       break;
     }
   }
@@ -366,6 +822,79 @@ function drawWaterfall(canvas, state){
   });
 }
 
+// Classic spectrum-analyzer style view: amplitude (Y) vs frequency (X) for the CURRENT instant,
+// derived from the same live segment data driving the waterfall — just visualized a second way.
+function drawSpectrum(canvas, state){
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0,0,W,H);
+
+  // vertical (frequency) gridlines
+  ctx.strokeStyle = 'rgba(0,255,136,0.06)';
+  ctx.lineWidth = 1;
+  for(let i=1;i<8;i++){ const x=i/8*W; ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+
+  // horizontal (power/dB) gridlines + labels — simulated relative dB scale, top=0dB down to -60dB
+  const dbLevels = [0,-15,-30,-45,-60];
+  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(0,255,136,0.55)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  dbLevels.forEach((db,i)=>{
+    const y = (i/(dbLevels.length-1)) * (H-10) + 5;
+    ctx.strokeStyle = 'rgba(0,255,136,0.08)';
+    ctx.beginPath(); ctx.moveTo(28,y); ctx.lineTo(W,y); ctx.stroke();
+    ctx.fillText(db+'', 2, y);
+  });
+
+  const segs = (state.rows && state.rows[0]) || [];
+  const bins = 160;
+  const amps = new Array(bins);
+  for(let i=0;i<bins;i++){
+    const bx = i/(bins-1);
+    let a = 0.04 + Math.random()*0.05; // noise floor, jitters every frame like a real analyzer
+    segs.forEach(seg=>{
+      if(bx>=seg.x0 && bx<=seg.x1){
+        a = Math.max(a, seg.intensity*(0.85+Math.random()*0.15));
+      }
+    });
+    amps[i]=a;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(28,H);
+  amps.forEach((a,i)=>{
+    const x = 28 + (i/(bins-1))*(W-28);
+    const y = H - a*(H-10)*0.92;
+    ctx.lineTo(x,y);
+  });
+  ctx.lineTo(W,H);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(0,255,136,0.55)');
+  grad.addColorStop(1,'rgba(0,255,136,0.05)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#00ff88';
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+
+  // Axis titles
+  ctx.save();
+  ctx.font = 'bold 9px monospace';
+  ctx.fillStyle = 'rgba(0,255,136,0.75)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.translate(10, H-4);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('POWER (dB)', 0, 0);
+  ctx.restore();
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('FREQUENCY \u2192', W-4, H-2);
+}
+
 let quizAnimId = null, exploreAnimId = null;
 
 function animateQuiz(){
@@ -377,22 +906,38 @@ function animateQuiz(){
 }
 
 let exploreState = null;
+let exploreFrameCount = 0;
 function animateExplore(){
-  if(exploreState){
-    stepWaterfall(exploreState, 90);
-    drawWaterfall(document.getElementById('exploreCanvas'), exploreState);
+  const dbg = document.getElementById('exploreDebug');
+  try {
+    if(exploreState){
+      exploreFrameCount++;
+      stepWaterfall(exploreState, 90);
+      const c1 = document.getElementById('exploreCanvas');
+      if(!c1) throw new Error('exploreCanvas element not found in DOM');
+      drawWaterfall(c1, exploreState);
+      const segCounts = exploreState.rows.slice(0,10).map(r=>r.length).join(',');
+      if(dbg) dbg.textContent = `Debug: pattern="${exploreState.pattern}" | frame=${exploreFrameCount} | rows=${exploreState.rows.length} | canvas=${c1.width}x${c1.height} | segs(last10)=[${segCounts}]`;
+    } else {
+      if(dbg) dbg.textContent = 'Debug: click a signal in the spectrum view above to begin';
+    }
+  } catch(err) {
+    if(dbg){ dbg.textContent = 'ERROR: ' + err.message; dbg.style.color = '#ff4a4a'; }
+    console.error('animateExplore error:', err);
   }
   exploreAnimId = requestAnimationFrame(()=>setTimeout(animateExplore, 45));
 }
 
 /* ── QUIZ LOGIC ──────────────────────────────────────────────── */
-function pickFreqWindow(){
-  const windows = [
-    ['500 kHz','1.1 MHz','1.7 MHz'], ['80 MHz','98 MHz','116 MHz'],
-    ['1.2 GHz','1.6 GHz','2.0 GHz'], ['2.3 GHz','2.4 GHz','2.5 GHz'],
-    ['3 GHz','5 GHz','7 GHz'], ['400 MHz','460 MHz','520 MHz'],
-  ];
-  return windows[Math.floor(Math.random()*windows.length)];
+function pickFreqWindow(sigId){
+  const hz = SIGNAL_FREQ_HZ[sigId];
+  if(hz === undefined){
+    // Fallback for the rare case a signal has no frequency mapping — shouldn't happen, but stay safe.
+    return ['?','?','?'];
+  }
+  const lo = hz * 0.82;
+  const hi = hz * 1.18;
+  return [fmtHz(lo), fmtHz(hz), fmtHz(hi)];
 }
 
 function nextQuestion(){
@@ -403,16 +948,23 @@ function nextQuestion(){
   waterfallState = newWaterfallState(sig.pattern);
   for(let i=0;i<90;i++) stepWaterfall(waterfallState, 90); // pre-fill so it doesn't start blank
 
-  const [lo,mid,hi] = pickFreqWindow();
+  const anomalyEnabled = document.getElementById('anomalyToggle').checked;
+  hasAnomaly = anomalyEnabled && Math.random() < 0.3;
+  if(hasAnomaly) injectAnomaly(waterfallState);
+
+  const [lo,mid,hi] = pickFreqWindow(sig.id);
   document.getElementById('freqLo').textContent = lo;
   document.getElementById('freqMid').textContent = mid;
   document.getElementById('freqHi').textContent = hi;
   document.getElementById('freqWindowLabel').textContent = '';
 
-  // Build 4 choices: correct + 3 random distractors
+  // Build choices: correct + distractors, or an anomaly option when this round has one injected
   const others = SIGNALS.filter(s=>s.id!==sig.id);
-  const shuffled = others.sort(()=>Math.random()-0.5).slice(0,3);
-  const choices = [sig, ...shuffled].sort(()=>Math.random()-0.5);
+  const distractorCount = hasAnomaly ? 2 : 3;
+  const shuffled = others.sort(()=>Math.random()-0.5).slice(0,distractorCount);
+  let choices = [sig, ...shuffled];
+  if(hasAnomaly) choices.push({id:'ANOMALY', name:'\u26a0\ufe0f Anomaly / Unusual Activity'});
+  choices = choices.sort(()=>Math.random()-0.5);
 
   const grid = document.getElementById('choiceGrid');
   grid.innerHTML = '';
@@ -420,6 +972,7 @@ function nextQuestion(){
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
     btn.textContent = c.name;
+    btn.dataset.cid = c.id;
     btn.onclick = () => selectAnswer(c.id, btn);
     grid.appendChild(btn);
   });
@@ -432,7 +985,8 @@ function selectAnswer(chosenId, btnEl){
   if(answered) return;
   answered = true;
   const sig = SIGNALS[quizIdx];
-  const correct = chosenId === sig.id;
+  const correctId = hasAnomaly ? 'ANOMALY' : sig.id;
+  const correct = chosenId === correctId;
 
   total++;
   if(correct){ score++; streak++; } else { streak = 0; }
@@ -441,53 +995,167 @@ function selectAnswer(chosenId, btnEl){
 
   document.querySelectorAll('.choice-btn').forEach(b => {
     b.disabled = true;
-    if(b.textContent === sig.name) b.classList.add('correct');
+    if(b.dataset.cid === correctId) b.classList.add('correct');
     else if(b === btnEl && !correct) b.classList.add('wrong');
   });
 
   const rb = document.getElementById('revealBox');
-  rb.innerHTML = `
-    <div class="rname">${correct?'✅ Correct':'❌'} — ${sig.name}</div>
-    <div>Freq: ${sig.freq} &nbsp;|&nbsp; BW: ${sig.bw} &nbsp;|&nbsp; Duty: ${sig.duty}</div>
-    ${sig.clues.map(c=>`<div class="clue">${c}</div>`).join('')}
-  `;
+  if(hasAnomaly){
+    rb.innerHTML = `
+      <div class="rname">${correct?'✅ Correct':'❌'} — Anomaly Detected</div>
+      <div>Underlying signal: ${sig.name} (${sig.freq})</div>
+      <div class="clue">⚠ A brief, unexpected wideband burst appeared partway through the capture — overlaid interference or jamming on top of the normal ${sig.name} pattern. Noticing activity that doesn't match a signal's known baseline is real spectrum-monitoring anomaly detection.</div>
+    `;
+  } else {
+    rb.innerHTML = `
+      <div class="rname">${correct?'✅ Correct':'❌'} — ${sig.name}</div>
+      <div>Freq: ${sig.freq} &nbsp;|&nbsp; BW: ${sig.bw} &nbsp;|&nbsp; Duty: ${sig.duty}</div>
+      ${sig.clues.map(c=>`<div class="clue">${c}</div>`).join('')}
+    `;
+  }
   rb.classList.add('show');
   document.getElementById('nextBtn').classList.add('show');
 }
 
 /* ── REFERENCE TAB ───────────────────────────────────────────── */
+const REF_CATEGORY_ORDER = [
+  'Broadcast','Amateur & Digital Modes','Radar & EW','Land Mobile & Trunked',
+  'Satellite','Aviation & Maritime','Consumer & IoT (ISM)','Cellular','SIGINT & Utility','Unmanned Systems'
+];
 let refBuilt = false;
-function buildReference(){
-  if(refBuilt) return;
-  refBuilt = true;
-  const grid = document.getElementById('refGrid');
-  grid.innerHTML = SIGNALS.map(s => `
+let refCollapsed = new Set(REF_CATEGORY_ORDER); // all categories start collapsed
+
+function refCardHtml(s){
+  return `
     <div class="ref-card">
+      <canvas class="ref-thumb" id="refthumb-${s.id}" width="240" height="54"></canvas>
       <div class="rc-name">${s.name}</div>
       <div class="rc-row"><b>Frequency</b><span>${s.freq}</span></div>
       <div class="rc-row"><b>Bandwidth</b><span>${s.bw}</span></div>
       <div class="rc-row"><b>Duty Cycle</b><span>${s.duty}</span></div>
+    </div>`;
+}
+function drawRefThumbs(signals){
+  signals.forEach(s=>{
+    const canvas = document.getElementById('refthumb-'+s.id);
+    if(!canvas) return;
+    const st = newWaterfallState(s.pattern);
+    for(let i=0;i<54;i++) stepWaterfall(st, 54);
+    drawWaterfall(canvas, st);
+  });
+}
+function toggleRefCat(cat){
+  if(refCollapsed.has(cat)) refCollapsed.delete(cat);
+  else refCollapsed.add(cat);
+  renderReference();
+}
+function renderReference(){
+  const q = (document.getElementById('refSearch').value || '').toLowerCase().trim();
+  const grid = document.getElementById('refGrid');
+
+  if(q){
+    const matches = SIGNALS.filter(s => (s.name+' '+s.freq+' '+s.cat).toLowerCase().includes(q));
+    if(!matches.length){
+      grid.innerHTML = `<div class="empty-cat">No signals match "${q}".</div>`;
+      return;
+    }
+    grid.innerHTML = `<div class="ref-grid">${matches.map(refCardHtml).join('')}</div>`;
+    drawRefThumbs(matches);
+    return;
+  }
+
+  let html = '';
+  REF_CATEGORY_ORDER.forEach(cat=>{
+    const items = SIGNALS.filter(s=>s.cat===cat);
+    if(!items.length) return;
+    const collapsed = refCollapsed.has(cat);
+    html += `<div class="section-label" style="cursor:pointer" onclick="toggleRefCat('${cat}')">
+      <span style="display:inline-block;transition:transform .15s;transform:rotate(${collapsed?'-90deg':'0deg'})">\u25BC</span>
+      ${cat} <span style="opacity:.6;font-weight:400">(${items.length})</span>
+    </div>`;
+    if(!collapsed){
+      html += `<div class="ref-grid">${items.map(refCardHtml).join('')}</div>`;
+    }
+  });
+  grid.innerHTML = html;
+  if(!q){
+    REF_CATEGORY_ORDER.forEach(cat=>{
+      if(!refCollapsed.has(cat)) drawRefThumbs(SIGNALS.filter(s=>s.cat===cat));
+    });
+  }
+}
+function buildReference(){
+  if(refBuilt) return;
+  refBuilt = true;
+  renderReference();
+}
+
+/* ── EXPLORE TAB ─────────────────────────────────────────────── */
+const LIVE_SDR_DIRECTORIES = [
+  { name:'University of Twente WebSDR', band:'HF (0–30 MHz)',
+    desc:'One of the original, longest-running WebSDR sites — live shortwave, direct in your browser. Extremely stable, university-hosted.',
+    url:'http://websdr.ewi.utwente.nl:8901/' },
+  { name:'KiwiSDR Public Receiver List', band:'HF, some VHF (varies per receiver)',
+    desc:'The official directory of hundreds of individually-hosted KiwiSDR receivers worldwide — pick any one currently online.',
+    url:'http://kiwisdr.com/public/' },
+  { name:'Receiverbook Directory', band:'LF/MF/HF/VHF/UHF (varies per receiver)',
+    desc:'Aggregates both KiwiSDR and OpenWebRX public receivers by location and band — good for finding VHF/UHF coverage specifically.',
+    url:'https://www.receiverbook.de/' },
+  { name:'WebSDR.org Directory', band:'HF/VHF/UHF (varies per receiver)',
+    desc:'The primary directory for classic WebSDR servers worldwide, sorted by location and band coverage.',
+    url:'http://www.websdr.org/' },
+];
+
+let exploreMode = 'sim';
+function setExploreMode(mode){
+  exploreMode = mode;
+  document.getElementById('btn-exsim').classList.toggle('act', mode==='sim');
+  document.getElementById('btn-exlive').classList.toggle('act', mode==='live');
+  document.getElementById('explore-sim').style.display = mode==='sim' ? '' : 'none';
+  document.getElementById('explore-live').style.display = mode==='live' ? '' : 'none';
+  if(mode==='live') buildLiveGrid();
+}
+let liveGridBuilt = false;
+function buildLiveGrid(){
+  if(liveGridBuilt) return;
+  liveGridBuilt = true;
+  document.getElementById('liveGrid').innerHTML = LIVE_SDR_DIRECTORIES.map(d => `
+    <div class="ref-card">
+      <div class="rc-name">${d.name}</div>
+      <div class="rc-row"><b>Band Coverage</b><span>${d.band}</span></div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--txt);margin-top:8px;line-height:1.6">${d.desc}</div>
+      <a href="${d.url}" target="_blank" rel="noopener" style="display:block;margin-top:10px;text-align:center;background:var(--gfaint);border:1px solid var(--gdim);color:var(--green);
+        font-family:var(--ui);font-size:12.5px;font-weight:700;padding:8px;border-radius:4px;text-decoration:none">Open Live Receiver &#8599;</a>
     </div>
   `).join('');
 }
 
-/* ── EXPLORE TAB ─────────────────────────────────────────────── */
 let exploreInited = false;
 function initExplore(){
+  buildPanorama();
   if(!exploreInited){
     exploreInited = true;
     const sel = document.getElementById('exploreSelect');
-    sel.innerHTML = SIGNALS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+    const sorted = SIGNALS.filter(s => SIGNAL_FREQ_HZ[s.id] !== undefined)
+      .sort((a,b) => SIGNAL_FREQ_HZ[a.id] - SIGNAL_FREQ_HZ[b.id]);
+    sorted.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = `${s.name} (${fmtHz(SIGNAL_FREQ_HZ[s.id])})`;
+      sel.appendChild(opt);
+    });
+    // no default selection — the waterfall stays idle until a signal is chosen
   }
-  exploreChange();
 }
-function exploreChange(){
-  const id = document.getElementById('exploreSelect').value;
+function exploreChange(id){
   const sig = SIGNALS.find(s=>s.id===id);
+  if(!sig) return;
   exploreState = newWaterfallState(sig.pattern);
   for(let i=0;i<90;i++) stepWaterfall(exploreState, 90);
 
-  const [lo,mid,hi] = pickFreqWindow();
+  document.getElementById('wfSelectedName').textContent = sig.name;
+
+  const [lo,mid,hi] = pickFreqWindow(sig.id);
   document.getElementById('exFreqLo').textContent = lo;
   document.getElementById('exFreqMid').textContent = mid;
   document.getElementById('exFreqHi').textContent = hi;
@@ -504,9 +1172,10 @@ function exploreChange(){
 
 /* ── CANVAS RESIZE ───────────────────────────────────────────── */
 let lastCanvasWidth = 0;
-function resizeCanvases(){
-  const w = document.getElementById('waterfallCanvas').parentElement.clientWidth;
-  if(w === lastCanvasWidth) return;
+function resizeCanvases(force){
+  let w = document.getElementById('waterfallCanvas').parentElement.clientWidth;
+  if(!w || w < 50) w = 700; // guard against a premature 0px measurement before layout settles
+  if(!force && w === lastCanvasWidth) return;
   lastCanvasWidth = w;
   ['waterfallCanvas','exploreCanvas'].forEach(id=>{
     const c = document.getElementById(id);
@@ -529,12 +1198,14 @@ function toggleTheme(){
 /* ── INIT ────────────────────────────────────────────────────── */
 setTimeout(()=>{
   resizeCanvases();
+  buildReference();
   nextQuestion();
   animateQuiz();
+animateExplore();
 }, 50);
 </script>
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
-  <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
 <script>
 if ('serviceWorker' in navigator) {
@@ -545,5 +1216,35 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:14px 16px 0;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
 </body>
 </html>

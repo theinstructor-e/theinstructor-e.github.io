@@ -164,12 +164,13 @@ const TOOLS=[
   {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88',kw:'breadboard resistor capacitor circuit simulator schematic wiring electronics lab'},
   // E EW Theory
   {cat:'E EW Theory',kind:'guide',nm:'Electromagnetic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
+  {cat:'E EW Theory',kind:'guide',nm:'Signal Identification Explained',ds:'Plain-language guide: the four traits that identify any signal, reading a waterfall, and real EW research behind it',file:'sigidguide',color:'#ff4444',kw:'signal identification waterfall spectrum frequency bandwidth duty cycle hopping GTRI angry kitten pysdr'},
   {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444',kw:'electronic support electronic attack electronic protection jamming warfare framework'},
+  {cat:'E EW Theory',nm:'Signal ID Trainer',ds:'50 real signals across a scrollable live spectrum survey, an ID quiz with anomaly detection, and a categorized reference library',file:'sigid',color:'#ff4444',kw:'signal identification waterfall spectrum analyzer SIGINT anomaly detection radar OTH jammer cellular'},
   {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff',kw:'dipole yagi antenna gain radiation pattern element spacing directional'},
   {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff',kw:'direction finding triangulation geolocation emitter location bearing lines terrain masking'},
   {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff',kw:'satellite navigation jamming fake location signal deception position spoofing PNT denial'},
   {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff',kw:'FHSS anti-jam frequency agility spread spectrum hopping sequence dwell time'},
-  {cat:'E EW Theory',nm:'Signal ID Trainer',ds:'Identify emissions by spectral/waveform characteristics — animated signal quiz with a study reference',file:'sigid',color:'#ff4a4a',kw:'signal identification spectrogram waveform emission characteristics SIGINT ELINT modulation recognition'},
   // D Networking
   {cat:'D Networking',kind:'guide',nm:'Networking Explained',ds:'Plain-language guide: OSI, MAC/IP, subnetting, DHCP, TCP/UDP & ports, DNS/URLs, topologies & gear',file:'networkguide',color:'#00d4ff'},
   {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
@@ -523,7 +524,7 @@ renderWraven();
   <script data-goatcounter="https://ewit-training.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
-  <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
 <script>
 if ('serviceWorker' in navigator) {
@@ -545,7 +546,7 @@ if ('serviceWorker' in navigator) {
 </style>
 <div id="fbNudge">
   <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
-  Got a sec? <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener">Let us know</a> what's working or what's not — takes under a minute.
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
 </div>
 <script>
 (function(){
