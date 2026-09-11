@@ -153,28 +153,17 @@ function submitFeedback(){
   err.textContent = '';
 
   if (FEEDBACK_FORM_URL.startsWith('http')) {
-    const form = document.createElement('form');
-    form.action = FEEDBACK_FORM_URL;
-    form.method = 'POST';
-    form.target = 'feedbackFrame';
-    form.style.display = 'none';
-    const fields = {};
-    fields[FEEDBACK_ENTRY_TOOL] = tool;
-    fields[FEEDBACK_ENTRY_ACTIVITY] = activity;
-    fields[FEEDBACK_ENTRY_WORKED] = worked;
-    fields[FEEDBACK_ENTRY_CONFUSING] = confusing;
-    fields[FEEDBACK_ENTRY_BUG] = bug;
-    fields[FEEDBACK_ENTRY_RECOMMEND] = recommend;
-    fields[FEEDBACK_ENTRY_RATING] = rating;
-    fields[FEEDBACK_ENTRY_NAME] = name;
-    for (const key in fields) {
-      const input = document.createElement('input');
-      input.type = 'hidden'; input.name = key; input.value = fields[key];
-      form.appendChild(input);
-    }
-    document.body.appendChild(form);
-    form.submit();
-    setTimeout(function(){ form.remove(); }, 1500);
+    const params = new URLSearchParams();
+    params.set(FEEDBACK_ENTRY_TOOL, tool);
+    params.set(FEEDBACK_ENTRY_ACTIVITY, activity);
+    params.set(FEEDBACK_ENTRY_WORKED, worked);
+    params.set(FEEDBACK_ENTRY_CONFUSING, confusing);
+    params.set(FEEDBACK_ENTRY_BUG, bug);
+    params.set(FEEDBACK_ENTRY_RECOMMEND, recommend);
+    params.set(FEEDBACK_ENTRY_RATING, rating);
+    params.set(FEEDBACK_ENTRY_NAME, name);
+    const iframe = document.getElementById('feedbackFrame');
+    iframe.src = FEEDBACK_FORM_URL + '?' + params.toString() + '&submit=Submit';
   }
 
   if (window.goatcounter && window.goatcounter.count) {
