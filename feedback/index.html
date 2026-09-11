@@ -63,19 +63,41 @@ textarea{resize:vertical;min-height:110px;font-family:var(--display)}
       <h2>Feedback</h2>
       <p class="sub">Found a bug, have a suggestion, or something not working right? Let us know below — this goes straight to the instructor.</p>
 
-      <label for="fbCategory">Category</label>
-      <select id="fbCategory">
-        <option value="Bug">Bug / something's broken</option>
-        <option value="Suggestion">Suggestion / idea</option>
-        <option value="Content Issue">Content issue (wrong info, typo, etc.)</option>
+      <label for="fbTool">Which tool or page were you using?</label>
+      <input type="text" id="fbTool" placeholder="e.g., Subnet Calculator, WRAVEN Module 3...">
+
+      <label for="fbActivity">What were you doing when you had this feedback?</label>
+      <select id="fbActivity">
+        <option value="Learning a new topic">Learning a new topic</option>
+        <option value="Studying for the exam">Studying for the exam</option>
+        <option value="Testing something for an instructor">Testing something for an instructor</option>
+        <option value="Just browsing">Just browsing</option>
         <option value="Other">Other</option>
       </select>
 
-      <label for="fbPage">Which page or tool? (optional)</label>
-      <input type="text" id="fbPage" placeholder="e.g., Subnet Calculator, WRAVEN Module 3...">
+      <label for="fbWorked">What worked well?</label>
+      <textarea id="fbWorked" placeholder="Anything that stood out as helpful..."></textarea>
 
-      <label for="fbMessage">Details</label>
-      <textarea id="fbMessage" placeholder="What happened, or what would help?"></textarea>
+      <label for="fbConfusing">What didn't work, or was confusing?</label>
+      <textarea id="fbConfusing" placeholder="Anything unclear, awkward, or frustrating..."></textarea>
+
+      <label for="fbBug">Found a bug? (Be specific)</label>
+      <textarea id="fbBug" placeholder="What happened, which tool, what you expected instead..."></textarea>
+
+      <label for="fbRecommend">Any tools, websites, or resources you'd recommend adding? (Please add why)</label>
+      <textarea id="fbRecommend" placeholder="Optional..."></textarea>
+
+      <label for="fbRating">Overall rating</label>
+      <select id="fbRating">
+        <option value="5">5 — Excellent</option>
+        <option value="4">4 — Good</option>
+        <option value="3">3 — Average</option>
+        <option value="2">2 — Below Average</option>
+        <option value="1">1 — Poor</option>
+      </select>
+
+      <label for="fbName">Your name/rank (optional)</label>
+      <input type="text" id="fbName" placeholder="Optional">
 
       <div class="err" id="fbErr"></div>
       <button class="submit-btn" onclick="submitFeedback()">SEND FEEDBACK</button>
@@ -92,54 +114,56 @@ textarea{resize:vertical;min-height:110px;font-family:var(--display)}
 <iframe name="feedbackFrame" id="feedbackFrame" style="display:none" title="feedback submission"></iframe>
 <script>
 // ---- Feedback Google Form wiring ----
-// TODO: replace with your feedback form's real formResponse URL + entry IDs
-// (same "Get pre-filled link" trick used for the WRAVEN roster form)
-const FEEDBACK_FORM_URL = 'PASTE_GOOGLE_FORM_FORMRESPONSE_URL_HERE';
-const FEEDBACK_ENTRY_CATEGORY = 'entry.XXXXXXXXX';
-const FEEDBACK_ENTRY_PAGE = 'entry.XXXXXXXXX';
-const FEEDBACK_ENTRY_MESSAGE = 'entry.XXXXXXXXX';
+const FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdBlFVcPPuZ-XGF4G-KSjrNYP6LQyTvh_f43_WqXg5EIEaQEg/formResponse';
+const FEEDBACK_ENTRY_TOOL = 'entry.186462603';
+const FEEDBACK_ENTRY_ACTIVITY = 'entry.1038790333';
+const FEEDBACK_ENTRY_WORKED = 'entry.1719705512';
+const FEEDBACK_ENTRY_CONFUSING = 'entry.898164636';
+const FEEDBACK_ENTRY_BUG = 'entry.1591609530';
+const FEEDBACK_ENTRY_RECOMMEND = 'entry.1146034060';
+const FEEDBACK_ENTRY_RATING = 'entry.1482777484';
+const FEEDBACK_ENTRY_NAME = 'entry.1865060671';
 
-// Auto-fill "which page" from the referring page, if the person arrived via a footer link
+// Auto-fill "which tool" from the referring page, if the person arrived via a footer link
 (function(){
   try {
     const ref = document.referrer;
     if (ref && ref.indexOf(location.host) !== -1) {
       const path = new URL(ref).pathname.replace(/\/index\.html$/, '').replace(/\//g, '');
-      if (path) document.getElementById('fbPage').value = path;
+      if (path) document.getElementById('fbTool').value = path;
     }
   } catch(e) {}
 })();
 
 function submitFeedback(){
-  const category = document.getElementById('fbCategory').value;
-  const page = document.getElementById('fbPage').value.trim();
-  const message = document.getElementById('fbMessage').value.trim();
+  const tool = document.getElementById('fbTool').value.trim();
+  const activity = document.getElementById('fbActivity').value;
+  const worked = document.getElementById('fbWorked').value.trim();
+  const confusing = document.getElementById('fbConfusing').value.trim();
+  const bug = document.getElementById('fbBug').value.trim();
+  const recommend = document.getElementById('fbRecommend').value.trim();
+  const rating = document.getElementById('fbRating').value;
+  const name = document.getElementById('fbName').value.trim();
   const err = document.getElementById('fbErr');
 
-  if (!message) {
-    err.textContent = 'Please add a few details before sending.';
+  if (!tool) {
+    err.textContent = 'Let us know which tool or page this is about.';
     return;
   }
   err.textContent = '';
 
   if (FEEDBACK_FORM_URL.startsWith('http')) {
-    const form = document.createElement('form');
-    form.action = FEEDBACK_FORM_URL;
-    form.method = 'POST';
-    form.target = 'feedbackFrame';
-    form.style.display = 'none';
-    const fields = {};
-    fields[FEEDBACK_ENTRY_CATEGORY] = category;
-    fields[FEEDBACK_ENTRY_PAGE] = page;
-    fields[FEEDBACK_ENTRY_MESSAGE] = message;
-    for (const key in fields) {
-      const input = document.createElement('input');
-      input.type = 'hidden'; input.name = key; input.value = fields[key];
-      form.appendChild(input);
-    }
-    document.body.appendChild(form);
-    form.submit();
-    setTimeout(function(){ form.remove(); }, 1500);
+    const params = new URLSearchParams();
+    params.set(FEEDBACK_ENTRY_TOOL, tool);
+    params.set(FEEDBACK_ENTRY_ACTIVITY, activity);
+    params.set(FEEDBACK_ENTRY_WORKED, worked);
+    params.set(FEEDBACK_ENTRY_CONFUSING, confusing);
+    params.set(FEEDBACK_ENTRY_BUG, bug);
+    params.set(FEEDBACK_ENTRY_RECOMMEND, recommend);
+    params.set(FEEDBACK_ENTRY_RATING, rating);
+    params.set(FEEDBACK_ENTRY_NAME, name);
+    const iframe = document.getElementById('feedbackFrame');
+    iframe.src = FEEDBACK_FORM_URL + '?' + params.toString() + '&submit=Submit';
   }
 
   if (window.goatcounter && window.goatcounter.count) {
