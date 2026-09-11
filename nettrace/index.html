@@ -104,7 +104,8 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
 .instr-body{font-size:12.5px;color:var(--txt);line-height:1.7}
 .instr-body strong{color:var(--amber)}
 .instr-body em{color:var(--cyan);font-style:normal}
-.quiz-banner{background:#0a1218;border:1px solid var(--b2);padding:9px 13px;font-size:12.5px;line-height:1.65;color:var(--txt);border-radius:5px}
+.quiz-banner{background:#0a1218;border:1px solid var(--amber);box-shadow:0 2px 10px rgba(0,0,0,.35);padding:11px 16px;font-size:12.5px;line-height:1.65;color:var(--txt);border-radius:5px}
+.quiz-banner #quizQ{font-size:15px;display:block;margin-bottom:2px}
 [data-theme="light"] .quiz-banner{background:var(--panel2)}
 .quiz-banner strong{color:var(--amber)}
 #quizStatus{margin-top:8px;font-weight:700}
@@ -185,6 +186,20 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
   <a href="../mitm/">🕵️ MITM Simulator</a>
 </div>
 
+<div class="quiz-banner" id="quizBanner" style="display:none;position:sticky;top:0;z-index:50;margin-bottom:12px">
+  <strong id="quizQ">Question text</strong>
+  <div id="quizStatus"></div>
+  <div class="cert-progress" id="certProgress" style="display:none">
+    <span id="certProgressLabel">Certification: 0/10 correct</span>
+    <div class="bar-track"><div class="bar-fill" id="certProgressBar" style="width:0%"></div></div>
+  </div>
+  <div class="cert-unlock-card" id="certUnlockCard">
+    <div class="cu-title">🎖 Certification Complete</div>
+    <div class="cu-sub">You've correctly identified 10 devices from captured traffic.</div>
+    <button class="btn" onclick="openCertModal()">Claim Your Certificate</button>
+  </div>
+</div>
+
 <div class="layout">
   <div class="main-col">
 
@@ -233,20 +248,7 @@ table.pkt-table tr.quiz-target td{animation:pulseRow 1.4s ease-in-out infinite}
       </div>
     </div>
 
-    <!-- Quiz banner -->
-    <div class="quiz-banner" id="quizBanner" style="display:none">
-      <strong id="quizQ">Question text</strong>
-      <div id="quizStatus"></div>
-      <div class="cert-progress" id="certProgress" style="display:none">
-        <span id="certProgressLabel">Certification: 0/10 correct</span>
-        <div class="bar-track"><div class="bar-fill" id="certProgressBar" style="width:0%"></div></div>
-      </div>
-      <div class="cert-unlock-card" id="certUnlockCard">
-        <div class="cu-title">🎖 Certification Complete</div>
-        <div class="cu-sub">You've correctly identified 10 devices from captured traffic.</div>
-        <button class="btn" onclick="openCertModal()">Claim Your Certificate</button>
-      </div>
-    </div>
+    <!-- Quiz banner moved to a sticky top-level position — see below -->
 
     <!-- Device legend -->
     <div class="card">
@@ -726,7 +728,7 @@ renderLegend();
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
-  <a href="https://forms.gle/A8j3JBDjJxQD824f9" target="_blank" rel="noopener" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
 <script>
 if ('serviceWorker' in navigator) {
@@ -738,5 +740,33 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <div style="text-align:center;padding:14px 16px 0;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
 </body>
 </html>
