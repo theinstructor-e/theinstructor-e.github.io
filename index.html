@@ -333,7 +333,8 @@ const SLIDES=[
   {nm:'Thrift Savings Plan',ds:'Building your financial mission readiness \u00b7 30-min brief for new Soldiers \u00b7 11 slides',file:'slides/tsp-briefing.pptx'},
 ];
 function renderSlides(){
-  let vh='<div class="grid">';
+  let vh='<div style="text-align:center;padding:6px 0 18px;font-size:13px;color:var(--text-dim)">Reviewed one of these? <a href="/slides/certificate/" style="color:#ffb300;font-weight:700">Print an attendance certificate &#8594;</a></div>';
+  vh+='<div class="grid">';
   SLIDES.forEach(s=>{
     vh+=`<a class="card" href="${s.file}" download style="--accent:#ffb300">
       <div class="cat">LESSON <span class="tag tag-slide">PPTX</span></div><div class="nm">${s.nm}</div>
