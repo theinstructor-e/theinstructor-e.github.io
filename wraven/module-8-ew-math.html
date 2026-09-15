@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,11 @@
     --crt-green: #39ff14;
     --crt-dark: #021102;
     --crt-grid: #0f3b0f;
+  }
+  [data-theme="light"]{
+    --bg:#eef2f0; --panel:#ffffff; --panel2:#f5f7f6;
+    --accent:#0077bb; --accent2:#00884a; --warn:#b3690a; --bad:#cc2222;
+    --txt:#1a2a30; --muted:#5a6a70; --border:#c8d0d4;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -271,6 +276,7 @@
   <header>
     <div class="brand"><button id="tocToggle" onclick="toggleToc()">&#9776;</button> WRAVEN TRAINING <span>· Module 8</span></div>
     <div class="counter"><span id="cur">1</span> / <span id="tot">1</span></div>
+    <button id="themeToggle" onclick="toggleTheme()" style="background:var(--panel2);border:1px solid var(--border);color:var(--txt);border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px;margin-left:8px">&#9789;</button>
   </header>
   <div id="mainRow">
     <div id="tocOverlay" onclick="closeToc()"></div>
@@ -848,6 +854,12 @@
     sidebar.innerHTML = html;
   }
 
+  function toggleTheme(){
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') !== 'light';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeToggle').innerHTML = isDark ? '&#9788;' : '&#9789;';
+  }
   function toggleToc(){
     document.getElementById('tocSidebar').classList.toggle('open');
     document.getElementById('tocOverlay').classList.toggle('open');

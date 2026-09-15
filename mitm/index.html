@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +19,21 @@
     --ink-faint:#5a6675;
     --gold:#ffcb6b;
     --seal:#3fb950;
+  }
+  [data-theme="light"]{
+    --void:#eef2f0;
+    --panel:#ffffff;
+    --panel-2:#f5f7f6;
+    --wire:#c8d0d4;
+    --alice:#0077bb;
+    --bob:#00884a;
+    --mallory:#cc2246;
+    --mallory-glow:rgba(204,34,70,.2);
+    --ink:#1a2a30;
+    --ink-dim:#5a6a70;
+    --ink-faint:#8896a0;
+    --gold:#b3690a;
+    --seal:#00884a;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
@@ -265,6 +280,7 @@
 </style>
 </head>
 <body>
+<button id="themeToggle" onclick="toggleTheme()" style="position:fixed;top:14px;right:14px;z-index:200;background:var(--panel);border:1px solid var(--wire);color:var(--ink-dim);padding:7px 15px;border-radius:3px;cursor:pointer;font-size:13px">&#9789;</button>
 <div class="wrap">
 
   <div class="related-bar">
@@ -561,6 +577,12 @@
     scenBox.appendChild(b);
   });
 
+  function toggleTheme(){
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') !== 'light';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeToggle').innerHTML = isDark ? '&#9788;' : '&#9789;';
+  }
   function clearTimers(){timers.forEach(clearTimeout);timers=[];}
   function stamp(i){const s=(i*1.4).toFixed(0).padStart(2,"0");return "00:"+s;}
 
