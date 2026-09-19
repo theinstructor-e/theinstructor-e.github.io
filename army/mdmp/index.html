@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDMP Planner — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.src-strip{max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--text-dim)}
+.src-strip b{color:var(--text-bright);font-weight:400;letter-spacing:1.5px;margin-right:6px}
+.src-strip a{color:var(--amber)}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.callout.green{border-left-color:var(--green);background:var(--green-dark)}.callout.green .key{color:var(--green)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px}
+.field input,.field select{width:100%;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:15px;padding:10px 11px;min-height:42px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--acc)}
+.field .hint{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.cbtn.on{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.readout{border:1px solid var(--border-bright);background:var(--canvas-bg);padding:10px 12px}
+.readout .l{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase}
+.readout .v{font-family:var(--display);font-size:26px;font-weight:700;color:var(--acc);line-height:1.2;margin-top:2px}
+.readout .s{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:2px}
+.status{font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.6}
+.status.win{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.status.bad{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+canvas{display:block;width:100%;height:auto;background:var(--canvas-bg);border:1px solid var(--border-bright)}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .tab-nav{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:11px}
+  .tab-content{padding:16px 14px 30px}
+}
+
+
+.steps-list{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border-bright);background:var(--canvas-bg);padding:12px 14px;cursor:pointer;transition:all .14s;text-align:left;width:100%;color:inherit;font:inherit}
+.step:hover{border-color:var(--acc)}
+.step.open{border-color:var(--acc);background:var(--acc-dark)}
+.step .num{background:var(--acc);color:var(--bg);width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;border-radius:3px}
+.step .t{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text-bright)}
+.step .g{font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:2px}
+.step .d{display:none;margin-top:10px}
+.step.open .d{display:block}
+.step .d h4{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--acc);text-transform:uppercase;font-weight:400;margin:10px 0 4px}
+.step .d ul{padding-left:18px;font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.6}
+.slots{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.slot{display:flex;gap:10px;align-items:center;border:1px dashed var(--border-bright);padding:10px 12px;min-height:44px;font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.slot .sn{background:var(--border);color:var(--text-dim);width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:2px}
+.slot.filled{border-style:solid;border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.slot.filled .sn{background:var(--green);color:var(--bg)}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--display);font-size:14px;font-weight:600;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:10px 14px;cursor:pointer;transition:all .14s;min-height:42px}
+.chip:hover{border-color:var(--acc);color:var(--acc)}
+.chip.wrong{animation:shake .3s;border-color:var(--red);color:var(--red)}
+@media (prefers-reduced-motion:reduce){.chip.wrong{animation:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.mq-card{font-family:var(--display);font-size:22px;font-weight:600;color:var(--text-bright);line-height:1.3;padding:16px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-bottom:12px;min-height:70px}
+.mq-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.mq-opts button{font-family:var(--display);font-size:14px;font-weight:600;text-align:left;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:10px 12px;cursor:pointer;min-height:44px}
+.mq-opts button:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.mq-opts button.right{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.mq-opts button.miss{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.mq-opts button:disabled{cursor:default;opacity:.85}
+.tbar{display:flex;height:22px;border:1px solid var(--border-bright);margin:10px 0}
+.tbar .hq{background:var(--green);opacity:.85}.tbar .sub{background:var(--amber);opacity:.85}
+.tbl{overflow-x:auto;margin-bottom:12px}
+.tbl table{border-collapse:collapse;width:100%;min-width:520px;font-family:var(--mono);font-size:12.5px}
+.tbl th,.tbl td{border:1px solid var(--border-bright);padding:6px 8px;text-align:center;color:var(--text)}
+.tbl th{background:var(--canvas-bg);color:var(--text-dim);font-weight:400;letter-spacing:1px;font-size:11px;text-transform:uppercase}
+.tbl td:first-child,.tbl th:first-child{text-align:left}
+.tbl input[type=text]{width:100%;min-width:90px;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:13px;padding:6px 8px;min-height:36px}
+.tbl input[type=number]{width:58px;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:14px;padding:6px;text-align:center;min-height:36px}
+.tbl input[type=checkbox]{width:20px;height:20px;accent-color:var(--green)}
+.tbl input:focus{outline:2px solid var(--cyan)}
+.tbl tr.fail td{opacity:.6}
+.tbl .tot{font-weight:700;color:var(--acc);font-size:15px}
+.tbl tr.lead td{background:var(--green-dark)}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>MDMP Planner <span>// 7 Steps · Time · COA Matrix — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; ARMY BASICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav" id="tabnav">
+  <button class="tab-btn active" onclick="switchTab('steps',this)">Steps</button>
+  <button class="tab-btn" onclick="switchTab('seq',this)">Order the Steps</button>
+  <button class="tab-btn" onclick="switchTab('match',this)">Match the Output</button>
+  <button class="tab-btn" onclick="switchTab('time',this)">Timeline</button>
+  <button class="tab-btn" onclick="switchTab('matrix',this)">COA Matrix</button>
+</nav>
+
+<div id="tab-steps" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">The 7 steps of the MDMP &#8212; tap a step for detail</div>
+    <div class="steps-list" id="steps-list"></div>
+    <div class="callout amber"><span class="key">ITERATIVE:</span> staffs usually work the steps in order but go back when they learn something new. Under time pressure the commander can direct an abbreviated MDMP, but a staff should master the full process first.</div>
+    <div class="callout"><span class="key">WHO USES IT:</span> a commander with a staff, typically battalion and above. Small-unit leaders use troop leading procedures. Reference: FM 5-0 (2022) and ADP 5-0.</div>
+  </div>
+</div>
+
+<div id="tab-seq" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Put the 7 steps in the correct order</div>
+    <div class="lead">Tap the steps in the order they occur. Correct picks lock in. A wrong pick shakes and waits.</div>
+    <div class="slots" id="sq-slots"></div>
+    <div class="pool" id="sq-pool"></div>
+    <div class="status" id="sq-status">Tap the first step to begin.</div>
+    <button class="cbtn" onclick="startSeq()">&#8635; New attempt</button>
+  </div>
+</div>
+
+<div id="tab-match" class="tab-content">
+  <div class="panel cyan">
+    <div class="panel-title">Match the activity or product to its step</div>
+    <div class="lead" id="mq-lead">Ten questions. Pick the MDMP step where each one happens.</div>
+    <div class="mq-card" id="mq-card"></div>
+    <div class="mq-opts" id="mq-opts"></div>
+    <div class="status" id="mq-status">Answer the question above.</div>
+    <div class="score" id="mq-score"></div>
+    <div class="btn-row"><button class="cbtn" id="mq-next" onclick="nextMatch()" style="display:none">Next question &#8594;</button><button class="cbtn" onclick="startMatch()">&#8635; New round</button></div>
+  </div>
+</div>
+
+<div id="tab-time" class="tab-content">
+  <div class="panel amber">
+    <div class="panel-title">One-third, two-thirds planning time</div>
+    <div class="lead">Leaders should use about one third of the available time for their own planning and leave at least two thirds for subordinates. Enter when the mission arrives and when it must be executed.</div>
+    <div class="form-grid">
+      <div class="field"><label for="tm-recv">Mission received (24-hour clock)</label><input id="tm-recv" type="time" value="06:00"></div>
+      <div class="field"><label for="tm-exec">Execution time (24-hour clock)</label><input id="tm-exec" type="time" value="18:00"></div>
+      <div class="field"><label for="tm-days">Execution is</label>
+        <select id="tm-days"><option value="0">the same day</option><option value="1">the next day</option><option value="2">2 days later</option><option value="3">3 days later</option></select></div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Total time available</div><div class="v" id="tm-total">&#8212;</div><div class="s" id="tm-total-s"></div></div>
+      <div class="readout"><div class="l">Headquarters planning (up to 1/3)</div><div class="v" id="tm-hq">&#8212;</div><div class="s" id="tm-hq-s"></div></div>
+      <div class="readout"><div class="l">Subordinate time (at least 2/3)</div><div class="v" id="tm-sub">&#8212;</div><div class="s" id="tm-sub-s"></div></div>
+    </div>
+    <div class="tbar" id="tm-bar" aria-hidden="true"><div class="hq" id="tm-bar-hq"></div><div class="sub" id="tm-bar-sub"></div></div>
+    <div class="status" id="tm-msg"></div>
+    <div class="callout"><span class="key">START THE CLOCK EARLY:</span> the initial warning order goes out as soon as the mission is received, so subordinates can start preparing while the headquarters plans.</div>
+  </div>
+</div>
+
+<div id="tab-matrix" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">COA screening and decision matrix</div>
+    <div class="lead">Screen each course of action, then score it against your evaluation criteria. Criteria and weights below are examples. Change them to fit the mission.</div>
+    <div class="callout amber" style="margin-top:0;margin-bottom:12px"><span class="key">STEP 3:</span> a valid COA is <strong>S</strong>uitable, <strong>F</strong>easible, <strong>A</strong>cceptable, <strong>D</strong>istinguishable, and <strong>C</strong>omplete. Uncheck any test a COA fails.</div>
+    <div class="tbl" id="mx-screen"></div>
+    <div class="callout" style="margin-bottom:12px"><span class="key">STEP 5:</span> weight each criterion from 1 (minor) to 5 (critical). Score each COA from 1 (poor) to 5 (best) on each criterion.</div>
+    <div class="tbl" id="mx-table"></div>
+    <div class="btn-row">
+      <button class="cbtn" onclick="addCriterion()">+ Criterion</button><button class="cbtn" onclick="removeCriterion()">&#8722; Criterion</button>
+      <button class="cbtn" onclick="addCoa()">+ COA</button><button class="cbtn" onclick="removeCoa()">&#8722; COA</button>
+      <button class="cbtn" onclick="resetMatrix()">&#8635; Reset</button>
+    </div>
+    <div class="readouts" id="mx-results"></div>
+    <div class="status" id="mx-note"></div>
+    <div class="callout amber"><span class="key">A MATRIX SUPPORTS JUDGMENT:</span> the numbers are opinions. If the leader changes when one weight moves by a point, that criterion deserves a closer look and a conversation with the commander.</div>
+  </div>
+</div>
+
+<div class="src-strip"><b>SOURCES</b> FM 5-0, <em>Planning and Orders Production</em> (2022), and ADP 5-0, <em>The Operations Process</em>. The criteria and weights in the matrix are examples, not doctrine. See the <a href="../mdmp-guide/">guide</a> for details.</div>
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  if(typeof onThemeChange==='function')onThemeChange();
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(typeof onTabShown==='function')onTabShown(id);
+}
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+const STEPS=[
+ {t:'Receipt of mission',g:'Set up the process: alert, gather, assess the time, give first guidance.',
+  acts:['Alert the staff and key participants','Gather tools: higher order, maps, running estimates, SOPs','Make an initial assessment of time and resources','Commander gives initial guidance','XO publishes the staff planning timeline','Issue the initial warning order'],
+  outs:['Commander\u2019s initial guidance','Initial planning timeline','Initial warning order']},
+ {t:'Mission analysis',g:'Understand the problem and set the yardstick for comparing options.',
+  acts:['Analyze the higher headquarters\u2019 order','Intelligence preparation of the battlefield','Identify specified, implied, and essential tasks','Review assets, constraints, critical facts, and assumptions','Begin risk assessment and develop CCIR and EEFI','Restate the mission and brief the commander','Set COA evaluation criteria'],
+  outs:['Restated mission','Initial commander\u2019s intent and planning guidance','CCIR and EEFI','COA evaluation criteria','Second warning order']},
+ {t:'COA development',g:'Build several workable courses of action.',
+  acts:['Assess relative combat power','Generate options','Array forces and develop a broad concept','Assign headquarters','Screen each COA: suitable, feasible, acceptable, distinguishable, complete'],
+  outs:['COA statements','COA sketches']},
+ {t:'COA analysis',g:'Wargame each COA to see how it plays out against the enemy.',
+  acts:['List forces, assumptions, and critical events','Pick a method: belt, avenue-in-depth, or box','Play action, reaction, counteraction','Record the results'],
+  outs:['Refined COAs','Decision points','Task organization adjustments','Updated running estimates']},
+ {t:'COA comparison',g:'Compare the COAs against the evaluation criteria and recommend one.',
+  acts:['Score each COA against the criteria (decision matrix)','Weigh strengths and weaknesses','Recommend a COA'],
+  outs:['Decision matrix','Staff recommendation']},
+ {t:'COA approval',g:'The commander decides and gives final guidance.',
+  acts:['Decision briefing to the commander','Commander selects or modifies the COA','Final planning guidance and refined intent','Update CCIR and EEFI','Issue a warning order'],
+  outs:['Approved COA','Final planning guidance','Refined commander\u2019s intent']},
+ {t:'Orders production, dissemination, and transition',g:'Write the order, share it, and hand off to execution.',
+  acts:['Staff turns the approved COA into an order or plan','Commander approves the order','Disseminate and brief the order','Rehearse','Transition to those who execute'],
+  outs:['Approved OPORD or OPLAN','Subordinates who understand the plan']}
+];
+/* ---------- Tab 1: steps reference ---------- */
+function renderSteps(){
+  $('steps-list').innerHTML=STEPS.map((s,i)=>
+    '<button type="button" class="step" data-i="'+i+'" aria-expanded="false"><span class="num">'+(i+1)+'</span><span class="body"><span class="t">'+esc(s.t)+'</span><span class="g" style="display:block">'+esc(s.g)+'</span>'+
+    '<span class="d"><h4>What happens</h4><ul>'+s.acts.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul><h4>Key outputs</h4><ul>'+s.outs.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul></span></span></button>').join('');
+  document.querySelectorAll('#steps-list .step').forEach(b=>b.addEventListener('click',()=>{
+    const open=b.classList.toggle('open');b.setAttribute('aria-expanded',open?'true':'false');}));
+}
+
+/* ---------- Tab 2: sequence practice ---------- */
+let sqNext=0,sqMiss=0,sqPool=[];
+function startSeq(){
+  sqNext=0;sqMiss=0;sqPool=shuffle(STEPS.map((s,i)=>i));
+  $('sq-status').className='status';$('sq-status').textContent='Tap the first step to begin.';
+  renderSeq();
+}
+function renderSeq(){
+  $('sq-slots').innerHTML=STEPS.map((s,i)=>'<div class="slot'+(i<sqNext?' filled':'')+'"><span class="sn">'+(i+1)+'</span><span>'+(i<sqNext?esc(s.t):'&#8230;')+'</span></div>').join('');
+  $('sq-pool').innerHTML=sqPool.map(i=>'<button type="button" class="chip" data-i="'+i+'">'+esc(STEPS[i].t)+'</button>').join('');
+  document.querySelectorAll('#sq-pool .chip').forEach(c=>c.addEventListener('click',()=>pickSeq(parseInt(c.dataset.i,10),c)));
+}
+function pickSeq(i,el){
+  if(sqNext>=STEPS.length)return;
+  if(i===sqNext){
+    sqNext++;sqPool=sqPool.filter(x=>x!==i);renderSeq();
+    if(sqNext===STEPS.length){$('sq-status').className='status win';$('sq-status').textContent=sqMiss===0?'All 7 in order with no misses. Nice work.':'Done. All 7 in order, with '+sqMiss+' wrong pick'+(sqMiss===1?'':'s')+'. Try again for a clean run.';}
+    else{$('sq-status').className='status';$('sq-status').textContent='Correct. Now step '+(sqNext+1)+'. '+STEPS[sqNext-1].g;}
+  }else{
+    sqMiss++;el.classList.remove('wrong');void el.offsetWidth;el.classList.add('wrong');
+    $('sq-status').className='status bad';$('sq-status').textContent='Not that one. It is not step '+(sqNext+1)+'. Think about what has to happen right before it.';
+  }
+}
+
+/* ---------- Tab 3: match the output ---------- */
+const MATCH=[
+ ['The XO publishes the staff planning timeline',0],['Gather the higher order, maps, and running estimates',0],['Issue the initial warning order',0],
+ ['Identify specified, implied, and essential tasks',1],['Write the restated mission statement',1],['Develop the CCIR and EEFI',1],['Set the COA evaluation criteria',1],['Commander gives initial intent and planning guidance',1],
+ ['Screen each COA: suitable, feasible, acceptable, distinguishable, complete',2],['Prepare COA statements and sketches',2],['Array forces and develop a broad concept',2],
+ ['Play action, reaction, counteraction',3],['Choose the belt, avenue-in-depth, or box method',3],['Wargame to identify decision points and refine the COAs',3],
+ ['Score each COA against the criteria in a decision matrix',4],['The staff recommends a COA',4],
+ ['The commander selects the COA',5],['The commander gives final planning guidance',5],
+ ['The staff writes the OPORD',6],['Rehearse and transition the plan to those who execute it',6]
+];
+let mq={list:[],i:0,ok:0,answered:false};
+function startMatch(){
+  mq={list:shuffle(MATCH).slice(0,10),i:0,ok:0,answered:false};
+  $('mq-next').style.display='none';renderMatch();
+}
+function renderMatch(){
+  if(mq.i>=mq.list.length){
+    $('mq-card').textContent='Round complete: '+mq.ok+' of '+mq.list.length+' correct.';
+    $('mq-opts').innerHTML='';$('mq-status').className='status '+(mq.ok>=8?'win':'');$('mq-status').textContent=mq.ok>=8?'Strong. You know where the work happens.':'Review the Steps tab, then start a new round.';
+    $('mq-next').style.display='none';$('mq-score').innerHTML='Score: <b>'+mq.ok+' / '+mq.list.length+'</b>';return;
+  }
+  const q=mq.list[mq.i];mq.answered=false;
+  $('mq-card').textContent=(mq.i+1)+'. '+q[0];
+  $('mq-opts').innerHTML=STEPS.map((s,i)=>'<button type="button" data-i="'+i+'">'+(i+1)+'. '+esc(s.t)+'</button>').join('');
+  document.querySelectorAll('#mq-opts button').forEach(b=>b.addEventListener('click',()=>answerMatch(parseInt(b.dataset.i,10))));
+  $('mq-status').className='status';$('mq-status').textContent='Which step is this?';
+  $('mq-next').style.display='none';$('mq-score').innerHTML='Question <b>'+(mq.i+1)+' / '+mq.list.length+'</b> &nbsp; Correct: <b>'+mq.ok+'</b>';
+}
+function answerMatch(i){
+  if(mq.answered)return;mq.answered=true;
+  const q=mq.list[mq.i],ok=i===q[1];if(ok)mq.ok++;
+  document.querySelectorAll('#mq-opts button').forEach(b=>{const k=parseInt(b.dataset.i,10);b.disabled=true;if(k===q[1])b.classList.add('right');else if(k===i)b.classList.add('miss');});
+  $('mq-status').className='status '+(ok?'win':'bad');
+  $('mq-status').textContent=(ok?'Correct. ':'Not quite. ')+'That belongs to step '+(q[1]+1)+', '+STEPS[q[1]].t+': '+STEPS[q[1]].g;
+  $('mq-score').innerHTML='Question <b>'+(mq.i+1)+' / '+mq.list.length+'</b> &nbsp; Correct: <b>'+mq.ok+'</b>';
+  $('mq-next').style.display='inline-block';$('mq-next').textContent=mq.i===mq.list.length-1?'See score \u2192':'Next question \u2192';
+}
+function nextMatch(){mq.i++;renderMatch();}
+
+/* ---------- Tab 4: timeline ---------- */
+const toMin=v=>{const m=/^(\d{1,2}):(\d{2})$/.exec(v||'');return m?parseInt(m[1],10)*60+parseInt(m[2],10):null;};
+function fmtClock(min){const d=Math.floor(min/1440),r=((min%1440)+1440)%1440,h=Math.floor(r/60),m=r%60;
+  return String(h).padStart(2,'0')+String(m).padStart(2,'0')+(d>0?' (+'+d+' day'+(d>1?'s':'')+')':'');}
+const fmtDur=min=>{const h=Math.floor(min/60),m=Math.round(min%60);return h+' h '+String(m).padStart(2,'0')+' min';};
+function timePlan(recvMin,execMin,days){
+  const total=days*1440+execMin-recvMin;
+  if(total<=0)return null;
+  const hq=Math.floor(total/3);
+  return {total:total,hq:hq,sub:total-hq,hqEnd:recvMin+hq};
+}
+function timeUpdate(){
+  const r=toMin($('tm-recv').value),e=toMin($('tm-exec').value),d=parseInt($('tm-days').value,10);
+  const set=(id,v,s)=>{$(id).textContent=v;$(id+'-s').textContent=s||'';};
+  const p=(r===null||e===null)?null:timePlan(r,e,d);
+  if(!p){['tm-total','tm-hq','tm-sub'].forEach(i=>set(i,'\u2014',''));
+    $('tm-bar-hq').style.width='0';$('tm-bar-sub').style.width='0';
+    $('tm-msg').className='status bad';$('tm-msg').textContent=(r===null||e===null)?'Enter both times.':'Execution must be after the mission is received. Change the times, or choose a later day.';return;}
+  set('tm-total',fmtDur(p.total),'');
+  set('tm-hq',fmtDur(p.hq),'Order out by '+fmtClock(p.hqEnd));
+  set('tm-sub',fmtDur(p.sub),fmtClock(p.hqEnd)+' to '+fmtClock(r+p.total));
+  $('tm-bar-hq').style.width=(100*p.hq/p.total)+'%';$('tm-bar-sub').style.width=(100*p.sub/p.total)+'%';
+  $('tm-msg').className='status win';
+  $('tm-msg').textContent='Mission received '+fmtClock(r)+'. Finish the plan and issue the order by '+fmtClock(p.hqEnd)+'. Subordinates then have '+fmtDur(p.sub)+' to plan, rehearse, and prepare before execution at '+fmtClock(r+p.total)+'.';
+}
+['tm-recv','tm-exec','tm-days'].forEach(i=>{$(i).addEventListener('input',timeUpdate);$(i).addEventListener('change',timeUpdate);});
+
+/* ---------- Tab 5: COA screening and decision matrix ---------- */
+const TESTS=[['S','Suitable'],['F','Feasible'],['A','Acceptable'],['D','Distinguishable'],['C','Complete']];
+function defaultMatrix(){return {
+  crit:[{n:'Simplicity',w:3},{n:'Risk to the force',w:5},{n:'Speed',w:4},{n:'Flexibility',w:3}],
+  coas:[{n:'COA 1',pass:{S:1,F:1,A:1,D:1,C:1}},{n:'COA 2',pass:{S:1,F:1,A:1,D:1,C:1}},{n:'COA 3',pass:{S:1,F:1,A:1,D:1,C:1}}],
+  sc:[[3,4,2],[2,3,5],[4,3,2],[3,3,4]]};}
+let MX=defaultMatrix();
+const clamp=v=>{v=parseInt(v,10);return isFinite(v)?Math.min(5,Math.max(1,v)):3;};
+const coaPasses=c=>TESTS.every(t=>c.pass[t[0]]);
+function totals(mx){
+  return mx.coas.map((c,j)=>mx.crit.reduce((s,k,i)=>s+k.w*mx.sc[i][j],0));
+}
+function leaderOf(mx,tots){
+  const ok=mx.coas.map((c,j)=>j).filter(j=>coaPasses(mx.coas[j]));
+  if(!ok.length)return {idx:[],ok:ok};
+  const best=Math.max(...ok.map(j=>tots[j]));
+  return {idx:ok.filter(j=>tots[j]===best),ok:ok,best:best};
+}
+function sensitivity(mx){
+  const base=leaderOf(mx,totals(mx));const flips=[];
+  if(base.idx.length!==1)return flips;
+  mx.crit.forEach((k,i)=>{[-1,1].forEach(dw=>{
+    const w=k.w+dw;if(w<1||w>5)return;
+    const copy={crit:mx.crit.map((x,ii)=>ii===i?{n:x.n,w:w}:x),coas:mx.coas,sc:mx.sc};
+    const l=leaderOf(copy,totals(copy));
+    if(l.idx.length!==1||l.idx[0]!==base.idx[0])flips.push({name:k.n,dw:dw,to:(l.idx.length>1?'tie: ':'')+l.idx.map(j=>mx.coas[j].n).join(' / ')});
+  });});
+  return flips;
+}
+function renderMatrix(){
+  const nC=MX.coas.length;
+  let h='<table><thead><tr><th>COA</th>'+TESTS.map(t=>'<th title="'+t[1]+'">'+t[0]+'</th>').join('')+'<th>Result</th></tr></thead><tbody>';
+  MX.coas.forEach((c,j)=>{h+='<tr id="scr-row-'+j+'"><td><input type="text" data-k="an" data-j="'+j+'" value="'+esc(c.n)+'" aria-label="COA name"></td>'+
+    TESTS.map(t=>'<td><input type="checkbox" data-k="scr" data-j="'+j+'" data-c="'+t[0]+'" '+(c.pass[t[0]]?'checked':'')+' aria-label="'+esc(c.n)+' '+t[1]+'"></td>').join('')+'<td id="scr-res-'+j+'"></td></tr>';});
+  $('mx-screen').innerHTML=h+'</tbody></table>';
+  h='<table><thead><tr><th>Criterion</th><th>Weight</th>'+MX.coas.map((c,j)=>'<th id="mx-h-'+j+'">'+esc(c.n)+'</th>').join('')+'</tr></thead><tbody>';
+  MX.crit.forEach((k,i)=>{h+='<tr><td><input type="text" data-k="cn" data-i="'+i+'" value="'+esc(k.n)+'" aria-label="Criterion name"></td><td><input type="number" min="1" max="5" data-k="w" data-i="'+i+'" value="'+k.w+'" aria-label="Weight for '+esc(k.n)+'"></td>'+
+    MX.coas.map((c,j)=>'<td><input type="number" min="1" max="5" data-k="s" data-i="'+i+'" data-j="'+j+'" value="'+MX.sc[i][j]+'" aria-label="Score, '+esc(c.n)+', '+esc(k.n)+'"></td>').join('')+'</tr>';});
+  h+='<tr><td><strong>Weighted total</strong></td><td id="mx-max"></td>'+MX.coas.map((c,j)=>'<td class="tot" id="mx-t-'+j+'"></td>').join('')+'</tr>';
+  $('mx-table').innerHTML=h+'</tbody></table>';
+  document.querySelectorAll('#tab-matrix input').forEach(el=>{el.addEventListener('input',onMx);el.addEventListener('change',onMx);});
+  updateMatrix();
+}
+function onMx(ev){
+  const el=ev.target,k=el.dataset.k,i=parseInt(el.dataset.i,10),j=parseInt(el.dataset.j,10);
+  if(k==='an'){MX.coas[j].n=el.value||('COA '+(j+1));const th=$('mx-h-'+j);if(th)th.textContent=MX.coas[j].n;}
+  else if(k==='cn'){MX.crit[i].n=el.value||('Criterion '+(i+1));}
+  else if(k==='w'){if(ev.type==='change'){el.value=clamp(el.value);}MX.crit[i].w=clamp(el.value);}
+  else if(k==='s'){if(ev.type==='change'){el.value=clamp(el.value);}MX.sc[i][j]=clamp(el.value);}
+  else if(k==='scr'){MX.coas[j].pass[el.dataset.c]=el.checked?1:0;}
+  updateMatrix();
+}
+function updateMatrix(){
+  const tots=totals(MX),ld=leaderOf(MX,tots);
+  const wsum=MX.crit.reduce((s,k)=>s+k.w,0),max=wsum*5;
+  $('mx-max').textContent='max '+max;
+  MX.coas.forEach((c,j)=>{
+    const pass=coaPasses(c);const row=$('scr-row-'+j);
+    $('scr-res-'+j).innerHTML=pass?'<span style="color:var(--green)">Passes</span>':'<span style="color:var(--red)">Fails: '+TESTS.filter(t=>!c.pass[t[0]]).map(t=>t[1]).join(', ')+'</span>';
+    if(row)row.classList.toggle('fail',!pass);
+    const t=$('mx-t-'+j);if(t)t.textContent=tots[j]+' ('+Math.round(100*tots[j]/max)+'%)';
+  });
+  $('mx-results').innerHTML=MX.coas.map((c,j)=>'<div class="readout"><div class="l">'+esc(c.n)+(coaPasses(c)?'':' \u2014 failed screening')+'</div><div class="v">'+tots[j]+'</div><div class="s">'+Math.round(100*tots[j]/max)+'% of max'+(ld.idx.indexOf(j)>=0?' \u2014 leads':'')+'</div></div>').join('');
+  const note=$('mx-note');
+  if(!ld.ok.length){note.className='status bad';note.textContent='No COA passes screening. Rework the COAs in step 3 before comparing them.';return;}
+  if(ld.idx.length>1){note.className='status bad';note.textContent='Tie between '+ld.idx.map(j=>MX.coas[j].n).join(' and ')+'. The matrix cannot separate them. Discuss what the criteria are missing.';return;}
+  const fl=sensitivity(MX);
+  note.className='status '+(fl.length?'':'win');
+  note.textContent=MX.coas[ld.idx[0]].n+' leads on this matrix. '+(fl.length?'Sensitive: the leader changes if the weight of '+fl.map(f=>'"'+f.name+'" goes '+(f.dw>0?'up':'down')+' one point (result: '+f.to+')').join('; ')+'. Look hard at those criteria.':'The result holds when any single weight moves by one point.');
+}
+function addCriterion(){if(MX.crit.length>=8)return;MX.crit.push({n:'Criterion '+(MX.crit.length+1),w:3});MX.sc.push(MX.coas.map(()=>3));renderMatrix();}
+function removeCriterion(){if(MX.crit.length<=1)return;MX.crit.pop();MX.sc.pop();renderMatrix();}
+function addCoa(){if(MX.coas.length>=4)return;MX.coas.push({n:'COA '+(MX.coas.length+1),pass:{S:1,F:1,A:1,D:1,C:1}});MX.sc.forEach(r=>r.push(3));renderMatrix();}
+function removeCoa(){if(MX.coas.length<=2)return;MX.coas.pop();MX.sc.forEach(r=>r.pop());renderMatrix();}
+function resetMatrix(){MX=defaultMatrix();renderMatrix();}
+
+renderSteps();startSeq();startMatch();timeUpdate();renderMatrix();
+
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="../" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Army Basics</a> &nbsp;&nbsp; <a href="../mdmp-guide/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Read the guide</a> &nbsp;&nbsp; <a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+
+</body>
+</html>

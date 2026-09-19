@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Land Nav Toolkit — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--green);--acc-dark:var(--green-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.src-strip{max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--text-dim)}
+.src-strip b{color:var(--text-bright);font-weight:400;letter-spacing:1.5px;margin-right:6px}
+.src-strip a{color:var(--amber)}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.callout.green{border-left-color:var(--green);background:var(--green-dark)}.callout.green .key{color:var(--green)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px}
+.field input,.field select{width:100%;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:15px;padding:10px 11px;min-height:42px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--acc)}
+.field .hint{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.cbtn.on{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.readout{border:1px solid var(--border-bright);background:var(--canvas-bg);padding:10px 12px}
+.readout .l{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase}
+.readout .v{font-family:var(--display);font-size:26px;font-weight:700;color:var(--acc);line-height:1.2;margin-top:2px}
+.readout .s{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:2px}
+.status{font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.6}
+.status.win{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.status.bad{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+canvas{display:block;width:100%;height:auto;background:var(--canvas-bg);border:1px solid var(--border-bright)}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .tab-nav{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:11px}
+  .tab-content{padding:16px 14px 30px}
+}
+
+#az-canvas{max-width:480px;margin:0 auto}#gr-canvas,#pq-canvas{max-width:700px;margin:0 auto}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>Land Nav Toolkit <span>// Azimuth · Grid · Distance — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; ARMY BASICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav" id="tabnav">
+  <button class="tab-btn active" onclick="switchTab('az',this)">Azimuth</button>
+  <button class="tab-btn" onclick="switchTab('grid',this)">Grid Coordinates</button>
+  <button class="tab-btn" onclick="switchTab('dist',this)">Distance &amp; Pace</button>
+  <button class="tab-btn" onclick="switchTab('leg',this)">Leg Practice</button>
+</nav>
+
+<div id="tab-az" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">Azimuth converter &#8212; grid &#8596; magnetic, plus back azimuth</div>
+    <div class="lead">Enter an azimuth and the G-M angle from your map&#8217;s declination diagram. The diagram below shows grid north (GN), magnetic north (MN), and your line.</div>
+    <div class="form-grid">
+      <div class="field"><label for="az-type">I have a</label>
+        <select id="az-type"><option value="grid">Grid azimuth (map)</option><option value="mag">Magnetic azimuth (compass)</option></select></div>
+      <div class="field"><label for="az-val">Azimuth</label><input id="az-val" type="number" inputmode="decimal" value="90" step="any"></div>
+      <div class="field"><label for="az-unit">Unit</label>
+        <select id="az-unit"><option value="deg">Degrees</option><option value="mil">Mils</option></select></div>
+      <div class="field"><label for="az-gm">G-M angle (degrees)</label><input id="az-gm" type="number" inputmode="decimal" value="8" min="0" max="45" step="any">
+        <div class="hint">From the declination diagram in the map margin.</div></div>
+      <div class="field"><label for="az-side">Magnetic north is</label>
+        <select id="az-side"><option value="W">LEFT (west) of GN</option><option value="E">RIGHT (east) of GN</option></select>
+        <div class="hint">Which side of the GN line is the MN arrow on?</div></div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><div class="l" id="az-out-l">Magnetic azimuth</div><div class="v" id="az-out">&#8212;</div><div class="s" id="az-out-s"></div></div>
+      <div class="readout"><div class="l">Back azimuth (of your reading)</div><div class="v" id="az-back">&#8212;</div><div class="s" id="az-back-s"></div></div>
+      <div class="readout"><div class="l">Back azimuth (of the converted value)</div><div class="v" id="az-back2">&#8212;</div><div class="s" id="az-back2-s"></div></div>
+    </div>
+    <div class="status" id="az-rule"></div>
+    <canvas id="az-canvas" width="480" height="480" aria-label="Declination diagram with grid north, magnetic north and the azimuth line"></canvas>
+    <div class="callout"><span class="key">LARS:</span> Left Add, Right Subtract when converting <em>grid to magnetic</em>. Going magnetic to grid, do the opposite. Also read the conversion note printed on your own map.</div>
+    <div class="callout amber"><span class="key">CHECK YOUR UNIT:</span> a circle is 360&deg; or 6,400 mils. 1&deg; is about 17.8 mils. The diagram uses the G-M angle at true size, so small angles look small.</div>
+  </div>
+</div>
+
+<div id="tab-grid" class="tab-content">
+  <div class="panel cyan">
+    <div class="panel-title">Grid coordinates &#8212; 6-digit practice on a 4 km map</div>
+    <div class="lead">Grid squares are 1,000 m. A 6-digit grid has three easting digits then three northing digits: <strong>read right, then up</strong>, with each digit group ending in tenths of a square (100 m).</div>
+    <div class="btn-row">
+      <button class="cbtn on" id="gm-read" onclick="setGridMode('read')">Read it: find the grid</button>
+      <button class="cbtn" id="gm-plot" onclick="setGridMode('plot')">Plot it: place the point</button>
+      <button class="cbtn on" id="gm-guides" onclick="toggleGuides()">100 m guides: ON</button>
+      <button class="cbtn" onclick="newGridPoint()">New point</button>
+    </div>
+    <div class="status" id="gr-prompt"></div>
+    <canvas id="gr-canvas" width="700" height="700" aria-label="Practice map with a 4 by 4 kilometer grid"></canvas>
+    <div id="gr-read-ui" style="margin-top:12px">
+      <div class="form-grid" style="grid-template-columns:minmax(160px,260px) auto;align-items:end">
+        <div class="field"><label for="gr-answer">Your 6-digit grid</label><input id="gr-answer" type="text" inputmode="numeric" placeholder="e.g. 423 237" maxlength="8" autocomplete="off"></div>
+        <div class="btn-row" style="margin:0"><button class="cbtn primary" onclick="checkRead()">Check</button><button class="cbtn" onclick="showAnswer()">Show answer</button></div>
+      </div>
+    </div>
+    <div id="gr-plot-ui" style="margin-top:12px;display:none"><div class="btn-row" style="margin:0"><button class="cbtn" onclick="showAnswer()">Show answer</button></div></div>
+    <div class="status" id="gr-status">Pick a mode above, then answer.</div>
+    <div class="score" id="gr-score"></div>
+    <div class="callout"><span class="key">REMEMBER:</span> easting first (right), northing second (up). The grid you give names the 100 m square whose lower-left corner is at those numbers. With the guides off, use the tick marks on the map edge. On a phone, turn it sideways for a bigger map.</div>
+  </div>
+</div>
+
+<div id="tab-dist" class="tab-content">
+  <div class="panel amber">
+    <div class="panel-title">Pace count &#8212; paces &#8596; meters</div>
+    <div class="lead">Set your own pace count first: the number of paces you take to cover 100 m on a measured course. A pace is one step of the same foot (two steps).</div>
+    <div class="form-grid">
+      <div class="field"><label for="pc-per100">My pace count per 100 m</label><input id="pc-per100" type="number" inputmode="decimal" value="64" min="20" max="200" step="any">
+        <div class="hint">Measure yours. 64 is only an example.</div></div>
+      <div class="field"><label for="pc-paces">Paces I counted</label><input id="pc-paces" type="number" inputmode="decimal" value="192" min="0" step="any"></div>
+      <div class="field"><label for="pc-meters">Meters I need to walk</label><input id="pc-meters" type="number" inputmode="decimal" value="450" min="0" step="any"></div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Paces counted &#8594; distance</div><div class="v" id="pc-out-m">&#8212;</div><div class="s" id="pc-out-m-s"></div></div>
+      <div class="readout"><div class="l">Distance to walk &#8594; paces</div><div class="v" id="pc-out-p">&#8212;</div><div class="s" id="pc-out-p-s"></div></div>
+    </div>
+    <div class="callout"><span class="key">RANGER BEADS:</span> each of the nine lower beads is 100 m. At 1,000 m, reset the lower beads and slide one upper bead. The distance readouts above tell you how many to have moved.</div>
+  </div>
+  <div class="panel cyan">
+    <div class="panel-title">Map distance &#8594; ground distance &#8594; paces</div>
+    <div class="form-grid">
+      <div class="field"><label for="md-scale">Map scale</label>
+        <select id="md-scale"><option value="25000">1:25,000</option><option value="50000" selected>1:50,000</option><option value="100000">1:100,000</option><option value="250000">1:250,000</option></select></div>
+      <div class="field"><label for="md-len">Measured on the map</label><input id="md-len" type="number" inputmode="decimal" value="5" min="0" step="any"></div>
+      <div class="field"><label for="md-unit">Unit</label><select id="md-unit"><option value="cm">centimeters</option><option value="mm">millimeters</option></select></div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Ground distance</div><div class="v" id="md-out">&#8212;</div><div class="s" id="md-out-s"></div></div>
+      <div class="readout"><div class="l">At my pace count</div><div class="v" id="md-paces">&#8212;</div><div class="s" id="md-paces-s"></div></div>
+    </div>
+    <div class="callout amber"><span class="key">FLAT MAP, REAL HILLS:</span> the map shows straight-line distance on a flat plane. On steep ground you walk farther than the map says.</div>
+  </div>
+</div>
+
+<div id="tab-leg" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Leg calculator &#8212; azimuth and distance between two grids</div>
+    <div class="lead">Enter two 6-digit grids. The tool computes the grid azimuth, distance, and back azimuth. Add the G-M angle to get the magnetic azimuth you would set on the compass.</div>
+    <div class="form-grid">
+      <div class="field"><label for="lg-a">Start (A)</label><input id="lg-a" type="text" inputmode="numeric" value="412 218" maxlength="8" autocomplete="off"></div>
+      <div class="field"><label for="lg-b">Objective (B)</label><input id="lg-b" type="text" inputmode="numeric" value="431 236" maxlength="8" autocomplete="off"></div>
+      <div class="field"><label for="lg-gm">G-M angle (degrees)</label><input id="lg-gm" type="number" inputmode="decimal" value="0" min="0" max="45" step="any"></div>
+      <div class="field"><label for="lg-side">Magnetic north is</label><select id="lg-side"><option value="W">LEFT (west) of GN</option><option value="E">RIGHT (east) of GN</option></select></div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Grid azimuth A &#8594; B</div><div class="v" id="lg-az">&#8212;</div><div class="s" id="lg-az-s"></div></div>
+      <div class="readout"><div class="l">Distance</div><div class="v" id="lg-d">&#8212;</div><div class="s" id="lg-d-s"></div></div>
+      <div class="readout"><div class="l">Magnetic azimuth to set</div><div class="v" id="lg-mag">&#8212;</div><div class="s" id="lg-mag-s"></div></div>
+      <div class="readout"><div class="l">Back azimuth (grid)</div><div class="v" id="lg-back">&#8212;</div><div class="s" id="lg-back-s"></div></div>
+    </div>
+    <div class="status" id="lg-msg"></div>
+  </div>
+  <div class="panel cyan">
+    <div class="panel-title">Practice &#8212; work the leg by hand</div>
+    <div class="lead">You get two points. Work out the grid azimuth and the distance with a protractor or with trigonometry, then check.</div>
+    <div class="status" id="pq-prompt"></div>
+    <canvas id="pq-canvas" width="700" height="700" aria-label="Map showing point A and point B"></canvas>
+    <div class="form-grid" style="margin-top:12px">
+      <div class="field"><label for="pq-az">Grid azimuth A &#8594; B (degrees)</label><input id="pq-az" type="number" inputmode="decimal" step="any" placeholder="0 to 359"></div>
+      <div class="field"><label for="pq-d">Distance (meters)</label><input id="pq-d" type="number" inputmode="decimal" step="any" placeholder="meters"></div>
+    </div>
+    <div class="btn-row"><button class="cbtn primary" onclick="checkLeg()">Check</button><button class="cbtn" onclick="hintLeg()">Hint</button><button class="cbtn" onclick="showLeg()">Show answer</button><button class="cbtn" onclick="newLeg()">New leg</button></div>
+    <div class="status" id="pq-status">Enter your answers and press Check. Azimuth within 2&deg; and distance within 50 m counts as correct.</div>
+    <div class="score" id="pq-score"></div>
+    <div class="callout"><span class="key">BY HAND:</span> east difference (&#916;E) and north difference (&#916;N) between the points. The azimuth is the angle whose tangent is &#916;E &divide; &#916;N, adjusted for the quadrant. The distance is the square root of (&#916;E&sup2; + &#916;N&sup2;).</div>
+  </div>
+</div>
+
+<div class="src-strip"><b>SOURCES</b> TC 3-25.26, <em>Map Reading and Land Navigation</em> (2013). The practice map is made up for training. See the <a href="../land-nav-guide/">guide</a> for details.</div>
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  if(typeof onThemeChange==='function')onThemeChange();
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(typeof onTabShown==='function')onTabShown(id);
+}
+
+const $=id=>document.getElementById(id);
+const RAD=Math.PI/180;
+const mod=(a,n)=>((a%n)+n)%n;
+const degToMils=d=>d*6400/360;
+const milsToDeg=m=>m*360/6400;
+const backAz=d=>{d=mod(d,360);return d<180?d+180:d-180;};
+const fmtDeg=d=>{const r=Math.round(mod(d,360)*10)/10;return (r>=360?0:r)+'\u00B0';};
+const fmtMils=d=>{let m=Math.round(degToMils(mod(d,360)));if(m>=6400)m-=6400;return m+' mils';};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const pad3=n=>String(n).padStart(3,'0');
+
+/* ---------- core math (also used by the checks below) ---------- */
+// side 'W' = magnetic north is LEFT (west) of GN. d > 0 when MN is west of GN.
+function convertAz(type,deg,gm,side){
+  const d=side==='W'?gm:-gm;
+  return type==='grid'?{grid:mod(deg,360),mag:mod(deg+d,360),d:d}:{mag:mod(deg,360),grid:mod(deg-d,360),d:d};
+}
+function pacesToMeters(paces,per100){return paces/per100*100;}
+function metersToPaces(m,per100){return m/100*per100;}
+function mapToGround(len,unit,scale){const cm=unit==='mm'?len/10:len;return cm*scale/100;}
+function parseGrid6(s){
+  const t=String(s).replace(/\D/g,'');
+  if(t.length!==6)return null;
+  return {e:parseInt(t.slice(0,3),10)*100,n:parseInt(t.slice(3),10)*100,str:t.slice(0,3)+' '+t.slice(3)};
+}
+function azDist(A,B){
+  const dx=B.e-A.e,dy=B.n-A.n;
+  return {az:mod(Math.atan2(dx,dy)/RAD,360),dist:Math.hypot(dx,dy),dx:dx,dy:dy};
+}
+
+/* ---------- Tab 1: azimuth converter ---------- */
+function azUpdate(){
+  const type=$('az-type').value,unit=$('az-unit').value,side=$('az-side').value;
+  let v=parseFloat($('az-val').value),gm=parseFloat($('az-gm').value);
+  const max=unit==='mil'?6400:360;
+  const ok=isFinite(v)&&isFinite(gm)&&v>=0&&v<max&&gm>=0&&gm<=45;
+  if(!ok){
+    ['az-out','az-back','az-back2'].forEach(i=>$(i).textContent='\u2014');
+    ['az-out-s','az-back-s','az-back2-s'].forEach(i=>$(i).textContent='');
+    $('az-rule').className='status bad';
+    $('az-rule').textContent='Enter an azimuth from 0 to '+(max-(unit==='mil'?1:0.1))+(unit==='mil'?' mils':'\u00B0')+' and a G-M angle from 0\u00B0 to 45\u00B0.';
+    drawAz(null);return;
+  }
+  const deg=unit==='mil'?milsToDeg(v):v;
+  const r=convertAz(type,deg,gm,side);
+  const other=type==='grid'?r.mag:r.grid;
+  $('az-out-l').textContent=(type==='grid'?'Magnetic':'Grid')+' azimuth';
+  $('az-out').textContent=fmtDeg(other);$('az-out-s').textContent=fmtMils(other);
+  $('az-back').textContent=fmtDeg(backAz(deg));$('az-back-s').textContent=fmtMils(backAz(deg));
+  $('az-back2').textContent=fmtDeg(backAz(other));$('az-back2-s').textContent=fmtMils(backAz(other));
+  const sideTxt=side==='W'?'left (west)':'right (east)';
+  let op;
+  if(type==='grid')op=side==='W'?'ADD':'SUBTRACT';else op=side==='W'?'SUBTRACT':'ADD';
+  $('az-rule').className='status win';
+  $('az-rule').textContent=(type==='grid'?'Grid \u2192 magnetic':'Magnetic \u2192 grid')+', with magnetic north '+sideTxt+' of grid north: '+op+' the G-M angle ('+gm+'\u00B0). '+fmtDeg(deg)+(op==='ADD'?' + ':' \u2212 ')+gm+'\u00B0 = '+fmtDeg(other)+'.';
+  drawAz({grid:r.grid,mag:r.mag,d:r.d});
+}
+function drawAz(s){
+  const c=$('az-canvas'),g=c.getContext('2d'),W=c.width,H=c.height,cx=W/2,cy=H/2,R=Math.min(W,H)/2-34;
+  g.clearRect(0,0,W,H);g.fillStyle=css('--canvas-bg');g.fillRect(0,0,W,H);
+  g.strokeStyle=css('--border-bright');g.lineWidth=1;g.beginPath();g.arc(cx,cy,R,0,2*Math.PI);g.stroke();
+  for(let a=0;a<360;a+=10){const l=a%30===0?12:6;const x1=cx+Math.sin(a*RAD)*R,y1=cy-Math.cos(a*RAD)*R,x2=cx+Math.sin(a*RAD)*(R-l),y2=cy-Math.cos(a*RAD)*(R-l);g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+  g.fillStyle=css('--text-dim');g.font='12px '+css('--mono');g.textAlign='center';g.textBaseline='middle';
+  [[0,'0'],[90,'90'],[180,'180'],[270,'270']].forEach(p=>{g.fillText(p[1],cx+Math.sin(p[0]*RAD)*(R+18),cy-Math.cos(p[0]*RAD)*(R+18));});
+  if(!s){return;}
+  const line=(a,len,col,w,dash)=>{g.strokeStyle=col;g.lineWidth=w;g.setLineDash(dash||[]);g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.sin(a*RAD)*len,cy-Math.cos(a*RAD)*len);g.stroke();g.setLineDash([]);};
+  const lab=(a,len,txt,col)=>{g.fillStyle=col;g.font='bold 13px '+css('--mono');g.textAlign='center';g.textBaseline='middle';g.fillText(txt,cx+Math.sin(a*RAD)*len,cy-Math.cos(a*RAD)*len);};
+  const mnAng=-s.d;                     // MN angle, clockwise from GN
+  line(0,R-4,css('--green'),3);         // GN
+  line(mnAng,R-4,css('--cyan'),3);      // MN
+  lab(0,R-18,'GN',css('--green'));
+  lab(mnAng,R-18-(Math.abs(s.d)<6?16:0),'MN',css('--cyan'));
+  line(s.grid,R-4,css('--amber'),3,[8,5]);
+  lab(s.grid,R+2-0,'',css('--amber'));
+  const arc=(from,sweep,r,col,txt)=>{
+    g.strokeStyle=col;g.lineWidth=2;g.beginPath();g.arc(cx,cy,r,(from-90)*RAD,(from+sweep-90)*RAD,false);g.stroke();
+    const mid=from+sweep/2;g.fillStyle=col;g.font='bold 13px '+css('--mono');g.textAlign='center';g.textBaseline='middle';
+    g.fillText(txt,cx+Math.sin(mid*RAD)*(r+(r>80?0:0)),cy-Math.cos(mid*RAD)*(r));
+  };
+  // grid azimuth arc (from GN to the line), magnetic azimuth arc (from MN to the line)
+  const gsweep=mod(s.grid,360),msweep=mod(s.mag,360);
+  g.save();
+  arc(0,gsweep,58,css('--green'),'');
+  arc(mnAng,msweep,86,css('--cyan'),'');
+  g.restore();
+  // legend
+  g.textAlign='left';g.textBaseline='top';g.font='13px '+css('--mono');
+  g.fillStyle=css('--green');g.fillText('\u2014 Grid azimuth  '+fmtDeg(s.grid),12,H-64);
+  g.fillStyle=css('--cyan');g.fillText('\u2014 Magnetic azimuth  '+fmtDeg(s.mag),12,H-46);
+  g.fillStyle=css('--amber');g.fillText('- - your line',12,H-28);
+}
+
+/* ---------- Tab 2: grid map (shared map drawing) ---------- */
+const MAP={pad:44,size:612,km:4,e0:40,n0:20};
+function m2px(xm,ym){const k=MAP.size/(MAP.km*1000);return [MAP.pad+xm*k,MAP.pad+MAP.size-ym*k];}
+function px2m(px,py){const k=MAP.size/(MAP.km*1000);return [(px-MAP.pad)/k,(MAP.pad+MAP.size-py)/k];}
+function poly(g,pts,close){pts.forEach((p,i)=>{const q=m2px(p[0],p[1]);if(i)g.lineTo(q[0],q[1]);else g.moveTo(q[0],q[1]);});if(close)g.closePath();}
+function drawMap(canvas,guides){
+  const g=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  g.clearRect(0,0,W,H);g.fillStyle=css('--canvas-bg');g.fillRect(0,0,W,H);
+  g.save();g.beginPath();g.rect(MAP.pad,MAP.pad,MAP.size,MAP.size);g.clip();
+  // forests
+  g.fillStyle=css('--green');g.globalAlpha=.13;
+  [[[2400,3200],[3300,3400],[3600,2600],[3000,2300]],[[400,1200],[1200,1500],[1300,600],[600,400]]].forEach(p=>{g.beginPath();poly(g,p,true);g.fill();});
+  g.globalAlpha=1;
+  // hill contours
+  g.strokeStyle=css('--amber-dim');g.globalAlpha=.55;g.lineWidth=1.4;
+  [[420,300],[290,200],[170,110]].forEach(r=>{const c=m2px(1500,3200);const k=MAP.size/(MAP.km*1000);g.beginPath();g.ellipse(c[0],c[1],r[0]*k,r[1]*k,-.3,0,2*Math.PI);g.stroke();});
+  g.globalAlpha=1;
+  // river
+  g.strokeStyle=css('--cyan');g.globalAlpha=.7;g.lineWidth=5;g.lineJoin='round';g.beginPath();
+  poly(g,[[0,3300],[700,3000],[1400,2600],[2100,2500],[2900,2000],[3500,1300],[4000,1100]],false);g.stroke();g.globalAlpha=1;
+  // road
+  g.strokeStyle=css('--text-dim');g.lineWidth=3;g.beginPath();poly(g,[[200,0],[900,900],[1600,1500],[2600,2900],[3100,4000]],false);g.stroke();
+  g.restore();
+  // fine 100 m guides
+  const k=MAP.size/(MAP.km*1000);
+  if(guides){g.strokeStyle=css('--border-bright');g.globalAlpha=.55;g.lineWidth=.6;
+    for(let i=1;i<MAP.km*10;i++){if(i%10===0)continue;const p=MAP.pad+i*100*k;
+      g.beginPath();g.moveTo(p,MAP.pad);g.lineTo(p,MAP.pad+MAP.size);g.stroke();
+      g.beginPath();g.moveTo(MAP.pad,p);g.lineTo(MAP.pad+MAP.size,p);g.stroke();}
+    g.globalAlpha=1;}
+  // edge ticks every 100 m
+  g.strokeStyle=css('--text-dim');g.lineWidth=1;
+  for(let i=0;i<=MAP.km*10;i++){const p=MAP.pad+i*100*k;const L=i%5===0?9:5;
+    [[p,MAP.pad,p,MAP.pad-L],[p,MAP.pad+MAP.size,p,MAP.pad+MAP.size+L],[MAP.pad,p,MAP.pad-L,p],[MAP.pad+MAP.size,p,MAP.pad+MAP.size+L,p]].forEach(l=>{g.beginPath();g.moveTo(l[0],l[1]);g.lineTo(l[2],l[3]);g.stroke();});}
+  // 1 km grid lines
+  g.strokeStyle=css('--cyan-dim');g.lineWidth=1.6;
+  for(let i=0;i<=MAP.km;i++){const p=MAP.pad+i*1000*k;
+    g.beginPath();g.moveTo(p,MAP.pad);g.lineTo(p,MAP.pad+MAP.size);g.stroke();
+    g.beginPath();g.moveTo(MAP.pad,p);g.lineTo(MAP.pad+MAP.size,p);g.stroke();}
+  // labels
+  g.fillStyle=css('--text-bright');g.font='bold 15px '+css('--mono');g.textAlign='center';g.textBaseline='middle';
+  for(let i=0;i<=MAP.km;i++){const p=MAP.pad+i*1000*k;
+    const e=MAP.e0+i,n=MAP.n0+i;
+    g.fillText(e,p,MAP.pad-22);g.fillText(e,p,MAP.pad+MAP.size+24);
+    g.fillText(n,MAP.pad-24,MAP.pad+MAP.size-i*1000*k);g.fillText(n,MAP.pad+MAP.size+24,MAP.pad+MAP.size-i*1000*k);}
+}
+function mark(g,xm,ym,col,shape,label){
+  const p=m2px(xm,ym);g.strokeStyle=col;g.fillStyle=col;g.lineWidth=2.5;
+  if(shape==='x'){g.beginPath();g.moveTo(p[0]-8,p[1]-8);g.lineTo(p[0]+8,p[1]+8);g.moveTo(p[0]+8,p[1]-8);g.lineTo(p[0]-8,p[1]+8);g.stroke();}
+  else if(shape==='ring'){g.beginPath();g.arc(p[0],p[1],9,0,2*Math.PI);g.stroke();g.beginPath();g.arc(p[0],p[1],2,0,2*Math.PI);g.fill();}
+  else{g.beginPath();g.moveTo(p[0],p[1]-10);g.lineTo(p[0]+10,p[1]);g.lineTo(p[0],p[1]+10);g.lineTo(p[0]-10,p[1]);g.closePath();g.fill();}
+  if(label){g.font='bold 15px '+css('--mono');g.textAlign='left';g.textBaseline='bottom';g.fillText(label,p[0]+12,p[1]-8);}
+}
+function cellToStr(ce,cn){return pad3(MAP.e0*10+ce)+' '+pad3(MAP.n0*10+cn);}
+function breakdown(ce,cn){
+  const el=MAP.e0+Math.floor(ce/10),et=ce%10,nl=MAP.n0+Math.floor(cn/10),nt=cn%10;
+  return 'Right to line '+el+', plus '+et+' tenth'+(et===1?'':'s')+' = '+pad3(MAP.e0*10+ce)+'. Up from line '+nl+', plus '+nt+' tenth'+(nt===1?'':'s')+' = '+pad3(MAP.n0*10+cn)+'.';
+}
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+let gridMode='read',guides=true,gpt=null,gclick=null,gdone=false;
+const gscore={ok:0,n:0,streak:0};
+function setGridMode(m){gridMode=m;$('gm-read').classList.toggle('on',m==='read');$('gm-plot').classList.toggle('on',m==='plot');
+  $('gr-read-ui').style.display=m==='read'?'block':'none';$('gr-plot-ui').style.display=m==='plot'?'block':'none';newGridPoint();}
+function toggleGuides(){guides=!guides;$('gm-guides').classList.toggle('on',guides);$('gm-guides').textContent='100 m guides: '+(guides?'ON':'OFF');redrawGrid();}
+function newGridPoint(){
+  gpt={ce:rnd(2,37),cn:rnd(2,37)};gclick=null;gdone=false;$('gr-answer').value='';
+  $('gr-prompt').className='status';
+  if(gridMode==='read')$('gr-prompt').textContent='Find the 6-digit grid of the red diamond. Read right, then up.';
+  else $('gr-prompt').textContent='Plot this grid: '+cellToStr(gpt.ce,gpt.cn)+'. Tap or click the map where it belongs.';
+  $('gr-status').className='status';$('gr-status').textContent=gridMode==='read'?'Type your answer and press Check.':'Tap the map to place your point.';
+  redrawGrid();updateGridScore();
+}
+function redrawGrid(){
+  const c=$('gr-canvas');drawMap(c,guides);const g=c.getContext('2d');if(!gpt)return;
+  const xm=gpt.ce*100+50,ym=gpt.cn*100+50;
+  if(gridMode==='read'||gdone)mark(g,xm,ym,gdone?css('--green'):css('--red'),'diamond',gridMode==='read'&&!gdone?'':'');
+  if(gclick){mark(g,gclick[0],gclick[1],css('--amber'),'x','');}
+}
+function scoreGrid(ok){gscore.n++;if(ok){gscore.ok++;gscore.streak++;}else gscore.streak=0;updateGridScore();}
+function updateGridScore(){$('gr-score').innerHTML='Correct: <b>'+gscore.ok+' / '+gscore.n+'</b> &nbsp; Streak: <b>'+gscore.streak+'</b>';}
+function checkRead(){
+  if(gridMode!=='read'||!gpt||gdone)return;
+  const p=parseGrid6($('gr-answer').value);
+  if(!p){$('gr-status').className='status bad';$('gr-status').textContent='Enter six digits: three for the easting, then three for the northing.';return;}
+  const want=cellToStr(gpt.ce,gpt.cn);
+  gdone=true;const ok=p.str===want;scoreGrid(ok);
+  $('gr-status').className='status '+(ok?'win':'bad');
+  $('gr-status').textContent=(ok?'Correct. ':'Not quite. You gave '+p.str+'. ')+'The answer is '+want+'. '+breakdown(gpt.ce,gpt.cn);
+  redrawGrid();
+}
+function showAnswer(){
+  if(!gpt)return;
+  if(!gdone){gdone=true;gscore.n++;gscore.streak=0;updateGridScore();}
+  $('gr-status').className='status';$('gr-status').textContent='Answer: '+cellToStr(gpt.ce,gpt.cn)+'. '+breakdown(gpt.ce,gpt.cn);
+  redrawGrid();
+}
+function canvasPoint(ev,canvas){
+  const r=canvas.getBoundingClientRect();
+  return [(ev.clientX-r.left)*canvas.width/r.width,(ev.clientY-r.top)*canvas.height/r.height];
+}
+function gridClick(ev){
+  if(gridMode!=='plot'||!gpt||gdone)return;
+  const p=canvasPoint(ev,$('gr-canvas'));const m=px2m(p[0],p[1]);
+  if(m[0]<0||m[1]<0||m[0]>4000||m[1]>4000)return;
+  gclick=m;gdone=true;
+  const tx=gpt.ce*100+50,ty=gpt.cn*100+50;const dist=Math.hypot(m[0]-tx,m[1]-ty);
+  const ok=dist<=71;scoreGrid(ok);
+  $('gr-status').className='status '+(ok?'win':'bad');
+  $('gr-status').textContent=ok?'Good plot. You were about '+Math.round(dist)+' m from the point.':'You were about '+Math.round(dist)+' m away. '+cellToStr(gpt.ce,gpt.cn)+' is where the green diamond is. '+breakdown(gpt.ce,gpt.cn);
+  redrawGrid();
+}
+$('gr-canvas').addEventListener('click',gridClick);
+$('gr-answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkRead();});
+
+/* ---------- Tab 3: distance and pace ---------- */
+function beadText(m,per100){
+  const km=Math.floor(m/1000+1e-9),rem=m-km*1000,h=Math.floor(rem/100+1e-9),left=rem-h*100;
+  let t=km+' upper bead'+(km===1?'':'s')+', '+h+' lower bead'+(h===1?'':'s');
+  if(left>0.5)t+=', then '+Math.round(metersToPaces(left,per100))+' more paces';
+  return t;
+}
+function distUpdate(){
+  const per=parseFloat($('pc-per100').value),paces=parseFloat($('pc-paces').value),mtr=parseFloat($('pc-meters').value);
+  const perOk=isFinite(per)&&per>0;
+  if(perOk&&isFinite(paces)&&paces>=0){const m=pacesToMeters(paces,per);$('pc-out-m').textContent=Math.round(m)+' m';$('pc-out-m-s').textContent=beadText(m,per);}
+  else{$('pc-out-m').textContent='\u2014';$('pc-out-m-s').textContent='Enter a pace count and paces.';}
+  if(perOk&&isFinite(mtr)&&mtr>=0){const p=metersToPaces(mtr,per);$('pc-out-p').textContent=Math.round(p)+' paces';$('pc-out-p-s').textContent=beadText(mtr,per);}
+  else{$('pc-out-p').textContent='\u2014';$('pc-out-p-s').textContent='Enter a pace count and a distance.';}
+  const len=parseFloat($('md-len').value),sc=parseFloat($('md-scale').value),un=$('md-unit').value;
+  if(isFinite(len)&&len>=0){const gm=mapToGround(len,un,sc);
+    $('md-out').textContent=Math.round(gm).toLocaleString('en-US')+' m';$('md-out-s').textContent='1:'+sc.toLocaleString('en-US')+' scale: '+(sc/100).toLocaleString('en-US')+' m per cm';
+    if(perOk){$('md-paces').textContent=Math.round(metersToPaces(gm,per))+' paces';$('md-paces-s').textContent='at '+per+' paces per 100 m';}
+    else{$('md-paces').textContent='\u2014';$('md-paces-s').textContent='Set your pace count above.';}
+  }else{$('md-out').textContent='\u2014';$('md-out-s').textContent='';$('md-paces').textContent='\u2014';$('md-paces-s').textContent='';}
+}
+['pc-per100','pc-paces','pc-meters','md-len','md-scale','md-unit'].forEach(i=>{$(i).addEventListener('input',distUpdate);$(i).addEventListener('change',distUpdate);});
+
+/* ---------- Tab 4: leg calculator and practice ---------- */
+function legUpdate(){
+  const A=parseGrid6($('lg-a').value),B=parseGrid6($('lg-b').value);
+  const gm=parseFloat($('lg-gm').value),side=$('lg-side').value;
+  const set=(id,v,s)=>{$(id).textContent=v;$(id+'-s').textContent=s||'';};
+  if(!A||!B||!isFinite(gm)||gm<0||gm>45){
+    ['lg-az','lg-d','lg-mag','lg-back'].forEach(i=>set(i,'\u2014',''));
+    $('lg-msg').className='status bad';$('lg-msg').textContent='Enter two 6-digit grids and a G-M angle from 0\u00B0 to 45\u00B0.';return;
+  }
+  if(A.e===B.e&&A.n===B.n){['lg-az','lg-d','lg-mag','lg-back'].forEach(i=>set(i,'\u2014',''));$('lg-msg').className='status bad';$('lg-msg').textContent='The two points are the same. Enter different grids.';return;}
+  const r=azDist(A,B);const cv=convertAz('grid',r.az,gm,side);
+  set('lg-az',fmtDeg(r.az),fmtMils(r.az));
+  set('lg-d',Math.round(r.dist).toLocaleString('en-US')+' m','\u0394E '+r.dx+' m, \u0394N '+r.dy+' m');
+  set('lg-mag',fmtDeg(cv.mag),gm===0?'G-M angle is 0, so it matches the grid azimuth':fmtMils(cv.mag));
+  set('lg-back',fmtDeg(backAz(r.az)),fmtMils(backAz(r.az)));
+  $('lg-msg').className='status win';
+  $('lg-msg').textContent='A '+A.str+' to B '+B.str+'. Grids are read to 100 m, so the answers are good to about that precision.';
+}
+['lg-a','lg-b','lg-gm','lg-side'].forEach(i=>{$(i).addEventListener('input',legUpdate);$(i).addEventListener('change',legUpdate);});
+
+let leg=null,legDone=false;const lscore={ok:0,n:0};
+function newLeg(){
+  let a,b,r;
+  do{a={ce:rnd(3,36),cn:rnd(3,36)};b={ce:rnd(3,36),cn:rnd(3,36)};
+     r=azDist({e:a.ce*100+50,n:a.cn*100+50},{e:b.ce*100+50,n:b.cn*100+50});}
+  while(r.dist<700||r.dist>3200);
+  leg={a:a,b:b,r:r};legDone=false;$('pq-az').value='';$('pq-d').value='';
+  $('pq-prompt').textContent='Start A: '+cellToStr(a.ce,a.cn)+'  |  Objective B: '+cellToStr(b.ce,b.cn);
+  $('pq-status').className='status';$('pq-status').textContent='Enter your answers and press Check. Azimuth within 2\u00B0 and distance within 50 m counts as correct.';
+  redrawLeg(false);updateLegScore();
+}
+function redrawLeg(reveal){
+  const c=$('pq-canvas');drawMap(c,false);const g=c.getContext('2d');if(!leg)return;
+  const ax=leg.a.ce*100+50,ay=leg.a.cn*100+50,bx=leg.b.ce*100+50,by=leg.b.cn*100+50;
+  if(reveal){const p=m2px(ax,ay),q=m2px(bx,by);g.strokeStyle=css('--amber');g.lineWidth=2.5;g.setLineDash([9,6]);g.beginPath();g.moveTo(p[0],p[1]);g.lineTo(q[0],q[1]);g.stroke();g.setLineDash([]);}
+  mark(g,ax,ay,css('--green'),'ring','A');mark(g,bx,by,css('--red'),'diamond','B');
+}
+function updateLegScore(){$('pq-score').innerHTML='Correct: <b>'+lscore.ok+' / '+lscore.n+'</b>';}
+function checkLeg(){
+  if(!leg||legDone)return;
+  const az=parseFloat($('pq-az').value),d=parseFloat($('pq-d').value);
+  if(!isFinite(az)||!isFinite(d)){$('pq-status').className='status bad';$('pq-status').textContent='Enter both a grid azimuth and a distance.';return;}
+  const dAz=Math.abs(mod(az-leg.r.az+180,360)-180),dD=Math.abs(d-leg.r.dist);
+  const okAz=dAz<=2,okD=dD<=50;const ok=okAz&&okD;
+  legDone=true;lscore.n++;if(ok)lscore.ok++;updateLegScore();
+  $('pq-status').className='status '+(ok?'win':'bad');
+  $('pq-status').textContent=(ok?'Correct. ':(okAz?'Azimuth is good. ':'Azimuth is off by '+dAz.toFixed(1)+'\u00B0. ')+(okD?'Distance is good. ':'Distance is off by '+Math.round(dD)+' m. '))
+    +'Answer: '+fmtDeg(leg.r.az)+' ('+fmtMils(leg.r.az)+'), '+Math.round(leg.r.dist)+' m.';
+  redrawLeg(true);
+}
+function hintLeg(){
+  if(!leg)return;
+  $('pq-status').className='status';
+  $('pq-status').textContent='\u0394E = '+Math.round(leg.r.dx)+' m, \u0394N = '+Math.round(leg.r.dy)+' m. Azimuth = angle from north (\u0394N axis) toward \u0394E, adjusted for the quadrant. Distance = \u221A(\u0394E\u00B2 + \u0394N\u00B2).';
+}
+function showLeg(){
+  if(!leg)return;
+  if(!legDone){legDone=true;lscore.n++;updateLegScore();}
+  $('pq-status').className='status';$('pq-status').textContent='Answer: '+fmtDeg(leg.r.az)+' ('+fmtMils(leg.r.az)+'), '+Math.round(leg.r.dist)+' m. Back azimuth: '+fmtDeg(backAz(leg.r.az))+'.';
+  redrawLeg(true);
+}
+
+/* ---------- wiring ---------- */
+['az-type','az-val','az-unit','az-gm','az-side'].forEach(i=>{$(i).addEventListener('input',azUpdate);$(i).addEventListener('change',azUpdate);});
+function onThemeChange(){azUpdate();redrawGrid();if(leg)redrawLeg(legDone);}
+function onTabShown(id){if(id==='grid')redrawGrid();if(id==='leg')redrawLeg(legDone);if(id==='az')azUpdate();}
+azUpdate();distUpdate();legUpdate();newGridPoint();newLeg();
+
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="../" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Army Basics</a> &nbsp;&nbsp; <a href="../land-nav-guide/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Read the guide</a> &nbsp;&nbsp; <a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+
+</body>
+</html>

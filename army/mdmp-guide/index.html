@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDMP Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;--border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#3d3212;--hero-eyebrow:#e0c877;--hero-sub:#e6d9a8;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;--toggle-bg:rgba(255,255,255,0.15);
+  --accent:#b08d1e;--accent-soft:#f6eecf;--c1:#1f6fe0;--c1s:#e2edfb;--c2:#c0392b;--c2s:#fbe4e0;--c3:#159c72;--c3s:#dcf3ea;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;--border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#2a2109;--hero-eyebrow:#d4bc6a;--hero-sub:#b0a06a;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;--toggle-bg:rgba(255,255,255,0.08);
+  --accent:#d9b64c;--accent-soft:#2a2109;--c1:#5a9bf0;--c1s:#0a2240;--c2:#e0685a;--c2s:#2e0e0a;--c3:#33b98d;--c3s:#0a2e22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:580px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+h4{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:1rem 0 .5rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}.fact-card-text strong{color:var(--text-primary)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+.steps{counter-reset:s;margin:1rem 0}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:.5rem}
+.step::before{counter-increment:s;content:counter(s);background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step .st{font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-primary)}.step .sd{font-size:12.5px;color:var(--text-secondary)}
+.mnem{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;font-size:13.5px}
+.mnem .k{font-family:'Nunito',sans-serif;font-weight:800;color:var(--accent)}
+
+:root{--hero-bg:#12305a;--hero-eyebrow:#8fbcf5;--hero-sub:#c0d6f4;--accent:#1f6fe0;--accent-soft:#e2edfb}
+[data-theme="dark"]{--hero-bg:#0a1b34;--hero-eyebrow:#7fb0f0;--hero-sub:#9db8dd;--accent:#5a9bf0;--accent-soft:#0a2240}
+.tab-jump-btn.prev{text-align:left}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:1rem 0}
+.card-row .card{margin-bottom:0}
+table.compare td:first-child{font-weight:700;color:var(--text-primary)}
+.tbl-wrap{overflow-x:auto;margin:1rem 0}
+.tbl-wrap table.compare{margin:0;min-width:520px}
+
+@media print{
+  body{background:#fff}
+  .hero{background:#fff!important;color:#000!important;padding:1rem 0 .5rem}
+  .hero h1,.hero h1 span,.hero-eyebrow,.hero-sub{color:#000!important}
+  .theme-toggle,.tab-nav,.tab-jump,#fbNudge{display:none!important}
+  .qc{position:static!important;display:inline-block;color:#000!important;border-color:#999!important;background:none!important;margin-bottom:.5rem}
+  .tab-content{display:block!important;animation:none!important}
+  .tab-content+.tab-content{margin-top:2rem;break-before:page}
+  .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
+  .section-wrap{padding-top:1rem}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>The <span>MDMP</span><br>How a headquarters turns a mission into a plan.</h1>
+  <p class="hero-sub">Seven steps from receiving a mission to writing the order. Learn what each step does, what it produces, and how to shorten it under pressure.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('over',this)">🧭 Overview</button><button class="tab-btn" onclick="switchTab('s12',this)">📥 Steps 1–2</button><button class="tab-btn" onclick="switchTab('s34',this)">🛠️ Steps 3–4</button><button class="tab-btn" onclick="switchTab('s57',this)">✅ Steps 5–7</button><button class="tab-btn" onclick="switchTab('terms',this)">📖 Products &amp; Terms</button><button class="tab-btn" onclick="switchTab('time',this)">⏱️ Time &amp; Tools</button>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <div class="tab-content active" id="tab-over">
+
+    <h2>MDMP — how a headquarters plans</h2>
+    <p class="lede">The Military Decision Making Process is the Army's step-by-step method for a commander and staff to understand a mission, build options, pick the best one, and turn it into an order.</p>
+    <div class="analogy">🏗️ <strong>Like a design-and-build project:</strong> you study the problem, sketch several designs, test them, choose one, and then write the blueprints everyone will build from.</div>
+    <h3>The seven steps</h3>
+    <div class="steps">
+      <div class="step"><div><div class="st">Receipt of mission</div><div class="sd">The staff is alerted, gathers tools, and the commander gives initial guidance.</div></div></div>
+      <div class="step"><div><div class="st">Mission analysis</div><div class="sd">Understand the problem: tasks, constraints, facts, assumptions, and risks. End with a restated mission and the commander’s intent.</div></div></div>
+      <div class="step"><div><div class="st">COA development</div><div class="sd">Build several workable courses of action.</div></div></div>
+      <div class="step"><div><div class="st">COA analysis</div><div class="sd">Wargame each course of action to see how it plays out.</div></div></div>
+      <div class="step"><div><div class="st">COA comparison</div><div class="sd">Compare the courses of action against the evaluation criteria.</div></div></div>
+      <div class="step"><div><div class="st">COA approval</div><div class="sd">The commander picks one and gives final guidance.</div></div></div>
+      <div class="step"><div><div class="st">Orders production, dissemination, and transition</div><div class="sd">Write the order, share it, and hand off to execution.</div></div></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">🎯</span><span class="fact-card-text"><strong>COA</strong> stands for course of action: a broad possible way to accomplish the mission.</span></div>
+    <h3>Who does what</h3>
+    <div class="card-row"><div class="card"><div class="card-head"><span class="card-emoji">👤</span><div><div class="card-title">Commander</div><div class="card-sub">The decision maker</div></div></div><p style="margin:0">The most important participant. The commander frames the problem, gives guidance and intent, and chooses the course of action.</p></div><div class="card"><div class="card-head"><span class="card-emoji">📋</span><div><div class="card-title">Executive officer</div><div class="card-sub">Runs the staff</div></div></div><p style="margin:0">Coordinates the staff, builds the planning timeline, and keeps the process on track.</p></div><div class="card"><div class="card-head"><span class="card-emoji">👥</span><div><div class="card-title">Staff sections</div><div class="card-sub">The experts</div></div></div><p style="margin:0">Each section keeps a running estimate for its area and contributes to every step. The intelligence, operations, logistics, and other sections all take part.</p></div></div>
+    <div class="fact-card"><span class="fact-card-emoji">📡</span><span class="fact-card-text"><strong>Where EW fits.</strong> Electromagnetic warfare staff add the spectrum picture to planning: what the enemy emits, what friendly units depend on, and how to attack or protect it. Your course instructors will show the exact products.</span></div>
+    <h3>It bends, not breaks</h3>
+    <p>Staffs usually work the steps in order, but they go back when they learn something new. The process is also meant to be shortened when time is tight. See the Time &amp; Tools tab.</p>
+    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../mdmp/" style="color:inherit"><em>MDMP Planner</em></a> has step cards, a sequencing drill, a match-the-output quiz, a planning-time calculator, and a COA decision matrix.</div>
+
+    <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('s12')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📥 Steps 1–2</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-s12">
+
+    <h2>Steps 1–2 — Start and understand the problem</h2>
+    <h3>Step 1: Receipt of mission</h3>
+    <p>Planning begins when the commander gets a mission or sees one coming. Quick, focused actions set everything else up.</p>
+    <div class="steps">
+      <div class="step"><div><div class="st">Alert the staff and key people</div><div class="sd">Tell them planning is starting, and how much time there is.</div></div></div>
+      <div class="step"><div><div class="st">Gather tools</div><div class="sd">Higher headquarters’ orders, maps, running estimates, unit SOPs, and other references.</div></div></div>
+      <div class="step"><div><div class="st">Make an initial assessment</div><div class="sd">A first look at the time and resources available and the situation.</div></div></div>
+      <div class="step"><div><div class="st">Issue initial guidance</div><div class="sd">The commander gives early direction, including how to use the time.</div></div></div>
+      <div class="step"><div><div class="st">Publish the planning timeline</div><div class="sd">The staff sets who does what and when.</div></div></div>
+      <div class="step"><div><div class="st">Issue a warning order</div><div class="sd">Tell subordinate units so they can begin their own preparation.</div></div></div>
+    </div>
+    <h3>Step 2: Mission analysis</h3>
+    <p>This is the step where the staff figures out what the problem really is. It is the base for every later step.</p>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Question</th><th>What the staff produces</th></tr></thead><tbody><tr><td>What were we told to do?</td><td>Analysis of the higher headquarters’ order: task, purpose, and intent</td></tr><tr><td>What is the situation?</td><td>Intelligence preparation of the battlefield (the enemy, terrain, and weather)</td></tr><tr><td>What must we do?</td><td>A list of specified, implied, and essential tasks</td></tr><tr><td>What limits us?</td><td>Constraints: what we must do and must not do</td></tr><tr><td>What do we know and assume?</td><td>Critical facts and assumptions</td></tr><tr><td>What could go wrong?</td><td>A first risk assessment</td></tr><tr><td>What does the commander need to know?</td><td>Commander’s critical information requirements (CCIR) and essential elements of friendly information (EEFI)</td></tr><tr><td>What is our mission?</td><td>A restated mission statement (who, what, when, where, why)</td></tr></tbody></table></div>
+    <div class="mnem"><span class="k">Specified</span><span>A task the higher order tells you to do.</span><span class="k">Implied</span><span>A task you must do to accomplish a specified task, though nobody wrote it down.</span><span class="k">Essential</span><span>A task you must do to accomplish the mission. Essential tasks go into the mission statement.</span></div>
+    <p>Step 2 ends with a <strong>mission analysis briefing</strong> to the commander. The commander approves the restated mission and gives the <strong>commander’s intent</strong> and <strong>planning guidance</strong>. The staff also sets the <strong>evaluation criteria</strong> it will use to compare courses of action later, and a second warning order goes out.</p>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('over')"><span class="tj-label">&larr; Back</span><span class="tj-title">🧭 Overview</span></button><button class="tab-jump-btn next" onclick="goToTab('s34')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🛠️ Steps 3–4</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-s34">
+
+    <h2>Steps 3–4 — Build options and test them</h2>
+    <h3>Step 3: COA development</h3>
+    <p>The staff builds several possible courses of action. A COA is a broad possible solution, described well enough to be tested. Typical work includes weighing relative combat power, generating options, arranging forces, developing a broad concept, and writing a COA statement and sketch.</p>
+    <p>Each COA is screened against five tests:</p>
+    <div class="mnem"><span class="k">S</span><span><strong>Suitable</strong>: it accomplishes the mission and follows the commander’s guidance.</span><span class="k">F</span><span><strong>Feasible</strong>: it can be done with the time, space, and resources available.</span><span class="k">A</span><span><strong>Acceptable</strong>: the advantage is worth the risk and cost.</span><span class="k">D</span><span><strong>Distinguishable</strong>: it is meaningfully different from the other COAs.</span><span class="k">C</span><span><strong>Complete</strong>: it covers the operation from start to finish.</span></div>
+    <h3>Step 4: COA analysis (wargaming)</h3>
+    <p>Wargaming plays each COA against the likely enemy actions to find out what works. It goes in a rhythm of <strong>action, reaction, counteraction</strong>: we do something, the enemy responds, we respond to that.</p>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Method</th><th>How it works</th></tr></thead><tbody><tr><td>Belt</td><td>Divides the battlefield into areas (belts) across its width and plays each in turn</td></tr><tr><td>Avenue-in-depth</td><td>Follows one avenue of approach from start to finish, then the next</td></tr><tr><td>Box</td><td>Focuses in detail on a specific area, such as the objective</td></tr></tbody></table></div>
+    <p>Wargaming turns up weak points, decision points, and sequencing problems. The staff refines each COA and updates its plans and estimates.</p>
+    <div class="fact-card"><span class="fact-card-emoji">🎲</span><span class="fact-card-text"><strong>Tip.</strong> A good wargame needs someone to play the enemy honestly. If the "enemy" only does what is convenient for us, the results are worthless.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s12')"><span class="tj-label">&larr; Back</span><span class="tj-title">📥 Steps 1–2</span></button><button class="tab-jump-btn next" onclick="goToTab('s57')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Steps 5–7</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-s57">
+
+    <h2>Steps 5–7 — Choose and write the plan</h2>
+    <h3>Step 5: COA comparison</h3>
+    <p>The staff compares the COAs against the evaluation criteria set in mission analysis. A <strong>decision matrix</strong> is a common tool: score each COA on each criterion, weight the criteria, and total the scores. The staff then recommends a COA.</p>
+    <div class="fact-card"><span class="fact-card-emoji">⚠️</span><span class="fact-card-text"><strong>A matrix supports judgment. It does not replace it.</strong> Scores and weights are opinions. Look at whether the answer changes if a weight changes, and ask why.</span></div>
+    <h3>Step 6: COA approval</h3>
+    <p>The staff briefs the commander on the recommended COA. The commander picks one, changes it, or asks for more work. Then the commander gives <strong>final planning guidance</strong>, refines the intent, and updates the commander's critical information requirements. Another warning order goes to subordinates.</p>
+    <h3>Step 7: Orders production, dissemination, and transition</h3>
+    <p>The staff turns the approved COA into an operation order or plan, the commander approves it, and it goes out to the units. Rehearsals help everyone understand it. The plan then <strong>transitions</strong> from the planners to the people who run current operations.</p>
+    <div class="fact-card"><span class="fact-card-emoji">📄</span><span class="fact-card-text"><strong>Orders follow a standard format.</strong> The five-paragraph OPORD (Situation, Mission, Execution, Sustainment, Command and Signal) is the same one you use for small-unit orders. See the <a href="/opord/" style="color:inherit">OPORD Builder</a>.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s34')"><span class="tj-label">&larr; Back</span><span class="tj-title">🛠️ Steps 3–4</span></button><button class="tab-jump-btn next" onclick="goToTab('terms')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📖 Products &amp; Terms</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-terms">
+
+    <h2>Products and terms</h2>
+    <p class="lede">These are the words and documents you will hear most in planning.</p>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Term</th><th>What it means</th></tr></thead><tbody><tr><td>Warning order (WARNORD)</td><td>An early notice of an upcoming operation, so units can start preparing. Sent at several points in the MDMP.</td></tr><tr><td>Running estimate</td><td>A staff section’s continuous assessment of its area. It is updated throughout planning and execution.</td></tr><tr><td>Commander’s intent</td><td>A clear, short statement of the purpose of the operation and the desired end state. Subordinates use it when the plan no longer fits.</td></tr><tr><td>Planning guidance</td><td>The commander’s direction to the staff about how to plan, given in mission analysis and again at COA approval.</td></tr><tr><td>Restated mission</td><td>The mission in who, what, when, where, and why form, developed in mission analysis.</td></tr><tr><td>Essential task</td><td>A task that must be done to accomplish the mission.</td></tr><tr><td>CCIR</td><td>Commander’s critical information requirements: information the commander needs to make timely decisions. It includes priority intelligence requirements (PIR) and friendly force information requirements (FFIR).</td></tr><tr><td>EEFI</td><td>Essential elements of friendly information: things the enemy must not learn about our operations.</td></tr><tr><td>Evaluation criteria</td><td>The standards used to compare COAs, chosen during mission analysis.</td></tr><tr><td>Decision point</td><td>A time or place where the commander expects to make a key decision.</td></tr><tr><td>Wargame</td><td>A step-by-step test of a COA against the enemy’s likely actions.</td></tr><tr><td>OPORD / OPLAN</td><td>The order or plan that results from the MDMP.</td></tr><tr><td>FRAGORD</td><td>A fragmentary order: a quick change to an existing order.</td></tr></tbody></table></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s57')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Steps 5–7</span></button><button class="tab-jump-btn next" onclick="goToTab('time')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⏱️ Time &amp; Tools</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-time">
+
+    <h2>Time and tools</h2>
+    <p class="lede">The full MDMP takes time. Real headquarters often have less, so they need to shorten it without losing the point.</p>
+    <h3>The one-third, two-thirds rule</h3>
+    <p>A commander should use no more than about <strong>one third</strong> of the available time for the headquarters' own planning and leave at least <strong>two thirds</strong> for subordinates. Late plans starve the units that have to execute them.</p>
+    <div class="fact-card"><span class="fact-card-emoji">🧮</span><span class="fact-card-text"><strong>Example.</strong> Available time: 24 hours. Headquarters planning: no more than 8 hours. Subordinate units: at least 16 hours.</span></div>
+    <h3>When time is short</h3>
+    <p>Commanders can direct the staff to abbreviate the MDMP. Common methods include:</p>
+    <div class="mnem"><span class="k">More guidance</span><span>The commander gives clearer, more detailed guidance early, so the staff wastes less time.</span><span class="k">Fewer COAs</span><span>Develop one COA, or even just refine the commander’s own concept.</span><span class="k">Parallel planning</span><span>Subordinates start planning as soon as warning orders arrive instead of waiting.</span><span class="k">Fewer briefs</span><span>Combine or skip some briefings.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">📘</span><span class="fact-card-text"><strong>Learn the full version first.</strong> Doctrine says a staff should master the full MDMP before trying to abbreviate it. You cannot safely skip what you do not understand.</span></div>
+    <h3>Changing the plan during execution</h3>
+    <p>When the situation changes after the order is out, commanders and staffs often use the <strong>Rapid Decision-making and Synchronization Process (RDSP)</strong>:</p>
+    <div class="steps">
+      <div class="step"><div><div class="st">Compare the current situation to the order</div><div class="sd">Is what is happening what we expected?</div></div></div>
+      <div class="step"><div><div class="st">Determine whether a decision is needed, and what type</div><div class="sd">Some changes need a new decision; others do not.</div></div></div>
+      <div class="step"><div><div class="st">Develop a course of action</div><div class="sd">Build a workable option quickly.</div></div></div>
+      <div class="step"><div><div class="st">Refine and validate it</div><div class="sd">Check it against the mission and intent.</div></div></div>
+      <div class="step"><div><div class="st">Issue and implement the order</div><div class="sd">Get the change to the units.</div></div></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> FM 5-0, <em>Planning and Orders Production</em> (2022), and ADP 5-0, <em>The Operations Process</em>. Use your class slides and instructor as the authority.</span></div>
+    <div class="tryit"><strong>▶ Try it:</strong> the <a href="../mdmp/" style="color:inherit"><em>MDMP Planner</em></a> timeline tab works out the one-third and two-thirds split from your times.</div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('terms')"><span class="tj-label">&larr; Back</span><span class="tj-title">📖 Products &amp; Terms</span></button></div>
+  </div>
+</div>
+
+<div class="card refs" style="max-width:820px;margin:24px auto 0;padding:18px 20px"><h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2><p style="font-size:13px;color:var(--text-secondary);line-height:1.6">The explanations here are written in plain language to summarize Army doctrine. They do not replace the source publications, and publications are revised. Check the current edition of each at the <a href="https://armypubs.army.mil/" style="color:var(--accent)">Army Publishing Directorate</a>, and follow your class slides and instructor where they differ.</p><ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px"><li><b>FM 5-0</b> — Planning and Orders Production (2022). The seven MDMP steps, their products, and planning under time pressure.</li><li><b>ADP 5-0</b> — The Operations Process. The framework the MDMP sits inside.</li></ul></div>
+<div style="text-align:center;padding:16px 16px 0"><a href="../" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Army Basics</a> &nbsp;&nbsp; <a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">Back to E-WIT</a></div>
+<div class="footer">MDMP Explained · Companion guide to the MDMP Planner · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

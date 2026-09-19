@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rank &amp; Insignia — Army Basics — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00aa5a;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --purple:#bb88ff;--red:#ff4444;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005c34;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --purple:#6b3fd0;--red:#cc2222;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:90px}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+.hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .15s;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:13px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 40px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (max-width:680px){
+  header{padding:12px 16px;position:static}
+  html{scroll-padding-top:12px}
+  h1{font-size:20px;letter-spacing:2px}
+  .sub{padding:10px 16px 0;font-size:12px}
+  .wrap{padding:18px 16px 30px}
+}
+
+h1{font-size:24px}
+.h1-sub{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px}
+.lede{font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--text);max-width:70ch;margin-bottom:18px}
+
+/* progress: one segment per card */
+.prog{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.segs{display:flex;gap:3px;flex:1;min-width:200px}
+.sg{flex:1;height:10px;border:1px solid var(--green);opacity:.6}
+.sg.done{background:var(--green);opacity:1}
+.prog-txt{font-family:var(--display);font-size:20px;font-weight:700;color:var(--text-bright);letter-spacing:1px;white-space:nowrap}
+.prog-txt b{color:var(--green)}
+
+/* trainer */
+.trainer{background:var(--panel);border:1px solid var(--border-bright);border-top:3px solid var(--green);padding:18px 20px 16px}
+.tr-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin-bottom:14px}
+.tr-top label{cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tr-top input{accent-color:var(--green);width:15px;height:15px}
+.q-lab,.a-lab{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);margin-bottom:6px}
+.q-text{font-family:var(--display);font-size:28px;font-weight:600;line-height:1.25;color:var(--text-bright);min-height:2.5em}
+.a-box{margin-top:16px;padding:14px 16px;border:1px dashed var(--border-bright);min-height:84px;background:var(--bg)}
+.a-box.shown{border-style:solid;border-color:var(--green-dim);background:var(--green-dark)}
+[data-theme="light"] .a-box.shown{background:#e6fff2}
+.a-text{font-family:var(--mono);font-size:15px;line-height:1.6;color:var(--text-bright)}
+.a-hint{font-family:var(--mono);font-size:13px;color:var(--text-dim)}
+.btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:1px;padding:12px 18px;cursor:pointer;border:1px solid var(--border-bright);background:var(--panel);color:var(--text);transition:all .15s;min-height:46px;flex:1;min-width:130px}
+.btn:hover{border-color:var(--amber);color:var(--amber)}
+.btn[hidden]{display:none}
+.btn-show{border-color:var(--cyan);color:var(--cyan)}
+.btn-show:hover{background:var(--cyan-dark);border-color:var(--cyan);color:var(--cyan)}
+.btn-got{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.btn-got:hover{background:var(--green);color:var(--bg);border-color:var(--green)}
+.btn-miss{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.btn-miss:hover{background:var(--amber);color:var(--bg);border-color:var(--amber)}
+.keys{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:10px;letter-spacing:.5px}
+.done-panel{text-align:center;padding:26px 10px 10px}
+.done-panel h2{font-family:var(--display);font-size:26px;color:var(--green);letter-spacing:2px;margin-bottom:8px}
+.done-panel p{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.6;margin-bottom:16px}
+.done-panel .btns{justify-content:center}
+.done-panel .btn{flex:0 1 220px}
+
+/* reference list */
+.ref{margin-top:30px}
+.ref h2{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;font-weight:400;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:6px}
+.ref dl{max-width:78ch}
+.ref dt{font-family:var(--display);font-size:18px;font-weight:700;color:var(--green);margin-top:14px;letter-spacing:.5px}
+.ref dd{font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--text);margin-top:2px;padding-left:12px;border-left:2px solid var(--border-bright)}
+.src{margin-top:26px;font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.6;max-width:78ch}
+@media (hover:none){.keys{display:none}}
+.src a{color:var(--amber);text-decoration:none;border-bottom:1px dotted var(--amber-dim)}
+@media (max-width:680px){.q-text{font-size:23px}.btn{min-width:100%}.trainer{padding:14px 14px 12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">ARMY BASICS</div>
+    <h1>Rank &amp; Insignia</h1>
+  </div>
+  <div class="hdr-right">
+    <a class="hdr-link" href="../">&#8592; ALL CONCEPTS</a>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
+</header>
+<div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Flashcards &nbsp;|&nbsp; 7 cards</div>
+
+<main class="wrap">
+  <p class="lede">Grades, insignia, and the difference between an SGM and a CSM. Read the question, say your answer out loud, then check yourself. Cards you get right leave the deck. Cards you miss come back.</p>
+
+  <div class="prog" aria-label="Progress">
+    <div class="segs" id="segs"></div>
+    <div class="prog-txt"><b id="knownN">0</b> of <span id="totalN">0</span> known</div>
+  </div>
+
+  <section class="trainer" aria-label="Flashcard trainer">
+    <div class="tr-top">
+      <span id="pos"></span>
+      <label><input type="checkbox" id="shuf" checked> Shuffle</label>
+    </div>
+    <div id="cardArea">
+      <div class="q-lab">QUESTION</div>
+      <div class="q-text" id="qText" aria-live="polite"></div>
+      <div class="a-box" id="aBox">
+        <div class="a-lab">ANSWER</div>
+        <div class="a-hint" id="aHint">Say your answer, then tap Show answer.</div>
+        <div class="a-text" id="aText" hidden></div>
+      </div>
+      <div class="btns">
+        <button type="button" class="btn btn-show" id="btnShow">SHOW ANSWER</button>
+        <button type="button" class="btn btn-miss" id="btnMiss" hidden>MISSED IT</button>
+        <button type="button" class="btn btn-got" id="btnGot" hidden>GOT IT</button>
+      </div>
+      <div class="keys">Keyboard: Space shows the answer &nbsp;&middot;&nbsp; Left arrow = missed &nbsp;&middot;&nbsp; Right arrow = got it</div>
+    </div>
+    <div class="done-panel" id="donePanel" hidden>
+      <h2>Deck complete</h2>
+      <p>You know all <span id="doneN"></span> cards in this set. Run it again any time to keep it fresh.</p>
+      <div class="btns"><button type="button" class="btn btn-show" id="btnRestart">START OVER</button></div>
+    </div>
+  </section>
+
+  <section class="ref" aria-label="All questions and answers">
+    <h2>All questions and answers</h2>
+    <dl id="refList"></dl>
+  </section>
+
+  <p class="src">Source: the Question &amp; Answer bank in the <a href="/slides/#deck-board">Promotion Board Preparation deck</a>. If a card and the current regulation ever disagree, go with the regulation and tell us on the feedback page.</p>
+</main>
+
+<script>
+const CAT={"slug": "rank", "title": "Rank & Insignia", "cards": [{"q": "What rank is E-5?", "a": "Sergeant (SGT)."}, {"q": "What rank is E-6?", "a": "Staff Sergeant (SSG)."}, {"q": "What insignia does a Sergeant First Class (E-7) wear?", "a": "Three chevrons up, two rockers down."}, {"q": "What insignia does a Command Sergeant Major wear?", "a": "Three chevrons, three rockers, with a star centered in the wreath."}, {"q": "What rank is O-1?", "a": "Second Lieutenant (2LT)."}, {"q": "What rank is W-1?", "a": "Warrant Officer 1 (WO1)."}, {"q": "What's the difference between a Sergeant Major and a Command Sergeant Major?", "a": "Both are E-9; a CSM holds a command-level leadership position, while an SGM typically serves in a staff role."}]};
+function hashQ(s){let x=5381;for(let i=0;i<s.length;i++)x=((x<<5)+x+s.charCodeAt(i))|0;return (x>>>0).toString(36);}
+function loadKnown(slug){try{const a=JSON.parse(localStorage.getItem('ewit_army_'+slug)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+function saveKnown(slug,set){try{localStorage.setItem('ewit_army_'+slug,JSON.stringify([...set]));}catch(e){}}
+
+const cards=CAT.cards.map(c=>({q:c.q,a:c.a,id:hashQ(c.q)}));
+const ids=new Set(cards.map(c=>c.id));
+let known=new Set(loadKnown(CAT.slug).filter(x=>ids.has(x)));
+saveKnown(CAT.slug,known);
+let queue=[];
+let flipped=false;
+const $=id=>document.getElementById(id);
+
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildQueue(){
+  queue=cards.filter(c=>!known.has(c.id));
+  if($('shuf').checked)shuffleArr(queue);
+}
+function ping(path,title){if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:path,title:title,event:true});}}
+
+function renderSegs(){
+  $('segs').innerHTML=cards.map(c=>'<div class="sg'+(known.has(c.id)?' done':'')+'"></div>').join('');
+  $('knownN').textContent=known.size;
+  $('totalN').textContent=cards.length;
+}
+function renderCard(){
+  renderSegs();
+  const complete=queue.length===0;
+  $('cardArea').hidden=complete;
+  $('donePanel').hidden=!complete;
+  if(complete){$('doneN').textContent=cards.length;$('pos').textContent='';return;}
+  const c=queue[0];
+  $('pos').textContent=queue.length+' left in this round';
+  $('qText').textContent=c.q;
+  $('aText').textContent=c.a;
+  $('aText').hidden=!flipped;
+  $('aHint').hidden=flipped;
+  $('aBox').classList.toggle('shown',flipped);
+  $('btnShow').hidden=flipped;
+  $('btnGot').hidden=!flipped;
+  $('btnMiss').hidden=!flipped;
+}
+function showAnswer(){if(!queue.length||flipped)return;flipped=true;renderCard();$('btnGot').focus({preventScroll:true});}
+function got(){
+  if(!queue.length||!flipped)return;
+  known.add(queue[0].id);queue.shift();saveKnown(CAT.slug,known);flipped=false;renderCard();
+  if(queue.length===0)ping('army-'+CAT.slug+'-complete','Army Basics complete: '+CAT.title);
+  else $('btnShow').focus({preventScroll:true});
+}
+function missed(){
+  if(!queue.length||!flipped)return;
+  queue.push(queue.shift());flipped=false;renderCard();$('btnShow').focus({preventScroll:true});
+}
+function restart(){known=new Set();saveKnown(CAT.slug,known);flipped=false;buildQueue();renderCard();}
+
+$('btnShow').addEventListener('click',showAnswer);
+$('btnGot').addEventListener('click',got);
+$('btnMiss').addEventListener('click',missed);
+$('btnRestart').addEventListener('click',restart);
+$('shuf').addEventListener('change',()=>{flipped=false;buildQueue();renderCard();});
+document.addEventListener('keydown',e=>{
+  if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;
+  if(e.key===' '&&!flipped&&queue.length&&e.target.tagName!=='BUTTON'){e.preventDefault();showAnswer();}
+  else if(e.key==='ArrowRight'&&flipped){got();}
+  else if(e.key==='ArrowLeft'&&flipped){missed();}
+});
+
+$('refList').innerHTML=cards.map(c=>'<dt>'+esc(c.q)+'</dt><dd>'+esc(c.a)+'</dd>').join('');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+
+buildQueue();renderCard();
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="../" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; All Army concepts</a> &nbsp;&nbsp; <a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+
+</body>
+</html>

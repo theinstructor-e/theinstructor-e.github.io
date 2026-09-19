@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOOM Trainer — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.src-strip{max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--text-dim)}
+.src-strip b{color:var(--text-bright);font-weight:400;letter-spacing:1.5px;margin-right:6px}
+.src-strip a{color:var(--amber)}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.callout.green{border-left-color:var(--green);background:var(--green-dark)}.callout.green .key{color:var(--green)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px}
+.field input,.field select{width:100%;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:15px;padding:10px 11px;min-height:42px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--acc)}
+.field .hint{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.cbtn.on{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.readout{border:1px solid var(--border-bright);background:var(--canvas-bg);padding:10px 12px}
+.readout .l{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase}
+.readout .v{font-family:var(--display);font-size:26px;font-weight:700;color:var(--acc);line-height:1.2;margin-top:2px}
+.readout .s{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:2px}
+.status{font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.6}
+.status.win{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.status.bad{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+canvas{display:block;width:100%;height:auto;background:var(--canvas-bg);border:1px solid var(--border-bright)}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .tab-nav{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:11px}
+  .tab-content{padding:16px 14px 30px}
+}
+
+
+.checks{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;font-family:var(--mono);font-size:13px;color:var(--text)}
+.checks label{display:flex;gap:10px;align-items:center;cursor:pointer;min-height:34px}
+.checks input{width:20px;height:20px;accent-color:var(--acc);flex-shrink:0}
+.sc-card{font-family:var(--display);font-size:20px;font-weight:600;color:var(--text-bright);line-height:1.35;padding:16px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-bottom:14px}
+.sc-lab{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin:10px 0 6px}
+.sc-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.sc-opts button{font-family:var(--display);font-size:15px;font-weight:600;text-align:left;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:10px 12px;cursor:pointer;min-height:46px}
+.sc-opts button:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.sc-opts button.sel{border-color:var(--cyan);background:var(--cyan-dark);color:var(--cyan)}
+.sc-opts button.right{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.sc-opts button.miss{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.sc-opts button:disabled{cursor:default}
+#bd-canvas{max-width:700px;margin:0 auto 6px}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>FOOM Trainer <span>// Formations · Techniques — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; ARMY BASICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav" id="tabnav">
+  <button class="tab-btn active" onclick="switchTab('aid',this)">Decision Aid</button>
+  <button class="tab-btn" onclick="switchTab('scen',this)">Scenarios</button>
+  <button class="tab-btn" onclick="switchTab('bound',this)">Bounding</button>
+</nav>
+
+<div id="tab-aid" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">Decision aid &#8212; squad-level formation and movement technique</div>
+    <div class="lead">Describe the situation. The aid suggests a technique and a formation and tells you why, using the rules from the infantry platoon and squad publication. It is a thinking tool, not a substitute for your leader&#8217;s judgment.</div>
+    <div class="form-grid">
+      <div class="field"><label for="ai-contact">Chance of enemy contact</label>
+        <select id="ai-contact"><option value="none">Not likely</option><option value="possible" selected>Possible</option><option value="expected">Expected</option></select></div>
+      <div class="field"><label for="ai-terrain">Terrain and visibility</label>
+        <select id="ai-terrain"><option value="open">Open, easy to see and control</option><option value="mixed" selected>Mixed</option><option value="tight">Restrictive or poor visibility</option></select>
+        <div class="hint">Dense woods, ridge line, night, or thick brush count as restrictive.</div></div>
+      <div class="field"><label for="ai-speed">Need for speed</label>
+        <select id="ai-speed"><option value="normal" selected>Normal</option><option value="high">High</option></select></div>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" id="ai-near"> The leader feels the enemy is near (tracks, noise, trash, a hunch)</label>
+      <label><input type="checkbox" id="ai-danger"> Crossing a large open danger area</label>
+      <label><input type="checkbox" id="ai-assault"> About to assault the objective</label>
+    </div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Movement technique</div><div class="v" id="ai-tech">&#8212;</div></div>
+      <div class="readout"><div class="l">Squad formation</div><div class="v" id="ai-form" style="font-size:21px">&#8212;</div></div>
+    </div>
+    <div class="status" id="ai-why"></div>
+    <div class="callout amber" id="ai-warn" style="display:none"></div>
+    <div class="callout"><span class="key">HOW LEADERS DECIDE:</span> the technique comes from the likelihood of contact and the need for speed. The formation comes from the mission and METT-TC(I). Change one input at a time and watch what moves.</div>
+  </div>
+</div>
+
+<div id="tab-scen" class="tab-content">
+  <div class="panel cyan">
+    <div class="panel-title">Scenario drill &#8212; pick a technique and a formation</div>
+    <div class="lead" id="sc-lead">Eight scenarios. Choose your answers, then press Check.</div>
+    <div class="sc-card" id="sc-card"></div>
+    <div id="sc-tech-wrap"><div class="sc-lab">Movement technique</div><div class="sc-opts" id="sc-tech"></div></div>
+    <div><div class="sc-lab">Squad formation</div><div class="sc-opts" id="sc-form"></div></div>
+    <div class="btn-row"><button class="cbtn primary" id="sc-check" onclick="checkScenario()">Check</button><button class="cbtn" id="sc-next" onclick="nextScenario()" style="display:none">Next &#8594;</button><button class="cbtn" onclick="startScenarios()">&#8635; New round</button></div>
+    <div class="status" id="sc-status">Pick your answers above.</div>
+    <div class="score" id="sc-score"></div>
+  </div>
+</div>
+
+<div id="tab-bound" class="tab-content">
+  <div class="panel amber">
+    <div class="panel-title">Bounding overwatch &#8212; alternate versus successive</div>
+    <div class="lead">Two elements, A and B, cross the ground. Only one moves at a time while the other overwatches. Step through both methods side by side.</div>
+    <canvas id="bd-canvas" width="700" height="290" aria-label="Alternate and successive bounds, shown step by step"></canvas>
+    <div class="btn-row"><button class="cbtn primary" onclick="boundStep(1)">Next bound &#8594;</button><button class="cbtn" onclick="boundStep(-1)">&#8592; Back</button><button class="cbtn" onclick="boundReset()">&#8635; Reset</button></div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Alternate bounds &#8212; front of unit</div><div class="v" id="bd-alt">&#8212;</div><div class="s" id="bd-alt-s"></div></div>
+      <div class="readout"><div class="l">Successive bounds &#8212; front of unit</div><div class="v" id="bd-suc">&#8212;</div><div class="s" id="bd-suc-s"></div></div>
+    </div>
+    <div class="status" id="bd-msg"></div>
+    <div class="callout"><span class="key">ALTERNATE:</span> the rear element moves past the lead element and takes up overwatch. Usually faster. <span class="key">SUCCESSIVE:</span> the lead element advances, then the rear element moves up to about even with it. Easier to control, but slower. In both, only one element moves at a time, and the overwatch element covers from a covered, concealed position.</div>
+  </div>
+</div>
+
+<div class="src-strip"><b>SOURCES</b> ATP 3-21.8, <em>Infantry Platoon and Squad</em>, and TC 3-21.76, <em>Ranger Handbook</em>. The scenarios are written for training. See the <a href="../foom-guide/">guide</a> for details.</div>
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  if(typeof onThemeChange==='function')onThemeChange();
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(typeof onTabShown==='function')onTabShown(id);
+}
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+const TECH={trav:'Traveling',over:'Traveling overwatch',bound:'Bounding overwatch'};
+const FORM={col:'Squad column (fire teams in wedge)',mod:'Modified column (fire teams in file)',line:'Squad line'};
+
+/* ---------- Tab 1: decision aid ---------- */
+function recommend(s){
+  const why=[],warn=[];let tech;
+  if(s.contact==='expected'||s.near||s.danger){
+    tech='bound';
+    if(s.contact==='expected')why.push('Contact is expected, so use bounding overwatch. It is the most secure technique, and the slowest.');
+    if(s.near)why.push('The leader feels the enemy is near. That is a trigger for bounding overwatch.');
+    if(s.danger)why.push('A large open danger area is crossed by bounding overwatch.');
+  }else if(s.contact==='possible'){
+    tech='over';why.push('Contact is possible, so use traveling overwatch. The lead element keeps moving and the trail element is ready to support.');
+  }else{
+    tech='trav';why.push('Contact is not likely, so traveling works. It is the fastest technique and gives the least security.');
+  }
+  let form;
+  if(s.assault){
+    form='line';why.push('The squad line gives maximum firepower to the front. It is used to assault or just before it.');
+  }else if(s.terrain==='tight'){
+    form='mod';why.push('Restrictive terrain or poor visibility make control hard, so the wedge is modified into a file. It is fast and easy to control.');
+    if(tech==='bound'||s.contact==='expected')warn.push('A file is the least secure formation. With contact expected, keep intervals tight, keep one element overwatching, and use a wedge where the ground allows.');
+  }else{
+    form='col';why.push(s.terrain==='mixed'?'The squad column with fire teams in wedge is the everyday movement formation. Reduce intervals wherever the ground tightens.':'The squad column with fire teams in wedge is the main movement formation, with good spread and control.');
+  }
+  if(tech==='over')why.push('Ideally the lead team moves at least 50 meters ahead of the rest, with attached weapons near the squad leader.');
+  if(tech==='bound')why.push('Pick alternate bounds for speed or successive bounds for control. The squad leader usually stays with the overwatch team.');
+  if(s.speed==='high'){
+    if(tech==='bound')warn.push('You want speed, but with contact expected or the enemy near, security comes first. Bounding is slow, so tell your leader what it will cost in time.');
+    else if(tech==='over')warn.push('Traveling overwatch is the fastest technique that still gives you overwatch. Traveling is faster, but only when contact is not likely.');
+  }
+  if(s.assault&&tech==='trav')warn.push('You are about to assault. Check whether contact is really "not likely." Approach the objective with more security.');
+  return {tech:tech,form:form,why:why,warn:warn};
+}
+function aidRead(){return {contact:$('ai-contact').value,terrain:$('ai-terrain').value,speed:$('ai-speed').value,near:$('ai-near').checked,danger:$('ai-danger').checked,assault:$('ai-assault').checked};}
+function aidUpdate(){
+  const r=recommend(aidRead());
+  $('ai-tech').textContent=TECH[r.tech];$('ai-form').textContent=FORM[r.form];
+  $('ai-why').className='status win';$('ai-why').innerHTML=r.why.map(w=>'&#8226; '+esc(w)).join('<br>');
+  const w=$('ai-warn');if(r.warn.length){w.style.display='block';w.innerHTML='<span class="key">CAUTION:</span> '+r.warn.map(esc).join(' ');}else{w.style.display='none';w.innerHTML='';}
+}
+['ai-contact','ai-terrain','ai-speed','ai-near','ai-danger','ai-assault'].forEach(i=>{$(i).addEventListener('input',aidUpdate);$(i).addEventListener('change',aidUpdate);});
+
+/* ---------- Tab 2: scenario drill ---------- */
+const SCEN=[
+ {t:'The squad walks a wide, well-used track inside the battalion\u2019s secure area at midday. The route is open and nobody has reported enemy activity. The platoon needs the squad at the assembly area in 30 minutes.',
+  tech:'trav',form:'col',why:'Contact is not likely and speed is needed, so travel. The squad column with fire teams in wedge is the everyday movement formation.'},
+ {t:'The squad moves through woods with widely spaced trees and good visibility. A local report says enemy scouts were seen in these woods yesterday. You have seen nothing yet.',
+  tech:'over',form:'col',why:'Contact is possible, so use traveling overwatch, with the lead team ideally at least 50 m ahead. Visibility is good, so the normal column with wedge still works.'},
+ {t:'It is dusk. The squad moves through thick brush along a narrow stream bed. Team leaders can barely see each other. Contact is possible.',
+  tech:'over',form:'mod',why:'Contact is possible, so use traveling overwatch. Thick brush and poor visibility make control hard, so the wedge is modified into a file.'},
+ {t:'The squad reaches the edge of a large open valley floor with a tree line on the far side. You cannot tell whether the tree line is occupied.',
+  tech:'bound',form:'col',why:'A large open danger area is crossed by bounding overwatch. Visibility is good, so the normal column with wedge works.'},
+ {t:'Halfway through a patrol in light woods, the lead team leader stops and points to fresh tracks and a food wrapper on the trail. Your gut says the enemy is close.',
+  tech:'bound',form:'col',why:'Fresh tracks, trash, and a bad feeling are signs the enemy is near. Shift to bounding overwatch. The terrain allows the usual column with wedge.'},
+ {t:'The squad is in its assault position, 100 m from an enemy-held building. The platoon leader has just ordered the assault.',
+  tech:null,form:'line',why:'The squad line gives maximum firepower to the front. It is the assault or pre-assault formation.'},
+ {t:'The squad must move along a narrow, wooded ridge line in the dark. Contact is expected somewhere along it.',
+  tech:'bound',form:'mod',why:'Contact is expected, so bound. The ridge and darkness make control hard, so the wedge is modified into a file. A file is the least secure, so keep intervals tight and keep one team overwatching.'},
+ {t:'The squad has been told an enemy position is about 400 m ahead. The ground is open and gently rolling, and visibility is good.',
+  tech:'bound',form:'col',why:'Contact is expected, so use bounding overwatch. The open ground allows the normal column with wedge, and the squad can go on line if it has to assault.'}
+];
+let sc={list:[],i:0,pts:0,max:0,pickT:null,pickF:null,done:false};
+function startScenarios(){sc={list:shuffle(SCEN),i:0,pts:0,max:0,pickT:null,pickF:null,done:false};renderScenario();}
+function renderScenario(){
+  if(sc.i>=sc.list.length){
+    $('sc-card').textContent='Round complete: '+sc.pts+' of '+sc.max+' points.';
+    $('sc-tech-wrap').style.display='none';$('sc-form').innerHTML='';$('sc-check').style.display='none';$('sc-next').style.display='none';
+    const good=sc.pts/sc.max>=0.85;
+    $('sc-status').className='status '+(good?'win':'');$('sc-status').textContent=good?'Strong work. You are reading the ground and the threat.':'Review the guide, then try a new round.';
+    $('sc-score').innerHTML='Score: <b>'+sc.pts+' / '+sc.max+'</b>';return;
+  }
+  const q=sc.list[sc.i];sc.pickT=null;sc.pickF=null;sc.done=false;
+  $('sc-card').textContent=(sc.i+1)+'. '+q.t;
+  $('sc-tech-wrap').style.display=q.tech?'block':'none';
+  $('sc-tech').innerHTML=Object.keys(TECH).map(k=>'<button type="button" data-k="'+k+'">'+TECH[k]+'</button>').join('');
+  $('sc-form').innerHTML=Object.keys(FORM).map(k=>'<button type="button" data-k="'+k+'">'+FORM[k]+'</button>').join('');
+  document.querySelectorAll('#sc-tech button').forEach(b=>b.addEventListener('click',()=>pick('T',b.dataset.k)));
+  document.querySelectorAll('#sc-form button').forEach(b=>b.addEventListener('click',()=>pick('F',b.dataset.k)));
+  $('sc-check').style.display='inline-block';$('sc-next').style.display='none';
+  $('sc-status').className='status';$('sc-status').textContent=q.tech?'Choose a technique and a formation, then press Check.':'Choose the formation, then press Check. (No movement technique applies here.)';
+  $('sc-score').innerHTML='Scenario <b>'+(sc.i+1)+' / '+sc.list.length+'</b> &nbsp; Points: <b>'+sc.pts+'</b>';
+}
+function pick(kind,k){
+  if(sc.done)return;
+  if(kind==='T')sc.pickT=k;else sc.pickF=k;
+  document.querySelectorAll('#sc-'+(kind==='T'?'tech':'form')+' button').forEach(b=>b.classList.toggle('sel',b.dataset.k===k));
+}
+function checkScenario(){
+  const q=sc.list[sc.i];if(!q||sc.done)return;
+  if((q.tech&&!sc.pickT)||!sc.pickF){$('sc-status').className='status bad';$('sc-status').textContent=q.tech?'Pick both a technique and a formation first.':'Pick a formation first.';return;}
+  sc.done=true;
+  let pts=0,max=q.tech?2:1;
+  const okF=sc.pickF===q.form;if(okF)pts++;
+  let okT=true;if(q.tech){okT=sc.pickT===q.tech;if(okT)pts++;}
+  sc.pts+=pts;sc.max+=max;
+  const mark=(sel,right,pk)=>document.querySelectorAll(sel+' button').forEach(b=>{b.disabled=true;b.classList.remove('sel');if(b.dataset.k===right)b.classList.add('right');else if(b.dataset.k===pk)b.classList.add('miss');});
+  if(q.tech)mark('#sc-tech',q.tech,sc.pickT);mark('#sc-form',q.form,sc.pickF);
+  const all=pts===max;
+  $('sc-status').className='status '+(all?'win':'bad');
+  $('sc-status').textContent=(all?'Correct. ':(pts>0?'Partly right. ':'Not quite. '))+q.why;
+  $('sc-score').innerHTML='Scenario <b>'+(sc.i+1)+' / '+sc.list.length+'</b> &nbsp; Points: <b>'+sc.pts+' / '+sc.max+'</b>';
+  $('sc-check').style.display='none';$('sc-next').style.display='inline-block';$('sc-next').textContent=sc.i===sc.list.length-1?'See score \u2192':'Next \u2192';
+}
+function nextScenario(){sc.i++;renderScenario();}
+
+/* ---------- Tab 3: bounding step-through ---------- */
+const MAXB=6;let bstep=0;
+function boundState(method,step){
+  let A=2,B=0,moving=null,watching=null;
+  for(let s=1;s<=step;s++){
+    if(method==='alt'){
+      if(B<=A){B=A+2;moving='B';watching='A';}else{A=B+2;moving='A';watching='B';}
+    }else{
+      if(s%2===1){A=A+2;moving='A';watching='B';}else{B=A;moving='B';watching='A';}
+    }
+  }
+  return {A:A,B:B,moving:moving,watching:watching,front:Math.max(A,B)};
+}
+function boundStep(d){bstep=Math.min(MAXB,Math.max(0,bstep+d));drawBound();}
+function boundReset(){bstep=0;drawBound();}
+function drawBound(){
+  const c=$('bd-canvas'),g=c.getContext('2d'),W=c.width,H=c.height;
+  g.clearRect(0,0,W,H);g.fillStyle=css('--canvas-bg');g.fillRect(0,0,W,H);
+  const x0=50,sx=(W-100)/15;
+  const lanes=[['alt','ALTERNATE BOUNDS',75],['suc','SUCCESSIVE BOUNDS',205]];
+  lanes.forEach(L=>{
+    const st=boundState(L[0]==='alt'?'alt':'suc',bstep),y=L[2];
+    g.fillStyle=css('--text-dim');g.font='12px '+css('--mono');g.textAlign='left';g.textBaseline='top';g.fillText(L[1],12,y-58);
+    g.strokeStyle=css('--border-bright');g.lineWidth=1;g.beginPath();g.moveTo(x0-20,y);g.lineTo(W-20,y);g.stroke();
+    for(let i=0;i<=14;i+=2){g.beginPath();g.moveTo(x0+i*sx,y-5);g.lineTo(x0+i*sx,y+5);g.stroke();}
+    // direction arrow
+    g.fillStyle=css('--text-dim');g.font='11px '+css('--mono');g.textAlign='right';g.fillText('direction of movement \u2192',W-22,y-58);
+    [['A',st.A,css('--cyan')],['B',st.B,css('--green')]].forEach(e=>{
+      const x=x0+e[1]*sx,isMove=st.moving===e[0],isWatch=st.watching===e[0];
+      if(isMove){g.strokeStyle=css('--amber');g.lineWidth=3;g.beginPath();g.arc(x,y,20,0,2*Math.PI);g.stroke();}
+      g.fillStyle=e[2];g.beginPath();g.arc(x,y,13,0,2*Math.PI);g.fill();
+      g.fillStyle=css('--bg');g.font='bold 14px '+css('--mono');g.textAlign='center';g.textBaseline='middle';g.fillText(e[0],x,y+1);
+      g.font='bold 11px '+css('--mono');g.textBaseline='top';
+      if(isMove){g.fillStyle=css('--amber');g.fillText('MOVING',x,y+26);}
+      else if(isWatch){g.fillStyle=css('--cyan');g.fillText('OVERWATCH',x,y+26);}
+      else if(bstep===0){g.fillStyle=css('--text-dim');g.fillText(e[0]==='A'?'LEAD':'REAR',x,y+26);}
+    });
+  });
+  const a=boundState('alt',bstep),s=boundState('suc',bstep);
+  $('bd-alt').textContent=a.front+' units';$('bd-suc').textContent=s.front+' units';
+  $('bd-alt-s').textContent=bstep?('Element '+a.moving+' moved, '+a.watching+' overwatched'):'Start: A is lead, B is rear';
+  $('bd-suc-s').textContent=bstep?('Element '+s.moving+' moved, '+s.watching+' overwatched'):'Start: A is lead, B is rear';
+  $('bd-msg').className='status'+(bstep>=2&&a.front>s.front?' win':'');
+  $('bd-msg').textContent=bstep===0?'Press Next bound. In both methods only one element moves at a time.':
+    'After '+bstep+' bound'+(bstep===1?'':'s')+': alternate has advanced the unit '+a.front+' units, successive '+s.front+'. '+(a.front>s.front?'Alternate is faster.':'They are level so far.')+(bstep>=MAXB?' Reset to run it again.':'');
+}
+function onThemeChange(){drawBound();}
+function onTabShown(id){if(id==='bound')drawBound();}
+
+aidUpdate();startScenarios();drawBound();
+
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="../" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Army Basics</a> &nbsp;&nbsp; <a href="../foom-guide/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Read the guide</a> &nbsp;&nbsp; <a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+
+</body>
+</html>

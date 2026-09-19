@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TLP Planner — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel.cyan::before{background:var(--cyan)}.panel.amber::before{background:var(--amber)}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.src-strip{max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--text-dim)}
+.src-strip b{color:var(--text-bright);font-weight:400;letter-spacing:1.5px;margin-right:6px}
+.src-strip a{color:var(--amber)}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.callout.green{border-left-color:var(--green);background:var(--green-dark)}.callout.green .key{color:var(--green)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px}
+.field input,.field select{width:100%;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:15px;padding:10px 11px;min-height:42px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--acc)}
+.field .hint{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.cbtn.on{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.readout{border:1px solid var(--border-bright);background:var(--canvas-bg);padding:10px 12px}
+.readout .l{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase}
+.readout .v{font-family:var(--display);font-size:26px;font-weight:700;color:var(--acc);line-height:1.2;margin-top:2px}
+.readout .s{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:2px}
+.status{font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.6}
+.status.win{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.status.bad{border-color:var(--red);color:var(--red);background:var(--red-dark)}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+canvas{display:block;width:100%;height:auto;background:var(--canvas-bg);border:1px solid var(--border-bright)}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .tab-nav{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:11px}
+  .tab-content{padding:16px 14px 30px}
+}
+
+
+.hint-line{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin:-2px 0 12px}
+.tbar{display:flex;height:22px;border:1px solid var(--border-bright);margin:10px 0}
+.tbar .hq{background:var(--green);opacity:.85}.tbar .sub{background:var(--amber);opacity:.85}
+.tbl{overflow-x:auto;margin:12px 0}
+.tbl table{border-collapse:collapse;width:100%;min-width:560px;font-family:var(--mono);font-size:12.5px}
+.tbl th,.tbl td{border:1px solid var(--border-bright);padding:8px 10px;text-align:left;color:var(--text);vertical-align:top}
+.tbl th{background:var(--canvas-bg);color:var(--text-dim);font-weight:400;letter-spacing:1px;font-size:11px;text-transform:uppercase}
+.tbl td.t{color:var(--acc);white-space:nowrap;font-weight:700}
+.tbl tr.warn td{background:var(--red-dark);color:var(--red)}
+.stepstrip{display:flex;gap:4px;margin:10px 0 14px}
+.stepstrip i{flex:1;height:10px;border:1px solid var(--acc);display:block}
+.stepstrip i.done{background:var(--acc)}.stepstrip i.cur{background:var(--amber);border-color:var(--amber)}
+.wk-card{font-family:var(--display);font-size:20px;font-weight:600;color:var(--text-bright);line-height:1.35;padding:16px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-bottom:12px}
+.wk-card small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--acc);font-weight:400;text-transform:uppercase;margin-bottom:6px}
+.wk-opts{display:grid;gap:8px}
+.wk-opts button{font-family:var(--display);font-size:15px;font-weight:600;text-align:left;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:12px 14px;cursor:pointer;min-height:48px}
+.wk-opts button:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.wk-opts button.right{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.wk-opts button.miss{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.wk-opts button:disabled{cursor:default}
+a{color:var(--acc)}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>TLP Planner <span>// Time Plan · Step-Through — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; ARMY BASICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav" id="tabnav">
+  <button class="tab-btn active" onclick="switchTab('plan',this)">Time Plan</button>
+  <button class="tab-btn" onclick="switchTab('walk',this)">Step-Through</button>
+</nav>
+
+<div id="tab-plan" class="tab-content active">
+  <div class="panel amber">
+    <div class="panel-title">Backward time plan &#8212; one third for you, two thirds for your team</div>
+    <div class="lead">Enter when the mission arrives and when you must execute. The planner splits the time with the one-third and two-thirds rule and works backward from execution to show when your team needs to be doing what.</div>
+    <div class="form-grid">
+      <div class="field"><label for="tp-recv">Mission received (24-hour clock)</label><input id="tp-recv" type="time" value="18:00"></div>
+      <div class="field"><label for="tp-exec">Execute / depart (24-hour clock)</label><input id="tp-exec" type="time" value="04:00"></div>
+      <div class="field"><label for="tp-days">Execution is</label>
+        <select id="tp-days"><option value="0">the same day</option><option value="1" selected>the next day</option><option value="2">2 days later</option></select></div>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label for="tp-reh">Rehearsal (minutes)</label><input id="tp-reh" type="number" inputmode="numeric" min="0" step="5" value="90"></div>
+      <div class="field"><label for="tp-pci">Pre-combat checks and inspections (minutes)</label><input id="tp-pci" type="number" inputmode="numeric" min="0" step="5" value="60"></div>
+      <div class="field"><label for="tp-move">Movement to the start point (minutes)</label><input id="tp-move" type="number" inputmode="numeric" min="0" step="5" value="30"></div>
+    </div>
+    <div class="hint-line">These three times are examples. Set them to your unit&#8217;s SOP and the mission.</div>
+    <div class="readouts">
+      <div class="readout"><div class="l">Total time</div><div class="v" id="tp-total">&#8212;</div></div>
+      <div class="readout"><div class="l">Your planning (up to 1/3)</div><div class="v" id="tp-hq">&#8212;</div><div class="s" id="tp-hq-s"></div></div>
+      <div class="readout"><div class="l">Your team (at least 2/3)</div><div class="v" id="tp-sub">&#8212;</div><div class="s" id="tp-sub-s"></div></div>
+    </div>
+    <div class="tbar" id="tp-bar" aria-hidden="true"><div class="hq" id="tp-bar-hq"></div><div class="sub" id="tp-bar-sub"></div></div>
+    <div class="status" id="tp-msg"></div>
+    <div class="tbl" id="tp-table"></div>
+    <div class="callout amber"><span class="key">OVERLAPPING STEPS:</span> steps 3 through 6 run together and loop back. The clock only marks when the warning order should go out, when the order is due, and how the rest of the time is used.</div>
+  </div>
+</div>
+
+<div id="tab-walk" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Step-through &#8212; run a squad patrol through the 8 steps</div>
+    <div class="lead">Mission: <strong>1st Squad conducts a reconnaissance patrol NLT 0600 at OBJ RAVEN in order to confirm enemy strength prior to the platoon&#8217;s assault.</strong> You are the squad leader. At each step, pick the best action.</div>
+    <div class="stepstrip" id="wk-strip"></div>
+    <div class="wk-card" id="wk-card"></div>
+    <div class="wk-opts" id="wk-opts"></div>
+    <div class="status" id="wk-status">Pick an action.</div>
+    <div class="score" id="wk-score"></div>
+    <div class="btn-row"><button class="cbtn primary" id="wk-next" onclick="nextWalk()" style="display:none">Next step &#8594;</button><button class="cbtn" onclick="startWalk()">&#8635; Start over</button></div>
+    <div class="callout"><span class="key">PRACTICE MORE:</span> the <a href="/tlp/">TLP Trainer</a> drills the order of the steps and METT-TC, and the <a href="/opord/">OPORD Builder</a> helps with step 7.</div>
+  </div>
+</div>
+
+<div class="src-strip"><b>SOURCES</b> ADP 5-0, <em>The Operations Process</em>, and FM 5-0, <em>Planning and Orders Production</em> (2022). The rehearsal, inspection, and movement times are examples, so set them to your unit&#8217;s SOP. The patrol is written for training. See the <a href="../tlp-guide/">guide</a> for details.</div>
+<script>
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+  if(typeof onThemeChange==='function')onThemeChange();
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(typeof onTabShown==='function')onTabShown(id);
+}
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ---------- Tab 1: backward time plan ---------- */
+const toMin=v=>{const m=/^(\d{1,2}):(\d{2})$/.exec(v||'');return m?parseInt(m[1],10)*60+parseInt(m[2],10):null;};
+function fmtClock(min){const d=Math.floor(min/1440),r=((min%1440)+1440)%1440,h=Math.floor(r/60),m=r%60;
+  return String(h).padStart(2,'0')+String(m).padStart(2,'0')+(d>0?' (+'+d+')':'');}
+const fmtDur=min=>{const h=Math.floor(min/60),m=Math.round(min%60);return h+' h '+String(m).padStart(2,'0')+' min';};
+function buildPlan(recv,exec,days,reh,pci,move){
+  const total=days*1440+exec-recv;
+  if(total<=0)return null;
+  const hq=Math.floor(total/3),orderAt=recv+hq,end=recv+total;
+  const startPoint=end-move,pciStart=startPoint-pci,rehStart=pciStart-reh;
+  const prepMin=rehStart-orderAt;
+  return {total:total,hq:hq,sub:total-hq,orderAt:orderAt,end:end,startPoint:startPoint,pciStart:pciStart,rehStart:rehStart,prepMin:prepMin,fits:prepMin>=0};
+}
+function planUpdate(){
+  const r=toMin($('tp-recv').value),e=toMin($('tp-exec').value),d=parseInt($('tp-days').value,10);
+  const reh=Math.max(0,parseInt($('tp-reh').value,10)||0),pci=Math.max(0,parseInt($('tp-pci').value,10)||0),mv=Math.max(0,parseInt($('tp-move').value,10)||0);
+  const set=(id,v,s)=>{$(id).textContent=v;if($(id+'-s'))$(id+'-s').textContent=s||'';};
+  const p=(r===null||e===null)?null:buildPlan(r,e,d,reh,pci,mv);
+  if(!p){['tp-total','tp-hq','tp-sub'].forEach(i=>set(i,'\u2014',''));$('tp-bar-hq').style.width='0';$('tp-bar-sub').style.width='0';
+    $('tp-table').innerHTML='';$('tp-msg').className='status bad';
+    $('tp-msg').textContent=(r===null||e===null)?'Enter both times.':'Execution must be after the mission is received. Change the times, or choose a later day.';return;}
+  set('tp-total',fmtDur(p.total));
+  set('tp-hq',fmtDur(p.hq),'Order out by '+fmtClock(p.orderAt));
+  set('tp-sub',fmtDur(p.sub),fmtClock(p.orderAt)+' to '+fmtClock(p.end));
+  $('tp-bar-hq').style.width=(100*p.hq/p.total)+'%';$('tp-bar-sub').style.width=(100*p.sub/p.total)+'%';
+  const rows=[
+    [fmtClock(r),'Steps 1 and 2','Receive the mission and issue the warning order as soon as you can. Tell the team the mission, the time of the order, and when you execute.'],
+    [fmtClock(r)+' to '+fmtClock(p.orderAt),'Steps 3 to 6','Make the tentative plan, start any movement that cannot wait, do your reconnaissance, and complete the plan. These overlap.'],
+    [fmtClock(p.orderAt),'Step 7','Issue the order.']
+  ];
+  const t=[];
+  if(p.prepMin>0)t.push([fmtClock(p.orderAt)+' to '+fmtClock(p.rehStart),'Step 8','Team preparation, planning, and rest ('+fmtDur(p.prepMin)+').']);
+  if(reh>0)t.push([fmtClock(p.rehStart)+' to '+fmtClock(p.pciStart),'Step 8','Rehearsal ('+reh+' min).']);
+  if(pci>0)t.push([fmtClock(p.pciStart)+' to '+fmtClock(p.startPoint),'Step 8','Pre-combat checks and inspections ('+pci+' min).']);
+  if(mv>0)t.push([fmtClock(p.startPoint)+' to '+fmtClock(p.end),'Step 8','Movement to the start point ('+mv+' min).']);
+  t.push([fmtClock(p.end),'Execute','Cross the start point and begin the mission.']);
+  const all=rows.concat(p.fits?t:[]);
+  $('tp-table').innerHTML='<table><thead><tr><th>Time</th><th>Step</th><th>What happens</th></tr></thead><tbody>'+all.map(x=>'<tr><td class="t">'+esc(x[0])+'</td><td>'+esc(x[1])+'</td><td>'+esc(x[2])+'</td></tr>').join('')+
+    (p.fits?'':'<tr class="warn"><td class="t">'+fmtClock(p.orderAt)+' on</td><td>Step 8</td><td>Not enough time. Rehearsal, inspections, and movement need '+(reh+pci+mv)+' min but your team only has '+Math.round(p.sub)+' min after the order.</td></tr>')+'</tbody></table>';
+  if(p.fits){$('tp-msg').className='status win';$('tp-msg').textContent='Issue the order by '+fmtClock(p.orderAt)+' at the latest. Your team then has '+fmtDur(p.sub)+', which covers '+(reh+pci+mv)+' min of rehearsal, inspections, and movement and leaves '+fmtDur(p.prepMin)+' to prepare and rest.';}
+  else{$('tp-msg').className='status bad';$('tp-msg').textContent='The time does not fit. Your team needs '+(reh+pci+mv)+' min for rehearsal, inspections, and movement, and only has '+Math.round(p.sub)+' min. Shorten them, issue the order sooner, or ask for more time.';}
+}
+['tp-recv','tp-exec','tp-days','tp-reh','tp-pci','tp-move'].forEach(i=>{$(i).addEventListener('input',planUpdate);$(i).addEventListener('change',planUpdate);});
+
+/* ---------- Tab 2: step-through ---------- */
+const WALK=[
+ {s:'Receive the mission',q:'The platoon leader gives you the order at 1800. You must depart at 0400. What do you do first?',
+  a:'Read the order for your task, purpose, and the commander\u2019s intent, and work the clock backward from 0400.',
+  w:['Start drawing your route on the map before you have read the whole order.','Wait for the platoon leader to tell you how to plan it.'],
+  e:'Step 1 is about understanding the task and purpose and building a time plan. Working backward from departure shows how much time you and your squad really have.'},
+ {s:'Issue a warning order',q:'You know the mission, the OPORD time of 2100, and the departure time. Your team leaders are waiting. What now?',
+  a:'Send a warning order now with the mission, the time of the order, rehearsal, and departure, so the squad can start preparing.',
+  w:['Wait until the plan is finished so the warning order is complete.','Brief the full five-paragraph order right now.'],
+  e:'A warning order should go out early and be updated later. Waiting wastes your team\u2019s time. The full OPORD comes in step 7.'},
+ {s:'Make a tentative plan',q:'Now you plan. Which approach fits?',
+  a:'Run METT-TC, choose a route and an observation position, and note the risks and how you would react.',
+  w:['Reuse last week\u2019s patrol plan with the names changed.','Ask every team leader to make a separate plan and pick the best.'],
+  e:'The tentative plan comes from analyzing the situation with METT-TC, then building a course of action you can check against the ground.'},
+ {s:'Initiate movement',q:'The squad needs radios, batteries, and ammunition, and the assembly area is a short walk away. You are still planning.',
+  a:'Send a team to draw the gear and move to the assembly area while you keep planning.',
+  w:['Hold everyone in place until the plan is final.','Move the whole squad toward the objective now.'],
+  e:'Step 4 means starting any movement that does not have to wait for the finished plan. It buys time for the later steps.'},
+ {s:'Conduct reconnaissance',q:'You want to check the route and approach to OBJ RAVEN before you finish the plan. Realistically you can only do a map check for now.',
+  a:'Do a map reconnaissance of the route and approach, and check your assumptions about the terrain.',
+  w:['Skip it, because the tentative plan is fine.','Send the whole squad to recon the objective in force.'],
+  e:'A ground recon is best when you can do it. When you cannot, a map recon still tests your assumptions before the plan is final.'},
+ {s:'Complete the plan',q:'Your map recon shows a stream crossing you had not planned for.',
+  a:'Adjust the route around the crossing and prepare a sketch for the order.',
+  w:['Leave the tentative plan unchanged and deal with it on the patrol.','Rewrite the mission to avoid the problem.'],
+  e:'Step 6 updates the plan with what you learned and prepares what you need to brief. The mission comes from higher, so you adjust the how, not the what.'},
+ {s:'Issue the order',q:'It is 2100. Your squad is gathered.',
+  a:'Brief the five-paragraph order at a sand table or sketch, and have the team leaders back-brief their tasks.',
+  w:['Send the order as a text message and skip the brief.','Give only the mission paragraph to save time.'],
+  e:'Brief the full order, in format, where the team can see the terrain or a model. Back-briefs confirm the team understood.'},
+ {s:'Supervise and refine',q:'The order is out. It is 2130 and you depart at 0400.',
+  a:'Rehearse, run pre-combat checks and inspections, and adjust the plan as needed.',
+  w:['Let everyone rest. The order is out, so your work is done.','Change the plan every hour to stay flexible.'],
+  e:'Step 8 is where plans get tested. Rehearsals and inspections find problems while there is still time to fix them.'}
+];
+let wk={i:0,pts:0,done:false,items:[]};
+function startWalk(){wk={i:0,pts:0,done:false,items:WALK.map(w=>shuffle([{t:w.a,ok:true}].concat(w.w.map(x=>({t:x,ok:false})))))};renderWalk();}
+function renderWalk(){
+  $('wk-strip').innerHTML=WALK.map((w,i)=>'<i class="'+(i<wk.i?'done':(i===wk.i?'cur':''))+'"></i>').join('');
+  if(wk.i>=WALK.length){
+    $('wk-card').innerHTML='<small>Complete</small>You finished all 8 steps: '+wk.pts+' of '+WALK.length+' best actions.';
+    $('wk-opts').innerHTML='';$('wk-next').style.display='none';
+    $('wk-status').className='status '+(wk.pts>=7?'win':'');$('wk-status').textContent=wk.pts>=7?'Strong. You know how the steps fit together.':'Read the TLP guide, then start over.';
+    $('wk-score').innerHTML='Score: <b>'+wk.pts+' / '+WALK.length+'</b>';return;
+  }
+  const w=WALK[wk.i];wk.done=false;
+  $('wk-card').innerHTML='<small>Step '+(wk.i+1)+' of 8: '+esc(w.s)+'</small>'+esc(w.q);
+  $('wk-opts').innerHTML=wk.items[wk.i].map((o,k)=>'<button type="button" data-k="'+k+'">'+esc(o.t)+'</button>').join('');
+  document.querySelectorAll('#wk-opts button').forEach(b=>b.addEventListener('click',()=>answerWalk(parseInt(b.dataset.k,10))));
+  $('wk-status').className='status';$('wk-status').textContent='Pick the best action.';
+  $('wk-next').style.display='none';$('wk-score').innerHTML='Step <b>'+(wk.i+1)+' / '+WALK.length+'</b> &nbsp; Best actions: <b>'+wk.pts+'</b>';
+}
+function answerWalk(k){
+  if(wk.done||wk.i>=WALK.length)return;wk.done=true;
+  const opts=wk.items[wk.i],ok=opts[k].ok;if(ok)wk.pts++;
+  document.querySelectorAll('#wk-opts button').forEach((b,i)=>{b.disabled=true;if(opts[i].ok)b.classList.add('right');else if(i===k)b.classList.add('miss');});
+  $('wk-status').className='status '+(ok?'win':'bad');$('wk-status').textContent=(ok?'Best action. ':'Not the best choice. ')+WALK[wk.i].e;
+  $('wk-score').innerHTML='Step <b>'+(wk.i+1)+' / '+WALK.length+'</b> &nbsp; Best actions: <b>'+wk.pts+'</b>';
+  $('wk-next').style.display='inline-block';$('wk-next').textContent=wk.i===WALK.length-1?'See score \u2192':'Next step \u2192';
+}
+function nextWalk(){wk.i++;renderWalk();}
+
+planUpdate();startWalk();
+
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="../" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Army Basics</a> &nbsp;&nbsp; <a href="../tlp-guide/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Read the guide</a> &nbsp;&nbsp; <a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+
+</body>
+</html>

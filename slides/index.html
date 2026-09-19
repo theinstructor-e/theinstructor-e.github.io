@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Readiness Briefing Package — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00aa5a;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --red:#ff4444;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005c34;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --red:#cc2222;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:90px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* ── Header (standard E-WIT header) ── */
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .15s;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:13px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 40px}
+
+/* ── Intro ── */
+.intro{max-width:70ch;font-size:19px;line-height:1.5;color:var(--text-bright);margin-bottom:22px}
+
+/* ── Package map: one segment per deck, width = slide count ── */
+.pkg{background:var(--panel);border:1px solid var(--border-bright);padding:16px 18px 14px;margin-bottom:26px}
+.pkg-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pkg-title{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase}
+.pkg-count{font-family:var(--display);font-size:22px;font-weight:700;color:var(--text-bright);letter-spacing:1px}
+.pkg-count b{color:var(--green)}
+.pkg-count small{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--text-dim);letter-spacing:.5px;margin-left:8px}
+.bar{display:flex;gap:3px}
+.seg{--c:var(--green);flex:var(--w) 1 0%;min-width:0;min-height:46px;padding:4px 2px;background:transparent;border:1px solid var(--c);color:var(--c);font-family:var(--mono);font-size:10.5px;letter-spacing:.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;transition:background .15s,color .15s;position:relative}
+.seg .sn{font-size:9px;opacity:.75}
+.seg::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--c);opacity:.35}
+.seg:hover{background:color-mix(in srgb,var(--c) 18%,transparent)}
+.seg.done{background:var(--c);color:var(--bg)}
+.seg.done .sn{opacity:.85}
+.seg.done::after{display:none}
+.seg.t-standards{--c:var(--cyan)}
+.seg.t-career{--c:var(--amber)}
+.seg.t-pay{--c:var(--green)}
+.pkg-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.3px;align-items:center}
+.pkg-foot a{color:var(--amber);text-decoration:none;border-bottom:1px dotted var(--amber-dim)}
+.pkg-foot a:hover{color:var(--text-bright)}
+.linkbtn{background:none;border:none;color:var(--text-dim);font-family:var(--mono);font-size:12px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;padding:0}
+.linkbtn:hover{color:var(--red)}
+
+/* ── Track filter (same pattern as the landing page tabs) ── */
+.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--border-bright);margin-bottom:6px;scrollbar-width:thin}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:1.5px;color:var(--text-dim);background:none;border:none;padding:11px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s;text-transform:uppercase}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--green);border-bottom-color:var(--green)}
+
+/* ── Track groups ── */
+.group{margin-top:26px}
+.group[hidden]{display:none}
+.group-head{border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.group-head h2{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--gc);text-transform:uppercase;font-weight:400}
+.group-head p{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.3px}
+
+/* ── Deck sheet ── */
+.deck{--accent:var(--green);background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent);padding:16px 18px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:start;position:relative}
+.deck.t-standards{--accent:var(--cyan)}
+.deck.t-career{--accent:var(--amber)}
+.deck.t-pay{--accent:var(--green)}
+.deck.reviewed{border-color:var(--border-bright);border-left-color:var(--accent)}
+.deck.flash{animation:flash 1.3s ease-out 1}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.deck.flash{animation:none;outline:2px solid var(--accent)}}
+.deck-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.deck-title h3{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:1px;color:var(--accent)}
+.code{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--text-dim);border:1px solid var(--border-bright);padding:2px 6px}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;font-weight:700}
+.tag-verify{color:var(--amber);background:var(--amber-dark);border:1px solid var(--amber-dim)}
+.tag-done{color:var(--green);background:var(--green-dark);border:1px solid var(--green-dim)}
+.deck-ds{font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--text);max-width:68ch}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.3px}
+.meta b{color:var(--text-bright);font-weight:400}
+.act{display:flex;flex-direction:column;gap:8px;min-width:170px}
+.btn{font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:10px 14px;cursor:pointer;text-align:center;text-decoration:none;border:1px solid var(--border-bright);background:var(--panel);color:var(--text);transition:all .15s;display:block;min-height:40px}
+.btn-dl{border-color:var(--amber);color:var(--amber);background:var(--amber-dark)}
+.btn-dl:hover{background:var(--amber);color:var(--bg)}
+.btn-rev:hover{border-color:var(--green);color:var(--green)}
+.btn-rev[aria-pressed="true"]{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+
+/* ── Expandable detail ── */
+details{grid-column:1 / -1;border-top:1px dashed var(--border-bright);padding-top:10px}
+summary{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;color:var(--text-dim);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:4px 0;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'\25B8';font-size:10px;transition:transform .15s;color:var(--accent)}
+details[open] summary::before{transform:rotate(90deg)}
+summary:hover{color:var(--text-bright)}
+.detail-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px;padding:12px 0 4px}
+.detail-body h4{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);font-weight:400;margin-bottom:8px;text-transform:uppercase}
+.detail-body ol,.detail-body ul{padding-left:20px;font-family:var(--mono);font-size:13px;line-height:1.65;color:var(--text)}
+.detail-body li{margin-bottom:4px}
+.detail-body li::marker{color:var(--accent)}
+.ask{grid-column:1 / -1;font-family:var(--mono);font-size:13px;line-height:1.6;border-left:2px solid var(--accent);padding:2px 0 2px 12px;color:var(--text-bright)}
+.ask span{color:var(--text-dim);display:block;font-size:11px;letter-spacing:2px;margin-bottom:2px;text-transform:uppercase}
+.note{grid-column:1 / -1;font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--amber);border:1px dashed var(--amber-dim);padding:8px 12px;background:var(--amber-dark)}
+
+/* ── Footer area ── */
+.how{margin-top:34px;padding-top:18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--text-dim);max-width:78ch}
+.how b{color:var(--text-bright);font-weight:400}
+
+@media (max-width:680px){
+  header{padding:12px 16px;position:static}
+  html{scroll-padding-top:12px}
+  h1{font-size:20px;letter-spacing:2px}
+  .sub{padding:10px 16px 0;font-size:12px}
+  .wrap{padding:18px 16px 30px}
+  .intro{font-size:17px}
+  .deck{grid-template-columns:1fr}
+  .act{flex-direction:row;min-width:0}
+  .act .btn{flex:1}
+  .seg{font-size:9.5px}
+  .seg .sn{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Readiness Briefings</h1>
+  </div>
+  <div class="hdr-right">
+    <a class="hdr-link" href="/">&#8592; E-WIT HOME</a>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
+</header>
+<div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Lesson slide decks &nbsp;|&nbsp; U.S. Army Cyber School</div>
+
+<main class="wrap">
+  <p class="intro">Seven short briefings for new Soldiers, from warrior tasks to your TSP. Download a deck to brief it in class, or read through it on your own and mark it reviewed.</p>
+
+  <section class="pkg" aria-label="Package progress">
+    <div class="pkg-top">
+      <div class="pkg-title">Package map</div>
+      <div class="pkg-count"><b id="doneCount">0</b> of <span id="deckTotal">7</span> reviewed<small id="slideTotal"></small></div>
+    </div>
+    <div class="bar" id="bar" role="list"></div>
+    <div class="pkg-foot">
+      <span>Segment width = slide count. Tap a segment to jump to its deck.</span>
+      <span><a href="/slides/certificate/">Print an attendance certificate</a> &nbsp;&middot;&nbsp; <button class="linkbtn" id="resetBtn" type="button">Clear progress</button></span>
+    </div>
+    <div class="pkg-foot" style="margin-top:6px"><span>Progress is saved on this device only.</span></div>
+  </section>
+
+  <div class="tabs" id="tabs" role="group" aria-label="Filter by track"></div>
+  <div id="list"></div>
+
+  <section class="how" aria-label="Using these decks">
+    <b>Briefing a class?</b> Each deck opens with an agenda and ends with a closing question you can use to start discussion.
+    <b>Using them alone?</b> Open the deck in PowerPoint, Keynote, or Google Slides and read it start to finish.
+    Policy and pay details change, so check the notes marked <b>VERIFY</b> against current guidance before you rely on them.
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   DECK DATA — edit here to add or change a deck.
+   To add one: drop the .pptx in /slides/, then add an entry below
+   AND to the SLIDES array in the root index.html (search feature).
+   track: 'standards' | 'career' | 'pay'
+   ============================================================ */
+const TRACKS=[
+  {id:'standards',nm:'Soldier standards',ds:'What every Soldier is expected to know and do.'},
+  {id:'career',nm:'Career & education',ds:'Where your career goes, and how to fund the schooling that gets you there.'},
+  {id:'pay',nm:'Pay, travel & support',ds:'Orders, savings, and the programs that back you and your Family.'}
+];
+const DECKS=[
+  {id:'wtbd',code:'WTBD',nm:'Warrior Tasks & Battle Drills',track:'standards',slides:12,time:'30 min',file:'warrior-tasks-battle-drills.pptx',
+   ds:'The skills every Soldier must own, and how they differ from collective battle drills.',
+   topics:['What Warrior Tasks & Battle Drills are, and why they exist','The 5 categories: Shoot, Move, Communicate, Survive, Adapt','Real examples of tasks inside each category','The 4 core Battle Drills, and how they differ from tasks','Where they show up: sustainment training, CTT, and boards','Common mistakes units and Soldiers make'],
+   take:['5 categories: Shoot, Move, Communicate, Survive, Adapt. Every task fits one.','Battle Drills are instant, team-level reactions, not a task you decide to do.','The Soldier\u2019s Manual of Common Tasks is the official source for all of it.','These are lifetime skills, sustained and tested throughout your career.'],
+   ask:'Which of the 5 categories are you least confident in right now?'},
+  {id:'board',code:'BOARD',nm:'Promotion Board Preparation',track:'standards',slides:23,time:'60\u201375 min, best split across two periods',file:'promotion-board-prep.pptx',
+   ds:'A complete guide plus a Question & Answer bank for Regular Army Soldiers.',
+   topics:['What a promotion/Soldier board is, and why it matters','Board composition, roles, and the notification timeline','Uniform, appearance, and bearing standards','Reporting in and the board room walkthrough','What boards are really scoring, and common mistakes','A Q&A bank across 10 study categories','Study tips, resources, and a mock board drill'],
+   take:['Boards score bearing and composure as much as raw knowledge.','Study all 10 categories, starting 2\u20133 weeks out, not the night before.','Know your own chain of command and unit mission cold.','Run a real mock board before the real one. It is the highest-value prep step.'],
+   ask:'Which of the 10 Q&A categories are you personally weakest in? Pick one to study first this week.',
+   verify:'The current-leadership Q&A slide is dated mid-2026. Reverify names and positions before a board date.'},
+  {id:'career',code:'CAREER',nm:'Professional Development',track:'career',slides:13,time:'30 min',ref:'DA PAM 600-25',file:'career-map-17e.pptx',
+   ds:'Your 17E career map and how to build your Soldier Talent Profile.',
+   topics:['What \u201Cprofessional development\u201D means, and the 4 pillars','Your 17E career path: ranks, time in service, and RCPs','Operating, Generating & Broadening assignments','The PME & JPME ladder from BLC to MLC','Your EW technical training pipeline (SI-series courses)','Building your Soldier Talent Profile (STP) in IPPS-A'],
+   take:['Your 17E Career Map (DA PAM 600-25) lays out your whole path. Bookmark it.','Know your Retention Control Points. They drive your promotion timeline.','PME is required; self-development (education, boards, COOL) is on you.','Your STP in IPPS-A is your Army resume. Keep all 5 categories current.'],
+   ask:'Log into IPPS-A this week and open your Talent Profile. Which of the 5 categories needs the most work?'},
+  {id:'edu',code:'EDU',nm:'Education Benefits',track:'career',slides:11,time:'30 min',file:'education-benefits-17e.pptx',
+   ds:'A practical guide to tuition, credentials, and credit for 17E Soldiers.',
+   topics:['Why education matters on your 17E career path','Tuition Assistance (TA): caps, limits, and how it works','Credentialing Assistance (CA) and a major 2026 policy change','The Post-9/11 GI Bill: tuition, housing, and Yellow Ribbon','Free credit-by-exam: CLEP and DSST through DANTES','Your Joint Services Transcript (JST)'],
+   take:['Check your JST first. It may already cover more than you think.','CLEP/DSST are free and fast. Use them before spending TA hours.','TA covers tuition now; CA requires supervisor approval since Mar 2026.','Save the GI Bill for after service, or to top up what TA doesn\u2019t cover.'],
+   ask:'Log into ArmyIgnitED and JST this week. What is one course or exam you could knock out before your next PCS?',
+   verify:'Credentialing Assistance policy changed in March 2026 (supervisor approval now required). Confirm current rules with your education counselor.'},
+  {id:'tdy',code:'TDY',nm:'TDY for Schools',track:'pay',slides:13,time:'',ref:'JTR Ch. 2\u20133',file:'tdy-for-schools.pptx',
+   ds:'A Soldier\u2019s guide to temporary duty for institutional training: orders, entitlements, GTCC, and DTS.',
+   topics:['What TDY to a school means','TDY vs. PCS','Documents that have to be right before you travel','Per diem and what the government pays','The Government Travel Charge Card (GTCC)','Split disbursement and avoiding delinquency','The Defense Travel System (DTS): authorization before, voucher after','Voucher tips and what to bring'],
+   take:['School = TDY, not PCS. You return to your PDS and your unit doesn\u2019t change.','No valid DTS / DD 1610 order means don\u2019t move. Confirm your ATRRS seat first.','Inside the 50-mile radius? You commute, with no per diem.','Use the GTCC, split disburse, and file your voucher within 5 days.'],
+   ask:'',
+   verify:'Per diem rates are locality-based and change every year. Check current rates in DTS or on the DTMO per diem site.'},
+  {id:'tsp',code:'TSP',nm:'Thrift Savings Plan',track:'pay',slides:11,time:'30 min',file:'tsp-briefing.pptx',
+   ds:'Building your financial mission readiness: the match, the funds, and a plan you can start this week.',
+   topics:['Why saving early matters, even a little','What TSP actually is, in plain English','The Army\u2019s free match, and how to get all of it','Traditional vs. Roth (pre-tax vs. after-tax)','The 5 investment funds, explained simply','A simple game plan you can start this week'],
+   take:['Contribute at least 5%. That is the full Army match, free money.','Keep contributing every paycheck, all year, without stopping.','Roth or Traditional is fine. The mistake is picking neither.','Not sure where to start? The default L Fund already has you covered.'],
+   ask:'What percentage are you going to set when you log into myPay this week?'},
+  {id:'acs',code:'ACS',nm:'Army Community Service',track:'pay',slides:10,time:'25 min',file:'army-community-service.pptx',
+   ds:'The support network you\u2019re already paying for: free, on-post programs for Soldiers and Families.',
+   topics:['What ACS is and who it\u2019s for','Financial Readiness & Army Emergency Relief (AER)','Family Advocacy Program (FAP) and New Parent Support','Relocation Readiness: PCS support that actually helps','Employment Readiness for spouses and family members','Other programs: EFMP, AVC, AFTB, and Survivor Outreach'],
+   take:['ACS is free, confidential, and built for Soldiers and Families at every stage.','Financial Readiness and AER can help long before a small problem gets big.','Relocation Readiness works best when you visit before you PCS, not after.','Employment Readiness is a real career resource for spouses. Pass it along.'],
+   ask:'Which ACS program from today is most relevant to you or your Family right now?'}
+];
+
+/* ---------- progress storage (device-local) ---------- */
+const KEY='ewit_slides_reviewed';
+function loadDone(){
+  try{const a=JSON.parse(localStorage.getItem(KEY)||'[]');return new Set(Array.isArray(a)?a:[]);}
+  catch(e){return new Set();}
+}
+function saveDone(set){
+  try{localStorage.setItem(KEY,JSON.stringify([...set]));}catch(e){}
+}
+let done=loadDone();
+let activeTrack='all';
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ping(path,title){
+  if(window.goatcounter&&window.goatcounter.count){
+    window.goatcounter.count({path:path,title:title,event:true});
+  }
+}
+
+/* ---------- render ---------- */
+function renderBar(){
+  const bar=document.getElementById('bar');
+  bar.innerHTML=DECKS.map(d=>
+    `<button type="button" role="listitem" class="seg t-${d.track}${done.has(d.id)?' done':''}" style="--w:${d.slides}" data-id="${d.id}" aria-label="${esc(d.nm)}, ${d.slides} slides${done.has(d.id)?', reviewed':''}"><span>${esc(d.code)}</span><span class="sn">${d.slides}</span></button>`
+  ).join('');
+  bar.querySelectorAll('.seg').forEach(b=>b.addEventListener('click',()=>jumpTo(b.dataset.id)));
+}
+function renderTabs(){
+  const t=document.getElementById('tabs');
+  const items=[{id:'all',nm:'All briefings'}].concat(TRACKS);
+  t.innerHTML=items.map(i=>`<button type="button" class="tab${i.id===activeTrack?' on':''}" data-t="${i.id}" aria-pressed="${i.id===activeTrack}">${esc(i.nm)}</button>`).join('');
+  t.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{activeTrack=b.dataset.t;renderTabs();applyFilter();}));
+}
+function deckHTML(d){
+  const isDone=done.has(d.id);
+  const meta=[`<span><b>${d.slides}</b> slides</span>`];
+  if(d.time)meta.push(`<span><b>${esc(d.time)}</b></span>`);
+  if(d.ref)meta.push(`<span>Ref: <b>${esc(d.ref)}</b></span>`);
+  return `<article class="deck t-${d.track}${isDone?' reviewed':''}" id="deck-${d.id}" data-track="${d.track}">
+    <div>
+      <div class="deck-title"><span class="code">${esc(d.code)}</span><h3>${esc(d.nm)}</h3>${d.verify?'<span class="tag tag-verify">VERIFY</span>':''}${isDone?'<span class="tag tag-done">REVIEWED</span>':''}</div>
+      <p class="deck-ds">${esc(d.ds)}</p>
+      <div class="meta">${meta.join('')}</div>
+    </div>
+    <div class="act">
+      <a class="btn btn-dl" href="${d.file}" download data-dl="${d.id}">DOWNLOAD PPTX &#8595;</a>
+      <button type="button" class="btn btn-rev" data-rev="${d.id}" aria-pressed="${isDone}">${isDone?'&#10003; REVIEWED':'MARK REVIEWED'}</button>
+    </div>
+    <details>
+      <summary>What&#8217;s inside</summary>
+      <div class="detail-body">
+        <div><h4>Topics</h4><ol>${d.topics.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+        <div><h4>Key takeaways</h4><ul>${d.take.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+        ${d.ask?`<div class="ask"><span>Closing question</span>${esc(d.ask)}</div>`:''}
+        ${d.verify?`<div class="note"><b>VERIFY:</b> ${esc(d.verify)}</div>`:''}
+      </div>
+    </details>
+  </article>`;
+}
+function renderList(){
+  const list=document.getElementById('list');
+  const colorVar={standards:'var(--cyan)',career:'var(--amber)',pay:'var(--green)'};
+  list.innerHTML=TRACKS.map(t=>{
+    const decks=DECKS.filter(d=>d.track===t.id);
+    return `<section class="group" data-group="${t.id}" style="--gc:${colorVar[t.id]}">
+      <div class="group-head"><h2>${esc(t.nm)}</h2><p>${esc(t.ds)}</p></div>
+      ${decks.map(deckHTML).join('')}
+    </section>`;
+  }).join('');
+  list.querySelectorAll('[data-rev]').forEach(b=>b.addEventListener('click',()=>toggleDone(b.dataset.rev)));
+  list.querySelectorAll('[data-dl]').forEach(a=>a.addEventListener('click',()=>{
+    const d=DECKS.find(x=>x.id===a.dataset.dl);
+    ping('slides-download-'+d.id,'Slides download: '+d.nm);
+  }));
+  applyFilter();
+}
+function applyFilter(){
+  document.querySelectorAll('.group').forEach(g=>{
+    g.hidden=!(activeTrack==='all'||g.dataset.group===activeTrack);
+  });
+}
+function updateCounts(){
+  document.getElementById('doneCount').textContent=DECKS.filter(d=>done.has(d.id)).length;
+  document.getElementById('deckTotal').textContent=DECKS.length;
+  const total=DECKS.reduce((n,d)=>n+d.slides,0);
+  document.getElementById('slideTotal').textContent=total+' slides in the package';
+}
+function toggleDone(id){
+  if(done.has(id))done.delete(id);else done.add(id);
+  saveDone(done);
+  const d=DECKS.find(x=>x.id===id);
+  if(done.has(id))ping('slides-reviewed-'+id,'Slides marked reviewed: '+d.nm);
+  // Preserve which details panels are open across the re-render
+  const open=[...document.querySelectorAll('.deck details[open]')].map(x=>x.closest('.deck').id);
+  renderBar();renderList();updateCounts();
+  open.forEach(i=>{const el=document.querySelector('#'+i+' details');if(el)el.open=true;});
+  const btn=document.querySelector('[data-rev="'+id+'"]');if(btn)btn.focus({preventScroll:true});
+  if(DECKS.every(x=>done.has(x.id)))ping('slides-package-complete','Slides package: all reviewed');
+}
+function jumpTo(id){
+  const d=DECKS.find(x=>x.id===id);
+  if(activeTrack!=='all'&&activeTrack!==d.track){activeTrack='all';renderTabs();applyFilter();}
+  const el=document.getElementById('deck-'+id);
+  if(!el)return;
+  el.scrollIntoView({block:'center'});
+  el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(!done.size)return;
+  if(confirm('Clear reviewed status for all briefings on this device?')){
+    done=new Set();saveDone(done);renderBar();renderList();updateCounts();
+  }
+});
+
+renderBar();renderTabs();renderList();updateCounts();
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

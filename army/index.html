@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Army Basics — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00aa5a;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --purple:#bb88ff;--red:#ff4444;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005c34;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --purple:#6b3fd0;--red:#cc2222;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:90px}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+.hdr-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .15s;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:13px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 40px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (max-width:680px){
+  header{padding:12px 16px;position:static}
+  html{scroll-padding-top:12px}
+  h1{font-size:20px;letter-spacing:2px}
+  .sub{padding:10px 16px 0;font-size:12px}
+  .wrap{padding:18px 16px 30px}
+}
+
+.intro{max-width:70ch;font-size:19px;line-height:1.5;color:var(--text-bright);margin-bottom:22px}
+.pkg{background:var(--panel);border:1px solid var(--border-bright);padding:16px 18px 14px;margin-bottom:8px}
+.pkg-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pkg-title{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase}
+.pkg-count{font-family:var(--display);font-size:22px;font-weight:700;color:var(--text-bright);letter-spacing:1px}
+.pkg-count b{color:var(--green)}
+.bar{display:flex;gap:3px}
+.seg{--c:var(--green);flex:var(--w) 1 0%;min-width:0;height:14px;border:1px solid var(--c);background:linear-gradient(to right,var(--c) var(--p,0%),transparent var(--p,0%));display:block;text-decoration:none}
+.seg.g-identity{--c:var(--green)}.seg.g-org{--c:var(--cyan)}.seg.g-duty{--c:var(--amber)}.seg.g-mos{--c:var(--purple)}
+.pkg-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.3px;align-items:center}
+.linkbtn{background:none;border:none;color:var(--text-dim);font-family:var(--mono);font-size:12px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;padding:0}
+.linkbtn:hover{color:var(--red)}
+.group{margin-top:26px}
+.group-head{border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.group-head h2{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--gc);text-transform:uppercase;font-weight:400}
+.group-head p{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:flex;flex-direction:column}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.6}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){.card{transition:border-color .15s}.card:hover{transform:none}}
+.card .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.6;flex:1}
+.card .stat{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px}
+.card .stat .go{color:var(--accent)}
+.mini{height:4px;background:var(--border);margin-top:8px}
+.mini i{display:block;height:100%;background:var(--accent);width:0}
+.gi{--accent:var(--green);--gc:var(--green)}.go2{--accent:var(--cyan);--gc:var(--cyan)}.gd{--accent:var(--amber);--gc:var(--amber)}.gm{--accent:var(--purple);--gc:var(--purple)}
+.sec-title{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:2px;color:var(--text-bright);text-transform:uppercase;margin:34px 0 4px;padding-bottom:6px;border-bottom:2px solid var(--border-bright)}
+.sec-title:first-of-type{margin-top:8px}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
+.tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
+[data-theme="light"] .tag-guide{color:#5a3ccc}
+.tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
+.card .cat{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);margin-bottom:6px}
+.card.is-guide{border-style:dashed}
+.l-green{--accent:var(--green);--gc:var(--green)}.l-purple{--accent:var(--purple);--gc:var(--purple)}.l-amber{--accent:var(--amber);--gc:var(--amber)}
+.pkg{margin-top:18px}
+.note{margin-top:34px;padding-top:18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--text-dim);max-width:78ch}
+.note a{color:var(--amber);text-decoration:none;border-bottom:1px dotted var(--amber-dim)}
+.note b{color:var(--text-bright);font-weight:400}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Army Basics</h1>
+  </div>
+  <div class="hdr-right">
+    <a class="hdr-link" href="/">&#8592; E-WIT HOME</a>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
+</header>
+<div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Common concepts every Soldier is expected to know</div>
+
+<main class="wrap">
+  <p class="intro">Guides and interactives for land navigation and planning, plus nine flashcard sets on the basics: values, creeds, rank, drill, and more.</p>
+
+  <h2 class="sec-title">Guides &amp; interactives</h2>
+  <section class="group l-green"><div class="group-head"><h2>Land navigation</h2><p>Read a map, take a direction, and walk a distance.</p></div><div class="grid"><a class="card tcard is-guide" href="land-nav-guide/"><div class="cat">LAND NAVIGATION <span class="tag tag-guide">GUIDE</span></div><div class="nm">Land Navigation Explained</div><div class="ds">Maps, grids, azimuths, the compass, pace count, and terrain association in six short tabs.</div><div class="stat"><span></span><span class="go">READ &#8594;</span></div></a><a class="card tcard" href="land-nav/"><div class="cat">LAND NAVIGATION <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">Land Nav Toolkit</div><div class="ds">Convert azimuths, practice 6-digit grids, work pace count and map distance, and solve legs between two points.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a></div></section><section class="group l-purple"><div class="group-head"><h2>Planning and orders</h2><p>How leaders and staffs turn a mission into a plan.</p></div><div class="grid"><a class="card tcard is-guide" href="tlp-guide/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-guide">GUIDE</span></div><div class="nm">Troop Leading Procedures Explained</div><div class="ds">The eight steps, the one-third and two-thirds rule, a worked squad patrol, and how TLP compares with MDMP.</div><div class="stat"><span></span><span class="go">READ &#8594;</span></div></a><a class="card tcard" href="tlp-planner/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">TLP Planner</div><div class="ds">Work a backward time plan with the one-third and two-thirds rule, then run a squad patrol through the 8 steps.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a><a class="card tcard" href="/tlp/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">TLP Trainer</div><div class="ds">Put the 8 troop leading procedures in order and drill METT-TC.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a><a class="card tcard" href="/opord/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">OPORD Builder</div><div class="ds">Build a 5-paragraph operation order with a live preview.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a><a class="card tcard is-guide" href="mdmp-guide/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-guide">GUIDE</span></div><div class="nm">MDMP Explained</div><div class="ds">The seven steps, key products and terms, and how to shorten the process under time pressure.</div><div class="stat"><span></span><span class="go">READ &#8594;</span></div></a><a class="card tcard" href="mdmp/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">MDMP Planner</div><div class="ds">Step cards, sequencing and matching drills, a one-third and two-thirds timeline, and a COA decision matrix.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a><a class="card tcard is-guide" href="/planningguide/"><div class="cat">PLANNING AND ORDERS <span class="tag tag-guide">GUIDE</span></div><div class="nm">Planning &amp; Tactics Explained</div><div class="ds">Plain-language guide to TLP, the OPORD, battle drills, and formations.</div><div class="stat"><span></span><span class="go">READ &#8594;</span></div></a></div></section><section class="group l-amber"><div class="group-head"><h2>Movement and formations</h2><p>How a squad arranges itself and how carefully it moves.</p></div><div class="grid"><a class="card tcard is-guide" href="foom-guide/"><div class="cat">MOVEMENT AND FORMATIONS <span class="tag tag-guide">GUIDE</span></div><div class="nm">FOOM Explained</div><div class="ds">Formations and order of movement: fire team, squad, and platoon formations, the three movement techniques, and how leaders choose.</div><div class="stat"><span></span><span class="go">READ &#8594;</span></div></a><a class="card tcard" href="foom/"><div class="cat">MOVEMENT AND FORMATIONS <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">FOOM Trainer</div><div class="ds">A decision aid for technique and formation, eight scenarios to work, and a step-through of alternate versus successive bounds.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a><a class="card tcard" href="/wtbd/"><div class="cat">MOVEMENT AND FORMATIONS <span class="tag tag-int">INTERACTIVE</span></div><div class="nm">WTBD &amp; FOOM</div><div class="ds">Warrior tasks, animated battle drill sims, and a viewer that draws each formation and movement technique.</div><div class="stat"><span></span><span class="go">LAUNCH &#8594;</span></div></a></div></section>
+
+  <h2 class="sec-title">Flashcard study sets</h2>
+
+  <section class="pkg" aria-label="Overall progress">
+    <div class="pkg-top">
+      <div class="pkg-title">Flashcard progress</div>
+      <div class="pkg-count"><b id="knownAll">0</b> of <span id="totalAll">0</span> cards known</div>
+    </div>
+    <div class="bar" id="bar"></div>
+    <div class="pkg-foot">
+      <span>Each segment is one concept, sized by card count. Progress is saved on this device only.</span>
+      <button class="linkbtn" id="resetBtn" type="button">Clear progress</button>
+    </div>
+  </section>
+
+  <div id="groups"></div>
+
+  <section class="note">
+    <b>Where the flashcards come from.</b> Every card is taken from the Question &amp; Answer bank in the
+    <a href="/slides/#deck-board">Promotion Board Preparation deck</a>, so what you study here matches what is taught in class.
+    <b>Not included:</b> the current-leadership questions (Secretary of the Army, Chief of Staff, Sergeant Major of the Army). Those change, so they stay on the deck&#8217;s VERIFY slide rather than becoming cards that go stale.
+  </section>
+</main>
+
+<script>
+const GROUPS=[{"id": "identity", "nm": "Values & identity", "ds": "What the Army stands for and how Soldiers carry it."}, {"id": "org", "nm": "Organization", "ds": "How the Army is built and who leads what."}, {"id": "duty", "nm": "Duties & skills", "ds": "What Soldiers are expected to do and how they do it."}, {"id": "mos", "nm": "Your MOS", "ds": "The basics of being a 17E."}];
+const CATS=[{"slug": "values", "title": "Army Values", "ds": "The seven values behind LDRSHIP, with their official definitions.", "group": "identity", "qs": ["What does LDRSHIP stand for?", "Army Value: Loyalty. What is the official definition?", "Army Value: Duty. What is the official definition?", "Army Value: Respect. What is the official definition?", "Army Value: Selfless Service. What is the official definition?", "Army Value: Honor. What is the official definition?", "Army Value: Integrity. What is the official definition?", "Army Value: Personal Courage. What is the official definition?"]}, {"slug": "creeds", "title": "Soldier’s Creed & NCO Creed", "ds": "Key lines and ideas from both creeds.", "group": "identity", "qs": ["What is the opening line of the Soldier's Creed?", "What line references warrior tasks and drills?", "What line in the Soldier's Creed refers to never abandoning a teammate?", "What is the opening line of the NCO Creed?", "What is the NCO Corps known as, per the NCO Creed?", "What are an NCO's two basic responsibilities per the creed?", "What is an NCO's \"watchword,\" per the creed?", "According to the creed, what will every Soldier receive from their NCO?"]}, {"slug": "customs", "title": "Customs, Courtesies & Traditions", "ds": "Saluting, Reveille and Retreat, the Army birthday, and other traditions.", "group": "identity", "qs": ["When do you render a hand salute?", "What is Reveille?", "What is Retreat?", "What does the Army celebrate as its birthday?", "What color is the fringe on the Army flag?", "What is a \"Pass in Review\"?"]}, {"slug": "structure", "title": "Army Structure & Chain of Command", "ds": "Unit sizes, who leads them, and how the chain of command and NCO Support Channel work.", "group": "org", "qs": ["What is the smallest organized Army element?", "About how large is a squad?", "About how large is a platoon, and who leads it?", "About how large is a company, and who commands it?", "About how large is a battalion, and who commands it?", "About how large is a brigade, and who commands it?", "What is the chain of command?", "What is the NCO Support Channel?"]}, {"slug": "rank", "title": "Rank & Insignia", "ds": "Grades, insignia, and the difference between an SGM and a CSM.", "group": "org", "qs": ["What rank is E-5?", "What rank is E-6?", "What insignia does a Sergeant First Class (E-7) wear?", "What insignia does a Command Sergeant Major wear?", "What rank is O-1?", "What rank is W-1?", "What's the difference between a Sergeant Major and a Command Sergeant Major?"]}, {"slug": "general-orders", "title": "General Orders & Guard Duty", "ds": "The three General Orders and what “properly relieved” means.", "group": "duty", "qs": ["What is the First General Order?", "What is the Second General Order?", "What is the Third General Order?", "When are you considered \"properly relieved\" from a post?", "What should you do if you don't understand a special order for your post?", "Why do General Orders apply to every Soldier, not just those on guard duty?"]}, {"slug": "drill", "title": "Drill & Ceremony", "ds": "Basic commands: stepping off, alignment, halting, and saluting in formation.", "group": "duty", "qs": ["What is the command to begin marching from a halt?", "What foot do you always step off on when marching?", "What command aligns a formation at proper interval and distance?", "What command brings a marching formation to a stop?", "What is \"normal interval\" in a formation?", "What command renders a hand salute while in formation?"]}, {"slug": "warrior-tasks", "title": "Warrior Tasks & Battle Drills", "ds": "The five task categories, the core Battle Drills, and key standards.", "group": "duty", "qs": ["What are the 5 categories of Warrior Tasks?", "Name the 4 core Battle Drills.", "What is the standard for zeroing an M4?", "What is the time standard to don, clear, and check a protective mask?", "What's the difference between a Warrior Task and a Battle Drill?", "What publication is the authoritative source for Warrior Tasks and Battle Drills?"]}, {"slug": "17e-basics", "title": "17E Basics", "ds": "What 17E and its common acronyms mean, and where your career path is documented.", "group": "mos", "qs": ["What does 17E stand for?", "What does EMSO stand for?", "What does CEMA stand for?", "What does SIGINT stand for?", "What document lays out your MOS's critical individual tasks?", "What official Army document maps your entire 17E career path?", "Name one recurring technical course on the 17E career map."]}];
+function hashQ(s){let x=5381;for(let i=0;i<s.length;i++)x=((x<<5)+x+s.charCodeAt(i))|0;return (x>>>0).toString(36);}
+function loadKnown(slug){try{const a=JSON.parse(localStorage.getItem('ewit_army_'+slug)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+function saveKnown(slug,set){try{localStorage.setItem('ewit_army_'+slug,JSON.stringify([...set]));}catch(e){}}
+
+const $=id=>document.getElementById(id);
+const GCLASS={identity:'gi',org:'go2',duty:'gd',mos:'gm'};
+CATS.forEach(c=>{c.ids=new Set(c.qs.map(hashQ));});
+function knownCount(c){return loadKnown(c.slug).filter(x=>c.ids.has(x)).length;}
+
+function render(){
+  const total=CATS.reduce((n,c)=>n+c.qs.length,0);
+  const counts=CATS.map(knownCount);
+  const known=counts.reduce((a,b)=>a+b,0);
+  $('knownAll').textContent=known;$('totalAll').textContent=total;
+  $('bar').innerHTML=CATS.map((c,i)=>{
+    const p=Math.round(100*counts[i]/c.qs.length);
+    return '<a class="seg g-'+c.group+'" href="'+c.slug+'/" style="--w:'+c.qs.length+';--p:'+p+'%" title="'+esc(c.title)+': '+counts[i]+' of '+c.qs.length+' known" aria-label="'+esc(c.title)+', '+counts[i]+' of '+c.qs.length+' known"></a>';
+  }).join('');
+  $('groups').innerHTML=GROUPS.map(g=>{
+    const items=CATS.map((c,i)=>({c:c,k:counts[i]})).filter(x=>x.c.group===g.id);
+    return '<section class="group '+GCLASS[g.id]+'"><div class="group-head"><h2>'+esc(g.nm)+'</h2><p>'+esc(g.ds)+'</p></div><div class="grid">'+
+      items.map(x=>{
+        const n=x.c.qs.length,p=Math.round(100*x.k/n);
+        const status=x.k===n?'ALL KNOWN':(x.k?x.k+' / '+n+' KNOWN':n+' CARDS');
+        return '<a class="card" href="'+x.c.slug+'/"><div class="nm">'+esc(x.c.title)+'</div><div class="ds">'+esc(x.c.ds)+'</div>'+
+          '<div class="mini"><i style="width:'+p+'%"></i></div>'+
+          '<div class="stat"><span>'+status+'</span><span class="go">'+(x.k===n?'REVIEW':x.k?'CONTINUE':'STUDY')+' &#8594;</span></div></a>';
+      }).join('')+'</div></section>';
+  }).join('');
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+$('resetBtn').addEventListener('click',()=>{
+  if(!CATS.some(c=>knownCount(c)))return;
+  if(confirm('Clear known cards for every Army Basics concept on this device?')){
+    CATS.forEach(c=>saveKnown(c.slug,new Set()));render();
+  }
+});
+
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+
+render();
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:10px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:14px 16px 24px;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; E-WIT home</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electromagnetic Warfare Interactive Tool (E-WIT)</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:18px 28px;background:var(--panel);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:12px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase}
+h1 span{color:var(--text-dim);font-weight:400}
+.theme-btn{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.sub{font-family:var(--mono);font-size:13px;color:var(--text-dim);letter-spacing:1px;padding:10px 28px 0;max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 28px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s;text-decoration:none;color:var(--text);display:block}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--green));opacity:.5}
+.card:hover{border-color:var(--accent,var(--green));transform:translateY(-2px)}
+.card .cat{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.card .nm{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:1px;color:var(--accent,var(--green));margin-bottom:4px}
+.card .ds{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.6}
+.card .go{font-family:var(--mono);font-size:11px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
+.tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
+.tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
+.tag-quiz{color:#ffb300;background:rgba(255,179,0,.16);border:1px solid rgba(255,179,0,.4)}
+[data-theme="light"] .tag-guide{color:#5a3ccc}
+.card.is-guide{border-style:dashed}
+.card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
+.section-label{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:color .15s}
+.section-label:hover{color:var(--green)}
+.cat-chevron{font-size:9px;display:inline-block;transition:transform .15s}
+.cat-count{font-size:11px;color:var(--text-dim);letter-spacing:0;font-weight:400;margin-left:auto}
+.section-label:first-child{margin-top:0}
+.empty-cat{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
+.pagetabs{display:flex;gap:8px}
+.pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
+  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s}
+.pagetab:hover{border-color:var(--amber);color:var(--amber)}
+.pagetab.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+.page{display:none}
+.page.on{display:block}
+.tag-slide{color:var(--amber);background:var(--amber-dark);border:1px solid var(--amber-dim)}
+.pagetabs-bar{background:var(--panel);border-bottom:1px solid var(--border-bright);padding:0 28px}
+.pagetabs-bar .pagetabs{max-width:1080px;margin:0 auto;padding:10px 0}
+
+/* ── Site-wide search bar (visible on every page tab) ──── */
+.global-search-bar{display:flex;gap:10px;align-items:center;padding:14px 28px;max-width:1080px;margin:0 auto;flex-wrap:wrap}
+.search-wrap{flex:1;min-width:220px;max-width:460px;position:relative}
+.search-wrap input{width:100%;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-bright);
+  font-family:var(--mono);font-size:13px;padding:9px 14px 9px 30px;letter-spacing:.4px}
+.search-wrap input:focus{outline:none;border-color:var(--green)}
+.search-wrap input::placeholder{color:var(--text-dim)}
+.search-wrap::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:14px;pointer-events:none}
+.search-count{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:.5px;white-space:nowrap}
+
+/* ── Category tabs (replaces stacked collapsible sections) ─ */
+.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--border-bright);margin-bottom:18px;scrollbar-width:thin}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:1.5px;color:var(--text-dim);background:none;border:none;
+  padding:11px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--green);border-bottom-color:var(--green)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>Electromagnetic Warfare Interactive Tool (E-WIT)</h1>
+  </div>
+  <a href="index.html" class="theme-btn" style="text-decoration:none;display:inline-flex;align-items:center;margin-right:8px">🎮 ADVENTURE MAP</a>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+</header>
+<div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Electromagnetic Warfare Specialist — Self-Contained Interactive References</div>
+
+<div class="global-search-bar">
+  <div class="search-wrap"><input id="globalSearch" placeholder="Search everything — tools, guides, quizzes, slides, learning..." oninput="globalSearch()"></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="pagetabs-bar">
+  <div class="pagetabs">
+    <button class="pagetab on" id="tab-tools" onclick="showPage('tools')">TOOLS</button>
+    <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
+    <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
+    <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
+    <a class="pagetab" id="tab-army" href="army/">ARMY</a>
+  </div>
+</div>
+
+<div id="page-tools" class="page on">
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div id="view-grid"></div>
+</div>
+</div>
+
+<div id="page-search" class="page">
+<div class="wrap">
+  <div id="view-search"></div>
+</div>
+</div>
+
+<div id="page-slides" class="page">
+<div class="wrap">
+  <div id="view-slides"></div>
+</div>
+</div>
+
+<div id="page-learning" class="page">
+<div class="wrap">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Self-study resources for career progression beyond this course — external links open in a new tab. Details below are current as of research, but always verify current requirements/costs directly with the certifying body before committing time or money.
+  </div>
+  <div class="tabs" id="tabsLearning"></div>
+  <div id="view-learning"></div>
+</div>
+</div>
+
+<div id="page-wraven" class="page">
+<div class="wrap">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Self-paced WRAVEN modules — each opens as its own interactive lesson with inline quizzes, a final exam, and a printable certificate of completion.
+  </div>
+  <div id="view-wraven"></div>
+</div>
+</div>
+
+<script>
+// Section order. Empty sections still render (placeholder shown) so you can fill them later.
+const CATEGORIES=['B1 Math','B2 Physics','C BET','D Networking','E EW Theory','F Systems','G Planning'];
+// hrefs/labels match your existing site. Edit "file" if your paths change.
+const TOOLS=[
+  // B1 Math
+  {cat:'B1 Math',kind:'guide',nm:'Math Explained',ds:'Plain-language guide: algebra, trig, logarithms & decibels',file:'mathguide',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math for EW',ds:'Algebra, trigonometry, logarithms & decibels calculators',file:'mathtools',color:'#3d7fd6'},
+  {cat:'B1 Math',nm:'Math',ds:'Core math refresher for EW calculations',file:'math',color:'#ffb300'},
+  // B2 Physics
+  {cat:'B2 Physics',kind:'guide',nm:'Radio Waves Explained',ds:'Plain-language guide: waves, spectrum, propagation, loss & antennas',file:'physicsguide',color:'#00d4ff'},
+  {cat:'B2 Physics',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'AC Circuit Theory & Impedance',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
+  {cat:'B2 Physics',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
+  {cat:'B2 Physics',nm:'Signal Quality & Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
+  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff',kw:'signal identification waterfall frequency band spectrum analyzer emitter recognition'},
+  // C BET
+  {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
+  {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
+  {cat:'C BET',nm:'Circuit Bench',ds:'Hands-on circuit builder \u2014 place parts, wire them, watch it solve',file:'betsim',color:'#00ff88',kw:'breadboard resistor capacitor circuit simulator schematic wiring electronics lab'},
+  // E EW Theory
+  {cat:'E EW Theory',kind:'guide',nm:'Electromagnetic Warfare Explained',ds:'Plain-language guide: ES/EA/EP, jamming, DF & GPS attacks',file:'ewguide',color:'#ff4444'},
+  {cat:'E EW Theory',kind:'guide',nm:'Signal Identification Explained',ds:'Plain-language guide: the four traits that identify any signal, reading a waterfall, and real EW research behind it',file:'sigidguide',color:'#ff4444',kw:'signal identification waterfall spectrum frequency bandwidth duty cycle hopping GTRI angry kitten pysdr'},
+  {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444',kw:'electronic support electronic attack electronic protection jamming warfare framework'},
+  {cat:'E EW Theory',nm:'Signal ID Trainer',ds:'50 real signals across a scrollable live spectrum survey, an ID quiz with anomaly detection, and a categorized reference library',file:'sigid',color:'#ff4444',kw:'signal identification waterfall spectrum analyzer SIGINT anomaly detection radar OTH jammer cellular'},
+  {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff',kw:'dipole yagi antenna gain radiation pattern element spacing directional'},
+  {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff',kw:'direction finding triangulation geolocation emitter location bearing lines terrain masking'},
+  {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff',kw:'satellite navigation jamming fake location signal deception position spoofing PNT denial'},
+  {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff',kw:'FHSS anti-jam frequency agility spread spectrum hopping sequence dwell time'},
+  // D Networking
+  {cat:'D Networking',kind:'guide',nm:'Networking Explained',ds:'Plain-language guide: OSI, MAC/IP, subnetting, DHCP, TCP/UDP & ports, DNS/URLs, topologies & gear',file:'networkguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
+  {cat:'D Networking',kind:'guide',nm:'Wi-Fi Explained',ds:'Plain-language guide: Wi-Fi standards, bands & channels',file:'wifiguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh',color:'#00ff88'},
+  {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
+  {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
+  {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
+  {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a',kw:'man in the middle attack mitm adversary-in-the-middle eavesdropping packet interception ssl strip downgrade fake certificate rogue access point ARP poisoning session hijacking'},
+  // F Systems
+  {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
+  {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
+  {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700',kw:'counter drone anti-drone UAS defeat detection tracking'},
+  {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700',kw:'counter drone anti-drone UAS defeat engagement kill chain interceptor jamming'},
+  // G Planning
+  {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
+  {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff',kw:'troop leading procedures mission planning sequence order of operations METT-TC'},
+  {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff',kw:'operation order five paragraph order mission planning document'},
+  {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff',kw:'warrior tasks battle drills formations of movement squad tactics'},
+];
+function catId(cat){ return cat.replace(/[^a-zA-Z0-9]/g,'-'); }
+
+let activeCat='ALL';
+
+function renderTabs(){
+  const tabs=['ALL',...CATEGORIES];
+  document.getElementById('tabs').innerHTML=tabs.map(c=>
+    `<button class="tab${c===activeCat?' on':''}" data-c="${c}" onclick="setCat('${c}')">${c==='ALL'?'ALL TOOLS':c}</button>`
+  ).join('');
+}
+function setCat(c){
+  activeCat=c;
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('on', el.dataset.c===c));
+  render();
+}
+function sortWeight(t){
+  if(t.kind==='guide') return 0;
+  if(t.kind==='quiz') return 2;
+  return 1;
+}
+function render(){
+  let items=activeCat==='ALL'?TOOLS:TOOLS.filter(t=>t.cat===activeCat);
+  if(activeCat==='ALL'){
+    items=items.slice().sort((a,b)=>{
+      const catDiff=CATEGORIES.indexOf(a.cat)-CATEGORIES.indexOf(b.cat);
+      if(catDiff!==0) return catDiff;
+      return sortWeight(a)-sortWeight(b);
+    });
+  } else {
+    items=items.slice().sort((a,b)=>sortWeight(a)-sortWeight(b));
+  }
+  if(!items.length){
+    document.getElementById('view-grid').innerHTML=`<div class="empty-cat">No tools yet \u2014 coming soon</div>`;
+    return;
+  }
+  const cardHtml=t=>{
+    const guide=t.kind==='guide';
+    const quiz=t.kind==='quiz';
+    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+    const go=guide?'READ \u2192':'LAUNCH \u2192';
+    return `<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+      <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
+      <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
+  };
+  let vh='';
+  if(activeCat==='ALL'){
+    let lastCat=null;
+    items.forEach(t=>{
+      if(t.cat!==lastCat){
+        if(lastCat!==null) vh+='</div>';
+        vh+=`<div class="section-label" style="cursor:default;user-select:auto">${t.cat}</div><div class="grid">`;
+        lastCat=t.cat;
+      }
+      vh+=cardHtml(t);
+    });
+    vh+='</div>';
+  } else {
+    vh='<div class="grid">'+items.map(cardHtml).join('')+'</div>';
+  }
+  document.getElementById('view-grid').innerHTML=vh;
+}
+renderTabs();
+
+/* ── Site-wide search across Tools, Guides, Slides, Learning & WRAVEN ── */
+let lastPage='tools';
+function normalize(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+function globalSearch(){
+  const q=normalize(document.getElementById('globalSearch').value);
+  const pages=['tools','slides','learning','wraven'];
+  if(!q){
+    document.getElementById('page-search').classList.remove('on');
+    pages.forEach(n=>{
+      document.getElementById('page-'+n).classList.toggle('on', n===lastPage);
+      document.getElementById('tab-'+n).classList.toggle('on', n===lastPage);
+    });
+    document.getElementById('searchCount').textContent='';
+    return;
+  }
+  pages.forEach(n=>{
+    document.getElementById('page-'+n).classList.remove('on');
+    document.getElementById('tab-'+n).classList.remove('on');
+  });
+  document.getElementById('page-search').classList.add('on');
+
+  let results=[];
+  TOOLS.forEach(t=>{
+    if(normalize(t.nm+' '+t.ds+' '+t.cat+' '+(t.kw||'')).includes(q)){
+      const rType=t.kind==='guide'?'GUIDE':t.kind==='quiz'?'QUIZ':'INTERACTIVE';
+      const rClass=t.kind==='guide'?'tag-guide':t.kind==='quiz'?'tag-quiz':'tag-int';
+      results.push({type:rType, typeClass:rClass,
+        section:t.cat, nm:t.nm, ds:t.ds, href:t.file, color:t.color, go:t.kind==='guide'?'READ \u2192':'LAUNCH \u2192'});
+    }
+  });
+  SLIDES.forEach(s=>{
+    if(normalize(s.nm+' '+s.ds+' '+(s.kw||'')).includes(q)){
+      results.push({type:'PPTX', typeClass:'tag-slide', section:'Lesson Slide Deck', nm:s.nm, ds:s.ds,
+        href:s.file, color:'#ffb300', download:true, go:'DOWNLOAD \u2193'});
+    }
+  });
+  LEARN.forEach(l=>{
+    if(normalize(l.nm+' '+l.ds+' '+l.cat+' '+(l.kw||'')).includes(q)){
+      results.push({type:l.tag, typeClass:'tag-int', section:l.cat, nm:l.nm, ds:l.ds,
+        href:l.url, color:l.color, external:true, go:'OPEN \u2192'});
+    }
+  });
+  ARMY.forEach(a=>{
+    if(normalize(a.nm+' '+a.ds+' '+(a.kw||'')).includes(q)){
+      const isG=a.kind==='guide',isT=a.kind==='tool';
+      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':a.kind==='cards'?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:'Army Basics', nm:a.nm, ds:a.ds,
+        href:a.file, color:isG?'#7a5cff':isT?'#00ff88':'#00d4ff', go:isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192'});
+    }
+  });
+  WRAVEN_MODULES.forEach(m=>{
+    if(normalize(m.nm+' '+m.ds+' '+(m.kw||'')).includes(q)){
+      results.push({type:'MODULE', typeClass:'tag-int', section:'WRAVEN', nm:m.nm, ds:m.ds,
+        href:m.file, color:m.color, go:'BEGIN \u2192'});
+    }
+  });
+
+  document.getElementById('searchCount').textContent=`${results.length} result${results.length===1?'':'s'} across the site`;
+
+  if(!results.length){
+    document.getElementById('view-search').innerHTML=`<div class="empty-cat">No matches for "${q}" anywhere on the site.</div>`;
+    return;
+  }
+  let vh='<div class="grid">';
+  results.forEach(r=>{
+    const attrs=(r.external?'target="_blank" rel="noopener" ':'')+(r.download?'download':'');
+    vh+=`<a class="card" href="${r.href}" ${attrs} style="--accent:${r.color}">
+      <div class="cat">${r.section} <span class="tag ${r.typeClass}">${r.type}</span></div><div class="nm">${r.nm}</div>
+      <div class="ds">${r.ds}</div><div class="go">${r.go}</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-search').innerHTML=vh;
+}
+// Lesson slide decks — 10-Day EW Networking Fundamentals course. Edit file paths once your .pptx files are uploaded to /slides/.
+// Army Basics pages (army/) — used by the site-wide search only.
+const ARMY=[
+ {
+  "nm": "Army Basics",
+  "ds": "Guides, interactives, and flashcards for common Army concepts",
+  "file": "army/",
+  "kind": "hub",
+  "kw": "army basics soldier concepts study guides interactives flashcards"
+ },
+ {
+  "nm": "Land Navigation Explained",
+  "ds": "Maps, grids, azimuths, the compass, pace count, and terrain association",
+  "file": "army/land-nav-guide/",
+  "kind": "guide",
+  "kw": "land nav navigation map reading grid coordinates azimuth back azimuth mils degrees declination grid magnetic angle lensatic compass protractor pace count ranger beads terrain association contour intervals resection intersection TC 3-25.26"
+ },
+ {
+  "nm": "Land Nav Toolkit",
+  "ds": "Azimuth converter, 6-digit grid practice, pace count and map distance, leg calculator",
+  "file": "army/land-nav/",
+  "kind": "tool",
+  "kw": "land nav navigation azimuth converter grid magnetic G-M angle LARS back azimuth 6-digit grid coordinates plot pace count map scale distance leg practice"
+ },
+ {
+  "nm": "Troop Leading Procedures Explained",
+  "ds": "The eight steps, the one-third and two-thirds rule, a worked squad patrol, and TLP versus MDMP",
+  "file": "army/tlp-guide/",
+  "kind": "guide",
+  "kw": "TLP troop leading procedures warning order WARNORD METT-TC tentative plan reconnaissance rehearsal PCC PCI one third two thirds"
+ },
+ {
+  "nm": "TLP Planner",
+  "ds": "Backward time plan with the one-third and two-thirds rule, and a step-through of the 8 steps",
+  "file": "army/tlp-planner/",
+  "kind": "tool",
+  "kw": "TLP planner troop leading procedures time plan one third two thirds warning order rehearsal PCC PCI backward planning step through squad patrol"
+ },
+ {
+  "nm": "MDMP Explained",
+  "ds": "The seven steps, key products and terms, and how to shorten the process",
+  "file": "army/mdmp-guide/",
+  "kind": "guide",
+  "kw": "MDMP military decision making process mission analysis COA development wargame course of action commander intent CCIR EEFI running estimate RDSP FM 5-0"
+ },
+ {
+  "nm": "MDMP Planner",
+  "ds": "Step cards, sequencing and matching drills, timeline calculator, COA decision matrix",
+  "file": "army/mdmp/",
+  "kind": "tool",
+  "kw": "MDMP planner course of action COA decision matrix screening suitable feasible acceptable distinguishable complete timeline one third two thirds planning time seven steps sequence wargame quiz"
+ },
+ {
+  "nm": "FOOM Explained",
+  "ds": "Formations and order of movement: formations, movement techniques, and control",
+  "file": "army/foom-guide/",
+  "kind": "guide",
+  "kw": "FOOM formations order of movement wedge file column line vee squad platoon fire team traveling traveling overwatch bounding overwatch alternate successive bounds danger area intervals ATP 3-21.8"
+ },
+ {
+  "nm": "FOOM Trainer",
+  "ds": "Decision aid for movement technique and formation, scenario drill, alternate versus successive bounds",
+  "file": "army/foom/",
+  "kind": "tool",
+  "kw": "FOOM trainer formation movement technique decision aid scenarios bounding overwatch alternate successive traveling wedge column line squad"
+ },
+ {
+  "nm": "Army Values",
+  "ds": "The seven values behind LDRSHIP, with their official definitions. · 8 flashcards",
+  "file": "army/values/",
+  "kind": "cards",
+  "kw": "What does LDRSHIP stand for? Army Value: Loyalty. What is the official definition? Army Value: Duty. What is the official definition? Army Value: Respect. What is the official definition? Army Value: Selfless Service. What is the official definition? Army Value: Honor. What is the official definition? Army Value: Integrity. What is the official definition? Army Value: Personal Courage. What is the official definition?"
+ },
+ {
+  "nm": "Soldier’s Creed & NCO Creed",
+  "ds": "Key lines and ideas from both creeds. · 8 flashcards",
+  "file": "army/creeds/",
+  "kind": "cards",
+  "kw": "What is the opening line of the Soldier's Creed? What line references warrior tasks and drills? What line in the Soldier's Creed refers to never abandoning a teammate? What is the opening line of the NCO Creed? What is the NCO Corps known as, per the NCO Creed? What are an NCO's two basic responsibilities per the creed? What is an NCO's \"watchword,\" per the creed? According to the creed, what will every Soldier receive from their NCO?"
+ },
+ {
+  "nm": "Customs, Courtesies & Traditions",
+  "ds": "Saluting, Reveille and Retreat, the Army birthday, and other traditions. · 6 flashcards",
+  "file": "army/customs/",
+  "kind": "cards",
+  "kw": "When do you render a hand salute? What is Reveille? What is Retreat? What does the Army celebrate as its birthday? What color is the fringe on the Army flag? What is a \"Pass in Review\"?"
+ },
+ {
+  "nm": "Army Structure & Chain of Command",
+  "ds": "Unit sizes, who leads them, and how the chain of command and NCO Support Channel work. · 8 flashcards",
+  "file": "army/structure/",
+  "kind": "cards",
+  "kw": "What is the smallest organized Army element? About how large is a squad? About how large is a platoon, and who leads it? About how large is a company, and who commands it? About how large is a battalion, and who commands it? About how large is a brigade, and who commands it? What is the chain of command? What is the NCO Support Channel?"
+ },
+ {
+  "nm": "Rank & Insignia",
+  "ds": "Grades, insignia, and the difference between an SGM and a CSM. · 7 flashcards",
+  "file": "army/rank/",
+  "kind": "cards",
+  "kw": "What rank is E-5? What rank is E-6? What insignia does a Sergeant First Class (E-7) wear? What insignia does a Command Sergeant Major wear? What rank is O-1? What rank is W-1? What's the difference between a Sergeant Major and a Command Sergeant Major?"
+ },
+ {
+  "nm": "General Orders & Guard Duty",
+  "ds": "The three General Orders and what “properly relieved” means. · 6 flashcards",
+  "file": "army/general-orders/",
+  "kind": "cards",
+  "kw": "What is the First General Order? What is the Second General Order? What is the Third General Order? When are you considered \"properly relieved\" from a post? What should you do if you don't understand a special order for your post? Why do General Orders apply to every Soldier, not just those on guard duty?"
+ },
+ {
+  "nm": "Drill & Ceremony",
+  "ds": "Basic commands: stepping off, alignment, halting, and saluting in formation. · 6 flashcards",
+  "file": "army/drill/",
+  "kind": "cards",
+  "kw": "What is the command to begin marching from a halt? What foot do you always step off on when marching? What command aligns a formation at proper interval and distance? What command brings a marching formation to a stop? What is \"normal interval\" in a formation? What command renders a hand salute while in formation?"
+ },
+ {
+  "nm": "Warrior Tasks & Battle Drills",
+  "ds": "The five task categories, the core Battle Drills, and key standards. · 6 flashcards",
+  "file": "army/warrior-tasks/",
+  "kind": "cards",
+  "kw": "What are the 5 categories of Warrior Tasks? Name the 4 core Battle Drills. What is the standard for zeroing an M4? What is the time standard to don, clear, and check a protective mask? What's the difference between a Warrior Task and a Battle Drill? What publication is the authoritative source for Warrior Tasks and Battle Drills?"
+ },
+ {
+  "nm": "17E Basics",
+  "ds": "What 17E and its common acronyms mean, and where your career path is documented. · 7 flashcards",
+  "file": "army/17e-basics/",
+  "kind": "cards",
+  "kw": "What does 17E stand for? What does EMSO stand for? What does CEMA stand for? What does SIGINT stand for? What document lays out your MOS's critical individual tasks? What official Army document maps your entire 17E career path? Name one recurring technical course on the 17E career map."
+ }
+];
+
+const SLIDES=[
+  {nm:'TDY for Schools',ds:'A Soldier\u2019s guide to temporary duty for institutional training \u00b7 13 slides',file:'slides/tdy-for-schools.pptx'},
+  {nm:'Army Community Service',ds:'The support network you\u2019re already paying for \u00b7 25-min brief \u00b7 10 slides',file:'slides/army-community-service.pptx'},
+  {nm:'Education Benefits',ds:'A practical guide for 17E Soldiers \u00b7 30-min brief \u00b7 11 slides',file:'slides/education-benefits-17e.pptx'},
+  {nm:'Promotion Board Prep',ds:'Complete guide + Q&amp;A bank for Regular Army Soldiers \u00b7 extended session \u00b7 23 slides',file:'slides/promotion-board-prep.pptx'},
+  {nm:'Warrior Tasks &amp; Battle Drills',ds:'The skills every Soldier must own \u00b7 30-min brief \u00b7 12 slides',file:'slides/warrior-tasks-battle-drills.pptx'},
+  {nm:'Professional Development',ds:'Your 17E career map &amp; building your talent profile (Ref: DA PAM 600-25) \u00b7 30-min brief \u00b7 13 slides',file:'slides/career-map-17e.pptx'},
+  {nm:'Thrift Savings Plan',ds:'Building your financial mission readiness \u00b7 30-min brief for new Soldiers \u00b7 11 slides',file:'slides/tsp-briefing.pptx'},
+];
+function renderSlides(){
+  let vh='<div style="text-align:center;padding:6px 0 18px;font-size:13px;color:var(--text-dim)">Reviewed one of these? <a href="/slides/certificate/" style="color:#ffb300;font-weight:700">Print an attendance certificate &#8594;</a></div>';
+  vh+='<div class="grid">';
+  SLIDES.forEach(s=>{
+    vh+=`<a class="card" href="${s.file}" download style="--accent:#ffb300">
+      <div class="cat">LESSON <span class="tag tag-slide">PPTX</span></div><div class="nm">${s.nm}</div>
+      <div class="ds">${s.ds}</div><div class="go">DOWNLOAD &#8595;</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-slides').innerHTML=vh;
+}
+
+// Additional Learning — certifications & licenses for self-study beyond this course.
+// Grouped by category; each links externally (opens in a new tab, doesn't navigate away from the toolkit).
+const LEARN=[
+  // B1 Math
+  {cat:'B1 Math', nm:'Khan Academy \u2014 Algebra & Trigonometry', tag:'FREE TRAINING', color:'#3d7fd6',
+    ds:'Free, self-paced video lessons and practice problems covering the algebra and trig foundations this course\u2019s math modules build on \u2014 useful for shoring up any gaps before tackling decibels and RF calculations.',
+    url:'https://www.khanacademy.org/math'},
+
+  // B2 Physics
+  {cat:'B2 Physics', nm:'Technician Class', tag:'HAM', color:'#00ff88',
+    ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Free, always-current practice tests pulled straight from the active FCC question pool.',
+    url:'https://hamstudy.org/'},
+  {cat:'B2 Physics', nm:'General Class', tag:'HAM', color:'#00ff88',
+    ds:'The upgrade from Technician \u2014 35-question exam, 74% to pass (26/35), roughly $15\u2013$50 total in fees. Opens most HF privileges (10\u2013160 meters), letting you actually work worldwide propagation instead of just reading about it.',
+    url:'https://www.arrl.org/upgrading-to-a-general-license'},
+  {cat:'B2 Physics', nm:'Amateur Extra Class', tag:'HAM', color:'#00ff88',
+    ds:'The top of the three-tier ham ladder \u2014 50-question exam, 74% to pass (37/50). Grants full privileges on every amateur band and mode, including exclusive HF sub-bands reserved for Extra-class operators.',
+    url:'https://www.arrl.org/general-and-amateur-extra-class-license-manuals'},
+  {cat:'B2 Physics', nm:'FCC General Radiotelephone Operator License (GROL)', tag:'FCC', color:'#00d4ff',
+    ds:'Two written exams (Element 1: 24 questions; Element 3: 100 questions, both 75% to pass), roughly $100 total, valid for life with no renewal. Required to adjust, maintain, or internally repair licensed transmitters in aviation, maritime, and international fixed public radio services \u2014 a direct civilian parallel to EW-adjacent RF maintenance work, and listed on Marine Corps COOL as a recognized credential.',
+    url:'https://www.fcc.gov/wireless/bureau-divisions/mobility-division/commercial-operator-license-program'},
+  {cat:'B2 Physics', nm:'W2AEW \u2014 RF & Test Equipment', tag:'YOUTUBE', color:'#00d4ff',
+    ds:'Alan Wolke\u2019s long-running channel on RF theory, oscilloscope/test-equipment technique, and ham radio \u2014 deep dives on Smith charts, VSWR, mixers, and antenna matching that go well beyond the basics.',
+    url:'https://www.youtube.com/@w2aew'},
+
+  // C BET
+  {cat:'C BET', nm:'EEVblog \u2014 Electronics Engineering', tag:'YOUTUBE', color:'#ffb300',
+    ds:'Dave Jones\u2019s widely-followed electronics engineering channel \u2014 component teardowns, test-gear reviews, and unscripted troubleshooting that reinforce the diode/transistor/circuit fundamentals from the BET modules.',
+    url:'https://www.youtube.com/channel/UC2DjFE7Xf11URZqWBigcVOQ'},
+
+  // D Networking
+  {cat:'D Networking', nm:'CompTIA A+', tag:'CERT', color:'#00d4ff',
+    ds:'Foundational IT hardware, software & troubleshooting certification \u2014 a common first step before Network+ or Security+.',
+    url:'https://www.comptia.org/certifications/a'},
+  {cat:'D Networking', nm:'Professor Messer \u2014 A+ Core 1 (220-1101)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The internet\u2019s most-used free A+ training series \u2014 full video course covering every Core 1 exam objective.',
+    embed:'playlist', embedId:'PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnnOmvg5UGVenB_qQgsh01uC'},
+  {cat:'D Networking', nm:'Professor Messer \u2014 A+ Core 2 (220-1102)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The companion Core 2 course \u2014 operating systems, security, software troubleshooting, and operational procedures.',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnna96gzhJrzkii4hH_mgW4b'},
+  {cat:'D Networking', nm:'CompTIA Network+', tag:'CERT', color:'#00d4ff',
+    ds:'Vendor-neutral networking fundamentals \u2014 infrastructure, protocols, troubleshooting. Builds directly on this site\u2019s Networking modules.',
+    url:'https://www.comptia.org/certifications/network'},
+  {cat:'D Networking', nm:'Professor Messer \u2014 Network+ (N10-009) Training Index', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'Free full video course covering the current N10-009 objectives \u2014 official course index with every video linked in order.',
+    url:'https://professormesser.link/n009videos'},
+  {cat:'D Networking', nm:'CompTIA Security+', tag:'CERT', color:'#00d4ff',
+    ds:'Security fundamentals \u2014 commonly used to satisfy DoD 8140/8570 IAT Level II baseline certification requirements.',
+    url:'https://www.comptia.org/certifications/security'},
+  {cat:'D Networking', nm:'Professor Messer \u2014 Security+ (SY0-701)', tag:'FREE TRAINING', color:'#00d4ff',
+    ds:'The current SY0-701 training course \u2014 121 videos, 15+ hours, covering every exam objective for free.',
+    embed:'playlist', embedId:'PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv',
+    url:'https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv'},
+  {cat:'D Networking', nm:'CWNA \u2014 Certified Wireless Network Administrator', tag:'CERT', color:'#00d4ff',
+    ds:'Vendor-neutral foundation certification for enterprise Wi-Fi \u2014 60 questions, 90 minutes, 70% to pass. Covers RF fundamentals, 802.11 standards through Wi-Fi 6E/7, WLAN design, and WPA3 security, building directly on this course\u2019s Wi-Fi and RF theory modules.',
+    url:'https://www.cwnp.com/certifications/cwna/'},
+
+  // E EW Theory
+  {cat:'E EW Theory', nm:'CemaXecuter \u2014 Linux & SDR', tag:'YOUTUBE', color:'#ff4444',
+    ds:'Practical, hands-on videos on Linux and software-defined radio (SDR) \u2014 the same technology CEMA/EW operations lean on for spectrum monitoring, signal capture, and flexible tactical radios. A strong bridge between this course\u2019s theory and real SDR tooling.',
+    url:'https://www.youtube.com/@cemaxecuter'},
+
+  // F Systems
+  {cat:'F Systems', nm:'FAA Part 107 \u2014 Remote Pilot Certificate', tag:'FAA', color:'#ff7700',
+    ds:'The federal certificate required for any commercial or non-recreational drone flight \u2014 60-question knowledge test, $175 fee, in-person at an FAA-approved testing center. Never expires once earned, just free recurrent training every 24 months. A natural pairing with this course\u2019s C-UAS content \u2014 understanding how drones are legally and technically operated sharpens how you plan to counter them.',
+    url:'https://www.faa.gov/uas/commercial_operators'},
+
+  // G Planning
+  {cat:'G Planning', nm:'Army Publishing Directorate \u2014 Doctrine Library', tag:'FREE TRAINING', color:'#bb88ff',
+    ds:'The official source for current ADP, ATP, and FM doctrine \u2014 including the TLP, OPORD, and battle-drill publications this module\u2019s tools are built from. Always check here for the current version before citing a specific ADP/ATP number.',
+    url:'https://armypubs.army.mil/'},
+
+  // Career & Credentialing (spans the whole MOS, not tied to one module)
+  {cat:'Career & Credentialing', nm:'DoD 8140.03 Cyber Workforce Framework', tag:'DoD', color:'#ffb300',
+    ds:'As of Feb 2023, DoDM 8140.03 supersedes the older 8570.01-M IA program, mapping roles to DCWF work roles (the old IAT/IAM/IASAE terms are still used informally). Check your specific role/level before assuming which certification applies \u2014 requirements vary by position.',
+    url:'https://dl.dod.cyber.mil/wp-content/uploads/8140/pdf/unclass-dod8570_ia_program_transition_dod8140_cwp.pdf'},
+  {cat:'Career & Credentialing', nm:'Navigating DoD 8140 Qualifications', tag:'FREE TRAINING', color:'#ffb300',
+    ds:'A plain-language walkthrough of how the 8140 qualification and role-mapping process actually works in practice.',
+    embed:'video', embedId:'HgVQLTIyuh4',
+    url:'https://www.youtube.com/watch?v=HgVQLTIyuh4'},
+  {cat:'Career & Credentialing', nm:'DoD 8140 Qualification Matrices (Official)', tag:'DoD', color:'#ffb300',
+    ds:'The official DoD Cyber Exchange page listing approved certifications and training by DCWF work role \u2014 the authoritative source, not a summary.',
+    url:'https://www.cyber.mil/dod-workforce-innovation-directorate/dod8140/qualification-matrices'},
+  {cat:'Career & Credentialing', nm:'Army COOL \u2014 17E Credentialing (Official)', tag:'DoD', color:'#ffb300',
+    ds:'The Army\u2019s own Credentialing Opportunities On-Line page for 17E \u2014 lists the nationally recognized certifications mapped specifically to this MOS, plus Credentialing Assistance (CA) funding rules and how to apply through ArmyIgnitED.',
+    url:'https://www.cool.osd.mil/army/moc/index.html?moc=17e&tab=cred'},
+  {cat:'Career & Credentialing', nm:'GI Bill Comparison Tool \u2014 Degree Pathways', tag:'DEGREE', color:'#ffb300',
+    ds:'The VA\u2019s official tool for comparing schools and programs \u2014 tuition/fee coverage, housing allowance, and Yellow Ribbon participation, side by side. Use it to research electrical engineering, cybersecurity, or telecommunications degrees before committing GI Bill or Tuition Assistance funds; always verify a program\u2019s accreditation (CHEA/ABET) before enrolling.',
+    url:'https://www.va.gov/education/gi-bill-comparison-tool/'},
+];
+
+let activeLearnCat='ALL';
+function renderLearnTabs(){
+  const cats=['ALL',...new Set(LEARN.map(l=>l.cat))];
+  document.getElementById('tabsLearning').innerHTML=cats.map(c=>
+    `<button class="tab${c===activeLearnCat?' on':''}" data-c="${c}" onclick="setLearnCat('${c}')">${c==='ALL'?'ALL RESOURCES':c}</button>`
+  ).join('');
+}
+function setLearnCat(c){
+  activeLearnCat=c;
+  document.querySelectorAll('#tabsLearning .tab').forEach(el=>el.classList.toggle('on', el.dataset.c===c));
+  renderLearning();
+}
+function renderLearning(){
+  const items=activeLearnCat==='ALL'?LEARN:LEARN.filter(l=>l.cat===activeLearnCat);
+  let vh='<div class="grid">';
+  items.forEach(l=>{
+    if(l.embed==='playlist' || l.embed==='video'){
+      const src = l.embed==='playlist'
+        ? `https://www.youtube.com/embed/videoseries?list=${l.embedId}`
+        : `https://www.youtube.com/embed/${l.embedId}`;
+      vh+=`<div class="card" style="--accent:${l.color};padding:0;overflow:hidden">
+        <div style="position:relative;padding-bottom:56.25%;height:0;background:#000">
+          <iframe src="${src}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div style="padding:16px 18px">
+          <div class="cat">${l.tag} <span class="tag tag-slide">YOUTUBE</span></div><div class="nm">${l.nm}</div>
+          <div class="ds">${l.ds}</div>
+          <a class="go" style="text-decoration:none;display:block;margin-top:8px" href="${l.url}" target="_blank" rel="noopener">OPEN FULL COURSE &#8599;</a>
+        </div>
+      </div>`;
+    } else if(l.tag === 'PENDING'){
+      vh+=`<div class="card" style="--accent:${l.color};opacity:.7;cursor:default">
+        <div class="cat">${l.tag}</div><div class="nm">${l.nm}</div>
+        <div class="ds">${l.ds}</div></div>`;
+    } else {
+      vh+=`<a class="card" href="${l.url}" target="_blank" rel="noopener" style="--accent:${l.color}">
+        <div class="cat">${l.tag} <span class="tag tag-slide">EXTERNAL LINK</span></div><div class="nm">${l.nm}</div>
+        <div class="ds">${l.ds}</div><div class="go">LEARN MORE &#8599;</div></a>`;
+    }
+  });
+  vh+='</div>';
+  document.getElementById('view-learning').innerHTML=vh;
+}
+renderLearnTabs();
+
+// WRAVEN training modules — each is a self-contained interactive lesson (inline quizzes,
+// final exam, printable certificate). Add new modules here as they're built; the file
+// itself lives in /wraven/.
+const WRAVEN_MODULES=[
+  {nm:'Module 1: DC & Electrical Safety', ds:'Electrical safety and shock rescue, atomic structure, conductors/insulators, voltage/current/resistance, Ohm\u2019s Law, power, and series/parallel circuits \u2014 with inline quizzes and a final certification exam.', file:'wraven/module-1-dc-safety.html', color:'#3fb6ff'},
+  {nm:'Module 2: AC & Transformers', ds:'Sine waves, frequency/period, peak vs. RMS, inductance, capacitance, reactance/impedance, and transformer turns-ratio/power relationships \u2014 with inline quizzes and a final exam.', file:'wraven/module-2-ac-transformers.html', color:'#7ee787'},
+  {nm:'Module 3: Circuit Protection', ds:'Fuses, circuit breakers, switches, relays, wire/AWG sizing, insulation ratings, and reading basic schematic symbols \u2014 with inline quizzes and a final exam.', file:'wraven/module-3-circuit-protection.html', color:'#ffb454'},
+  {nm:'Module 4: Generators & Motors', ds:'Electromagnetic induction, left/right-hand rules, AC and DC generators, generator components, DC/AC motor types, counter-EMF, and single vs. three-phase \u2014 with inline quizzes and a final exam.', file:'wraven/module-4-generators-motors.html', color:'#ff6b6b'},
+  {nm:'Module 5: Electronics', ds:'Resistor color codes, semiconductor material and the P-N junction, diode biasing and rectification, and transistor/electron tube fundamentals \u2014 with inline quizzes and a final exam.', file:'wraven/module-5-electronics.html', color:'#3fb6ff'},
+  {nm:'Module 6: Wave Propagation', ds:'EM wave anatomy, wavelength/frequency, polarization, multipath fading, ionospheric propagation and skip zones, antenna feed/SWR/waveguides, gain, and EM radiation hazards (HERP/HERO) \u2014 with inline quizzes and a final exam.', file:'wraven/module-6-wave-propagation.html', color:'#7ee787'},
+  {nm:'Module 7: Number Systems', ds:'Decimal, binary, octal, and hexadecimal \u2014 positional notation and conversions between all four systems, with guided practice and a final exam.', file:'wraven/module-7-number-systems.html', color:'#ffb454'},
+  {nm:'Module 8: EW Math', ds:'The decibel and why linear math fails at scale, the 3 dB/10 dB rules, dBm and power budgets, and the radar range equation \u2014 with inline quizzes and a final exam.', file:'wraven/module-8-ew-math.html', color:'#ff6b6b'},
+];
+function renderWraven(){
+  let vh='<div class="grid">';
+  WRAVEN_MODULES.forEach(m=>{
+    vh+=`<a class="card" href="${m.file}" style="--accent:${m.color}">
+      <div class="cat">WRAVEN <span class="tag tag-int">MODULE</span></div><div class="nm">${m.nm}</div>
+      <div class="ds">${m.ds}</div><div class="go">BEGIN \u2192</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-wraven').innerHTML=vh;
+}
+
+  
+function showPage(name){
+  lastPage=name;
+  document.getElementById('globalSearch').value='';
+  document.getElementById('searchCount').textContent='';
+  document.getElementById('page-search').classList.remove('on');
+  document.getElementById('tab-tools').classList.toggle('on',name==='tools');
+  document.getElementById('tab-slides').classList.toggle('on',name==='slides');
+  document.getElementById('tab-learning').classList.toggle('on',name==='learning');
+  document.getElementById('tab-wraven').classList.toggle('on',name==='wraven');
+  document.getElementById('page-tools').classList.toggle('on',name==='tools');
+  document.getElementById('page-slides').classList.toggle('on',name==='slides');
+  document.getElementById('page-learning').classList.toggle('on',name==='learning');
+  document.getElementById('page-wraven').classList.toggle('on',name==='wraven');
+}
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+render();
+renderSlides();
+renderLearning();
+renderWraven();
+</script>
+  <script data-goatcounter="https://ewit-training.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:20px;opacity:.62;font-family:'Share Tech Mono',monospace">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
