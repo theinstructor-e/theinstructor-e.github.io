@@ -54,7 +54,7 @@ h1 span{color:var(--text-dim);font-weight:400}
 .empty-cat{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;padding:14px 16px;border:1px dashed var(--border-bright);opacity:.6;text-transform:uppercase}
 .pagetabs{display:flex;gap:8px}
 .pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
-  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s}
+  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s;text-decoration:none;display:inline-block;line-height:1.2}
 .pagetab:hover{border-color:var(--amber);color:var(--amber)}
 .pagetab.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
 .page{display:none}
@@ -105,7 +105,7 @@ h1 span{color:var(--text-dim);font-weight:400}
     <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
     <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
     <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
-    <a class="pagetab" id="tab-army" href="army/">ARMY</a>
+    <a class="pagetab" id="tab-army" href="army/">TACTICS</a>
   </div>
 </div>
 
@@ -305,7 +305,7 @@ function globalSearch(){
   ARMY.forEach(a=>{
     if(normalize(a.nm+' '+a.ds+' '+(a.kw||'')).includes(q)){
       const isG=a.kind==='guide',isT=a.kind==='tool';
-      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':a.kind==='cards'?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:'Army Basics', nm:a.nm, ds:a.ds,
+      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':a.kind==='cards'?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:'Tactics', nm:a.nm, ds:a.ds,
         href:a.file, color:isG?'#7a5cff':isT?'#00ff88':'#00d4ff', go:isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192'});
     }
   });
