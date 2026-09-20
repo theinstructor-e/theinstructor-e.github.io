@@ -187,10 +187,15 @@ const TOOLS=[
   {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
   {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a',kw:'man in the middle attack mitm adversary-in-the-middle eavesdropping packet interception ssl strip downgrade fake certificate rogue access point ARP poisoning session hijacking'},
   // F Systems
-  {cat:'F Systems',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
-  {cat:'F Systems',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
+  {cat:'E EW Theory',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
+  {cat:'E EW Theory',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
   {cat:'F Systems',nm:'C-UAS',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700',kw:'counter drone anti-drone UAS defeat detection tracking'},
   {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700',kw:'counter drone anti-drone UAS defeat engagement kill chain interceptor jamming'},
+  {cat:'F Systems',nm:'Signal ID Trainer',ds:'50 real signals across a scrollable live spectrum survey, an ID quiz with anomaly detection, and a categorized reference library',file:'sigid',color:'#ff4444',kw:'signal identification waterfall spectrum analyzer SIGINT anomaly detection radar OTH jammer cellular'},
+  {cat:'F Systems',kind:'guide',nm:'Software-Defined Radio Explained',ds:'Plain-language guide: SDR hardware, common software, tuning, gain, demod modes, and reading a waterfall',file:'sdrguide',color:'#ff7700',kw:'SDR RTL-SDR HackRF GNU Radio GQRX SDR# tuning gain demodulation'},
+  {cat:'F Systems',nm:'SDR Console Simulator',ds:'A hands-on practice SDR interface — tune, adjust gain, switch demodulation modes, and find 5 hidden practice signals',file:'sdrsim',color:'#ff7700',kw:'SDR tuning gain demodulation AM FM USB LSB CW waterfall spectrum'},
+  {cat:'F Systems',soon:true,nm:'Drone Defender Simulator',ds:'A hands-on counter-UAS engagement simulator — detect, track, and defeat drone threats',file:'',color:'#ff7700'},
+  {cat:'F Systems',soon:true,nm:'Field Ops: Enlist to First Unit',ds:'A narrative training game following a Soldier from enlistment through Basic, AIT, and their first unit',file:'',color:'#ff7700'},
   // G Planning
   {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
   {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff',kw:'troop leading procedures mission planning sequence order of operations METT-TC'},
@@ -233,6 +238,11 @@ function render(){
     return;
   }
   const cardHtml=t=>{
+    if(t.soon){
+      return `<div class="card is-soon" style="--accent:${t.color};opacity:.55;cursor:default;filter:grayscale(.4)">
+        <div class="cat">${t.cat} <span class="tag tag-int" style="border-color:var(--amber);color:var(--amber)">COMING SOON</span></div><div class="nm">${t.nm}</div>
+        <div class="ds">${t.ds}</div><div class="go" style="color:var(--text-dim)">IN DEVELOPMENT</div></div>`;
+    }
     const guide=t.kind==='guide';
     const quiz=t.kind==='quiz';
     const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':'<span class="tag tag-int">INTERACTIVE</span>';
@@ -283,6 +293,7 @@ function globalSearch(){
 
   let results=[];
   TOOLS.forEach(t=>{
+    if(t.soon) return;
     if(normalize(t.nm+' '+t.ds+' '+t.cat+' '+(t.kw||'')).includes(q)){
       const rType=t.kind==='guide'?'GUIDE':t.kind==='quiz'?'QUIZ':'INTERACTIVE';
       const rClass=t.kind==='guide'?'tag-guide':t.kind==='quiz'?'tag-quiz':'tag-int';
@@ -670,6 +681,10 @@ render();
 renderSlides();
 renderLearning();
 renderWraven();
+(function(){
+  const p = new URLSearchParams(location.search).get('page');
+  if(p && ['tools','slides','learning','wraven'].includes(p)) showPage(p);
+})();
 </script>
   <script data-goatcounter="https://ewit-training.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>

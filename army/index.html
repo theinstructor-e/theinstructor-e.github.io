@@ -78,6 +78,12 @@ h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);
 .gi{--accent:var(--green);--gc:var(--green)}.go2{--accent:var(--cyan);--gc:var(--cyan)}.gd{--accent:var(--amber);--gc:var(--amber)}.gm{--accent:var(--purple);--gc:var(--purple)}
 .sec-title{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:2px;color:var(--text-bright);text-transform:uppercase;margin:34px 0 4px;padding-bottom:6px;border-bottom:2px solid var(--border-bright)}
 .sec-title:first-of-type{margin-top:8px}
+.pagetabs-bar{background:var(--panel);border-bottom:1px solid var(--border-bright);padding:0 28px}
+.pagetabs-bar .pagetabs{max-width:1080px;margin:0 auto;padding:10px 0;display:flex;gap:8px;flex-wrap:wrap}
+.pagetab{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);
+  padding:8px 16px;cursor:pointer;letter-spacing:2px;transition:all .15s;text-decoration:none;display:inline-block;line-height:1.2}
+.pagetab:hover{border-color:var(--amber);color:var(--amber)}
+.pagetab.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
 .tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
 .tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
 [data-theme="light"] .tag-guide{color:#5a3ccc}
@@ -102,6 +108,15 @@ h1{font-family:var(--display);font-size:26px;font-weight:700;color:var(--green);
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
   </div>
 </header>
+<div class="pagetabs-bar">
+  <div class="pagetabs">
+    <a class="pagetab" href="../classic.html?page=tools">TOOLS</a>
+    <a class="pagetab" href="../classic.html?page=slides">SLIDES</a>
+    <a class="pagetab" href="../classic.html?page=learning">LEARNING</a>
+    <a class="pagetab" href="../classic.html?page=wraven">WRAVEN</a>
+    <a class="pagetab on" href=".">TACTICS</a>
+  </div>
+</div>
 <div class="sub">UNCLASSIFIED &nbsp;|&nbsp; Common concepts every Soldier is expected to know</div>
 
 <main class="wrap">

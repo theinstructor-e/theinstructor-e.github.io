@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDR Console Simulator — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00aa5a;--green-dark:#003322;
+  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--red:#ff4444;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005c34;--green-dark:#d0ffe8;
+  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--red:#cc2222;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh}
+a{color:inherit}
+header{border-bottom:1px solid var(--border-bright);padding:16px 24px;background:var(--panel);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hl{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark)}
+h1{font-size:22px;font-weight:700;letter-spacing:1px}
+.theme-btn{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 20px 50px}
+.sub{font-family:var(--mono);font-size:12px;color:var(--text-dim);text-align:center;margin-bottom:16px}
+
+.panel{background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:14px 16px;margin-bottom:14px}
+.panel-title{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+
+#freqDisplay{font-family:var(--mono);font-size:38px;font-weight:700;color:var(--green);text-align:center;letter-spacing:2px;margin-bottom:4px}
+#freqDisplay span{font-size:16px;color:var(--text-dim)}
+.freq-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.freq-row input[type=range]{flex:1}
+.fine-btns{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
+.fine-btns button{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text);padding:5px 12px;cursor:pointer;border-radius:3px}
+.fine-btns button:hover{border-color:var(--cyan);color:var(--cyan)}
+
+canvas{width:100%;display:block;border:1px solid var(--border-bright);border-radius:4px;background:#050708}
+#specCanvas{height:110px;margin-bottom:2px}
+#wfCanvas{height:150px}
+
+.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+@media(max-width:600px){.controls-row{grid-template-columns:1fr}}
+.ctrl-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px;display:flex;justify-content:space-between}
+.mode-btns{display:flex;gap:6px;flex-wrap:wrap}
+.mode-btns button{flex:1;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:8px 4px;cursor:pointer;border-radius:3px;min-width:52px}
+.mode-btns button.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
+
+.objective{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sig-list{display:flex;flex-direction:column;gap:6px}
+.sig-item{font-family:var(--mono);font-size:12.5px;padding:8px 10px;border:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center;color:var(--text-dim)}
+.sig-item.found{border-color:var(--green);color:var(--green)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--green);color:var(--green);
+  font-family:var(--mono);font-size:13px;padding:10px 20px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200}
+.toast.on{opacity:1}
+.toast.bad{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>SDR Console Simulator</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <a href="../sdrguide/" class="theme-btn">📘 SDR Guide</a>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+  </div>
+</header>
+<div class="sub" style="padding-top:10px">UNCLASSIFIED &nbsp;|&nbsp; Tune, adjust gain, and demodulate real practice signals hidden across the band</div>
+
+<div class="wrap">
+
+  <div class="panel">
+    <div id="freqDisplay">142.500<span> MHz</span></div>
+    <div class="freq-row">
+      <input type="range" id="freqSlider" min="1200" max="1800" value="1425" step="1">
+    </div>
+    <div class="fine-btns">
+      <button onclick="nudge(-1)">&minus;100 kHz</button>
+      <button onclick="nudge(-0.1)">&minus;10 kHz</button>
+      <button onclick="nudge(0.1)">+10 kHz</button>
+      <button onclick="nudge(1)">+100 kHz</button>
+    </div>
+    <canvas id="specCanvas"></canvas>
+    <canvas id="wfCanvas"></canvas>
+  </div>
+
+  <div class="controls-row">
+    <div class="panel">
+      <div class="ctrl-label"><span>GAIN</span><span id="gainVal">30 dB</span></div>
+      <input type="range" id="gainSlider" min="0" max="50" value="30" style="width:100%;margin-bottom:14px">
+      <div class="ctrl-label">DEMODULATION MODE</div>
+      <div class="mode-btns">
+        <button data-m="AM" class="on" onclick="setMode('AM')">AM</button>
+        <button data-m="FM" onclick="setMode('FM')">FM</button>
+        <button data-m="USB" onclick="setMode('USB')">USB</button>
+        <button data-m="LSB" onclick="setMode('LSB')">LSB</button>
+        <button data-m="CW" onclick="setMode('CW')">CW</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="objective">
+        <div class="panel-title" style="margin-bottom:0">Practice Signals</div>
+        <div class="panel-title" style="margin-bottom:0" id="progressLabel">0 / 5 found</div>
+      </div>
+      <div class="sig-list" id="sigList"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px;font-family:var(--mono);font-size:11px">
+    <span style="color:var(--text-dim)">Related:</span>
+    <a href="../sigid/" style="color:var(--cyan);text-decoration:none">📻 Signal ID Trainer</a>
+    <a href="../rftheory/" style="color:var(--cyan);text-decoration:none">📡 RF Theory</a>
+    <a href="../cuas/" style="color:var(--cyan);text-decoration:none">🛸 Drone Signal Spectrum</a>
+    <a href="../cuasdemo/" style="color:var(--cyan);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MIN_F=120,MAX_F=180; // MHz, tunable range (x10 internally for slider precision)
+const SIGNALS=[
+  {freq:132.3,mode:'AM',name:'Signal 1 — AM voice net'},
+  {freq:144.9,mode:'FM',name:'Signal 2 — FM voice net'},
+  {freq:156.2,mode:'USB',name:'Signal 3 — USB voice'},
+  {freq:163.7,mode:'CW',name:'Signal 4 — CW beacon'},
+  {freq:171.4,mode:'LSB',name:'Signal 5 — LSB voice'}
+];
+let found={};
+let curMode='AM';
+let curFreq=142.5;
+let gain=30;
+
+function renderSigList(){
+  document.getElementById('sigList').innerHTML=SIGNALS.map((s,i)=>{
+    const f=found[i];
+    return `<div class="sig-item${f?' found':''}"><span>${f?s.name:'Signal '+(i+1)+' — ??? (find it)'}</span><span>${f?'\u2713 '+s.mode:''}</span></div>`;
+  }).join('');
+  const n=Object.keys(found).length;
+  document.getElementById('progressLabel').textContent=n+' / '+SIGNALS.length+' found';
+}
+
+function setMode(m){
+  curMode=m;
+  document.querySelectorAll('.mode-btns button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  checkSignal();
+}
+
+function nudge(deltaMHz){
+  curFreq=Math.max(MIN_F,Math.min(MAX_F,curFreq+deltaMHz));
+  document.getElementById('freqSlider').value=Math.round(curFreq*10);
+  updateFreqDisplay();
+  checkSignal();
+}
+
+function updateFreqDisplay(){
+  document.getElementById('freqDisplay').innerHTML=curFreq.toFixed(3)+'<span> MHz</span>';
+}
+
+let toastTimer=null;
+function toast(msg,bad){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.toggle('bad',!!bad);t.classList.add('on');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2200);
+}
+
+function checkSignal(){
+  SIGNALS.forEach((s,i)=>{
+    if(found[i]) return;
+    if(Math.abs(curFreq-s.freq)<0.15){
+      if(curMode===s.mode){
+        found[i]=true;
+        renderSigList();
+        toast('SIGNAL CONFIRMED: '+s.name);
+        if(Object.keys(found).length===SIGNALS.length) setTimeout(()=>toast('ALL SIGNALS FOUND — nice tuning'),2400);
+      }
+    }
+  });
+}
+
+document.getElementById('freqSlider').addEventListener('input',e=>{
+  curFreq=e.target.value/10;
+  updateFreqDisplay();
+  checkSignal();
+});
+document.getElementById('gainSlider').addEventListener('input',e=>{
+  gain=+e.target.value;
+  document.getElementById('gainVal').textContent=gain+' dB';
+});
+
+/* ===== spectrum + waterfall rendering ===== */
+const specCanvas=document.getElementById('specCanvas'), wfCanvas=document.getElementById('wfCanvas');
+const specCtx=specCanvas.getContext('2d'), wfCtx=wfCanvas.getContext('2d');
+let wfHistory=[];
+
+function resizeCanvases(){
+  [specCanvas,wfCanvas].forEach(c=>{
+    const r=c.getBoundingClientRect();
+    c.width=r.width*devicePixelRatio;c.height=r.height*devicePixelRatio;
+  });
+}
+window.addEventListener('resize',resizeCanvases);
+
+function computeRow(w){
+  const row=new Array(w);
+  const gainFactor=gain/50;
+  for(let x=0;x<w;x++){
+    const f=MIN_F+(x/w)*(MAX_F-MIN_F);
+    let v=0.05+Math.random()*0.05*(0.4+gainFactor);
+    SIGNALS.forEach(s=>{
+      const d=Math.abs(f-s.freq);
+      if(d<0.6){
+        const spike=Math.exp(-(d*d)/(2*0.12*0.12))*(0.5+gainFactor*0.6)*(0.85+Math.random()*0.15);
+        if(spike>v) v=spike;
+      }
+    });
+    const tuneD=Math.abs(f-curFreq);
+    if(tuneD<0.15) v=Math.min(1,v+0.15);
+    row[x]=v;
+  }
+  return row;
+}
+
+function drawSpectrum(){
+  const w=specCanvas.width,h=specCanvas.height;
+  specCtx.fillStyle='#050708';specCtx.fillRect(0,0,w,h);
+  const row=computeRow(w);
+  specCtx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--green').trim();
+  specCtx.lineWidth=1.5*devicePixelRatio;
+  specCtx.beginPath();
+  row.forEach((v,x)=>{
+    const y=h-(v*h*0.92);
+    if(x===0) specCtx.moveTo(x,y);else specCtx.lineTo(x,y);
+  });
+  specCtx.stroke();
+  // tuned cursor
+  const cx=((curFreq-MIN_F)/(MAX_F-MIN_F))*w;
+  specCtx.strokeStyle='#ffb300';specCtx.lineWidth=1*devicePixelRatio;
+  specCtx.beginPath();specCtx.moveTo(cx,0);specCtx.lineTo(cx,h);specCtx.stroke();
+  return row;
+}
+
+function drawWaterfall(row){
+  const w=wfCanvas.width,h=wfCanvas.height;
+  wfHistory.unshift(row);
+  if(wfHistory.length>Math.floor(h/2)) wfHistory.pop();
+  wfCtx.fillStyle='#050708';wfCtx.fillRect(0,0,w,h);
+  wfHistory.forEach((r,ry)=>{
+    for(let x=0;x<w;x+=2){
+      const v=r[Math.floor(x/w*r.length)];
+      if(v>0.12){
+        const g=Math.min(255,Math.floor(v*255));
+        wfCtx.fillStyle='rgba(0,'+g+',136,'+Math.min(1,v+0.15)+')';
+        wfCtx.fillRect(x,ry*2,2,2);
+      }
+    }
+  });
+}
+
+function animate(){
+  const row=drawSpectrum();
+  drawWaterfall(row);
+  requestAnimationFrame(animate);
+}
+
+function toggleTheme(){
+  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',light?'dark':'light');
+  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
+}
+
+updateFreqDisplay();
+renderSigList();
+resizeCanvases();
+animate();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<div style="text-align:center;padding:14px 16px 0;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>
