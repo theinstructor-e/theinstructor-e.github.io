@@ -105,7 +105,7 @@ h1 span{color:var(--text-dim);font-weight:400}
     <button class="pagetab" id="tab-slides" onclick="showPage('slides')">SLIDES</button>
     <button class="pagetab" id="tab-learning" onclick="showPage('learning')">LEARNING</button>
     <button class="pagetab" id="tab-wraven" onclick="showPage('wraven')">WRAVEN</button>
-    <a class="pagetab" id="tab-army" href="army/">TACTICS</a>
+    <button class="pagetab" id="tab-army" onclick="showPage('army')">TACTICS</button>
   </div>
 </div>
 
@@ -144,6 +144,15 @@ h1 span{color:var(--text-dim);font-weight:400}
     Self-paced WRAVEN modules — each opens as its own interactive lesson with inline quizzes, a final exam, and a printable certificate of completion.
   </div>
   <div id="view-wraven"></div>
+</div>
+</div>
+
+<div id="page-army" class="page">
+<div class="wrap">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6">
+    Common concepts every Soldier is expected to know — land navigation, troop leading procedures, MDMP, FOOM, and flashcard sets on values, creeds, customs, rank, and more.
+  </div>
+  <div id="view-army"></div>
 </div>
 </div>
 
@@ -646,6 +655,22 @@ const WRAVEN_MODULES=[
   {nm:'Module 7: Number Systems', ds:'Decimal, binary, octal, and hexadecimal \u2014 positional notation and conversions between all four systems, with guided practice and a final exam.', file:'wraven/module-7-number-systems.html', color:'#ffb454'},
   {nm:'Module 8: EW Math', ds:'The decibel and why linear math fails at scale, the 3 dB/10 dB rules, dBm and power budgets, and the radar range equation \u2014 with inline quizzes and a final exam.', file:'wraven/module-8-ew-math.html', color:'#ff6b6b'},
 ];
+function renderArmy(){
+  let vh='<div class="grid">';
+  ARMY.forEach(a=>{
+    if(a.kind==='hub') return;
+    const isG=a.kind==='guide',isT=a.kind==='tool';
+    const tag=isG?'<span class="tag tag-guide">GUIDE</span>':isT?'<span class="tag tag-int">INTERACTIVE</span>':'<span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span>';
+    const color=isG?'#7a5cff':isT?'#00ff88':'#00d4ff';
+    const go=isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192';
+    vh+=`<a class="card${isG?' is-guide':''}" href="${a.file}" style="--accent:${color}">
+      <div class="cat">TACTICS ${tag}</div><div class="nm">${a.nm}</div>
+      <div class="ds">${a.ds}</div><div class="go">${go}</div></a>`;
+  });
+  vh+='</div>';
+  document.getElementById('view-army').innerHTML=vh;
+}
+
 function renderWraven(){
   let vh='<div class="grid">';
   WRAVEN_MODULES.forEach(m=>{
@@ -667,10 +692,12 @@ function showPage(name){
   document.getElementById('tab-slides').classList.toggle('on',name==='slides');
   document.getElementById('tab-learning').classList.toggle('on',name==='learning');
   document.getElementById('tab-wraven').classList.toggle('on',name==='wraven');
+  document.getElementById('tab-army').classList.toggle('on',name==='army');
   document.getElementById('page-tools').classList.toggle('on',name==='tools');
   document.getElementById('page-slides').classList.toggle('on',name==='slides');
   document.getElementById('page-learning').classList.toggle('on',name==='learning');
   document.getElementById('page-wraven').classList.toggle('on',name==='wraven');
+  document.getElementById('page-army').classList.toggle('on',name==='army');
 }
 function toggleTheme(){
   const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
@@ -681,9 +708,10 @@ render();
 renderSlides();
 renderLearning();
 renderWraven();
+renderArmy();
 (function(){
   const p = new URLSearchParams(location.search).get('page');
-  if(p && ['tools','slides','learning','wraven'].includes(p)) showPage(p);
+  if(p && ['tools','slides','learning','wraven','army'].includes(p)) showPage(p);
 })();
 </script>
   <script data-goatcounter="https://ewit-training.goatcounter.com/count"

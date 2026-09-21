@@ -129,6 +129,8 @@ a.icard .go{font-family:var(--mono);font-size:11px;color:var(--accent,var(--cyan
     <p class="lead">Walk your trooper across the map. Each <b>city</b> is a course module — step inside and every guide, simulator and quiz is a building on its streets. Take the spaceport to orbit and land on <b>LEARNING</b>, <b>WRAVEN</b> or the <b>SLIDES</b> depot.</p>
     <div id="idGate">
       <input type="text" id="playerNameInput" placeholder="Enter your name or ID" maxlength="40"
+        style="width:100%;box-sizing:border-box;font-family:inherit;font-size:15px;padding:11px 13px;border-radius:8px;border:1px solid var(--border-bright);background:var(--panel2);color:var(--text);margin-bottom:8px">
+      <input type="text" id="playerMosInput" placeholder="MOS (optional)" maxlength="20"
         style="width:100%;box-sizing:border-box;font-family:inherit;font-size:15px;padding:11px 13px;border-radius:8px;border:1px solid var(--border-bright);background:var(--panel2);color:var(--text);margin-bottom:10px">
       <div class="acts">
         <button class="btn" id="btnStart">▶ START MISSION</button>
@@ -181,10 +183,31 @@ try{var s0=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s0&&s0.launched
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 function setIdentity(nameOrGuest){
   isGuest=(nameOrGuest==='__guest__');
+  rememberedId=nameOrGuest;
   try{localStorage.setItem(PLAYER_ID_KEY,nameOrGuest);}catch(e){}
   SAVE_KEY=saveKeyFor(nameOrGuest);
   save={launched:{},scene:'ground',x:298,y:1514};
   try{var s1=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s1&&s1.launched){save.launched=s1.launched;if(typeof s1.scene==='string'){save.scene=s1.scene;save.x=+s1.x||save.x;save.y=+s1.y||save.y;}}}catch(e){}
+}
+var LOG_FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSe3ujO10PD0ekFelnZp0rlm-nOSrgRU4nrI5lXCwuURcDnJFg/formResponse';
+var LOG_ENTRY_NAME='entry.1636715303',LOG_ENTRY_MOS='entry.1690968697',LOG_ENTRY_MODULE='entry.420689179',LOG_ENTRY_EVENT='entry.342790596';
+var playerMos='';
+function logEvent(eventType,moduleOrTool){
+  if(isGuest)return;
+  try{
+    var params=new URLSearchParams();
+    params.set(LOG_ENTRY_NAME,rememberedId||'');
+    params.set(LOG_ENTRY_MOS,playerMos||'');
+    params.set(LOG_ENTRY_MODULE,moduleOrTool||'');
+    params.set(LOG_ENTRY_EVENT,eventType||'');
+    var f=document.createElement('iframe');
+    f.style.display='none';f.name='logFrame_'+Date.now();
+    document.body.appendChild(f);
+    var a=document.createElement('a');
+    a.href=LOG_FORM_URL+'?'+params.toString()+'&submit=Submit';
+    f.src=a.href;
+    setTimeout(function(){f.remove();},4000);
+  }catch(e){}
 }
 
 /* ============ world data ============ */
@@ -720,7 +743,10 @@ function openPanel(z){
   p.innerHTML=h;p.scrollTop=0;p.classList.add('open');
   $('pClose').onclick=closePanel;
   if(z.type==='portal'){$('pGo').onclick=function(){closePanel();travel(z.to,z.pos,z.src);};}
-  if($('pEnter'))$('pEnter').onclick=function(){closePanel();travel('in:'+z.id);};
+  if($('pEnter'))$('pEnter').onclick=function(){
+    if(z.type==='city')logEvent('Module Entered',z.name);
+    closePanel();travel('in:'+z.id);
+  };
   $('hint').classList.add('off');
 }
 function closePanel(){if(!openId)return;dismissed[openId]=true;openId=null;$('panel').classList.remove('open');}
@@ -731,7 +757,7 @@ $('panel').addEventListener('click',function(e){
     var before=rankInfo(toolsLaunched()).i;save.launched[k]=1;persist();a.classList.add('done');
     var z=zoneById(openId);
     if(z&&z.items){var pr=panelProgress(z);var b=$('pBar');if(b)b.style.width=pr.pct+'%';var sEl=$('pSub');if(sEl)sEl.textContent=pr.d+' / '+pr.t+' '+(z.type==='city'?'LAUNCHED':'OPENED')+' · TAP A CARD';
-      if(z.type==='city'&&pr.d===pr.t)toast(z.name+' cleared!','★ CITY COMPLETE');}
+      if(z.type==='city'&&pr.d===pr.t){toast(z.name+' cleared!','★ CITY COMPLETE');logEvent('Module Completed',z.name);}}
     updateHUD();
     var after=rankInfo(toolsLaunched());
     if(after.i>before)setTimeout(function(){toast(after.full,'▲ RANK UP · '+after.abbr);},900);
@@ -815,23 +841,28 @@ promptEl.onclick=function(){if(promptZone&&!openId&&!menuOpen)openPanel(promptZo
 $('classic').href=CLASSIC;
 $('legCities').textContent=CITIES.length+' CITIES';
 if(rememberedId&&rememberedId!=='__guest__')$('playerNameInput').value=rememberedId;
+try{var rememberedMos=localStorage.getItem('ewit_player_mos');if(rememberedMos)$('playerMosInput').value=rememberedMos;}catch(e){}
 if(isGuest)$('legSaveNote').textContent='GUEST MODE — PROGRESS NOT TRACKED BY NAME';
 var hadProgress=Object.keys(save.launched).length>0;
 if(hadProgress)$('btnStart').textContent='▶ CONTINUE MISSION';
 $('legCount').textContent=NTOOLS+' TOOLS';
 function beginAs(nameOrGuest){
   setIdentity(nameOrGuest);
+  playerMos=($('playerMosInput').value||'').trim();
+  try{localStorage.setItem('ewit_player_mos',playerMos);}catch(e){}
   started=true;$('title').classList.remove('on');$('hint').classList.remove('off');
   var hp=Object.keys(save.launched).length>0;
   var o=isGuest?null:objective();
   toast(o?o.label:(isGuest?'Guest mode — free roam':'All clear — free roam'),hp?'WELCOME BACK':'FIRST OBJECTIVE');
   setTimeout(function(){$('hint').classList.add('off');},9000);
+  logEvent('Mission Start','');
 }
 $('btnStart').onclick=function(){
   var nm=($('playerNameInput').value||'').trim();
-  beginAs(nm?nm:'__guest__');
+  if(!nm){location.href=CLASSIC;return;}
+  beginAs(nm);
 };
-$('btnGuest').onclick=function(){beginAs('__guest__');};
+$('btnGuest').onclick=function(){location.href=CLASSIC;};
 
 /* ============ main loop ============ */
 function update(dt){
