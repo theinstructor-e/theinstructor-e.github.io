@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drone Defender Simulator — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070a0c; --panel:#0d1318; --panel2:#101820; --b1:#1c2a36; --b2:#25384a;
+  --green:#00ff88; --gdim:#00883a; --gfaint:#001a0d;
+  --amber:#ffb830; --red:#ff4a4a; --blue:#38bdf8; --cyan:#00d4ff;
+  --txt:#ffffff; --txtd:#6a8090; --txtb:#d8ecf5;
+  --mono:'Share Tech Mono',monospace; --ui:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#eef2f0; --panel:#ffffff; --panel2:#f5f7f6; --b1:#d4dcd9; --b2:#b8c4c0;
+  --green:#00884a; --gdim:#00a05a; --gfaint:#e0f5e8;
+  --amber:#b3690a; --red:#cc2222; --blue:#0077bb; --cyan:#0088aa;
+  --txt:#3a5560; --txtd:#8296a0; --txtb:#0a1a20;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.hidden{display:none !important}
+body{
+  font-family:var(--mono); user-select:none; background:var(--bg); color:var(--green);
+  height:100vh; width:100vw; overflow:hidden; display:flex; flex-direction:column;
+  align-items:center; justify-content:space-between; padding:8px;
+}
+.font-ui{font-family:var(--ui)}
+.scanlines{
+  background:linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,.25) 50%),
+    linear-gradient(90deg, rgba(255,0,0,.03), rgba(0,255,0,.01), rgba(0,0,255,.03));
+  background-size:100% 3px, 6px 100%; pointer-events:none;
+}
+.crt-glow{box-shadow:inset 0 0 40px rgba(0,255,136,.12)}
+.game-canvas-container{cursor:crosshair}
+@keyframes pulse-fast{0%,100%{opacity:1}50%{opacity:.3}}
+.animate-pulse-fast{animation:pulse-fast .6s infinite}
+@keyframes ping{75%,100%{transform:scale(2);opacity:0}}
+.animate-ping{animation:ping 1.4s cubic-bezier(0,0,.2,1) infinite}
+
+/* ===== Header ===== */
+.game-header{
+  width:100%; max-width:1152px; display:flex; justify-content:space-between; align-items:center;
+  border-bottom:2px solid var(--gdim); padding-bottom:8px; padding-left:8px; padding-right:8px;
+  font-size:12px; z-index:20;
+}
+.header-brand{display:flex; align-items:center; gap:10px}
+.header-icon{color:var(--green); font-size:22px}
+.header-title{font-family:var(--ui); font-size:18px; font-weight:700; letter-spacing:.1em; color:var(--green); text-transform:uppercase; line-height:1.1}
+.header-sub{font-size:10px; color:var(--gdim); letter-spacing:.05em}
+.hud-stats{display:flex; gap:10px; align-items:center; font-size:10px; flex-wrap:wrap}
+.hud-chip{text-align:center; background:var(--panel2); border:1px solid var(--b2); padding:4px 8px; border-radius:4px}
+.hud-chip-label{display:block; color:var(--gdim); font-size:8px; margin-bottom:2px}
+.hud-lives{display:flex; gap:2px; font-size:14px}
+.life-heart-full{color:var(--red)}
+.life-heart-empty{color:var(--b2)}
+.hud-score{color:var(--amber); font-size:12px}
+.hud-wave{color:var(--green); font-size:12px}
+.hud-mult{color:var(--amber); font-size:12px}
+.hdr-actions{display:flex; align-items:center; gap:8px}
+.hdr-btn{
+  padding:6px 10px; background:var(--gfaint); border:1px solid var(--b2); color:var(--green);
+  border-radius:4px; font-size:11px; font-family:var(--mono); cursor:pointer; display:flex; align-items:center; gap:5px;
+}
+.hdr-btn:hover{border-color:var(--amber); color:var(--amber)}
+.hdr-btn.alt{background:var(--panel2); color:var(--txtd)}
+
+/* ===== Playfield ===== */
+.playfield{
+  position:relative; width:100%; max-width:1152px; flex-grow:1; margin:4px 0;
+  border:2px solid var(--gdim); border-radius:8px; overflow:hidden; background:var(--panel2);
+  box-shadow:0 20px 40px rgba(0,0,0,.4); display:flex; flex-direction:column; justify-content:space-between;
+}
+.alert-banner{
+  display:none; position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:20;
+  padding:6px 16px; background:rgba(51,10,10,.9); border:2px solid var(--red); color:#ffb3b3;
+  font-family:var(--ui); font-size:11px; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,.4); text-align:center;
+}
+.alert-banner.show{display:block}
+.canvas-wrap{position:relative; width:100%; height:100%; flex-grow:1}
+#gameCanvas{width:100%; height:100%; display:block; background:var(--bg)}
+.weapon-badge{
+  position:absolute; top:12px; left:12px; z-index:20; padding:6px 12px; border-radius:6px;
+  border:1px solid var(--gdim); background:rgba(10,15,20,.85); backdrop-filter:blur(4px);
+  font-size:11px; display:flex; align-items:center; gap:8px;
+}
+.weapon-dot{width:10px; height:10px; border-radius:50%; background:var(--green)}
+.weapon-label{color:var(--txtd); font-size:9px; text-transform:uppercase; letter-spacing:.1em}
+.weapon-name{font-family:var(--ui); font-size:15px; font-weight:700}
+.weapon-name-green{color:var(--green)}
+.weapon-name-amber{color:var(--amber)}
+.switch-btn{
+  position:absolute; top:12px; right:12px; z-index:20; padding:6px 12px; background:var(--amber);
+  color:#0a0c0f; font-family:var(--ui); font-weight:700; font-size:12px; border:2px solid var(--amber);
+  border-radius:6px; box-shadow:0 4px 10px rgba(0,0,0,.3); cursor:pointer; display:flex; align-items:center; gap:6px;
+}
+.switch-btn:active{transform:scale(.96)}
+
+/* ===== Bottom dashboard ===== */
+.dashboard{
+  width:100%; background:var(--bg); border-top:2px solid var(--gdim); padding:8px; z-index:20;
+  display:grid; grid-template-columns:1fr; gap:8px; font-size:11px;
+}
+@media(min-width:768px){.dashboard{grid-template-columns:3fr 6fr 3fr}}
+.dash-col{background:var(--panel2); border:1px solid var(--b2); padding:8px; border-radius:5px; display:flex; flex-direction:column; justify-content:space-between}
+.dash-title{color:var(--gdim); font-weight:700; font-size:10px; border-bottom:1px solid var(--b1); padding-bottom:4px; display:flex; justify-content:space-between}
+.dash-row{display:flex; justify-content:space-between; font-size:10px; color:var(--txtb); margin:2px 0}
+.dash-row .k{color:var(--txtd)}
+.dash-note{font-size:9px; color:var(--txtd); border-top:1px solid var(--b1); padding-top:4px}
+.spectrum-col{background:var(--bg); border:1px solid var(--gdim)}
+.spectrum-hdr{display:flex; justify-content:space-between; font-size:9px; color:var(--green); margin-bottom:4px}
+.spectrum-box{width:100%; height:48px; background:#000; border:1px solid var(--gfaint); border-radius:3px; overflow:hidden}
+#spectrumCanvas{width:100%; height:100%; display:block}
+.spectrum-ticks{display:flex; justify-content:space-between; font-size:8px; color:var(--txtd); margin-top:4px; font-family:var(--mono)}
+.hint-line{font-size:10px; display:flex; align-items:center; gap:5px}
+.hint-active{color:var(--green); font-weight:700}
+.hint-inactive{color:var(--txtd)}
+.dash-keys{font-size:9px; color:var(--txtd); border-top:1px solid var(--b1); padding-top:4px; display:flex; justify-content:space-between}
+
+/* ===== Modals ===== */
+.modal-overlay{
+  position:fixed; inset:0; z-index:50; background:rgba(7,10,12,.92); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center; padding:16px;
+}
+.brief-card, .debrief-card{
+  max-width:560px; width:100%; background:var(--panel); border:2px solid var(--gdim);
+  border-radius:8px; padding:20px; box-shadow:0 20px 50px rgba(0,0,0,.5); color:var(--txtb);
+}
+.debrief-card{border-color:var(--red)}
+.brief-hdr, .debrief-hdr{text-align:center; border-bottom:1px solid var(--b1); padding-bottom:12px; margin-bottom:12px}
+.brief-badge{
+  display:inline-block; padding:2px 10px; background:var(--gfaint); border:1px solid var(--gdim);
+  color:var(--green); font-size:10px; font-weight:700; border-radius:4px; margin-bottom:6px;
+}
+.debrief-badge{background:#330a0a; border-color:var(--red); color:#ffb3b3}
+.brief-title{font-family:var(--ui); font-size:22px; font-weight:700; color:var(--green); letter-spacing:.05em}
+.debrief-title{font-family:var(--ui); font-size:26px; font-weight:700; color:var(--red); letter-spacing:.05em}
+.brief-tagline{font-size:11px; color:var(--txtd)}
+.brief-body{max-height:55vh; overflow-y:auto; font-size:12px; line-height:1.5}
+.brief-callout{background:var(--bg); border-left:4px solid var(--green); padding:10px; border-radius:4px; margin-bottom:8px}
+.brief-callout h3{color:var(--green); font-size:11px; text-transform:uppercase; margin-bottom:4px}
+.brief-grid{display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:8px}
+@media(min-width:520px){.brief-grid{grid-template-columns:1fr 1fr}}
+.brief-weapon-box{background:var(--bg); border:1px solid var(--b1); padding:10px; border-radius:4px}
+.brief-weapon-box .wname{font-weight:700; color:var(--green); margin-bottom:4px; display:flex; align-items:center; gap:6px; font-size:11.5px}
+.brief-weapon-box p{font-size:10.5px; color:var(--txtd)}
+.brief-warn{background:#332400; border:1px solid var(--amber); padding:10px; border-radius:4px; font-size:10.5px; color:var(--amber)}
+.brief-warn b{display:block; margin-bottom:3px; text-transform:uppercase}
+.brief-actions{margin-top:14px; display:flex; justify-content:flex-end; border-top:1px solid var(--b1); padding-top:10px}
+.start-btn{
+  width:100%; padding:12px; background:var(--green); color:#0a0c0f; font-family:var(--ui); font-weight:700;
+  font-size:16px; border:none; border-radius:5px; box-shadow:0 6px 16px rgba(0,0,0,.3); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.start-btn:active{transform:scale(.97)}
+.restart-btn{
+  width:100%; padding:12px; background:var(--amber); color:#0a0c0f; font-family:var(--ui); font-weight:700;
+  font-size:16px; border:none; border-radius:5px; box-shadow:0 6px 16px rgba(0,0,0,.3); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.restart-btn:active{transform:scale(.97)}
+.aar-list{font-family:var(--mono); font-size:11.5px}
+.aar-row{display:flex; justify-content:space-between; border-bottom:1px solid var(--b1); padding:4px 0}
+.aar-row .k{color:var(--txtd)}
+.aar-row .v-amber{color:var(--amber); font-weight:700}
+.aar-row .v-green{color:var(--green); font-weight:700}
+.aar-assess{background:var(--bg); border:1px solid var(--b1); padding:10px; border-radius:4px; margin-top:10px; font-size:11px; color:var(--txtb)}
+.aar-assess .lbl{color:var(--amber); font-weight:700; text-transform:uppercase; font-size:10px; margin-bottom:3px}
+
+/* theme toggle */
+.theme-btn{
+  position:fixed; top:10px; right:10px; z-index:300; background:var(--panel); border:1px solid var(--b2);
+  color:var(--txtd); padding:6px 12px; border-radius:4px; cursor:pointer; font-family:var(--mono); font-size:11px;
+}
+</style>
+</head>
+<body class="crt-glow">
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9789;</button>
+
+<header class="game-header">
+  <div class="header-brand">
+    <span class="header-icon">&#128737;</span>
+    <div>
+      <div class="header-title">17E EW Trainer</div>
+      <div class="header-sub">C-UAS &amp; C-COMMS TACTICAL SIMULATOR</div>
+    </div>
+  </div>
+  <div class="hud-stats">
+    <div class="hud-chip">
+      <span class="hud-chip-label">LIVES</span>
+      <div id="ui-lives" class="hud-lives"></div>
+    </div>
+    <div class="hud-chip"><span class="hud-chip-label">SCORE</span><span id="ui-score" class="hud-score">00000</span></div>
+    <div class="hud-chip"><span class="hud-chip-label">WAVE</span><span id="ui-wave" class="hud-wave">01</span></div>
+    <div class="hud-chip"><span class="hud-chip-label">MULT</span><span id="ui-multiplier" class="hud-mult">1.0x</span></div>
+    <div class="hud-chip"><span class="hud-chip-label">DRONES</span><span id="ui-drones-killed" class="hud-wave">0</span></div>
+    <div class="hud-chip"><span class="hud-chip-label">JAMMED</span><span id="ui-comms-jammed" class="hud-mult">0</span></div>
+  </div>
+  <div class="hdr-actions">
+    <button id="btn-audio-toggle" class="hdr-btn"><span id="audio-icon">&#128266;</span><span id="audio-status">AUDIO ON</span></button>
+    <button id="btn-show-briefing" class="hdr-btn alt">&#128214; DOCS</button>
+  </div>
+</header>
+
+<main class="playfield">
+  <div class="scanlines" style="position:absolute;inset:0;z-index:10"></div>
+  <div id="hud-alert-banner" class="alert-banner"><span id="hud-alert-text">HOSTILE TRANSMISSION INTERCEPTED!</span></div>
+
+  <div id="canvas-container" class="canvas-wrap game-canvas-container">
+    <canvas id="gameCanvas"></canvas>
+    <div class="weapon-badge">
+      <span class="weapon-dot animate-ping"></span>
+      <div>
+        <div class="weapon-label">Active System</div>
+        <div id="active-weapon-name" class="weapon-name weapon-name-green">DRONE DEFENDER [1]</div>
+      </div>
+    </div>
+    <button id="btn-switch-weapon" class="switch-btn">&#8635; SWITCH SYSTEM [SPACE / 2]</button>
+  </div>
+
+  <div class="dashboard">
+    <div class="dash-col">
+      <div class="dash-title"><span>OPERATIONAL STATUS</span><span style="color:var(--green)">ONLINE</span></div>
+      <div>
+        <div class="dash-row"><span class="k">Tactical Band:</span><span>C-UAS / VHF</span></div>
+        <div class="dash-row"><span class="k">Accuracy Rate:</span><span id="ui-accuracy" style="color:var(--amber)">100%</span></div>
+      </div>
+      <div class="dash-note">System Ready - Standard Engagement</div>
+    </div>
+
+    <div class="dash-col spectrum-col">
+      <div class="spectrum-hdr"><span>&#128266; RF SPECTRUM WATERFALL (2.4GHz - 5.8GHz / VHF Comms)</span><span id="spectrum-status" style="color:var(--green)">MONITORING BANDS</span></div>
+      <div class="spectrum-box"><canvas id="spectrumCanvas"></canvas></div>
+      <div class="spectrum-ticks"><span>2.40 GHz (ISM)</span><span>3.10 GHz (TacCom)</span><span>5.80 GHz (UAV Control)</span></div>
+    </div>
+
+    <div class="dash-col">
+      <div class="dash-title" style="border-bottom:1px solid var(--b1)">ENGAGEMENT GUIDE</div>
+      <div>
+        <div id="mode-hint-1" class="hint-line hint-active">&#127919; <span>Defender [1]:</span> Click UAVs in Sky</div>
+        <div id="mode-hint-2" class="hint-line hint-inactive">&#128225; <span>TLS [2/SPACE]:</span> Aim &amp; Hold Comms</div>
+      </div>
+      <div class="dash-keys"><span>[1] Drone Defender</span><span>[2/SPACE] TLS Manpack</span></div>
+    </div>
+  </div>
+</main>
+
+<div id="modal-overlay" class="modal-overlay">
+  <div id="modal-start" class="brief-card">
+    <div class="brief-hdr">
+      <div class="brief-badge">U.S. ARMY 17E ELECTRONIC WARFARE AIT</div>
+      <div class="brief-title">SPECTRUM DOMINANCE TRAINER</div>
+      <p class="brief-tagline">Multi-Domain Operations: C-UAS &amp; Counter-Comms</p>
+    </div>
+    <div class="brief-body">
+      <div class="brief-callout">
+        <h3>&#127919; Mission Objective</h3>
+        <p>Disrupt incoming hostile UAVs using the Drone Defender jammer and disable enemy radio spotter transmissions with the TLS Manpack before targets escape.</p>
+      </div>
+      <div class="brief-grid">
+        <div class="brief-weapon-box">
+          <div class="wname">&#127919; Drone Defender [1]</div>
+          <p>Aim and click airborne UAVs to disrupt control signals. Neutralized drones lose power and fall out of the sky.</p>
+        </div>
+        <div class="brief-weapon-box">
+          <div class="wname">&#128225; TLS Manpack [2 / SPACE]</div>
+          <p>When enemy spotters transmit on radio comms, press <strong>[SPACE] or [2]</strong> and click or hold the targeting beam over them to jam their link.</p>
+        </div>
+      </div>
+      <div class="brief-warn"><b>&#128737; 3-Lives System:</b>
+        Missing shots will NOT cost you a life. You only lose a life if an unjammed drone escapes offscreen or an enemy spotter completes their radio transmission!
+      </div>
+    </div>
+    <div class="brief-actions">
+      <button id="btn-start-game" class="start-btn">&#9654; START EW SIMULATOR</button>
+    </div>
+  </div>
+
+  <div id="modal-debrief" class="debrief-card hidden">
+    <div class="debrief-hdr">
+      <div class="brief-badge debrief-badge">AFTER ACTION REPORT (AAR)</div>
+      <div id="debrief-title" class="debrief-title">MISSION OVER</div>
+      <p id="debrief-subtitle" class="brief-tagline">Spectrum Operations Evaluation</p>
+    </div>
+    <div class="aar-list">
+      <div class="aar-row"><span class="k">Final Score:</span><span id="aar-score" class="v-amber">00000</span></div>
+      <div class="aar-row"><span class="k">Waves Survived:</span><span id="aar-waves" class="v-green">1</span></div>
+      <div class="aar-row"><span class="k">UAVs Jammed / Falling:</span><span id="aar-drones" class="v-green">0</span></div>
+      <div class="aar-row"><span class="k">Comms Links Jammed:</span><span id="aar-comms" class="v-amber">0</span></div>
+      <div class="aar-row"><span class="k">Firing Accuracy:</span><span id="aar-accuracy" class="v-green">100%</span></div>
+      <div class="aar-assess">
+        <div class="lbl">&#127891; Instructor Assessment:</div>
+        <p id="aar-feedback">Keep practicing rapid weapon switching and precision targeting!</p>
+      </div>
+    </div>
+    <div class="brief-actions">
+      <button id="btn-restart-game" class="restart-btn">&#8635; RE-ENGAGE SIMULATOR</button>
+    </div>
+  </div>
+</div>
+    <script>
+        // --- Game State Engine ---
+        const GameState = {
+            START: 'START',
+            PLAYING: 'PLAYING',
+            GAMEOVER: 'GAMEOVER'
+        };
+
+        const WeaponTypes = {
+            DEFENDER: 'DEFENDER',
+            TLS_MANPACK: 'TLS_MANPACK'
+        };
+
+        let state = GameState.START;
+        let activeWeapon = WeaponTypes.DEFENDER;
+
+        // Player Stats
+        let score = 0;
+        let wave = 1;
+        let waveMultiplier = 1.0;
+        let lives = 3;
+        let dronesKilled = 0;
+        let commsJammed = 0;
+        let totalShots = 0;
+        let hitShots = 0;
+
+        // Game Entities
+        let drones = [];
+        let commsSpotters = [];
+        let particles = [];
+        let floatingTexts = [];
+
+        // Timers
+        let lastFrameTime = performance.now();
+        let spawnDroneTimer = 0;
+        let spawnSpotterTimer = 0;
+        let waveTimer = 0;
+
+        // Mouse/Touch Tracking
+        const mouse = { x: 0, y: 0, isDown: false };
+
+        // Audio API Setup
+        let audioCtx = null;
+        let audioEnabled = true;
+
+        // Canvas Setup
+        let canvas, ctx, spectrumCanvas, spectrumCtx;
+
+        // --- Web Audio Synthesizer ---
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioEnabled || !audioCtx) return;
+
+            try {
+                const now = audioCtx.currentTime;
+
+                if (type === 'shot') {
+                    // RF Disruptor Zap
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(450, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.12);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+
+                } else if (type === 'drone_stall') {
+                    // Motor-Stall Descending Pitch Whistle (No Explosion)
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.45);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.45);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+
+                } else if (type === 'life_lost') {
+                    // Life Lost Alert Tone
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(140, now + 0.15);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+
+                } else if (type === 'jamming') {
+                    // TLS RF Jamming Wave Hum
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(160 + Math.random() * 60, now);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+
+                } else if (type === 'radio') {
+                    // Hostile Radio Signal Beep
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.setValueAtTime(660, now + 0.08);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.16);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.16);
+
+                } else if (type === 'switch') {
+                    // System Switch Click
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                }
+            } catch (e) {
+                // Audio safety
+            }
+        }
+
+        // --- Target Classes ---
+        class Drone {
+            constructor() {
+                this.width = 40;
+                this.height = 24;
+                this.x = Math.random() < 0.5 ? -this.width : canvas.width + this.width;
+                this.y = Math.random() * (canvas.height * 0.42) + 25;
+
+                const types = ['RECON', 'ATTACK', 'SWARM'];
+                this.type = types[Math.floor(Math.random() * types.length)];
+
+                // Speed scale factor: Wave 1 starts gentle (0.45)
+                const speedScale = 0.45 + Math.min(1.4, (wave - 1) * 0.15);
+
+                if (this.type === 'RECON') {
+                    this.speedX = (this.x < 0 ? 1 : -1) * (Math.random() * 0.8 + 1.0) * speedScale;
+                    this.speedY = Math.sin(this.x * 0.02) * 0.6 * speedScale;
+                    this.basePoints = 150;
+                    this.color = '#38bdf8';
+                } else if (this.type === 'ATTACK') {
+                    this.speedX = (this.x < 0 ? 1 : -1) * (Math.random() * 0.6 + 0.8) * speedScale;
+                    this.speedY = (Math.random() * 0.4 - 0.2) * speedScale;
+                    this.basePoints = 250;
+                    this.color = '#f87171';
+                } else { // SWARM
+                    this.speedX = (this.x < 0 ? 1 : -1) * (Math.random() * 1.0 + 1.1) * speedScale;
+                    this.speedY = (Math.random() - 0.5) * 1.2 * speedScale;
+                    this.basePoints = 100;
+                    this.color = '#fbbf24';
+                }
+
+                this.rotorsAngle = 0;
+                this.isFalling = false;
+                this.rotation = 0;
+                this.fallSpeedY = 2.5;
+                this.alpha = 1.0;
+            }
+
+            update() {
+                if (this.isFalling) {
+                    // Non-explosive Falling Physics: Tumbles out of sky
+                    this.y += this.fallSpeedY;
+                    this.fallSpeedY += 0.25; // gravity acceleration
+                    this.x += this.speedX * 0.3; // retain slight forward inertia
+                    this.rotation += 0.12;
+
+                    if (this.y > canvas.height * 0.76) {
+                        this.alpha -= 0.08; // fade out on ground contact
+                    }
+                } else {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.rotorsAngle += 0.3;
+
+                    if (this.y < 15 || this.y > canvas.height * 0.52) {
+                        this.speedY *= -1;
+                    }
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = Math.max(0, this.alpha);
+
+                // Drone Central Hull
+                ctx.fillStyle = this.isFalling ? '#64748b' : this.color;
+                ctx.fillRect(-14, -5, 28, 10);
+
+                // Sensor Eye
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(-4, -2, 8, 4);
+                ctx.fillStyle = this.isFalling ? '#475569' : '#ef4444';
+                ctx.fillRect(-2, -1, 4, 2);
+
+                // Arms & Rotors
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-14, -2); ctx.lineTo(-20, -10);
+                ctx.moveTo(14, -2); ctx.lineTo(20, -10);
+                ctx.stroke();
+
+                if (!this.isFalling) {
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.5;
+                    const rOffsetX = Math.cos(this.rotorsAngle) * 10;
+                    ctx.beginPath();
+                    ctx.moveTo(-20 - rOffsetX, -10); ctx.lineTo(-20 + rOffsetX, -10);
+                    ctx.moveTo(20 - rOffsetX, -10); ctx.lineTo(20 + rOffsetX, -10);
+                    ctx.stroke();
+
+                    // Signal Label
+                    ctx.fillStyle = '#22c55e';
+                    ctx.font = '9px monospace';
+                    ctx.fillText(this.type[0] + '-UAV', -12, 16);
+                }
+
+                ctx.restore();
+            }
+
+            isOutOfBounds() {
+                if (this.isFalling) {
+                    return this.alpha <= 0 || this.y > canvas.height + 40;
+                }
+                return (this.speedX > 0 && this.x > canvas.width + 60) ||
+                       (this.speedX < 0 && this.x < -60);
+            }
+        }
+
+        class CommsSpotter {
+            constructor() {
+                this.width = 32;
+                this.height = 42;
+                this.x = Math.random() * (canvas.width - 120) + 60;
+                this.y = canvas.height * 0.68 + (Math.random() * 30);
+                
+                this.state = 'POPPING';
+                this.timer = 0;
+                
+                // Minimum exposure window is GUARANTEED to be at least 4.0 seconds (240 ticks at 60fps)
+                const calculatedTalkTime = 520 - (wave - 1) * 35;
+                this.maxTalkTime = Math.max(240, calculatedTalkTime); 
+
+                this.jamProgress = 0;
+                this.requiredJam = 100;
+                this.rfWaveRadius = 4;
+            }
+
+            update() {
+                this.timer++;
+                this.rfWaveRadius = (this.rfWaveRadius + 0.7) % 28;
+
+                if (this.state === 'POPPING' && this.timer > 18) {
+                    this.state = 'TALKING';
+                    this.timer = 0;
+                    playSound('radio');
+                } else if (this.state === 'TALKING') {
+                    if (this.timer >= this.maxTalkTime) {
+                        this.state = 'RETREAT';
+                        this.timer = 0;
+                        triggerAlert("SPOTTER TRANSMISSION COMPLETED! (LIFE LOST)");
+                        loseLife();
+                    }
+                } else if (this.state === 'RETREAT' && this.timer > 18) {
+                    this.isDead = true;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                let offsetY = 0;
+                if (this.state === 'POPPING') offsetY = (18 - this.timer);
+                if (this.state === 'RETREAT') offsetY = this.timer;
+
+                ctx.translate(0, offsetY);
+
+                // Ground Spotter Soldier
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-9, -28, 18, 9);
+                ctx.fillStyle = '#fde047';
+                ctx.fillRect(-7, -19, 14, 8);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(-10, -11, 20, 20);
+                ctx.fillStyle = '#166534';
+                ctx.fillRect(-8, -7, 16, 16);
+
+                // Radio Whip Antenna
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(6, -8);
+                ctx.lineTo(14, -34);
+                ctx.stroke();
+
+                // Radio Transmission Waves
+                if (this.state === 'TALKING') {
+                    ctx.strokeStyle = `rgba(239, 68, 68, ${1 - this.rfWaveRadius / 28})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(14, -34, this.rfWaveRadius, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Jamming Progress Bar
+                    if (this.jamProgress > 0) {
+                        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                        ctx.fillRect(-18, -42, 36, 5);
+                        ctx.fillStyle = '#eab308';
+                        ctx.fillRect(-18, -42, (this.jamProgress / this.requiredJam) * 36, 5);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.strokeRect(-18, -42, 36, 5);
+                    }
+                }
+
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 3;
+                this.size = Math.random() * 2.5 + 1.5;
+                this.alpha = 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.05;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        class FloatingText {
+            constructor(x, y, text, color = '#fbbf24') {
+                this.x = x;
+                this.y = y;
+                this.text = text;
+                this.color = color;
+                this.alpha = 1;
+            }
+            update() {
+                this.y -= 0.8;
+                this.alpha -= 0.02;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.font = 'bold 12px "Share Tech Mono", monospace';
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        // --- Game Input & Logic Handlers ---
+        function switchWeapon(targetWeapon) {
+            if (targetWeapon) {
+                activeWeapon = targetWeapon;
+            } else {
+                activeWeapon = activeWeapon === WeaponTypes.DEFENDER ? WeaponTypes.TLS_MANPACK : WeaponTypes.DEFENDER;
+            }
+            playSound('switch');
+
+            const badgeName = document.getElementById('active-weapon-name');
+            const hint1 = document.getElementById('mode-hint-1');
+            const hint2 = document.getElementById('mode-hint-2');
+
+            if (activeWeapon === WeaponTypes.DEFENDER) {
+                badgeName.innerText = "DRONE DEFENDER [1]";
+                badgeName.className = "weapon-name weapon-name-green";
+                hint1.className = "hint-line hint-active";
+                hint2.className = "hint-line hint-inactive";
+            } else {
+                badgeName.innerText = "TLS MANPACK [2 / SPACE]";
+                badgeName.className = "weapon-name weapon-name-amber";
+                hint1.className = "hint-line hint-inactive";
+                hint2.className = "hint-line hint-active";
+            }
+        }
+
+        function triggerAlert(msg) {
+            const banner = document.getElementById('hud-alert-banner');
+            const text = document.getElementById('hud-alert-text');
+            text.innerText = msg;
+            banner.classList.remove('hidden');
+            setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 2500);
+        }
+
+        function loseLife() {
+            lives--;
+            playSound('life_lost');
+            updateLivesUI();
+
+            if (lives <= 0) {
+                endGame(false, "OPERATIONAL CAPACITY EXHAUSTED");
+            }
+        }
+
+        function updateLivesUI() {
+            const livesElem = document.getElementById('ui-lives');
+            livesElem.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < lives) {
+                    livesElem.innerHTML += '<span class="life-heart life-heart-full">&#9829;</span>';
+                } else {
+                    livesElem.innerHTML += '<span class="life-heart life-heart-empty">&#9825;</span>';
+                }
+            }
+        }
+
+        function handleFiring() {
+            if (state !== GameState.PLAYING) return;
+
+            initAudio();
+            totalShots++;
+
+            if (activeWeapon === WeaponTypes.DEFENDER) {
+                playSound('shot');
+
+                // Hit Detection for Airborne Drones
+                for (let i = drones.length - 1; i >= 0; i--) {
+                    const drone = drones[i];
+                    if (drone.isFalling) continue;
+
+                    const dist = Math.hypot(mouse.x - drone.x, mouse.y - drone.y);
+
+                    if (dist < 38) { // Reticle targeting radius
+                        hitShots++;
+                        
+                        // Drone loses motor power and tumbles out of sky
+                        drone.isFalling = true;
+                        drone.type = 'DISABLED';
+                        
+                        const earnedPoints = Math.round(drone.basePoints * waveMultiplier);
+                        score += earnedPoints;
+                        dronesKilled++;
+                        playSound('drone_stall');
+                        
+                        createDisruptionParticles(drone.x, drone.y, '#38bdf8', 8);
+                        floatingTexts.push(new FloatingText(drone.x, drone.y, `DISRUPTED! +${earnedPoints}`, '#38bdf8'));
+                        break;
+                    }
+                }
+                // NO LIFE PENALTY FOR MISSING SHOTS
+            }
+        }
+
+        function handleContinuousJamming() {
+            if (state !== GameState.PLAYING || !mouse.isDown) return;
+            if (activeWeapon !== WeaponTypes.TLS_MANPACK) return;
+
+            playSound('jamming');
+
+            for (let i = commsSpotters.length - 1; i >= 0; i--) {
+                const spotter = commsSpotters[i];
+                if (spotter.state === 'TALKING') {
+                    const dist = Math.hypot(mouse.x - spotter.x, mouse.y - (spotter.y - 12));
+
+                    if (dist < 60) { // RF Jamming beam radius
+                        spotter.jamProgress += 4.2;
+                        particles.push(new Particle(mouse.x, mouse.y, '#eab308'));
+
+                        if (spotter.jamProgress >= spotter.requiredJam) {
+                            hitShots++;
+                            totalShots++;
+                            const earnedPoints = Math.round(300 * waveMultiplier);
+                            score += earnedPoints;
+                            commsJammed++;
+                            playSound('radio');
+                            floatingTexts.push(new FloatingText(spotter.x, spotter.y - 20, `JAMMED! +${earnedPoints}`, '#22c55e'));
+                            createDisruptionParticles(spotter.x, spotter.y - 15, '#eab308', 10);
+                            spotter.state = 'RETREAT';
+                        }
+                    }
+                }
+            }
+        }
+
+        function createDisruptionParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            document.getElementById('modal-overlay').classList.add('hidden');
+            
+            state = GameState.PLAYING;
+            score = 0;
+            wave = 1;
+            waveMultiplier = 1.0;
+            lives = 3;
+            dronesKilled = 0;
+            commsJammed = 0;
+            totalShots = 0;
+            hitShots = 0;
+
+            drones = [];
+            commsSpotters = [];
+            particles = [];
+            floatingTexts = [];
+
+            spawnDroneTimer = 0;
+            spawnSpotterTimer = 0;
+            waveTimer = 0;
+
+            updateLivesUI();
+
+            lastFrameTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            if (state !== GameState.PLAYING) return;
+
+            handleContinuousJamming();
+
+            // Wave Scaling Mechanics (Wave 1 drone delay = 3.2 sec)
+            const droneInterval = Math.max(750, 3200 - (wave - 1) * 320);
+            spawnDroneTimer += dt;
+            if (spawnDroneTimer > droneInterval) {
+                drones.push(new Drone());
+                spawnDroneTimer = 0;
+            }
+
+            // Wave 1 spotter delay = 8.5 sec
+            const spotterInterval = Math.max(2800, 8500 - (wave - 1) * 600);
+            spawnSpotterTimer += dt;
+            if (spawnSpotterTimer > spotterInterval) {
+                commsSpotters.push(new CommsSpotter());
+                spawnSpotterTimer = 0;
+                triggerAlert("HOSTILE RADIO TRANSMISSION DETECTED! SWITCH TO TLS MANPACK [SPACE]");
+            }
+
+            // Wave advance timer (24 seconds per wave)
+            waveTimer += dt;
+            if (waveTimer > 24000) {
+                wave++;
+                waveTimer = 0;
+                waveMultiplier = Number((1.0 + (wave - 1) * 0.3).toFixed(1));
+                floatingTexts.push(new FloatingText(canvas.width / 2 - 100, canvas.height / 3, `WAVE ${wave} (${waveMultiplier}x MULTIPLIER)`, '#22c55e'));
+            }
+
+            // Update Target entities
+            for (let i = drones.length - 1; i >= 0; i--) {
+                const drone = drones[i];
+                drone.update();
+
+                // Check if drone escaped unjammed across the screen
+                if (!drone.isFalling && drone.isOutOfBounds()) {
+                    drones.splice(i, 1);
+                    triggerAlert("UAV ESCAPED UNJAMMED! (LIFE LOST)");
+                    loseLife();
+                } else if (drone.isFalling && drone.isOutOfBounds()) {
+                    drones.splice(i, 1);
+                }
+            }
+
+            for (let i = commsSpotters.length - 1; i >= 0; i--) {
+                commsSpotters[i].update();
+                if (commsSpotters[i].isDead) {
+                    commsSpotters.splice(i, 1);
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                floatingTexts[i].update();
+                if (floatingTexts[i].alpha <= 0) floatingTexts.splice(i, 1);
+            }
+
+            // Accuracy Rate Calculation
+            const accuracy = totalShots > 0 ? Math.round((hitShots / totalShots) * 100) : 100;
+
+            // Update UI elements
+            document.getElementById('ui-score').innerText = String(score).padStart(5, '0');
+            document.getElementById('ui-wave').innerText = String(wave).padStart(2, '0');
+            document.getElementById('ui-multiplier').innerText = `${waveMultiplier.toFixed(1)}x`;
+            document.getElementById('ui-drones-killed').innerText = dronesKilled;
+            document.getElementById('ui-comms-jammed').innerText = commsJammed;
+            document.getElementById('ui-accuracy').innerText = `${accuracy}%`;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Tactical Sky Background Gradient
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 0.7);
+            skyGradient.addColorStop(0, '#020617');
+            skyGradient.addColorStop(1, '#062016');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Distant Terrain
+            ctx.fillStyle = '#14532d';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height * 0.7);
+            ctx.lineTo(canvas.width * 0.3, canvas.height * 0.58);
+            ctx.lineTo(canvas.width * 0.6, canvas.height * 0.68);
+            ctx.lineTo(canvas.width, canvas.height * 0.58);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.fill();
+
+            // Foreground Ground
+            ctx.fillStyle = '#052e16';
+            ctx.fillRect(0, canvas.height * 0.72, canvas.width, canvas.height * 0.28);
+
+            // Bushes
+            ctx.fillStyle = '#166534';
+            for (let i = 0; i < canvas.width; i += 110) {
+                ctx.beginPath();
+                ctx.arc(i + 30, canvas.height * 0.74, 26, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw Ground Spotters
+            commsSpotters.forEach(spotter => spotter.draw(ctx));
+
+            // Trench Line Overlay
+            ctx.fillStyle = '#022c22';
+            ctx.fillRect(0, canvas.height * 0.78, canvas.width, canvas.height * 0.22);
+
+            // Draw Drones
+            drones.forEach(drone => drone.draw(ctx));
+
+            // Draw Effects
+            particles.forEach(p => p.draw(ctx));
+            floatingTexts.forEach(ft => ft.draw(ctx));
+
+            // Aiming Reticle
+            ctx.save();
+            ctx.translate(mouse.x, mouse.y);
+
+            if (activeWeapon === WeaponTypes.DEFENDER) {
+                // Drone Defender Scope Crosshair
+                ctx.strokeStyle = '#22c55e';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, 18, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(-22, 0); ctx.lineTo(-10, 0);
+                ctx.moveTo(10, 0); ctx.lineTo(22, 0);
+                ctx.moveTo(0, -22); ctx.lineTo(0, -10);
+                ctx.moveTo(0, 10); ctx.lineTo(0, 22);
+                ctx.stroke();
+
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(-2, -2, 4, 4);
+            } else {
+                // TLS Manpack Clean Tactical Crosshair + Beam Aura
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 2;
+                
+                // Active Beam Glow Circle
+                ctx.beginPath();
+                ctx.arc(0, 0, 28, 0, Math.PI * 2);
+                ctx.stroke();
+
+                if (mouse.isDown) {
+                    ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 28, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Inner Tactical Reticle
+                ctx.beginPath();
+                ctx.moveTo(-32, 0); ctx.lineTo(-12, 0);
+                ctx.moveTo(32, 0); ctx.lineTo(12, 0);
+                ctx.moveTo(0, -32); ctx.lineTo(0, -12);
+                ctx.moveTo(0, 32); ctx.lineTo(0, 12);
+                ctx.stroke();
+
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(-2, -2, 4, 4);
+            }
+
+            ctx.restore();
+
+            // Spectrum Analyzer
+            drawSpectrumAnalyzer();
+        }
+
+        function drawSpectrumAnalyzer() {
+            if (!spectrumCanvas || !spectrumCtx) return;
+
+            const w = spectrumCanvas.width;
+            const h = spectrumCanvas.height;
+
+            spectrumCtx.fillStyle = '#020617';
+            spectrumCtx.fillRect(0, 0, w, h);
+
+            // Grid Lines
+            spectrumCtx.strokeStyle = 'rgba(16, 185, 129, 0.2)';
+            spectrumCtx.lineWidth = 1;
+            for (let x = 0; x < w; x += 35) {
+                spectrumCtx.beginPath();
+                spectrumCtx.moveTo(x, 0);
+                spectrumCtx.lineTo(x, h);
+                spectrumCtx.stroke();
+            }
+
+            // Noise Wave
+            spectrumCtx.strokeStyle = '#059669';
+            spectrumCtx.beginPath();
+            spectrumCtx.moveTo(0, h - 8);
+            for (let x = 0; x < w; x += 5) {
+                const noise = Math.random() * 6;
+                spectrumCtx.lineTo(x, h - 8 - noise);
+            }
+            spectrumCtx.stroke();
+
+            // Drone Signal Spikes
+            drones.forEach(drone => {
+                if (!drone.isFalling) {
+                    const signalX = (drone.x / canvas.width) * (w * 0.4) + (w * 0.55);
+                    spectrumCtx.strokeStyle = '#38bdf8';
+                    spectrumCtx.fillStyle = 'rgba(56, 189, 248, 0.3)';
+                    spectrumCtx.beginPath();
+                    spectrumCtx.moveTo(signalX - 12, h - 8);
+                    spectrumCtx.lineTo(signalX, h - 30);
+                    spectrumCtx.lineTo(signalX + 12, h - 8);
+                    spectrumCtx.stroke();
+                    spectrumCtx.fill();
+                }
+            });
+
+            // Comms Spotter Spikes
+            commsSpotters.forEach(spotter => {
+                if (spotter.state === 'TALKING') {
+                    const signalX = (spotter.x / canvas.width) * (w * 0.4) + (w * 0.08);
+                    spectrumCtx.strokeStyle = '#ef4444';
+                    spectrumCtx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+                    spectrumCtx.beginPath();
+                    spectrumCtx.moveTo(signalX - 16, h - 8);
+                    spectrumCtx.lineTo(signalX, h - 36);
+                    spectrumCtx.lineTo(signalX + 16, h - 8);
+                    spectrumCtx.stroke();
+                    spectrumCtx.fill();
+                }
+            });
+        }
+
+        function gameLoop(time) {
+            const dt = time - lastFrameTime;
+            lastFrameTime = time;
+
+            if (state === GameState.PLAYING) {
+                update(dt);
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function endGame(isVictory = false, reason = "") {
+            state = GameState.GAMEOVER;
+
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            document.getElementById('modal-start').classList.add('hidden');
+            document.getElementById('modal-debrief').classList.remove('hidden');
+
+            // Strictly Header Text "MISSION OVER"
+            document.getElementById('debrief-title').innerText = "MISSION OVER";
+            document.getElementById('debrief-subtitle').innerText = reason || "Spectrum Operations Evaluation";
+
+            const accuracy = totalShots > 0 ? Math.round((hitShots / totalShots) * 100) : 100;
+
+            document.getElementById('aar-score').innerText = String(score).padStart(5, '0');
+            document.getElementById('aar-waves').innerText = wave;
+            document.getElementById('aar-drones').innerText = dronesKilled;
+            document.getElementById('aar-comms').innerText = commsJammed;
+            document.getElementById('aar-accuracy').innerText = `${accuracy}%`;
+
+            let feedback = "Practice quick weapon switching between C-UAS drone disruption and TLS RF ground spotter jamming.";
+            if (dronesKilled > 8 && commsJammed > 2 && accuracy > 75) {
+                feedback = "Outstanding EW execution, Specialist! High spectrum control and precision targeting observed.";
+            }
+            document.getElementById('aar-feedback').innerText = feedback;
+        }
+
+        // Window & Canvas Resize Handling
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            if (container && canvas) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+            if (spectrumCanvas) {
+                spectrumCanvas.width = spectrumCanvas.parentElement.clientWidth;
+                spectrumCanvas.height = spectrumCanvas.parentElement.clientHeight;
+            }
+        }
+
+        function setupEventListeners() {
+            window.addEventListener('resize', resizeCanvas);
+
+            // Canvas Mouse & Touch Events
+            const container = document.getElementById('canvas-container');
+            
+            function updateMousePos(e) {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            }
+
+            container.addEventListener('mousemove', (e) => updateMousePos(e));
+            
+            container.addEventListener('mousedown', (e) => {
+                updateMousePos(e);
+                mouse.isDown = true;
+                handleFiring();
+            });
+
+            window.addEventListener('mouseup', () => {
+                mouse.isDown = false;
+            });
+
+            // Touch Support
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    updateMousePos(e.touches[0]);
+                    mouse.isDown = true;
+                    handleFiring();
+                }
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    updateMousePos(e.touches[0]);
+                }
+            });
+
+            container.addEventListener('touchend', () => {
+                mouse.isDown = false;
+            });
+
+            // Keyboard Hotkeys
+            window.addEventListener('keydown', (e) => {
+                if (e.repeat) return; // Prevent key repeat locking issues
+
+                if (e.code === 'Key1' || e.key === '1') {
+                    switchWeapon(WeaponTypes.DEFENDER);
+                } else if (e.code === 'Key2' || e.key === '2') {
+                    switchWeapon(WeaponTypes.TLS_MANPACK);
+                } else if (e.code === 'Space') {
+                    e.preventDefault();
+                    switchWeapon(); // Toggle
+                }
+            });
+
+            // UI Buttons
+            document.getElementById('btn-switch-weapon').addEventListener('click', (e) => {
+                e.target.blur(); // Remove button focus to prevent spacebar from double triggering
+                switchWeapon();
+            });
+
+            document.getElementById('btn-start-game').addEventListener('click', startGame);
+            document.getElementById('btn-restart-game').addEventListener('click', startGame);
+
+            document.getElementById('btn-audio-toggle').addEventListener('click', () => {
+                audioEnabled = !audioEnabled;
+                document.getElementById('audio-status').innerText = audioEnabled ? 'AUDIO ON' : 'AUDIO OFF';
+                document.getElementById('audio-icon').textContent = audioEnabled ? '\ud83d\udd0a' : '\ud83d\udd07';
+            });
+
+            document.getElementById('btn-show-briefing').addEventListener('click', () => {
+                document.getElementById('modal-overlay').classList.remove('hidden');
+                document.getElementById('modal-start').classList.remove('hidden');
+                document.getElementById('modal-debrief').classList.add('hidden');
+            });
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            spectrumCanvas = document.getElementById('spectrumCanvas');
+            spectrumCtx = spectrumCanvas.getContext('2d');
+
+            resizeCanvas();
+            setupEventListeners();
+            draw();
+        };
+    </script>
+<script>
+function toggleTheme(){
+  const h=document.documentElement, isDark=h.getAttribute('data-theme')!=='light';
+  h.setAttribute('data-theme', isDark?'light':'dark');
+}
+</script>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px">
+  <span style="color:var(--txtd)">Related:</span>
+  <a href="../cuas/" style="color:var(--cyan);text-decoration:none">🛸 Drone Signal Spectrum</a>
+  <a href="../cuasdemo/" style="color:var(--cyan);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
+  <a href="../sdrguide/" style="color:var(--cyan);text-decoration:none">📻 Software-Defined Radio Explained</a>
+  <a href="../sdrsim/" style="color:var(--cyan);text-decoration:none">📻 SDR Console Simulator</a>
+  <a href="../fobdefense/" style="color:var(--cyan);text-decoration:none">🏕️ FOB Defense</a>
+</div>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:8px 16px 0;opacity:.62;font-family:sans-serif">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<div style="text-align:center;padding:8px 16px 6px;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>

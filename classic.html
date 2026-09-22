@@ -203,13 +203,15 @@ const TOOLS=[
   {cat:'F Systems',nm:'Signal ID Trainer',ds:'50 real signals across a scrollable live spectrum survey, an ID quiz with anomaly detection, and a categorized reference library',file:'sigid',color:'#ff4444',kw:'signal identification waterfall spectrum analyzer SIGINT anomaly detection radar OTH jammer cellular'},
   {cat:'F Systems',kind:'guide',nm:'Software-Defined Radio Explained',ds:'Plain-language guide: SDR hardware, common software, tuning, gain, demod modes, and reading a waterfall',file:'sdrguide',color:'#ff7700',kw:'SDR RTL-SDR HackRF GNU Radio GQRX SDR# tuning gain demodulation'},
   {cat:'F Systems',nm:'SDR Console Simulator',ds:'A hands-on practice SDR interface — tune, adjust gain, switch demodulation modes, and find 5 hidden practice signals',file:'sdrsim',color:'#ff7700',kw:'SDR tuning gain demodulation AM FM USB LSB CW waterfall spectrum'},
-  {cat:'F Systems',soon:true,nm:'Drone Defender Simulator',ds:'A hands-on counter-UAS engagement simulator — detect, track, and defeat drone threats',file:'',color:'#ff7700'},
-  {cat:'F Systems',soon:true,nm:'Field Ops: Enlist to First Unit',ds:'A narrative training game following a Soldier from enlistment through Basic, AIT, and their first unit',file:'',color:'#ff7700'},
+  {cat:'F Systems',nm:'Drone Defender Simulator',ds:'A hands-on counter-UAS engagement simulator — detect, track, and defeat drone threats',file:'dronedef',color:'#ff7700',kw:'counter drone UAS defender simulator arcade wave engagement TLS manpack jamming'},
+  {cat:'F Systems',nm:'FOB Defense',ds:'Build a layered defense — spectrum detectors, EW jammers, and C-UAS turrets — to protect your FOB from escalating drone waves',file:'fobdefense',color:'#ff7700',kw:'tower defense FOB base counter-UAS spectrum monitoring jammer turret layered defense wave'},
+  {cat:'F Systems',nm:'Field Ops: Enlist to First Unit',ds:'A narrative training game following a Soldier from enlistment through Basic, AIT, and their first unit',file:'fieldops',color:'#ff7700',kw:'narrative game story mode basic training AIT first unit SDR land nav compass loadout'},
   // G Planning
   {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
   {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff',kw:'troop leading procedures mission planning sequence order of operations METT-TC'},
   {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff',kw:'operation order five paragraph order mission planning document'},
   {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff',kw:'warrior tasks battle drills formations of movement squad tactics'},
+  {cat:'G Planning',kind:'cards',nm:'Warrior Tasks & Battle Drills',ds:'The five task categories, the core Battle Drills, and key standards \u00b7 6 flashcards',file:'army/warrior-tasks/',color:'#00d4ff',kw:'warrior tasks battle drills flashcards zeroing protective mask'},
 ];
 function catId(cat){ return cat.replace(/[^a-zA-Z0-9]/g,'-'); }
 
@@ -254,8 +256,9 @@ function render(){
     }
     const guide=t.kind==='guide';
     const quiz=t.kind==='quiz';
-    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':'<span class="tag tag-int">INTERACTIVE</span>';
-    const go=guide?'READ \u2192':'LAUNCH \u2192';
+    const cards=t.kind==='cards';
+    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':cards?'<span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+    const go=guide?'READ \u2192':cards?'STUDY \u2192':'LAUNCH \u2192';
     return `<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
       <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
       <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
@@ -266,7 +269,10 @@ function render(){
     items.forEach(t=>{
       if(t.cat!==lastCat){
         if(lastCat!==null) vh+='</div>';
-        vh+=`<div class="section-label" style="cursor:default;user-select:auto">${t.cat}</div><div class="grid">`;
+        const collapsed=collapsedCats.has(t.cat);
+        vh+=`<div class="section-label" onclick="toggleCatCollapse('${t.cat.replace(/'/g,"\\'")}')" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">`+
+          `<span style="display:inline-block;transition:transform .15s;transform:rotate(${collapsed?'-90':'0'}deg)">\u25be</span>${t.cat}</div>`+
+          `<div class="grid"${collapsed?' style="display:none"':''} data-cat="${t.cat.replace(/"/g,'&quot;')}">`;
         lastCat=t.cat;
       }
       vh+=cardHtml(t);
@@ -276,6 +282,11 @@ function render(){
     vh='<div class="grid">'+items.map(cardHtml).join('')+'</div>';
   }
   document.getElementById('view-grid').innerHTML=vh;
+}
+let collapsedCats=new Set();
+function toggleCatCollapse(cat){
+  if(collapsedCats.has(cat))collapsedCats.delete(cat);else collapsedCats.add(cat);
+  render();
 }
 renderTabs();
 
@@ -323,9 +334,10 @@ function globalSearch(){
     }
   });
   ARMY.forEach(a=>{
+    if(a.kind==='hub'||a.file==='army/warrior-tasks/') return;
     if(normalize(a.nm+' '+a.ds+' '+(a.kw||'')).includes(q)){
-      const isG=a.kind==='guide',isT=a.kind==='tool';
-      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':a.kind==='cards'?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:'Tactics', nm:a.nm, ds:a.ds,
+      const isG=a.kind==='guide',isT=a.kind==='tool',isCards=a.kind==='cards';
+      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':isCards?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:isCards?'Slides \u2014 Army Basics':'Tactics', nm:a.nm, ds:a.ds,
         href:a.file, color:isG?'#7a5cff':isT?'#00ff88':'#00d4ff', go:isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192'});
     }
   });
@@ -501,6 +513,14 @@ function renderSlides(){
       <div class="ds">${s.ds}</div><div class="go">DOWNLOAD &#8595;</div></a>`;
   });
   vh+='</div>';
+  vh+='<h3 style="font-size:13px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin:22px 0 8px">🎖️ Army Basics — Flashcards</h3>';
+  vh+='<div class="grid">';
+  ARMY.filter(a=>a.kind==='cards'&&a.file!=='army/warrior-tasks/').forEach(a=>{
+    vh+=`<a class="card" href="${a.file}" style="--accent:#00d4ff">
+      <div class="cat">ARMY <span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span></div><div class="nm">${a.nm}</div>
+      <div class="ds">${a.ds}</div><div class="go">STUDY \u2192</div></a>`;
+  });
+  vh+='</div>';
   document.getElementById('view-slides').innerHTML=vh;
 }
 
@@ -656,18 +676,28 @@ const WRAVEN_MODULES=[
   {nm:'Module 8: EW Math', ds:'The decibel and why linear math fails at scale, the 3 dB/10 dB rules, dBm and power budgets, and the radar range equation \u2014 with inline quizzes and a final exam.', file:'wraven/module-8-ew-math.html', color:'#ff6b6b'},
 ];
 function renderArmy(){
-  let vh='<div class="grid">';
-  ARMY.forEach(a=>{
-    if(a.kind==='hub') return;
+  const GROUPS=[
+    {label:'Land Navigation', files:['army/land-nav-guide/','army/land-nav/']},
+    {label:'Troop Leading Procedures', files:['army/tlp-guide/','army/tlp-planner/']},
+    {label:'MDMP', files:['army/mdmp-guide/','army/mdmp/']},
+    {label:'FOOM', files:['army/foom-guide/','army/foom/']}
+  ];
+  const cardHtml=a=>{
     const isG=a.kind==='guide',isT=a.kind==='tool';
-    const tag=isG?'<span class="tag tag-guide">GUIDE</span>':isT?'<span class="tag tag-int">INTERACTIVE</span>':'<span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span>';
-    const color=isG?'#7a5cff':isT?'#00ff88':'#00d4ff';
-    const go=isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192';
-    vh+=`<a class="card${isG?' is-guide':''}" href="${a.file}" style="--accent:${color}">
+    const tag=isG?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+    const color=isG?'#7a5cff':'#00ff88';
+    const go=isG?'READ \u2192':'LAUNCH \u2192';
+    return `<a class="card${isG?' is-guide':''}" href="${a.file}" style="--accent:${color}">
       <div class="cat">TACTICS ${tag}</div><div class="nm">${a.nm}</div>
       <div class="ds">${a.ds}</div><div class="go">${go}</div></a>`;
+  };
+  let vh='';
+  GROUPS.forEach(g=>{
+    const items=g.files.map(f=>ARMY.find(a=>a.file===f)).filter(Boolean);
+    if(!items.length) return;
+    vh+=`<h3 style="font-size:13px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin:18px 0 8px">${g.label}</h3>`;
+    vh+='<div class="grid">'+items.map(cardHtml).join('')+'</div>';
   });
-  vh+='</div>';
   document.getElementById('view-army').innerHTML=vh;
 }
 

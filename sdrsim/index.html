@@ -73,6 +73,7 @@ canvas{width:100%;display:block;border:1px solid var(--border-bright);border-rad
   </div>
   <div style="display:flex;align-items:center;gap:8px">
     <a href="../sdrguide/" class="theme-btn">📘 SDR Guide</a>
+    <button class="theme-btn" id="pause-btn" onclick="togglePause()">⏸ PAUSE</button>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
   </div>
 </header>
@@ -123,6 +124,7 @@ canvas{width:100%;display:block;border:1px solid var(--border-bright);border-rad
     <a href="../rftheory/" style="color:var(--cyan);text-decoration:none">📡 RF Theory</a>
     <a href="../cuas/" style="color:var(--cyan);text-decoration:none">🛸 Drone Signal Spectrum</a>
     <a href="../cuasdemo/" style="color:var(--cyan);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
+    <a href="../fieldops/" style="color:var(--cyan);text-decoration:none">🎮 Field Ops: Enlist to First Unit</a>
   </div>
 
 </div>
@@ -269,10 +271,17 @@ function drawWaterfall(row){
   });
 }
 
+var paused=false;
 function animate(){
-  const row=drawSpectrum();
-  drawWaterfall(row);
+  if(!paused){
+    const row=drawSpectrum();
+    drawWaterfall(row);
+  }
   requestAnimationFrame(animate);
+}
+function togglePause(){
+  paused=!paused;
+  document.getElementById('pause-btn').textContent=paused?'\u25b6 RESUME':'\u23f8 PAUSE';
 }
 
 function toggleTheme(){

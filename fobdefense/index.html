@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOB Defense — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070a0c; --panel:#0d1318; --panel2:#101820; --b1:#1c2a36; --b2:#25384a;
+  --green:#00ff88; --gdim:#00883a; --gfaint:#001a0d;
+  --amber:#ffb830; --red:#ff4a4a; --blue:#38bdf8; --cyan:#00d4ff;
+  --txt:#ffffff; --txtd:#6a8090; --txtb:#d8ecf5;
+  --mono:'Share Tech Mono',monospace; --ui:'Rajdhani',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#eef2f0; --panel:#ffffff; --panel2:#f5f7f6; --b1:#d4dcd9; --b2:#b8c4c0;
+  --green:#00884a; --gdim:#00a05a; --gfaint:#e0f5e8;
+  --amber:#b3690a; --red:#cc2222; --blue:#0077bb; --cyan:#0088aa;
+  --txt:#3a5560; --txtd:#8296a0; --txtb:#0a1a20;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:var(--ui);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;user-select:none}
+.hidden{display:none !important}
+header{border-bottom:1px solid var(--b2);padding:10px 16px;background:var(--panel);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;z-index:20}
+.hl{display:flex;align-items:center;gap:10px}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber);padding:3px 8px;letter-spacing:2px;background:var(--gfaint)}
+h1{font-size:17px;font-weight:700;letter-spacing:1px}
+.hud-stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stat{background:var(--panel2);border:1px solid var(--b2);border-radius:4px;padding:4px 9px;text-align:center;font-family:var(--mono)}
+.stat-label{display:block;font-size:8px;color:var(--txtd);letter-spacing:1px}
+.stat-val{font-size:13px;font-weight:700}
+.v-green{color:var(--green)} .v-amber{color:var(--amber)} .v-red{color:var(--red)} .v-cyan{color:var(--cyan)}
+.theme-btn{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px solid var(--b2);color:var(--txtd);padding:6px 12px;border-radius:4px;cursor:pointer}
+.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+
+.playfield-wrap{flex:1;position:relative;overflow:hidden;background:#050708}
+#gameCanvas{display:block;width:100%;height:100%;cursor:crosshair}
+.build-banner{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:15;
+  background:rgba(0,26,13,.9);border:1px solid var(--green);color:var(--green);
+  font-family:var(--mono);font-size:12px;padding:6px 16px;border-radius:6px;display:none;text-align:center;
+}
+.build-banner.show{display:block}
+.wave-banner{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:15;
+  background:rgba(51,10,10,.9);border:1px solid var(--red);color:#ffb3b3;
+  font-family:var(--mono);font-size:13px;padding:6px 16px;border-radius:6px;display:none;text-align:center;
+}
+.wave-banner.show{display:block}
+
+.tower-bar{
+  display:flex; gap:8px; padding:10px 12px; background:var(--panel); border-top:1px solid var(--b2);
+  overflow-x:auto; z-index:20; align-items:center;
+}
+.tower-card{
+  flex-shrink:0; width:118px; background:var(--panel2); border:2px solid var(--b2); border-radius:6px;
+  padding:8px; cursor:pointer; text-align:center; transition:border-color .15s;
+}
+.tower-card.sel{border-color:var(--green); box-shadow:0 0 0 1px var(--green)}
+.tower-card.unaffordable{opacity:.45; cursor:not-allowed}
+.tower-icon{font-size:22px; margin-bottom:2px}
+.tower-name{font-size:10.5px; font-weight:700; color:var(--txtb); line-height:1.2; margin-bottom:2px}
+.tower-cost{font-family:var(--mono); font-size:11px; color:var(--amber)}
+.tower-desc{font-size:8.5px; color:var(--txtd); margin-top:2px; line-height:1.3}
+.sell-btn{
+  flex-shrink:0; padding:8px 12px; background:var(--gfaint); border:2px solid var(--b2); border-radius:6px;
+  color:var(--txtd); font-size:11px; cursor:pointer; height:76px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+}
+.sell-btn.on{border-color:var(--red); color:var(--red)}
+
+.modal-overlay{position:fixed; inset:0; z-index:100; background:rgba(7,10,12,.92); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:16px}
+.brief-card{max-width:600px; width:100%; background:var(--panel); border:2px solid var(--gdim); border-radius:8px; padding:20px; box-shadow:0 20px 50px rgba(0,0,0,.5); color:var(--txtb); max-height:90vh; overflow-y:auto}
+.brief-card.debrief{border-color:var(--red)}
+.brief-title{font-size:22px; font-weight:700; color:var(--green); text-align:center; margin-bottom:4px}
+.debrief .brief-title{color:var(--red)}
+.brief-sub{font-size:11px; color:var(--txtd); text-align:center; margin-bottom:14px}
+.brief-section{background:var(--bg); border-left:3px solid var(--green); padding:10px 12px; border-radius:4px; margin-bottom:8px; font-size:12px; line-height:1.5}
+.brief-section b{color:var(--green)}
+.layer-grid{display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:10px}
+@media(min-width:500px){.layer-grid{grid-template-columns:1fr 1fr 1fr}}
+.layer-box{background:var(--bg); border:1px solid var(--b1); border-radius:4px; padding:8px; text-align:center}
+.layer-box .ic{font-size:20px}
+.layer-box .nm{font-size:10.5px; font-weight:700; color:var(--txtb); margin:3px 0}
+.layer-box .ds{font-size:9px; color:var(--txtd)}
+.start-btn{width:100%; padding:12px; background:var(--green); color:#0a0c0f; font-weight:700; font-size:15px; border:none; border-radius:5px; cursor:pointer; margin-top:6px}
+.start-btn:active{transform:scale(.97)}
+.aar-row{display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; border-bottom:1px solid var(--b1); padding:5px 0}
+.aar-row .k{color:var(--txtd)}
+</style>
+</head>
+<body>
+<button class="theme-btn" style="position:fixed;top:10px;right:10px;z-index:300" onclick="toggleTheme()">&#9789;</button>
+
+<header>
+  <div class="hl">
+    <div class="mil-badge">MIL-SPEC</div>
+    <h1>FOB DEFENSE</h1>
+  </div>
+  <div class="hud-stats">
+    <div class="stat"><span class="stat-label">FOB HP</span><span id="ui-hp" class="stat-val v-red">100</span></div>
+    <div class="stat"><span class="stat-label">CREDITS</span><span id="ui-credits" class="stat-val v-amber">150</span></div>
+    <div class="stat"><span class="stat-label">WAVE</span><span id="ui-wave" class="stat-val v-green">1</span></div>
+    <div class="stat"><span class="stat-label">SCORE</span><span id="ui-score" class="stat-val v-cyan">0</span></div>
+  </div>
+</header>
+
+<div class="playfield-wrap">
+  <canvas id="gameCanvas"></canvas>
+  <div id="buildBanner" class="build-banner">BUILD PHASE — <span id="buildTimer">15</span>s until Wave <span id="nextWaveNum">2</span></div>
+  <div id="waveBanner" class="wave-banner">WAVE <span id="waveNumBanner">1</span> INBOUND</div>
+</div>
+
+<div class="tower-bar" id="towerBar"></div>
+
+<div id="modal-start" class="modal-overlay">
+  <div class="brief-card">
+    <div class="brief-title">FOB DEFENSE</div>
+    <div class="brief-sub">Layered Counter-UAS &amp; Spectrum Monitoring — 17E Electronic Warfare AIT</div>
+    <div class="brief-section"><b>Mission:</b> Your FOB is under sustained drone reconnaissance and attack. Build a layered defense — detect early, disrupt their control links, then destroy what gets through. Survive escalating waves.</div>
+    <div class="layer-grid">
+      <div class="layer-box"><div class="ic">📡</div><div class="nm">Spectrum Detector</div><div class="ds">Reveals drones early &amp; extends ally range in its radius. No direct damage.</div></div>
+      <div class="layer-box"><div class="ic">📻</div><div class="nm">EW Jammer</div><div class="ds">Disrupts control links — heavily slows drones in range. No damage.</div></div>
+      <div class="layer-box"><div class="ic">🎯</div><div class="nm">C-UAS Turret</div><div class="ds">Kinetic hard-kill — the only tower that actually destroys drones.</div></div>
+    </div>
+    <div class="brief-section">Between waves you get a build phase to place or sell towers with earned credits. Drones that reach the FOB deal damage — lose all FOB HP and the mission ends.</div>
+    <button class="start-btn" id="btnStart">▶ START DEFENSE</button>
+  </div>
+</div>
+
+<div id="modal-debrief" class="modal-overlay hidden">
+  <div class="brief-card debrief">
+    <div class="brief-title">FOB OVERRUN</div>
+    <div class="brief-sub">After Action Report</div>
+    <div class="aar-row"><span class="k">Waves Survived:</span><span id="aar-wave">1</span></div>
+    <div class="aar-row"><span class="k">Drones Neutralized:</span><span id="aar-kills">0</span></div>
+    <div class="aar-row"><span class="k">Final Score:</span><span id="aar-score">0</span></div>
+    <button class="start-btn" id="btnRestart" style="background:var(--amber)">&#8635; RE-ENGAGE</button>
+  </div>
+</div>
+
+<script>
+/* ===================== FOB DEFENSE — core game ===================== */
+var W=0,H=0,dpr=1;
+var canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d');
+function resize(){
+  var wrap=canvas.parentElement,r=wrap.getBoundingClientRect();
+  dpr=Math.min(window.devicePixelRatio||1,2);
+  W=r.width;H=r.height;
+  canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize',resize);
+
+var FOB={x:0,y:0,r:44,hp:100,maxHp:100};
+var GRID=52; // cell size for placement snapping
+
+var TOWER_TYPES={
+  detector:{name:'Spectrum Detector',icon:'📡',cost:40,range:170,color:'#00d4ff',dmg:0,slow:0,detect:true,desc:'Reveals early, buffs range'},
+  jammer:{name:'EW Jammer',icon:'📻',cost:60,range:120,color:'#ffb830',dmg:0,slow:0.55,detect:false,desc:'Slows drones in range'},
+  turret:{name:'C-UAS Turret',icon:'🎯',cost:90,range:150,color:'#ff4a4a',dmg:34,slow:0,detect:false,rate:0.55,desc:'Hard-kill, damages drones'}
+};
+
+var towers=[]; // {type,x,y,cellX,cellY,cooldown}
+var drones=[]; // {x,y,hp,maxHp,speed,baseSpeed,angle,r,detected}
+var particles=[];
+var credits=150, score=0, wave=1, kills=0, fobHp=100;
+var state='START'; // START, BUILD, WAVE, OVER
+var buildTimer=0, BUILD_TIME=15;
+var selectedType=null;
+var mouse={x:0,y:0};
+
+function $(id){return document.getElementById(id);}
+
+function resetGame(){
+  towers=[];drones=[];particles=[];
+  credits=150;score=0;wave=1;kills=0;
+  FOB.hp=FOB.maxHp=100;
+  FOB.x=W/2;FOB.y=H/2;
+  state='BUILD';buildTimer=BUILD_TIME;
+  updateHUD();
+  renderTowerBar();
+}
+
+function updateHUD(){
+  $('ui-hp').textContent=Math.max(0,Math.round(FOB.hp));
+  $('ui-credits').textContent=credits;
+  $('ui-wave').textContent=wave;
+  $('ui-score').textContent=score;
+}
+
+/* ---------- tower bar ---------- */
+function renderTowerBar(){
+  var html='';
+  Object.keys(TOWER_TYPES).forEach(function(key){
+    var t=TOWER_TYPES[key];
+    var afford=credits>=t.cost;
+    html+='<div class="tower-card'+(selectedType===key?' sel':'')+(afford?'':' unaffordable')+'" data-type="'+key+'">'+
+      '<div class="tower-icon">'+t.icon+'</div><div class="tower-name">'+t.name+'</div>'+
+      '<div class="tower-cost">◆ '+t.cost+'</div><div class="tower-desc">'+t.desc+'</div></div>';
+  });
+  html+='<div class="sell-btn" id="sellBtn">💰<span>SELL MODE</span></div>';
+  $('towerBar').innerHTML=html;
+  document.querySelectorAll('.tower-card').forEach(function(el){
+    el.addEventListener('click',function(){
+      var type=el.dataset.type;
+      if(TOWER_TYPES[type].cost>credits)return;
+      selectedType=(selectedType===type)?null:type;
+      sellMode=false;
+      renderTowerBar();
+    });
+  });
+  var sb=$('sellBtn');
+  sb.classList.toggle('on',sellMode);
+  sb.addEventListener('click',function(){sellMode=!sellMode;selectedType=null;renderTowerBar();});
+}
+var sellMode=false;
+
+/* ---------- placement ---------- */
+function snapCell(x,y){return {cx:Math.floor(x/GRID),cy:Math.floor(y/GRID)};}
+function cellCenter(cx,cy){return {x:cx*GRID+GRID/2,y:cy*GRID+GRID/2};}
+function cellOccupied(cx,cy){return towers.some(function(t){return t.cellX===cx&&t.cellY===cy;});}
+function cellBlockedByFob(x,y){return Math.hypot(x-FOB.x,y-FOB.y)<FOB.r+30;}
+
+function handleCanvasClick(px,py){
+  if(state==='OVER'||state==='START')return;
+  var cell=snapCell(px,py),center=cellCenter(cell.cx,cell.cy);
+
+  if(sellMode){
+    var hit=towers.find(function(t){return t.cellX===cell.cx&&t.cellY===cell.cy;});
+    if(hit){
+      credits+=Math.round(TOWER_TYPES[hit.type].cost*0.6);
+      towers=towers.filter(function(t){return t!==hit;});
+      updateHUD();renderTowerBar();
+    }
+    return;
+  }
+  if(!selectedType)return;
+  var t=TOWER_TYPES[selectedType];
+  if(credits<t.cost)return;
+  if(cellOccupied(cell.cx,cell.cy))return;
+  if(cellBlockedByFob(center.x,center.y))return;
+  if(center.x<20||center.x>W-20||center.y<20||center.y>H-20)return;
+
+  towers.push({type:selectedType,x:center.x,y:center.y,cellX:cell.cx,cellY:cell.cy,cooldown:0});
+  credits-=t.cost;
+  updateHUD();renderTowerBar();
+}
+canvas.addEventListener('click',function(e){
+  var r=canvas.getBoundingClientRect();
+  handleCanvasClick(e.clientX-r.left,e.clientY-r.top);
+});
+canvas.addEventListener('mousemove',function(e){
+  var r=canvas.getBoundingClientRect();
+  mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
+});
+
+/* ---------- waves ---------- */
+function droneCountForWave(w){return 4+Math.floor(w*1.8);}
+var waveSpawnLeft=0, waveSpawnTimer=0, waveSpawnInterval=0.65, waveBaseSpeed=0, waveBaseHp=0;
+function spawnWave(){
+  state='WAVE';
+  waveSpawnLeft=droneCountForWave(wave);
+  waveSpawnTimer=0;
+  waveBaseSpeed=26+wave*2.2;
+  waveBaseHp=40+wave*9;
+  showWaveBanner();
+}
+function spawnOneDrone(){
+  var edge=Math.floor(Math.random()*4);
+  var x,y;
+  if(edge===0){x=Math.random()*W;y=-30;}
+  else if(edge===1){x=W+30;y=Math.random()*H;}
+  else if(edge===2){x=Math.random()*W;y=H+30;}
+  else{x=-30;y=Math.random()*H;}
+  var swarm=Math.random()<0.25;
+  drones.push({
+    x:x,y:y,hp:swarm?waveBaseHp*0.6:waveBaseHp,maxHp:swarm?waveBaseHp*0.6:waveBaseHp,
+    baseSpeed:swarm?waveBaseSpeed*1.4:waveBaseSpeed,speed:swarm?waveBaseSpeed*1.4:waveBaseSpeed,
+    r:swarm?9:13,detected:false,color:swarm?'#fbbf24':'#f87171'
+  });
+}
+function showWaveBanner(){
+  $('waveNumBanner').textContent=wave;
+  $('waveBanner').classList.add('show');
+  setTimeout(function(){$('waveBanner').classList.remove('show');},2200);
+}
+function startBuildPhase(){
+  state='BUILD';buildTimer=BUILD_TIME;
+  $('buildBanner').classList.add('show');
+  $('nextWaveNum').textContent=wave+1;
+}
+
+/* ---------- update ---------- */
+var lastT=performance.now();
+function update(dt){
+  if(state==='BUILD'){
+    buildTimer-=dt;
+    $('buildTimer').textContent=Math.max(0,Math.ceil(buildTimer));
+    if(buildTimer<=0){
+      $('buildBanner').classList.remove('show');
+      spawnWave();
+    }
+    return;
+  }
+  if(state!=='WAVE')return;
+
+  // dt-driven drone spawning (replaces old setInterval approach)
+  if(waveSpawnLeft>0){
+    waveSpawnTimer+=dt;
+    if(waveSpawnTimer>=waveSpawnInterval){
+      waveSpawnTimer=0;
+      spawnOneDrone();
+      waveSpawnLeft--;
+    }
+  }
+
+  // towers acquire targets / act
+  towers.forEach(function(t){
+    var def=TOWER_TYPES[t.type];
+    if(def.detect)return; // detectors are passive, handled in drone-detection pass
+    if(t.type==='jammer')return; // handled in drone slow pass
+    t.cooldown-=dt;
+    if(t.cooldown>0)return;
+    var target=null,bestD=def.range;
+    drones.forEach(function(d){
+      if(!d.detected)return;
+      var dist=Math.hypot(d.x-t.x,d.y-t.y);
+      if(dist<=def.range&&dist<bestD+1){target=d;bestD=dist;}
+    });
+    if(target){
+      target.hp-=def.dmg;
+      t.cooldown=def.rate;
+      particles.push({x:t.x,y:t.y,tx:target.x,ty:target.y,life:0.12,color:def.color,beam:true});
+      if(target.hp<=0){
+        for(var i=0;i<8;i++)particles.push({x:target.x,y:target.y,vx:(Math.random()-0.5)*90,vy:(Math.random()-0.5)*90,life:0.5,color:'#38bdf8'});
+        score+=Math.round(20+wave*3);kills++;
+        drones=drones.filter(function(d){return d!==target;});
+        credits+=6;
+        updateHUD();
+      }
+    }
+  });
+
+  // detection pass: any detector or turret in range reveals a drone; extends detection via detector range
+  drones.forEach(function(d){
+    var revealed=false;
+    towers.forEach(function(t){
+      var def=TOWER_TYPES[t.type];
+      var rng=def.range*(def.detect?1.35:1);
+      if(Math.hypot(d.x-t.x,d.y-t.y)<=rng)revealed=true;
+    });
+    if(revealed)d.detected=true;
+  });
+
+  // jammer slow pass (recompute each frame — not cumulative)
+  drones.forEach(function(d){
+    d.speed=d.baseSpeed;
+    towers.forEach(function(t){
+      if(t.type!=='jammer')return;
+      if(Math.hypot(d.x-t.x,d.y-t.y)<=TOWER_TYPES.jammer.range){
+        d.speed=d.baseSpeed*(1-TOWER_TYPES.jammer.slow);
+      }
+    });
+  });
+
+  // move drones toward FOB
+  for(var i=drones.length-1;i>=0;i--){
+    var d=drones[i];
+    var dx=FOB.x-d.x,dy=FOB.y-d.y,dist=Math.hypot(dx,dy)||1;
+    d.x+=dx/dist*d.speed*dt;
+    d.y+=dy/dist*d.speed*dt;
+    if(dist<FOB.r+d.r){
+      FOB.hp-=14;
+      drones.splice(i,1);
+      updateHUD();
+      if(FOB.hp<=0){endGame();return;}
+    }
+  }
+
+  // particles
+  for(i=particles.length-1;i>=0;i--){
+    var p=particles[i];
+    p.life-=dt;
+    if(!p.beam){p.x+=(p.vx||0)*dt;p.y+=(p.vy||0)*dt;}
+    if(p.life<=0)particles.splice(i,1);
+  }
+
+  // wave cleared — only once every drone for this wave has both spawned and been cleared
+  if(waveSpawnLeft===0&&drones.length===0){
+    wave++;
+    startBuildPhase();
+  }
+}
+
+/* ---------- draw ---------- */
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#050708';ctx.fillRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle='rgba(0,255,136,.05)';ctx.lineWidth=1;
+  for(var x=0;x<=W;x+=GRID){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(var y=0;y<=H;y+=GRID){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // placement preview
+  if(selectedType&&!sellMode){
+    var cell=snapCell(mouse.x,mouse.y),c=cellCenter(cell.cx,cell.cy);
+    var t=TOWER_TYPES[selectedType];
+    var ok=!cellOccupied(cell.cx,cell.cy)&&!cellBlockedByFob(c.x,c.y)&&credits>=t.cost;
+    ctx.strokeStyle=ok?'rgba(0,255,136,.5)':'rgba(255,74,74,.5)';
+    ctx.fillStyle=ok?'rgba(0,255,136,.08)':'rgba(255,74,74,.08)';
+    ctx.beginPath();ctx.arc(c.x,c.y,t.range,0,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle=ok?'rgba(0,255,136,.35)':'rgba(255,74,74,.35)';
+    ctx.fillRect(c.x-GRID/2+2,c.y-GRID/2+2,GRID-4,GRID-4);
+  }
+
+  // FOB
+  ctx.fillStyle='rgba(0,255,136,.06)';ctx.beginPath();ctx.arc(FOB.x,FOB.y,FOB.r+26,0,7);ctx.fill();
+  ctx.fillStyle='#12241a';ctx.beginPath();ctx.arc(FOB.x,FOB.y,FOB.r,0,7);ctx.fill();
+  ctx.strokeStyle='#00ff88';ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle='#00ff88';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('⛺',FOB.x,FOB.y);
+  // FOB hp bar
+  var hpw=90;
+  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(FOB.x-hpw/2,FOB.y-FOB.r-16,hpw,8);
+  ctx.fillStyle=FOB.hp>40?'#00ff88':'#ff4a4a';
+  ctx.fillRect(FOB.x-hpw/2,FOB.y-FOB.r-16,hpw*Math.max(0,FOB.hp/FOB.maxHp),8);
+  ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.strokeRect(FOB.x-hpw/2,FOB.y-FOB.r-16,hpw,8);
+
+  // towers
+  towers.forEach(function(t){
+    var def=TOWER_TYPES[t.type];
+    ctx.fillStyle=hexA(def.color,.06);ctx.beginPath();ctx.arc(t.x,t.y,def.range,0,7);ctx.fill();
+    ctx.fillStyle='#161e27';ctx.beginPath();ctx.arc(t.x,t.y,18,0,7);ctx.fill();
+    ctx.strokeStyle=def.color;ctx.lineWidth=2;ctx.stroke();
+    ctx.font='16px sans-serif';ctx.fillStyle=def.color;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(def.icon,t.x,t.y);
+  });
+
+  // drones
+  drones.forEach(function(d){
+    ctx.save();ctx.translate(d.x,d.y);
+    ctx.fillStyle=d.detected?d.color:'#3a4048';
+    ctx.fillRect(-d.r,-d.r*0.5,d.r*2,d.r);
+    ctx.fillStyle='#000';ctx.fillRect(-3,-2,6,4);
+    ctx.restore();
+    if(d.detected){
+      var bw=26;
+      ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(d.x-bw/2,d.y-d.r-10,bw,4);
+      ctx.fillStyle='#ff4a4a';ctx.fillRect(d.x-bw/2,d.y-d.r-10,bw*Math.max(0,d.hp/d.maxHp),4);
+    }
+  });
+
+  // particles
+  particles.forEach(function(p){
+    if(p.beam){
+      ctx.strokeStyle=hexA(p.color,Math.max(0,p.life/0.12));ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.tx,p.ty);ctx.stroke();
+    }else{
+      ctx.fillStyle=hexA(p.color,Math.max(0,p.life/0.5));
+      ctx.fillRect(p.x,p.y,3,3);
+    }
+  });
+}
+function hexA(hex,a){
+  hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');
+  var n=parseInt(hex,16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+}
+
+function endGame(){
+  state='OVER';
+  $('aar-wave').textContent=wave;
+  $('aar-kills').textContent=kills;
+  $('aar-score').textContent=score;
+  $('modal-debrief').classList.remove('hidden');
+}
+
+function loop(ts){
+  var dt=Math.min(0.05,(ts-lastT)/1000||0);lastT=ts;
+  update(dt);draw();
+  requestAnimationFrame(loop);
+}
+
+function toggleTheme(){
+  var h=document.documentElement,d=h.getAttribute('data-theme')!=='light';
+  h.setAttribute('data-theme',d?'light':'dark');
+}
+
+$('btnStart').addEventListener('click',function(){
+  $('modal-start').classList.add('hidden');
+  resize();resetGame();
+});
+$('btnRestart').addEventListener('click',function(){
+  $('modal-debrief').classList.add('hidden');
+  resize();resetGame();
+});
+
+resize();
+requestAnimationFrame(loop);
+
+window.__FOB={get state(){return state;},get towers(){return towers;},get drones(){return drones;},
+  get credits(){return credits;},get wave(){return wave;},resetGame:resetGame,
+  place:function(type,x,y){selectedType=type;handleCanvasClick(x,y);selectedType=null;},
+  step:function(dt){update(dt);draw();},
+  startWaveNow:function(){buildTimer=0;}};
+</script>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px">
+  <span style="color:var(--txtd)">Related:</span>
+  <a href="../cuas/" style="color:var(--cyan);text-decoration:none">🛸 Drone Signal Spectrum</a>
+  <a href="../cuasdemo/" style="color:var(--cyan);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
+  <a href="../dronedef/" style="color:var(--cyan);text-decoration:none">🎮 Drone Defender Simulator</a>
+  <a href="../sdrguide/" style="color:var(--cyan);text-decoration:none">📻 Software-Defined Radio Explained</a>
+</div>
+<div style="text-align:center;padding:8px 16px 0;opacity:.62;font-family:sans-serif">
+  <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
+</div>
+<div style="text-align:center;padding:8px 16px 6px;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>

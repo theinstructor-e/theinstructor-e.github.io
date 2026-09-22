@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-WIT Field Ops: Enlist to First Unit</title>
+<meta name="description" content="A free-play EW training game. Enlist, survive Basic, learn the fundamentals at AIT, then earn your gear and take taskings at your first unit. Works on phones and desktops.">
+<meta property="og:title" content="E-WIT Field Ops">
+<meta property="og:description" content="Enlist, train, and serve. Four items in the ruck, so choose well.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1d2114">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff7a2f'/%3E%3Ctext x='50' y='70' font-size='62' text-anchor='middle'%3E%F0%9F%93%A1%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@700;900&family=Public+Sans:wght@500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#dcd9c3; --panel:#f5f1df; --panel2:#e9e4cc; --ink:#1d2114; --muted:#585d42; --line:#1d2114;
+  --signal:#ff7a2f; --ok:#2f8a3b; --bad:#c4372b; --olive:#5b6b3a; --screen:#0a1416;
+  --disp:'Big Shoulders Stencil Display','Impact','Arial Narrow',sans-serif;
+  --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#12150d; --panel:#20261a; --panel2:#2b3222; --ink:#efe9d0; --muted:#adb28f; --line:#070905; --ok:#66d073; --bad:#ff7a6b; }
+}
+:root[data-theme="dark"]{ --bg:#12150d; --panel:#20261a; --panel2:#2b3222; --ink:#efe9d0; --muted:#adb28f; --line:#070905; --ok:#66d073; --bad:#ff7a6b; }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:500 16px/1.45 var(--body);min-height:100dvh;-webkit-tap-highlight-color:transparent}
+body.lock{overflow:hidden}
+h1,h2,h3{font-family:var(--disp);font-weight:900;margin:0;line-height:1.02;letter-spacing:.01em}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,.node:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+
+.case{background:var(--panel);border:3px solid var(--line);border-radius:14px;box-shadow:0 4px 0 var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:8px 20px;border:3px solid var(--line);border-radius:11px;background:var(--signal);color:#1d2114;font:900 20px/1 var(--disp);letter-spacing:.05em;box-shadow:0 4px 0 var(--line);cursor:pointer;transition:transform .06s,box-shadow .06s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.btn.alt{background:var(--panel2);color:var(--ink)}
+.btn.sm{min-height:40px;padding:6px 14px;font-size:17px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+
+/* ---------- title ---------- */
+.title{max-width:560px;margin:0 auto;padding:0 0 40px}
+.hero{display:block;width:100%;height:auto;border-bottom:3px solid var(--line)}
+.title h1{font-size:clamp(46px,14vw,74px);padding:16px 18px 0}
+.title .tag{padding:6px 18px 0;color:var(--muted);font-weight:700;font-size:17px}
+.pick{padding:18px}
+.pick h2{font-size:26px;margin-bottom:10px}
+.cards{display:grid;gap:10px}
+.cc{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;text-align:left;padding:10px 12px;cursor:pointer;background:var(--panel)}
+.cc svg{width:64px;height:64px;border-radius:50%;border:3px solid var(--line);background:#8fb0b8}
+.cc b{font:900 24px/1 var(--disp)}
+.cc small{display:block;color:var(--muted);font-weight:600;line-height:1.3;margin-top:3px}
+.cc[aria-pressed="true"]{background:var(--signal);color:#1d2114}
+.cc[aria-pressed="true"] small{color:#1d2114}
+.call{display:block;margin:16px 0 0;font-weight:800}
+.call input{display:block;width:100%;margin-top:6px;padding:11px 12px;border:3px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:700 18px var(--body)}
+
+/* ---------- world ---------- */
+.world{max-width:560px;margin:0 auto;padding:10px 12px 60px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.hud{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;position:sticky;top:6px;z-index:10}
+.hud .av svg{display:block;width:54px;height:54px;border-radius:50%;border:3px solid var(--line);background:#8fb0b8}
+.who b{font:900 26px/1 var(--disp)}
+.who span{display:block;color:var(--muted);font-weight:700;font-size:14px}
+.meter{grid-column:1/-1;display:flex;align-items:center;gap:10px;font:600 13px var(--mono)}
+.bar{flex:1;height:14px;border:3px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--signal);transition:width .5s}
+.loadout{padding:12px}
+.loadout h2{font-size:24px;margin-bottom:8px}
+.gs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin}
+.gear{flex:none;width:84px;display:grid;justify-items:center;gap:4px;padding:8px 4px;border:3px solid var(--line);border-radius:12px;background:var(--panel2);cursor:pointer}
+.gear svg{width:44px;height:44px}
+.gear span{font:800 12px/1.1 var(--body);text-align:center}
+.gear.lock svg{filter:grayscale(1) brightness(.35);opacity:.55}
+.gear.lock{border-style:dashed;color:var(--muted)}
+.mapcard{overflow:hidden;padding:0}
+#map{display:block;width:100%;height:auto}
+.node{cursor:pointer}
+.node .bd{fill:#f5f1df;stroke:#1d2114;stroke-width:4}
+.node text{font:900 19px var(--disp);fill:#1d2114;paint-order:stroke;stroke:#f5f1df;stroke-width:5px;stroke-linejoin:round}
+.node .pulse{fill:none;stroke:#ff7a2f;stroke-width:4;opacity:0}
+.node.avail .pulse{opacity:1;transform-box:fill-box;transform-origin:center;animation:pulse 1.8s ease-out infinite}
+.node.locked .ic{filter:grayscale(1) brightness(.4);opacity:.6}
+.node.locked .bd{fill:#c7c3ad}
+.node .lk,.node .ck{display:none}
+.node.locked .lk{display:block}
+.node.done .ck{display:block}
+@keyframes pulse{from{transform:scale(.9);opacity:.9}to{transform:scale(1.5);opacity:0}}
+.foot{text-align:center;color:var(--muted);font-size:14px;font-weight:600}
+.foot button{background:none;border:0;text-decoration:underline;cursor:pointer;color:var(--muted);padding:10px}
+
+/* ---------- layers ---------- */
+.layer{position:fixed;inset:0;z-index:50;background:rgba(18,22,10,.76);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:720px;max-height:96dvh;overflow:auto;padding:16px;border-radius:18px 18px 0 0;overscroll-behavior:contain}
+@media (min-width:760px){.layer{align-items:center}.sheet{border-radius:18px}}
+.sheet h2{font-size:34px}
+.sheet p{margin:8px 0}
+.obj{margin:8px 0;padding-left:20px}.obj li{margin:3px 0}
+.rew{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;margin-top:12px;padding:10px;border:3px dashed var(--line);border-radius:12px;background:var(--panel2)}
+.rew svg{width:56px;height:56px}
+.rew b{font:900 22px/1 var(--disp)}
+.rew small{display:block;color:var(--muted);font-weight:600;line-height:1.3;margin-top:2px}
+.mhd{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.mhd h2{font-size:30px}
+.prog{display:flex;gap:5px;margin-bottom:12px}
+.prog i{flex:1;height:12px;border:3px solid var(--line);border-radius:6px;background:var(--panel2)}
+.prog i.ok{background:var(--ok)}.prog i.bad{background:var(--bad)}.prog i.on{background:var(--signal)}
+.qcard{padding:12px 14px;border:3px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:10px}
+.qcard .qk{font:800 13px var(--body);color:var(--muted)}
+.qcard .qq{font:700 19px/1.3 var(--body);margin-top:2px}
+.opts{display:grid;gap:8px}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;min-height:50px;border:3px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:700 16px/1.25 var(--body);box-shadow:0 3px 0 var(--line);cursor:pointer}
+.opt.ok{background:color-mix(in srgb,var(--ok) 42%,var(--panel))}
+.opt.bad{background:color-mix(in srgb,var(--bad) 42%,var(--panel))}
+.opt.dim{opacity:.35}
+.opt[disabled]{cursor:default}
+.fb{margin-top:12px;font-weight:600;min-height:1.5em}
+.fb b{font-weight:800}
+.fb .yes{color:var(--ok);font-weight:800}.fb .no{color:var(--bad);font-weight:800}
+.hintbox{margin-top:8px;padding:8px 12px;border-left:6px solid var(--signal);background:var(--panel2);font-weight:600}
+
+/* SDR */
+.sdr{max-width:600px;margin:0 auto 12px;border:3px solid var(--line);border-radius:12px;overflow:hidden;background:var(--screen);box-shadow:0 4px 0 var(--line)}
+.sdr-top,.sdr-ax{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;padding:5px 10px;font:600 12px var(--mono);color:#9fd6d0;background:#0f2226}
+.sdr-top span,.sdr-ax span{white-space:nowrap}
+.sdr-top b{color:#ffb06a;font-weight:600}
+.sdr canvas{display:block;width:100%;image-rendering:pixelated}
+
+/* maps */
+.mapc{border:3px solid var(--line);border-radius:12px;overflow:hidden;background:#a9ba7c;box-shadow:0 4px 0 var(--line)}
+.mapc canvas{display:block;width:100%;height:auto;cursor:crosshair}
+.rd{margin-top:10px;font:600 14px var(--mono);display:flex;flex-wrap:wrap;gap:6px 14px}
+.rd b{font-weight:600;color:var(--signal)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{padding:8px 14px;border:3px solid var(--line);border-radius:99px;background:var(--panel2);font:800 15px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--signal);color:#1d2114}
+
+/* rogue AP */
+.aps{display:grid;gap:8px}
+.ap{text-align:left;padding:10px 12px;border:3px solid var(--line);border-radius:12px;background:var(--panel);cursor:pointer;display:block;width:100%}
+.ap b{font:900 22px/1 var(--disp)}
+.ap small{display:block;font:600 12px/1.5 var(--mono);color:var(--muted);margin-top:4px}
+.ap[aria-pressed="true"]{outline:4px solid var(--signal)}
+.ap.rogue{background:color-mix(in srgb,var(--bad) 32%,var(--panel))}
+.ap.fine{background:color-mix(in srgb,var(--ok) 25%,var(--panel))}
+
+/* link budget */
+.calc{display:grid;gap:10px;margin-top:10px}
+.calc label{display:flex;justify-content:space-between;font-weight:800}
+.calc input[type=range]{width:100%;accent-color:var(--signal);height:32px}
+.gauge{position:relative;height:30px;border:3px solid var(--line);border-radius:9px;background:var(--panel2);overflow:hidden}
+.gauge i{position:absolute;left:0;top:0;bottom:0;background:var(--signal)}
+.gauge u{position:absolute;top:-2px;bottom:-2px;width:4px;background:var(--ink)}
+.checks{display:grid;gap:4px;font-weight:700}
+.checks .y{color:var(--ok)}.checks .n{color:var(--bad)}
+.diag{width:100%;height:auto;display:block;border:3px solid var(--line);border-radius:12px;background:#a9ba7c}
+
+/* unlock */
+.unlock{position:relative;text-align:center;overflow:hidden;padding:26px 16px 20px}
+.unlock .rays{position:absolute;left:50%;top:120px;width:640px;height:640px;margin:-320px 0 0 -320px;background:repeating-conic-gradient(from 0deg,rgba(255,122,47,.35) 0 8deg,transparent 8deg 20deg);animation:spin 26s linear infinite;-webkit-mask:radial-gradient(circle,#000 20%,transparent 62%);mask:radial-gradient(circle,#000 20%,transparent 62%)}
+.unlock>*{position:relative}
+.unlock .big{width:150px;height:150px;margin:6px auto;display:block;animation:pop .6s cubic-bezier(.2,1.5,.4,1) both}
+.unlock .big svg{width:100%;height:100%;display:block}
+.unlock h2{font-size:44px;margin-top:4px}
+.unlock .kick{font:900 22px var(--disp);letter-spacing:.08em;color:var(--signal);-webkit-text-stroke:1px var(--line)}
+.unlock .lines{margin:10px 0;font:600 14px var(--mono);color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{from{opacity:0;transform:scale(.2) rotate(-14deg)}}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:80;max-width:88vw;padding:10px 16px;border:3px solid var(--line);border-radius:12px;background:var(--ink);color:var(--bg);font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.4)}
+
+@media (prefers-reduced-motion: reduce){
+  .node.avail .pulse,.unlock .rays,.unlock .big{animation:none}
+  .bar i{transition:none}
+}
+/* ---------- game (v2) ---------- */
+.game{max-width:680px;margin:0 auto;padding:8px 10px 24px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px 10px;align-items:center}
+.stg{font:900 22px/1 var(--disp)}
+.objt{font-weight:700;font-size:14px;line-height:1.25;color:var(--muted);margin-top:3px}
+.bagbar{display:flex;gap:5px}
+.cvw{position:relative;padding:0;overflow:hidden;background:#000}
+#gv{display:block;width:100%;height:auto;image-rendering:pixelated;touch-action:none}
+.dlg{position:absolute;left:8px;right:8px;bottom:8px;padding:10px 12px;background:var(--panel);border:3px solid var(--line);border-radius:12px;cursor:pointer;box-shadow:0 3px 0 var(--line)}
+.dlg b{font:900 21px/1 var(--disp)}
+.dlg p{margin:3px 0 4px;font-weight:600;line-height:1.35}
+.dlg small{color:var(--muted);font-weight:700}
+.hintbar{font:600 13px/1.4 var(--mono);padding:6px 10px;background:var(--panel2);border:3px solid var(--line);border-radius:10px;overflow-wrap:anywhere}
+.ctxbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ctxbar:empty{display:none}
+.ctl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:2px 6px}
+.pad{position:relative;width:136px;height:136px;border-radius:50%;border:3px solid var(--line);background:var(--panel2);touch-action:none;flex:none}
+.knob{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:var(--signal);border:3px solid var(--line);pointer-events:none}
+.btns{display:grid;gap:10px;justify-items:end}
+.rowb{display:flex;gap:8px}
+.abtn{width:92px;height:92px;border-radius:50%;border:3px solid var(--line);background:var(--panel2);color:var(--ink);font:900 42px/1 var(--disp);box-shadow:0 5px 0 var(--line);cursor:pointer}
+.abtn.hot{background:var(--signal);color:#1d2114}
+.abtn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+@media (min-width:520px){.slots{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.slot{display:grid;justify-items:center;align-content:center;gap:4px;padding:8px 4px;border:3px solid var(--line);border-radius:12px;background:var(--panel2);cursor:pointer;min-height:96px}
+.slot svg{width:44px;height:44px}
+.slot span{font:800 12px/1.1 var(--body);text-align:center}
+.slot.empty{border-style:dashed;color:var(--muted);cursor:default}
+.slot.mini{width:42px;height:42px;min-height:0;padding:0;border-radius:9px;place-items:center}
+.slot.mini svg{width:30px;height:30px}
+.radio{display:flex;align-items:center;justify-content:center;gap:14px;margin:12px 0}
+.chn{font:600 34px var(--mono);min-width:130px;text-align:center;padding:6px;border:3px solid var(--line);border-radius:10px;background:var(--screen);color:#ffb06a}
+.nb{display:block;width:100%;height:auto;border:3px solid var(--line);border-radius:12px;background:#a9ba7c;margin:8px 0}
+.calcl{display:flex;flex-wrap:wrap;justify-content:space-between;font-weight:800;margin-top:8px}
+.calcl input{width:100%;accent-color:var(--signal);height:32px}
+.tl{display:grid;gap:6px;margin:6px 0 10px}
+.tg{padding:7px 10px;border:3px solid var(--line);border-radius:10px;background:var(--panel2);font-weight:700;line-height:1.3}
+.tg.ok{background:color-mix(in srgb,var(--ok) 30%,var(--panel2))}
+.cap{margin:10px 0;border:3px solid var(--line);border-radius:10px;background:var(--panel2);overflow-x:auto;padding:6px;font:600 12px/1.4 var(--mono)}
+.cap table{border-collapse:collapse;width:100%}
+.cap th,.cap td{padding:3px 6px;text-align:left;white-space:nowrap}
+.cap tr:nth-child(even){background:rgba(0,0,0,.06)}
+.sdr .cw{position:relative}
+.curl{position:absolute;top:0;bottom:0;width:2px;background:#ff3d5a;pointer-events:none}
+.axp{position:relative;height:20px;background:#0f2226;font:600 12px var(--mono);color:#9fd6d0}
+.axp span{position:absolute;top:2px;transform:translateX(-50%)}
+.sdr .cw canvas{cursor:crosshair}
+.title{max-width:560px}
+.foot{text-align:center}
+.foot button{background:none;border:0;text-decoration:underline;cursor:pointer;color:var(--muted);padding:10px;font-weight:600}
+.unlock .rays{top:150px}
+
+.axp span:first-child{transform:none}
+.axp span:last-child{transform:translateX(-100%)}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="layer" class="layer" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<script>
+'use strict';
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const R = Math.random;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = (R() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const INK = '#1d2114', TS = 32;
+const hh = (x, y) => { const v = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return v - Math.floor(v); };
+let G = null, run = null;
+
+function avatar(kind) {
+  const sk = { scout: '#e2ac82', analyst: '#b27b52', pilot: '#f0c8a0' }[kind];
+  const body = { scout: '#5b6b3a', analyst: '#6b5a44', pilot: '#3f5468' }[kind];
+  let s = `<circle cx="50" cy="50" r="50" fill="#8fb0b8"/><path d="M8 100 C10 78 30 74 50 74 C70 74 90 78 92 100Z" fill="${body}" stroke="${INK}" stroke-width="3"/>`;
+  s += `<ellipse cx="50" cy="55" rx="25" ry="27" fill="${sk}" stroke="${INK}" stroke-width="3"/>`;
+  if (kind === 'scout') {
+    s += `<path d="M22 50 C20 18 80 18 78 50 C70 38 30 38 22 50Z" fill="#5b6b3a" stroke="${INK}" stroke-width="3"/><rect x="24" y="40" width="52" height="6" fill="#ff7a2f" stroke="${INK}" stroke-width="2.5"/>
+          <rect x="44" y="14" width="12" height="9" rx="2" fill="#2b3320" stroke="${INK}" stroke-width="2.5"/>
+          <path d="M22 54 C14 64 20 74 32 74" fill="none" stroke="${INK}" stroke-width="3"/><circle cx="33" cy="74" r="3.5" fill="#ff7a2f" stroke="${INK}" stroke-width="2"/>`;
+  } else if (kind === 'analyst') {
+    s += `<path d="M24 46 C24 22 76 22 76 46 C70 34 30 34 24 46Z" fill="#2b2118" stroke="${INK}" stroke-width="3"/>
+          <circle cx="40" cy="55" r="9" fill="rgba(255,255,255,.35)" stroke="${INK}" stroke-width="3"/><circle cx="60" cy="55" r="9" fill="rgba(255,255,255,.35)" stroke="${INK}" stroke-width="3"/><path d="M49 55H51" stroke="${INK}" stroke-width="3"/>
+          <path d="M26 74 C26 92 74 92 74 74" fill="none" stroke="#ff7a2f" stroke-width="6" stroke-linecap="round"/>`;
+  } else {
+    s += `<path d="M22 46 C22 20 78 20 78 46 L78 42 C68 34 32 34 22 42Z" fill="#ff7a2f" stroke="${INK}" stroke-width="3"/><path d="M22 44 H8" stroke="${INK}" stroke-width="3"/>
+          <circle cx="39" cy="40" r="8" fill="#9fd6d0" stroke="${INK}" stroke-width="3"/><circle cx="61" cy="40" r="8" fill="#9fd6d0" stroke="${INK}" stroke-width="3"/><path d="M47 40H53" stroke="${INK}" stroke-width="3"/>`;
+  }
+  s += `<circle cx="40" cy="58" r="3" fill="${INK}"/><circle cx="60" cy="58" r="3" fill="${INK}"/><path d="M43 69 Q50 74 57 69" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${s}</svg>`;
+}
+const IC = {
+  sdr:  `<rect x="8" y="32" width="38" height="17" rx="3" fill="#5b6b3a"/><rect x="46" y="36" width="10" height="9" fill="#cfcbb6"/><rect x="14" y="37" width="14" height="7" fill="#ff7a2f"/><path d="M22 32V12"/><circle cx="22" cy="10" r="4" fill="#ff7a2f"/>`,
+  df:   `<rect x="5" y="38" width="34" height="16" rx="3" fill="#5b6b3a"/><rect x="39" y="42" width="8" height="8" fill="#cfcbb6"/><circle cx="43" cy="21" r="15" fill="#f5f1df"/><path d="M43 9L49 24L43 21L37 24Z" fill="#ff7a2f"/><circle cx="43" cy="21" r="2" fill="${INK}"/><path d="M14 38V26"/>`,
+  yagi: `<path d="M6 36H58"/><path d="M12 22V50" stroke-width="4"/><path d="M22 18V54M31 24V48M40 27V45M49 29V43M57 31V41"/><path d="M12 36L4 46" />`,
+  pkt:  `<rect x="10" y="12" width="44" height="30" rx="3" fill="#1c2a2c"/><path d="M16 20H34M16 26H44M16 32H28" stroke="#ff7a2f"/><path d="M4 48H60L54 42H10Z" fill="#cfcbb6"/>`,
+  cell: `<path d="M32 12L18 56H46Z" fill="#cfcbb6"/><path d="M24 40H40M28 28H36M20 52L40 40L44 52M44 52L24 40L32 28"/><circle cx="32" cy="10" r="4" fill="#ff7a2f"/><path d="M20 8C14 12 14 20 20 24M44 8C50 12 50 20 44 24"/>`,
+  ids:  `<path d="M32 6L54 14V32C54 46 44 54 32 58C20 54 10 46 10 32V14Z" fill="#5b6b3a"/><path d="M20 30C27 22 37 22 44 30M25 35C29 31 35 31 39 35" stroke="#f5f1df"/><circle cx="32" cy="41" r="2.5" fill="#ff7a2f" stroke="none"/>`,
+  ea:   `<rect x="6" y="28" width="52" height="16" rx="8" fill="#5b6b3a"/><path d="M34 30L26 38H33L29 46L40 36H33Z" fill="#ff7a2f" stroke-width="2"/><path d="M28 28V16H36V28"/>`,
+  drone:`<rect x="24" y="26" width="16" height="12" rx="4" fill="#5b6b3a"/><path d="M26 28L12 16M38 28L52 16M26 36L12 48M38 36L52 48"/><circle cx="10" cy="14" r="6" fill="#cfcbb6"/><circle cx="54" cy="14" r="6" fill="#cfcbb6"/><circle cx="10" cy="50" r="6" fill="#cfcbb6"/><circle cx="54" cy="50" r="6" fill="#cfcbb6"/><circle cx="32" cy="32" r="2.5" fill="#ff7a2f" stroke="none"/>`,
+  ewd:  `<rect x="24" y="20" width="16" height="12" rx="4" fill="#5b6b3a"/><path d="M26 22L12 10M38 22L52 10M26 30L12 42M38 30L52 42"/><circle cx="10" cy="8" r="6" fill="#cfcbb6"/><circle cx="54" cy="8" r="6" fill="#cfcbb6"/><circle cx="10" cy="44" r="6" fill="#cfcbb6"/><circle cx="54" cy="44" r="6" fill="#cfcbb6"/><rect x="20" y="40" width="24" height="12" rx="6" fill="#ff7a2f"/><path d="M33 42L28 47H32L30 52L36 46H32Z" fill="${INK}" stroke-width="1.5"/>`
+};
+const icon = id => `<svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[id]}</svg>`;
+const g = (x, c, w) => Math.exp(-(((x - c) / w) ** 2));
+const box = (x, c, w, s = .012) => 1 / (1 + Math.exp(-(x - (c - w / 2)) / s)) * (1 / (1 + Math.exp(-((c + w / 2) - x) / s)));
+const hash = (a, b) => { const v = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return v - Math.floor(v); };
+const morse = str => { const M = { C: '-.-.', Q: '--.-' }; const u = []; str.split('').forEach((ch, i, arr) => { M[ch].split('').forEach((e, j, a) => { const n = e === '-' ? 3 : 1; for (let k = 0; k < n; k++) u.push(1); u.push(0); }); u.push(0, 0); }); for (let k = 0; k < 6; k++) u.push(0); return u; };
+const MORSE = morse('CQ');
+
+const SIG = {
+  fm: { n: 'FM broadcast', cf: '98.1 MHz', span: '1 MHz', ax: ['97.6', '98.1', '98.6'], bw: '≈ 200 kHz', conf: ['am', 'atsc', 'dmr'],
+    hint: 'Check the width first. It is far wider than a voice channel, with thin spikes near the middle.',
+    why: 'A wide (~200 kHz) hump that flexes with the audio, with thin spikes from the stereo pilot and data subcarriers, is wideband FM broadcast.',
+    init: () => ({ ph: R() * 6 }), f: (x, t, s) => .5 * box(x, .5, .22 + .015 * Math.sin(t * 4 + s.ph), .03) * (.8 + .2 * R()) + .3 * g(x, .5, .035) + .22 * g(x, .48, .004) + .22 * g(x, .52, .004) + .15 * g(x, .557, .004) },
+  am: { n: 'AM broadcast', cf: '1010 kHz', span: '40 kHz', ax: ['990', '1010', '1030'], bw: '≈ 10 kHz', conf: ['ssb', 'fm', 'nfm'],
+    hint: 'Look for a tall, thin spike in the exact center with a low shelf on both sides.',
+    why: 'AM keeps a strong carrier in the center with matching sidebands on each side. The sidebands pulse with the audio; the carrier stays put.',
+    tick: (s, t) => { s.e = .35 + .65 * Math.abs(Math.sin(t * 6.1) * Math.sin(t * 2.3 + 1)) + .15 * R(); },
+    f: (x, t, s) => .92 * g(x, .5, .006) + .4 * s.e * box(x, .5, .25, .02) * (.7 + .3 * R()) },
+  nfm: { n: 'Narrowband FM voice (push-to-talk)', cf: '151.5 MHz', span: '50 kHz', ax: ['151.475', '151.500', '151.525'], bw: '≈ 8 to 12 kHz', conf: ['dmr', 'am', 'ssb'],
+    hint: 'It is narrow and keyed. Watch the waterfall for blocks that switch on and off.',
+    why: 'A narrow block that turns on and off with each key-up is two-way analog voice. The energy is centered on the channel, with no fixed data pattern.',
+    tick: (s, t) => { s.on = (t % 3.6) < 2.3; },
+    f: (x, t, s) => s.on ? .72 * box(x, .5, .16, .02) * (.85 + .15 * R()) + .2 * g(x, .5, .02) : 0 },
+  ssb: { n: 'SSB voice (HF)', cf: '14.230 MHz', span: '12 kHz', ax: ['14.227', '14.230', '14.233'], bw: '≈ 2.7 kHz', conf: ['am', 'nfm', 'dmr'],
+    hint: 'Notice which side the energy sits on, and that there is no carrier at the center.',
+    why: 'Single sideband keeps only one sideband and drops the carrier. That gives a lopsided block with a sharp edge at the center that bounces with speech.',
+    tick: (s, t) => { s.e = Math.max(0, Math.sin(t * 9) * Math.sin(t * 3.7 + .5) + .25 * R() - .05); },
+    f: (x, t, s) => s.e * .78 * box(x, .625, .2, .008) * (.55 + .45 * R()) },
+  cw: { n: 'CW (Morse code)', cf: '7.030 MHz', span: '2 kHz', ax: ['7.029', '7.030', '7.031'], bw: '< 200 Hz', conf: ['fsk', 'ssb', 'am'],
+    hint: 'A single, very thin line. Watch its rhythm.',
+    why: 'A single narrow tone keyed on and off in long and short pulses is Morse code (continuous wave).',
+    tick: (s, t) => { s.on = MORSE[Math.floor(t / .13) % MORSE.length]; },
+    f: (x, t, s) => s.on ? .95 * g(x, .5 + .004 * Math.sin(t), .012) : 0 },
+  adsb: { n: 'ADS-B aircraft transponder', cf: '1090 MHz', span: '10 MHz', ax: ['1085', '1090', '1095'], bw: '≈ 2 MHz', conf: ['radar', 'lora', 'wifi'],
+    hint: 'Look at the timing. The bursts are short and land at random times.',
+    why: 'Short, randomly timed bursts around 1090 MHz are aircraft broadcasting position. The timing is irregular; a radar pulse train would be evenly spaced.',
+    tick: (s, t) => { if (s.h > 0) { s.h--; s.on = true; } else { s.on = false; if (R() < .1) { s.h = R() < .4 ? 1 : 0; s.on = true; s.a = .6 + .3 * R(); } } },
+    init: () => ({ h: 0, on: false, a: .8 }), f: (x, t, s) => s.on ? s.a * box(x, .5, .2, .012) * (.85 + .15 * R()) : 0 },
+  gsm: { n: 'GSM downlink', cf: '935.6 MHz', span: '3 MHz', ax: ['934.1', '935.6', '937.1'], bw: '200 kHz per carrier', conf: ['lte', 'dmr', 'wifi'],
+    hint: 'Count the carriers and their spacing. Only one stays on all the time.',
+    why: 'Several 200 kHz carriers side by side is GSM. The control carrier stays on constantly while the traffic carriers flicker with their time slots.',
+    f: (x, t) => { let v = 0; [.33, .4, .467, .533, .6, .667].forEach((c, k) => { const lvl = k === 2 ? .8 : ((Math.floor(t * 10) + k) % 3 === 0 ? .28 : .7); v += lvl * box(x, c, .06, .008) * (.9 + .1 * R()); }); return v; } },
+  lte: { n: 'LTE downlink', cf: '751 MHz', span: '20 MHz', ax: ['741', '751', '761'], bw: '10 MHz', conf: ['atsc', 'wifi', 'gsm'],
+    hint: 'A wide block with soft edges. Look for patches that change brightness over time.',
+    why: 'LTE is OFDM: one wide flat block with soft edges, and each patch of it brightens or dims as different users are scheduled.',
+    f: (x, t) => { const i = clamp(Math.floor((x - .25) / .05), 0, 9); return .55 * box(x, .5, .5, .015) * (.5 + .5 * hash(i, Math.floor(t * 1.5))); } },
+  wifi: { n: 'Wi-Fi (2.4 GHz)', cf: '2.437 GHz', span: '60 MHz', ax: ['2.407', '2.437', '2.467'], bw: '20 MHz', conf: ['lte', 'bt', 'atsc'],
+    hint: 'Flat block, moderate width. Watch how it turns on and off in short packets.',
+    why: 'A 20 MHz flat-topped block that appears in irregular packet bursts is Wi-Fi. Unlike LTE, it goes fully quiet between packets.',
+    init: () => ({ rem: 0, on: false }), tick: s => { if (--s.rem <= 0) { s.on = R() < .6; s.rem = 1 + ((R() * 5) | 0); } },
+    f: (x, t, s) => s.on ? .72 * box(x, .5, .33, .014) * (.9 + .1 * R()) : 0 },
+  bt: { n: 'Bluetooth (frequency hopping)', cf: '2.44 GHz', span: '100 MHz', ax: ['2.39', '2.44', '2.49'], bw: '1 MHz per hop', conf: ['wifi', 'fsk', 'lora'],
+    hint: 'Look at where the energy lands from one row to the next.',
+    why: 'Narrow 1 MHz bursts that jump all over the band, one hop after another, are Bluetooth frequency hopping. The waterfall looks like scattered dots.',
+    tick: s => { s.h = [(R() * 79) | 0, R() < .5 ? (R() * 79) | 0 : -1]; }, init: () => ({ h: [0, -1] }),
+    f: (x, t, s) => s.h.reduce((v, c) => c < 0 ? v : v + .85 * g(x, .1 + .8 * c / 78, .007), 0) },
+  gps: { n: 'GPS L1 (spread spectrum)', cf: '1575.42 MHz', span: '6 MHz', ax: ['1572.4', '1575.4', '1578.4'], bw: '≈ 2 MHz', conf: ['jam', 'atsc', 'lte'],
+    hint: 'This one barely rises above the noise. The trace is averaged to help you see it.',
+    why: 'GPS signals arrive below the noise floor. Only a faint, broad bump shows on an averaged display, and that is normal for spread spectrum.',
+    f: (x, t) => .13 * box(x, .5, .33, .07) * (.9 + .1 * R()) },
+  lora: { n: 'LoRa (chirp spread spectrum)', cf: '915 MHz', span: '500 kHz', ax: ['914.75', '915.00', '915.25'], bw: '125 kHz', conf: ['bt', 'fsk', 'adsb'],
+    hint: 'Watch the waterfall for slanted lines instead of vertical ones.',
+    why: 'A tone that sweeps across the channel again and again leaves diagonal lines in the waterfall. That is a chirp, the signature of LoRa.',
+    tick: (s, t) => { s.xc = .35 + .3 * ((t % 1.1) / 1.1); }, init: () => ({ xc: .5 }), f: (x, t, s) => .85 * g(x, s.xc, .012) },
+  fsk: { n: 'Paging / 2-FSK data', cf: '929.6 MHz', span: '40 kHz', ax: ['929.58', '929.60', '929.62'], bw: '≈ 10 kHz total', conf: ['cw', 'bt', 'lora'],
+    hint: 'Two thin lines, and only one is lit at a time.',
+    why: 'Two narrow tones that swap back and forth as data bits change is two-tone frequency shift keying, as used by pagers.',
+    tick: s => { s.b = R() < .5; }, init: () => ({ b: false }), f: (x, t, s) => .85 * g(x, .5 + (s.b ? .11 : -.11), .008) },
+  atsc: { n: 'Digital TV (8VSB)', cf: '605 MHz', span: '10 MHz', ax: ['600', '605', '610'], bw: '6 MHz', conf: ['lte', 'fm', 'wifi'],
+    hint: 'A very flat, steady block with sharp edges. Look at the left edge.',
+    why: 'A perfectly steady, flat 6 MHz block with hard edges and a small pilot spike near the low edge is a digital TV broadcast.',
+    f: x => .48 * box(x, .5, .6, .008) * (.93 + .07 * R()) + .7 * g(x, .207, .005) },
+  radar: { n: 'Pulsed radar (scanning)', cf: '2.8 GHz', span: '20 MHz', ax: ['2.79', '2.80', '2.81'], bw: '≈ 6 MHz pulses', conf: ['adsb', 'lora', 'jam'],
+    hint: 'The bursts are evenly spaced, and their strength rises and falls over time.',
+    why: 'Evenly spaced wideband pulses that swell and fade as the antenna turns is a scanning radar. The regular spacing separates it from ADS-B.',
+    init: () => ({ n: 0, p: false, a: 1 }), tick: (s, t) => { s.n++; s.p = s.n % 7 === 0; s.a = .2 + .8 * Math.pow(Math.max(0, Math.sin(t * .9)), 3); },
+    f: (x, t, s) => s.p ? s.a * .85 * box(x, .5, .3, .015) * (.9 + .1 * R()) : 0 },
+  jam: { n: 'Barrage noise (jamming)', cf: '156 MHz', span: '10 MHz', ax: ['151', '156', '161'], bw: 'the whole view', conf: ['gps', 'fm', 'atsc'],
+    hint: 'Look at the noise floor itself, not at a signal.',
+    why: 'The whole noise floor lifts across the band and buries weak signals. That is barrage noise, the classic look of noise jamming.',
+    f: x => (.32 + .18 * R()) * box(x, .5, .96, .03) + .08 * g(x, .3, .01) },
+  dmr: { n: 'Digital voice (DMR/P25 style)', cf: '450.1 MHz', span: '50 kHz', ax: ['450.075', '450.100', '450.125'], bw: '≈ 11 kHz', conf: ['nfm', 'ssb', 'fsk'],
+    hint: 'Narrow like analog voice, but ask whether it has a carrier spike and how steady it is.',
+    why: 'A flat, steady narrow block with fine time-slot ripple and no carrier spike is digital voice. Analog FM has a peak and drops out between transmissions.',
+    init: () => ({ n: 0 }), tick: s => { s.n++; }, f: (x, t, s) => .64 * box(x, .5, .22, .012) * (.9 + .1 * R()) * (s.n % 2 ? .78 : 1) }
+};
+
+const LUT = (() => {
+  const st = [[0, [6, 18, 22]], [.28, [18, 64, 84]], [.5, [28, 150, 140]], [.72, [255, 168, 58]], [1, [255, 246, 222]]]; const a = [];
+  for (let i = 0; i < 256; i++) { const v = i / 255; let k = 1; while (k < st.length - 1 && v > st[k][0]) k++; const [t0, c0] = st[k - 1], [t1, c1] = st[k]; const f = clamp((v - t0) / (t1 - t0), 0, 1); a.push(c0.map((c, j) => c + (c1[j] - c) * f)); }
+  return a;
+})();
+
+function makeTerrain(W, H, seed) {
+  let s = seed; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  x.fillStyle = '#a9ba7c'; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 26; i++) { x.fillStyle = r() > .5 ? '#9db06f' : '#b8c68c'; x.beginPath(); x.ellipse(r() * W, r() * H, 30 + r() * 60, 18 + r() * 34, r() * 3, 0, 7); x.fill(); }
+  x.lineCap = 'round'; x.lineJoin = 'round';
+  x.strokeStyle = '#86b9c7'; x.lineWidth = 16; x.beginPath(); x.moveTo(-10, H * .58); x.bezierCurveTo(W * .3, H * .16, W * .55, H * .98, W + 10, H * .42); x.stroke();
+  x.strokeStyle = '#a9d2db'; x.lineWidth = 8; x.stroke();
+  x.strokeStyle = '#d9c992'; x.lineWidth = 7; x.beginPath(); x.moveTo(-10, H * .86); x.quadraticCurveTo(W * .35, H * .62, W * .62, H * .74); x.quadraticCurveTo(W * .85, H * .82, W + 10, H * .6); x.stroke();
+  x.strokeStyle = '#e8dcaa'; x.lineWidth = 3; x.stroke();
+  for (let i = 0; i < 5; i++) { const cx = r() * W, cy = r() * H, rr = 34 + r() * 30, gr = x.createRadialGradient(cx, cy, 2, cx, cy, rr); gr.addColorStop(0, 'rgba(70,84,40,.42)'); gr.addColorStop(1, 'rgba(70,84,40,0)'); x.fillStyle = gr; x.beginPath(); x.arc(cx, cy, rr, 0, 7); x.fill(); }
+  for (let i = 0; i < 70; i++) { const tx = r() * W, ty = r() * H; x.fillStyle = '#5a7538'; x.beginPath(); x.arc(tx, ty, 3 + r() * 3, 0, 7); x.fill(); x.fillStyle = '#6f8c46'; x.beginPath(); x.arc(tx - 1, ty - 1, 2, 0, 7); x.fill(); }
+  return c;
+}
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+function canvasPoint(cv, e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; }
+function gauss() { return Math.sqrt(-2 * Math.log(1 - R())) * Math.cos(2 * Math.PI * R()); }
+function fixLS(rays) {
+  let a = 0, b = 0, c = 0, e = 0, f = 0;
+  rays.forEach(r => { const dx = Math.sin(r.th), dy = -Math.cos(r.th), p11 = 1 - dx * dx, p12 = -dx * dy, p22 = 1 - dy * dy; a += p11; b += p12; c += p22; e += p11 * r.sx + p12 * r.sy; f += p12 * r.sx + p22 * r.sy; });
+  const det = a * c - b * b; if (Math.abs(det) < .03) return null;
+  return { x: (c * e - b * f) / det, y: (a * f - b * e) / det };
+}
+
+function runQuiz(root, ctx, cfg) {
+  const qs = shuffle(cfg.qs).slice(0, cfg.pick); let i = 0, ok = 0, hints = ctx.hints, locked = false; const res = [];
+  function show() {
+    const q = qs[i], order = cfg.fixed ? q.o.map((_, j) => j) : shuffle(q.o.map((_, j) => j)); locked = false;
+    root.innerHTML = `<div class="prog">${qs.map((_, j) => `<i class="${res[j] || (j === i ? 'on' : '')}"></i>`).join('')}</div>
+      <div class="qcard"><div class="qk">${cfg.tag} ${i + 1} of ${qs.length}</div><div class="qq">${q.q}</div></div>
+      <div class="opts">${order.map(j => `<button class="opt" data-j="${j}">${q.o[j]}</button>`).join('')}</div>
+      <div class="fb" aria-live="polite"></div><div class="row"><button class="btn alt sm" id="hint">Hint (${hints})</button><button class="btn" id="nx" hidden>Next</button></div>`;
+    const hb = $('#hint', root); hb.disabled = hints <= 0;
+    hb.onclick = () => { if (hints <= 0 || locked) return; hints--; hb.textContent = `Hint (${hints})`; hb.disabled = hints <= 0; shuffle($$('.opt', root).filter(o => +o.dataset.j !== q.a)).slice(0, 2).forEach(o => { o.classList.add('dim'); o.disabled = true; }); };
+    $$('.opt', root).forEach(b => b.onclick = () => {
+      if (locked) return; locked = true; const good = +b.dataset.j === q.a; ok += good ? 1 : 0; res[i] = good ? 'ok' : 'bad'; if (good) ctx.xp(8);
+      $$('.opt', root).forEach(o => { o.disabled = true; if (+o.dataset.j === q.a) o.classList.add('ok'); else if (o === b) o.classList.add('bad'); });
+      $('.fb', root).innerHTML = `${good ? '<span class="yes">Correct.</span>' : `<span class="no">Not quite.</span> The answer is <b>${q.o[q.a]}</b>.`} ${q.why}`;
+      hb.disabled = true; const nx = $('#nx', root); nx.hidden = false; nx.textContent = i === qs.length - 1 ? 'See result' : 'Next';
+      nx.onclick = () => { i++; if (i < qs.length) show(); else finish(); };
+    });
+  }
+  function finish() {
+    if (ok >= cfg.pass) { ctx.win({ lines: [`Score: ${ok}/${qs.length}`] }); return; }
+    root.innerHTML = `<div class="qcard"><div class="qk">Result</div><div class="qq">${ok}/${qs.length} correct. You need ${cfg.pass}.</div></div><p>Review the explanations and try again with a fresh set.</p><div class="row"><button class="btn" id="rt">Try again</button></div>`;
+    $('#rt', root).onclick = () => runQuiz(root, ctx, cfg);
+  }
+  show();
+  return () => {};
+}
+
+function runDrone(root, ctx) {
+  const W = 480, H = 340, base = { x: 40, y: 300 }, budget = Math.round((ctx.budget || 720) * (G.cls === 'pilot' ? 1.15 : 1)), RL = 44, RH = 78, CH = 1.6;
+  const em = ctx.em || [{ x: 130, y: 90, n: 'Repeater' }, { x: 390, y: 70, n: 'Wi-Fi bridge' }, { x: 350, y: 250, n: 'Cell node' }, { x: 95, y: 235, n: 'Comms van' }];
+  let wps = [], alt = 0, found = new Set(), flying = false, raf = 0, dead = false, pos = null, cond = null;
+  root.innerHTML = `<div class="mapc"><canvas id="cv" width="${W}" height="${H}" role="img" aria-label="Map with four unknown emitters. Tap to add waypoints."></canvas></div>
+    <div class="rd" id="rd"></div><div class="bar" style="margin-top:8px"><i id="bt" style="width:100%"></i></div><div class="fb" id="fb" aria-live="polite">Tap the map to add waypoints from the base. Low altitude is cheap and short-ranged; high altitude sees farther and burns more.</div>
+    <div class="row"><button class="chip" id="al" aria-pressed="false">Altitude: Low</button><button class="btn alt sm" id="un">Undo</button><button class="btn alt sm" id="cl">Clear</button><button class="btn" id="go">Launch</button><button class="btn" id="nx" hidden>Finish</button></div>`;
+  const cv = $('#cv', root), c = cv.getContext('2d'), bg = makeTerrain(W, H, 31), fb = $('#fb', root);
+  const segs = () => { const p = [base, ...wps]; return p.slice(1).map((b, i) => ({ a: p[i], b, alt: b.alt })); };
+  const cost = () => segs().reduce((s, q) => s + dist(q.a, q.b) * (q.alt ? CH : 1), 0);
+  function ui() { const used = cost(); $('#bt', root).style.width = clamp(100 - used / budget * 100, 0, 100) + '%'; $('#rd', root).innerHTML = `<span>Battery <b>${Math.max(0, Math.round(budget - used))}/${budget}</b></span><span>Found <b>${found.size}/4</b></span>`; }
+  function draw() {
+    c.drawImage(bg, 0, 0);
+    segs().forEach(q => { c.strokeStyle = q.alt ? '#ff7a2f' : '#2d6fd6'; c.lineWidth = 4; c.setLineDash([10, 6]); c.beginPath(); c.moveTo(q.a.x, q.a.y); c.lineTo(q.b.x, q.b.y); c.stroke(); c.setLineDash([]); });
+    wps.forEach((w, i) => { c.fillStyle = w.alt ? '#ff7a2f' : '#5ab0ff'; c.strokeStyle = '#1d2114'; c.lineWidth = 3; c.beginPath(); c.arc(w.x, w.y, 7, 0, 7); c.fill(); c.stroke(); });
+    c.fillStyle = '#1d2114'; c.fillRect(base.x - 12, base.y - 12, 24, 24); c.fillStyle = '#ff7a2f'; c.fillRect(base.x - 7, base.y - 7, 14, 14);
+    em.forEach((e, i) => { const f = found.has(i); c.fillStyle = f ? '#c4372b' : '#e9e4cc'; c.strokeStyle = '#1d2114'; c.lineWidth = 3; c.beginPath(); c.arc(e.x, e.y, 13, 0, 7); c.fill(); c.stroke(); c.fillStyle = f ? '#fff' : '#1d2114'; c.font = '900 15px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(f ? '!' : '?', e.x, e.y + 1); if (f) { c.fillStyle = '#1d2114'; c.font = '800 12px sans-serif'; c.fillText(e.n, e.x, e.y + 26); } });
+    if (pos) { c.strokeStyle = 'rgba(255,255,255,.85)'; c.lineWidth = 2; c.setLineDash([4, 4]); c.beginPath(); c.arc(pos.x, pos.y, pos.alt ? RH : RL, 0, 7); c.stroke(); c.setLineDash([]); c.fillStyle = '#1d2114'; c.beginPath(); c.arc(pos.x, pos.y, 9, 0, 7); c.fill(); c.fillStyle = '#ff7a2f'; c.fillRect(pos.x - 13, pos.y - 2, 26, 4); c.fillRect(pos.x - 2, pos.y - 13, 4, 26); }
+  }
+  cv.addEventListener('click', e => {
+    if (flying) return; const p = canvasPoint(cv, e), last = wps.length ? wps[wps.length - 1] : base;
+    const add = dist(last, p) * (alt ? CH : 1); if (cost() + add > budget) { toast('Not enough battery for that leg'); return; }
+    wps.push({ x: p.x, y: p.y, alt }); ui(); draw();
+  });
+  $('#al', root).onclick = e => { alt = alt ? 0 : 1; e.currentTarget.textContent = `Altitude: ${alt ? 'High' : 'Low'}`; e.currentTarget.setAttribute('aria-pressed', !!alt); };
+  $('#un', root).onclick = () => { if (!flying) { wps.pop(); ui(); draw(); } };
+  $('#cl', root).onclick = () => { if (!flying) { wps = []; found = new Set(); pos = null; ui(); draw(); } };
+  $('#go', root).onclick = () => {
+    if (flying || !wps.length) return; flying = true; found = new Set(); const S2 = segs(); let si = 0, d = 0, last = performance.now(); $('#go', root).disabled = true;
+    function frame(now) {
+      if (dead) return; const dt = Math.min(.05, (now - last) / 1000); last = now; d += 230 * dt;
+      while (si < S2.length && d > dist(S2[si].a, S2[si].b)) { d -= dist(S2[si].a, S2[si].b); si++; }
+      if (si >= S2.length) { pos = null; flying = false; $('#go', root).disabled = false; end(); draw(); ui(); return; }
+      const q = S2[si], L = dist(q.a, q.b) || 1; pos = { x: q.a.x + (q.b.x - q.a.x) * d / L, y: q.a.y + (q.b.y - q.a.y) * d / L, alt: q.alt };
+      em.forEach((e, i) => { if (!found.has(i) && dist(pos, e) <= (q.alt ? RH : RL)) { found.add(i); ctx.xp(10); } });
+      ui(); draw(); raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  function end() {
+    if (found.size === 4) { fb.innerHTML = `<span class="yes">All four emitters found.</span> Battery left: ${Math.max(0, Math.round(budget - cost()))}.`; $('#go', root).hidden = true; const nx = $('#nx', root); nx.hidden = false; nx.onclick = () => ctx.win({ lines: ['Emitters detected: 4', `Battery left: ${Math.max(0, Math.round(budget - cost()))}`] }); }
+    else fb.innerHTML = `<span class="no">Found ${found.size} of 4.</span> Adjust the route. High altitude widens the detection ring, but every leg flown high costs more battery.`;
+  }
+  ui(); draw();
+  return () => { dead = true; cancelAnimationFrame(raf); };
+}
+
+
+/* =============================================================== data */
+const CLASSES = {
+  scout:   { n: 'Signals Scout', call: 'Sparrow', b: 'Reads the band fast.',         perk: 'Sharp Eyes: your SDR shows occupied bandwidth.', body: '#6f7b4c', hair: '#5b6b3a', acc: 'helmet', skin: '#e2ac82' },
+  analyst: { n: 'Cyber Analyst', call: 'Cipher',  b: 'Lives in packets and logs.',   perk: 'Deep Dive: 2 extra hints on the certification board.', body: '#6f7b4c', hair: '#2b2118', acc: 'glasses', skin: '#b27b52' },
+  pilot:   { n: 'Drone Pilot',   call: 'Kestrel', b: 'Flies first, debriefs after.', perk: 'Steady Hands: drones get +15% battery.', body: '#6f7b4c', hair: '#c9561a', acc: 'cap', skin: '#f0c8a0' }
+};
+const BASIC = ['compass', 'radio', 'canteen', 'notebook', 'aid', 'mre', 'poncho', 'shovel'];
+Object.assign(IC, {
+  compass: `<circle cx="32" cy="32" r="22" fill="#e9e4cc"/><path d="M32 13L38 33L32 30L26 33Z" fill="#ff7a2f"/><path d="M32 51L26 33L32 36L38 33Z" fill="#5b6b3a"/>`,
+  radio:   `<rect x="18" y="22" width="26" height="34" rx="4" fill="#5b6b3a"/><path d="M40 22V6"/><circle cx="31" cy="34" r="6" fill="#cfcbb6"/><rect x="24" y="44" width="14" height="7" fill="#1c2a2c"/>`,
+  canteen: `<path d="M24 16H40V21C48 25 50 32 50 44C50 52 46 58 32 58C18 58 14 52 14 44C14 32 16 25 24 21Z" fill="#7d8a55"/><rect x="24" y="8" width="16" height="9" rx="2" fill="#1d2114"/>`,
+  notebook:`<rect x="14" y="10" width="36" height="46" rx="3" fill="#f5f1df"/><path d="M20 22H46M20 32H46M20 42H46"/><rect x="14" y="10" width="6" height="46" fill="#ff7a2f"/>`,
+  aid:     `<rect x="10" y="18" width="44" height="34" rx="4" fill="#f5f1df"/><path d="M32 26V44M23 35H41" stroke="#c4372b" stroke-width="6"/>`,
+  mre:     `<rect x="12" y="20" width="40" height="28" rx="3" fill="#a98b57"/><path d="M20 28H44M20 36H36"/>`,
+  poncho:  `<path d="M32 8L54 50H10Z" fill="#5b6b3a"/><circle cx="32" cy="14" r="3.5" fill="#1d2114"/>`,
+  shovel:  `<path d="M32 6V38" stroke-width="5"/><path d="M22 38H42L40 56H24Z" fill="#7d8a55"/>`
+});
+const ITEMS = {
+  compass: { n: 'Compass', d: 'Lensatic compass. It reads your heading in degrees from north.' },
+  radio:   { n: 'Handheld Radio', d: 'Squad radio. Set the channel, then key the mic.' },
+  canteen: { n: 'Canteen', d: 'Water. Nobody skips this.' },
+  notebook:{ n: 'Notebook', d: 'Waterproof notebook for logging readings.' },
+  aid:     { n: 'First-Aid Kit', d: 'Individual first-aid kit.' },
+  mre:     { n: 'MRE', d: 'Meal, ready to eat.' },
+  poncho:  { n: 'Poncho', d: 'Rain gear that doubles as a shelter.' },
+  shovel:  { n: 'Entrenching Tool', d: 'Folding shovel.' },
+  sdr:   { n: 'Basic SDR', d: 'A basic wideband receiver. It shows the spectrum and a waterfall, nothing more.' },
+  df:    { n: 'DF-SDR', d: 'Direction-finding SDR. It measures bearings so you can geo-locate an emitter from two or more spots.' },
+  yagi:  { n: 'Yagi Kit', d: 'Directional antenna. A sharper beam tightens your bearings from about ±9° to about ±4°.' },
+  pkt:   { n: 'Laptop + Analyzer', d: 'Field laptop with a protocol analyzer and Wi-Fi adapter. It also runs drone ground control.' },
+  cell:  { n: 'Cell Survey Kit', d: 'Passive cellular survey gear. It records towers by generation and signal level without transmitting.' },
+  ids:   { n: 'Wireless IDS', d: 'A sensor that watches the Wi-Fi environment for spoofed beacons and unknown access points.' },
+  ea:    { n: 'EA Pod', d: 'Electronic attack pod for authorized range use. You size it with a jam-to-signal budget.' },
+  drone: { n: 'Recon Drone', d: 'Extends collection by air. Higher altitude sees farther and burns more battery.' },
+  ewd:   { n: 'EW Drone', d: 'A recon drone carrying DF and EA payloads: find, fix, and deny from the air.' }
+};
+const icon2 = id => icon(id === 'ewd' ? 'ewd' : id);
+const EW = [
+  { id: 'm1', n: 'Listening Post', need: ['sdr'], reward: 'df', where: 'Southwest hill' },
+  { id: 'm2', n: 'Fox Hunt Range', need: ['df'], reward: 'yagi', where: 'South gate' },
+  { id: 'm3', n: 'Network Ops Center', need: [], reward: 'pkt', where: 'Northwest building' },
+  { id: 'm4', n: 'Cell Site Survey', need: ['sdr', 'notebook'], reward: 'cell', where: 'Northeast tower' },
+  { id: 'm5', n: 'HQ Wi-Fi Sweep', need: ['pkt'], reward: 'ids', where: 'East building' },
+  { id: 'm6', n: 'EA Range', need: ['radio', 'df'], reward: 'ea', where: 'Range Control, northeast' },
+  { id: 'm7', n: 'Aerial Survey', need: ['pkt', 'radio'], reward: 'drone', where: 'Airfield, southeast' }
+];
+
+/* =============================================================== state */
+const KEY = 'ewit-field-ops-v2';
+function loadG() { try { const j = JSON.parse(localStorage.getItem(KEY)); if (j && j.v === 2 && CLASSES[j.cls]) { j.tk = j.tk || { chap: 0, team: null, done: 0, day: 1, hour: 6, active: null, board: null, ex: 0 }; j.xp = j.xp || 0; if (!j.f.enlisted && (j.f.packed || j.scene !== 'station')) { j.f.enlisted = 1; j.f.bayIntro = 1; } return j; } } catch (e) {} return null; }
+function save() { if (!G) return; try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) {} }
+const fresh = (cls, name) => ({ v: 2, cls, name, scene: 'station', x: 7, y: 6, f: {}, bag: [], owned: [...BASIC], xp: 0, tk: { chap: 0, team: null, done: 0, day: 1, hour: 6, active: null, board: null, ex: 0 } });
+const F = () => G.f;
+const SAT = { sdr: ['sdr', 'df', 'ewd'] };
+const inBag = id => (SAT[id] || [id]).some(i => G.bag.includes(i));
+const missing = ids => ids.filter(i => !inBag(i));
+const names = ids => ids.map(i => ITEMS[i].n).join(', ');
+
+/* =============================================================== UI helpers */
+const app = $('#app'), layer = $('#layer'), toastEl = $('#toast');
+let cleanup = null, toastT = 0, dlg = null, onLayerClose = null;
+function toast(m) { toastEl.textContent = m; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => toastEl.hidden = true, 2400); }
+function openLayer(html, noesc) {
+  layer.innerHTML = `<div class="sheet case" role="dialog" aria-modal="true" ${noesc ? 'data-noesc' : ''}>${html}</div>`;
+  layer.hidden = false; document.body.classList.add('lock'); layer.scrollTop = 0; pad0();
+}
+function closeLayer() {
+  if (cleanup) { cleanup(); cleanup = null; }
+  layer.hidden = true; layer.innerHTML = ''; document.body.classList.remove('lock');
+  const cb = onLayerClose; onLayerClose = null; if (cb) cb();
+}
+layer.addEventListener('click', e => { if (e.target === layer && !layer.querySelector('[data-noesc]')) closeLayer(); });
+const paused = () => !layer.hidden || !!dlg;
+
+function say(lines, cb) {
+  dlg = { l: (Array.isArray(lines) ? lines : [lines]).slice(), i: 0, cb }; pad0(); showDlg();
+}
+function showDlg() {
+  const el = $('#dlg'); if (!el) return; const l = dlg.l[dlg.i]; const [n, t] = typeof l === 'string' ? ['', l] : l;
+  el.innerHTML = `${n ? `<b>${n}</b>` : ''}<p>${t}</p><small>${dlg.i < dlg.l.length - 1 ? 'Tap to continue' : 'Tap to close'}</small>`; el.hidden = false;
+}
+function nextDlg() {
+  if (!dlg) return; dlg.i++;
+  if (dlg.i >= dlg.l.length) { const cb = dlg.cb; dlg = null; const el = $('#dlg'); if (el) el.hidden = true; if (cb) cb(); } else showDlg();
+}
+const speak = (who, arr) => arr.map(t => [who, t]);
+
+/* =============================================================== bag */
+function openBag(o = {}) {
+  const need = o.need || [], inc = o.incoming; let note = '';
+  const draw = () => {
+    const out = G.owned.filter(i => !G.bag.includes(i));
+    let h = `<div class="mhd"><h2>${o.title || 'Ruck'}</h2><button class="btn alt sm" id="bx">${inc ? 'Leave it in the locker' : 'Close'}</button></div>`;
+    h += inc ? `<p><b>Your ruck is full (4/4).</b> Tap an item in your ruck to put it back and make room for <b>${ITEMS[inc].n}</b>.</p>`
+      : o.supply ? `<p>Supply point. Tap items to move them between your ruck (max 4) and the locker.</p>` : `<p>You can only change your ruck at a supply point or a footlocker.</p>`;
+    if (need.length) h += `<p class="hintbox">Needed: ${need.map(i => `<b>${ITEMS[i].n}</b> ${inBag(i) ? '✓' : '✗'}`).join(' · ')}</p>`;
+    h += `<h3>Ruck ${G.bag.length}/4</h3><div class="slots">${[0, 1, 2, 3].map(i => { const id = G.bag[i]; return id ? `<button class="slot" data-b="${id}">${icon(id)}<span>${ITEMS[id].n}</span></button>` : `<div class="slot empty"><span>Empty</span></div>`; }).join('')}</div>`;
+    h += `<h3>Locker</h3><div class="slots">${out.map(id => `<button class="slot" data-l="${id}">${icon(id)}<span>${ITEMS[id].n}</span></button>`).join('') || '<p>Nothing else.</p>'}</div><div class="fb" id="bn">${note}</div>`;
+    openLayer(h, true);
+    $('#bx').onclick = () => { closeLayer(); if (o.onDone) o.onDone(); };
+    $$('[data-b]').forEach(b => b.onclick = () => {
+      const id = b.dataset.b;
+      if (inc) { G.bag.splice(G.bag.indexOf(id), 1); G.bag.push(inc); save(); updateHud(); closeLayer(); if (o.onDone) o.onDone(); return; }
+      if (o.supply) { G.bag.splice(G.bag.indexOf(id), 1); save(); updateHud(); note = ''; draw(); } else { note = `<b>${ITEMS[id].n}:</b> ${ITEMS[id].d}`; $('#bn').innerHTML = note; }
+    });
+    $$('[data-l]').forEach(b => b.onclick = () => {
+      const id = b.dataset.l;
+      if (o.supply && !inc) { if (G.bag.length >= 4) { note = '<span class="no">Ruck is full. Put one item back first.</span>'; $('#bn').innerHTML = note; return; } G.bag.push(id); save(); updateHud(); note = ''; draw(); }
+      else { note = `<b>${ITEMS[id].n}:</b> ${ITEMS[id].d}`; $('#bn').innerHTML = note; }
+    });
+  };
+  draw();
+}
+function giveItem(id, cb) {
+  if (!G.owned.includes(id)) G.owned.push(id);
+  if (G.bag.length < 4) { G.bag.push(id); toast(`${ITEMS[id].n} added to your ruck`); save(); updateHud(); if (cb) cb(); }
+  else openBag({ incoming: id, supply: true, onDone: () => { save(); updateHud(); if (cb) cb(); } });
+}
+function unlockCard(id, lines, cb) {
+  openLayer(`<div class="unlock"><div class="rays"></div><div class="kick">NEW GEAR</div><span class="big">${icon(id)}</span><h2>${ITEMS[id].n}</h2><p>${ITEMS[id].d}</p><div class="lines">${lines || ''}</div><button class="btn" id="ct">Continue</button></div>`, true);
+  $('#ct').onclick = () => { closeLayer(); giveItem(id, cb); };
+}
+
+/* =============================================================== small overlays */
+function openRadio(target, prompt, onOk) {
+  let ch = 1, ok = false;
+  const draw = msg => {
+    openLayer(`<div class="mhd"><h2>Handheld radio</h2><button class="btn alt sm" id="rx">Close</button></div><p>${prompt}</p>
+      <div class="radio"><button class="btn alt" id="cm" aria-label="Channel down">−</button><div class="chn">CH ${ch}</div><button class="btn alt" id="cp" aria-label="Channel up">+</button></div>
+      <div class="row"><button class="btn" id="ptt">Key mic and transmit</button></div><div class="fb" id="rf">${msg || ''}</div>`, true);
+    $('#rx').onclick = closeLayer; $('#cm').onclick = () => { ch = ch > 1 ? ch - 1 : 8; draw(); }; $('#cp').onclick = () => { ch = ch < 8 ? ch + 1 : 1; draw(); };
+    $('#ptt').onclick = () => {
+      if (ch === target) { $('#rf').innerHTML = '<span class="yes">"Loud and clear."</span> You are through.'; $('#ptt').textContent = 'Continue'; $('#ptt').onclick = () => { closeLayer(); onOk(); }; }
+      else { $('#rf').innerHTML = `<span class="no">Silence on channel ${ch}.</span> Check the channel you were given.`; }
+    };
+  };
+  draw();
+}
+function openReceipt(done) {
+  openLayer(`<h2>Hand receipt</h2><p>Item: <b>Basic SDR</b><br>Serial: <b>17E-0042-B</b><br>Condition: serviceable</p><p>Signing makes you responsible for this equipment. Hold the button until the bar fills.</p>
+    <div class="bar" style="margin:12px 0"><i id="sgb" style="width:0%"></i></div><div class="row"><button class="btn" id="sg">Hold to sign</button><button class="btn alt" id="sx">Cancel</button></div>`, true);
+  let t0 = 0, raf = 0; const b = $('#sg');
+  const tick = () => { const p = clamp((performance.now() - t0) / 1100, 0, 1); $('#sgb').style.width = p * 100 + '%'; if (p >= 1) { done_(); return; } raf = requestAnimationFrame(tick); };
+  const start = () => { if (t0) return; t0 = performance.now(); raf = requestAnimationFrame(tick); };
+  const stop = () => { t0 = 0; cancelAnimationFrame(raf); const s = $('#sgb'); if (s) s.style.width = '0%'; };
+  const done_ = () => { cancelAnimationFrame(raf); closeLayer(); done(); };
+  b.addEventListener('pointerdown', start); ['pointerup', 'pointerleave', 'pointercancel'].forEach(e => b.addEventListener(e, stop));
+  b.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); start(); } }); b.addEventListener('keyup', stop);
+  $('#sx').onclick = closeLayer;
+  cleanup = () => cancelAnimationFrame(raf);
+}
+function missionSheet(title, run, onDone) {
+  openLayer(`<div class="mhd"><h2>${title}</h2><button class="btn alt sm" id="ex">Exit</button></div><div id="mb"></div>`, true);
+  $('#ex').onclick = closeLayer;
+  cleanup = run($('#mb'), { hints: G.cls === 'analyst' ? 3 : 1, xp() {}, win: () => { closeLayer(); onDone(); } }) || null;
+}
+
+/* ---- network bench */
+function runNetwork(root, done) {
+  const D = { A: { n: 'PC-A', x: 50, y: 50, p: 1 }, B: { n: 'PC-B', x: 50, y: 190, p: 1 }, S: { n: 'Switch', x: 175, y: 120, p: 4 }, T: { n: 'Router', x: 280, y: 120, p: 2 }, N: { n: 'Internet', x: 360, y: 60, p: 1 } };
+  let cab = [], sel = null, ok = false;
+  const use = k => cab.filter(c => c.includes(k)).length;
+  const route = from => { const seen = new Set([from]), prev = {}, q = [from]; while (q.length) { const k = q.shift(); cab.forEach(c => { if (c.includes(k)) { const o = c[0] === k ? c[1] : c[0]; if (!seen.has(o)) { seen.add(o); prev[o] = k; q.push(o); } } }); } if (!seen.has('N')) return null; const p = []; let k = 'N'; while (k) { p.unshift(k); k = prev[k]; } return p; };
+  function draw(msg) {
+    root.innerHTML = `<p>Wire the lab network so both PCs can reach the internet. Tap one device, then another, to run a cable. Tap a cable to remove it.</p>
+      <svg class="nb" viewBox="0 0 420 240" role="group" aria-label="Network bench">${cab.map((c, i) => `<line x1="${D[c[0]].x}" y1="${D[c[0]].y}" x2="${D[c[1]].x}" y2="${D[c[1]].y}" stroke="${ok ? '#2f8a3b' : '#1d2114'}" stroke-width="5"/><line data-c="${i}" x1="${D[c[0]].x}" y1="${D[c[0]].y}" x2="${D[c[1]].x}" y2="${D[c[1]].y}" stroke="transparent" stroke-width="18" style="cursor:pointer"/>`).join('')}
+      ${Object.entries(D).map(([k, d]) => `<g data-d="${k}" style="cursor:pointer"><rect x="${d.x - 34}" y="${d.y - 22}" width="68" height="44" rx="8" fill="${sel === k ? '#ff7a2f' : '#f5f1df'}" stroke="#1d2114" stroke-width="3"/><text x="${d.x}" y="${d.y + 1}" text-anchor="middle" font-size="12" font-weight="800" fill="#1d2114">${d.n}</text><text x="${d.x}" y="${d.y + 15}" text-anchor="middle" font-size="10" font-weight="700" fill="#585d42">ports ${use(k)}/${d.p}</text></g>`).join('')}</svg>
+      <div class="fb" aria-live="polite">${msg || ''}</div><div class="row"><button class="btn" id="tt">Test network</button><button class="btn alt sm" id="rs">Remove all cables</button><button class="btn" id="nx" hidden>Finish</button></div>`;
+    $$('[data-d]', root).forEach(g0 => g0.onclick = () => {
+      const k = g0.dataset.d; if (ok) return;
+      if (!sel) { sel = k; draw(); return; } if (sel === k) { sel = null; draw(); return; }
+      if (cab.some(c => c.includes(sel) && c.includes(k))) { sel = null; draw('Those two are already connected.'); return; }
+      if (use(sel) >= D[sel].p || use(k) >= D[k].p) { const f = use(sel) >= D[sel].p ? sel : k; sel = null; draw(`<span class="no">No free port on ${D[f].n}.</span>`); return; }
+      cab.push([sel, k]); sel = null; draw();
+    });
+    $$('[data-c]', root).forEach(l => l.onclick = () => { cab.splice(+l.dataset.c, 1); draw(); });
+    $('#rs', root).onclick = () => { cab = []; sel = null; ok = false; draw(); };
+    $('#tt', root).onclick = () => {
+      const a = route('A'), b = route('B'); const r = k => k ? `<span class="yes">reached the internet via ${k.slice(1, -1).map(x => D[x].n).join(' → ') || 'a direct link'}</span>` : '<span class="no">no route to the internet</span>';
+      if (a && b) { ok = true; draw(`PC-A ${r(a)}.<br>PC-B ${r(b)}.<br><b>Network is up.</b> A switch shares one uplink, and the router hands traffic to the outside.`); $('#nx', root).hidden = false; $('#tt', root).hidden = true; $('#nx', root).onclick = done; }
+      else draw(`PC-A ${r(a)}.<br>PC-B ${r(b)}.<br>Check every hop: PCs to the switch, the switch to the router, the router to the internet.`);
+    };
+  }
+  draw();
+}
+
+/* ---- antenna bench */
+function runAntenna(root, done) {
+  const f0 = 150, L0 = 468 / f0 * 30.48; let L = 60;
+  root.innerHTML = `<p>Build a half-wave dipole for the class net on <b>${f0} MHz</b>. Adjust the wire length until the SWR meter reads low, then lock it in.</p>
+    <svg class="nb" viewBox="0 0 420 110" aria-label="Dipole antenna"><line x1="30" y1="55" x2="390" y2="55" stroke="#c9c5b0" stroke-width="2" stroke-dasharray="4 5"/><g id="dp"></g><rect x="200" y="42" width="20" height="26" rx="4" fill="#5b6b3a" stroke="#1d2114" stroke-width="3"/></svg>
+    <label class="calcl">Total wire length <b id="lv"></b><input type="range" id="ln" min="40" max="160" step="1" value="${L}" aria-label="Wire length"></label>
+    <div class="gauge" id="sg"><i></i></div><div class="fb" id="sw" aria-live="polite"></div>
+    <div class="hintbox">Rule of thumb: half-wave length in feet ≈ 468 ÷ frequency in MHz. One foot is about 30 cm.</div>
+    <div class="row"><button class="btn" id="lk">Lock it in</button></div>`;
+  const upd = () => {
+    L = +$('#ln', root).value; const r = (L - L0) / L0, swr = 1.05 + r * r * 70;
+    $('#lv', root).textContent = `${L} cm`; const half = L * 1.7; $('#dp', root).innerHTML = `<rect x="${210 - half}" y="50" width="${half - 10}" height="10" rx="4" fill="#ff7a2f" stroke="#1d2114" stroke-width="3"/><rect x="${220}" y="50" width="${half - 10}" height="10" rx="4" fill="#ff7a2f" stroke="#1d2114" stroke-width="3"/>`;
+    $('#sg i', root).style.width = clamp((6 - swr) / 5 * 100, 4, 100) + '%';
+    $('#sw', root).innerHTML = `SWR <b>${swr.toFixed(2)}:1</b> · ${swr < 1.5 ? '<span class="yes">good match</span>' : swr < 2.5 ? 'usable, but not great' : '<span class="no">poor match: power reflects back</span>'}`;
+    $('#lk', root).disabled = swr >= 1.5;
+  };
+  $('#ln', root).oninput = upd; $('#lk', root).onclick = done; upd();
+}
+
+/* ---- listening post: panorama */
+const W0 = { fm: .22, nfm: .16, dmr: .22, lte: .5, gps: .33, wifi: .33, nr: .8 };
+Object.assign(SIG, { nr: { n: '5G NR', cf: '3.7 GHz', span: '120 MHz', ax: ['3.64', '3.70', '3.76'], bw: '≈ 100 MHz', f: (x, t) => { const i = clamp(Math.floor((x - .1) / .05), 0, 15); return .5 * box(x, .5, .8, .01) * (.35 + .65 * hash(i, Math.floor(t * 4))); } } });
+function specView(root, cfg) {
+  const W = cfg.W || 256, SH = 72, WH = 112;
+  root.innerHTML = `<div class="sdr"><div class="sdr-top">${cfg.top.map(t => `<span>${t}</span>`).join('')}</div><div class="cw"><canvas class="sp" width="${W}" height="${SH}" role="img" aria-label="Spectrum trace"></canvas><canvas class="wf" width="${W}" height="${WH}" role="img" aria-label="Waterfall"></canvas><div class="curl" hidden></div></div>${cfg.ax}</div>`;
+  const sp = $('.sp', root), wf = $('.wf', root), sc = sp.getContext('2d'), wc = wf.getContext('2d'), cl = $('.curl', root);
+  const ems = cfg.em.map(e => ({ ...e, st: SIG[e.id].init ? SIG[e.id].init() : {} }));
+  let t = R() * 20, k = 0, acc = 0, last = performance.now(), raf = 0, dead = false; const avg = new Float32Array(W).fill(.1), img = wc.createImageData(W, 1);
+  wc.fillStyle = '#06121a'; wc.fillRect(0, 0, W, WH);
+  function step() {
+    t += .05; k++; ems.forEach(e => { const s = SIG[e.id]; if (s.tick) s.tick(e.st, t, k); });
+    for (let i = 0; i < W; i++) {
+      const x = i / (W - 1); let v = .07 + .06 * R(); ems.forEach(e => { v += SIG[e.id].f(.5 + (x - e.x) * e.k, t, e.st); }); v = clamp(v, 0, 1);
+      avg[i] += (v - avg[i]) * .22; const c = LUT[(v * 255) | 0], o = i * 4; img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2]; img.data[o + 3] = 255;
+    }
+    wc.drawImage(wf, 0, 1); wc.putImageData(img, 0, 0);
+  }
+  function drawSpec() {
+    sc.fillStyle = '#0a1416'; sc.fillRect(0, 0, W, SH); sc.strokeStyle = 'rgba(159,214,208,.16)'; sc.lineWidth = 1; sc.beginPath();
+    for (let i = 1; i < 4; i++) { sc.moveTo(0, i * SH / 4 + .5); sc.lineTo(W, i * SH / 4 + .5); sc.moveTo(i * W / 4 + .5, 0); sc.lineTo(i * W / 4 + .5, SH); } sc.stroke();
+    sc.beginPath(); sc.moveTo(0, SH); for (let i = 0; i < W; i++) sc.lineTo(i, SH - 3 - avg[i] * (SH - 8)); sc.lineTo(W - 1, SH); sc.closePath(); sc.fillStyle = 'rgba(255,122,47,.28)'; sc.fill();
+    sc.beginPath(); for (let i = 0; i < W; i++) { const y = SH - 3 - avg[i] * (SH - 8); i ? sc.lineTo(i, y) : sc.moveTo(i, y); } sc.strokeStyle = '#ffb06a'; sc.lineWidth = 1.5; sc.stroke();
+  }
+  for (let i = 0; i < WH; i++) step();
+  function loop(now) { if (dead) return; acc += Math.min(.1, (now - last) / 1000); last = now; while (acc >= .05) { acc -= .05; step(); } drawSpec(); raf = requestAnimationFrame(loop); }
+  raf = requestAnimationFrame(loop);
+  if (cfg.onTap) $('.cw', root).addEventListener('click', e => { const r = sp.getBoundingClientRect(), x = clamp((e.clientX - r.left) / r.width, 0, 1); cl.hidden = false; cl.style.left = x * 100 + '%'; cfg.onTap(x); });
+  return { stop() { dead = true; cancelAnimationFrame(raf); } };
+}
+const LOG0 = 7.4771, LOGS = 2;
+const fx = f => (Math.log10(f) - LOG0) / LOGS, xf = x => Math.pow(10, LOG0 + LOGS * x);
+const fmtF = f => f >= 1e9 ? (f / 1e9).toFixed(3) + ' GHz' : (f / 1e6).toFixed(1) + ' MHz';
+const LI = {
+  fm: 'A local broadcast station: wide, steady, with thin spikes.', nfm: 'Enemy squad net: analog push-to-talk voice. Narrow, and it keys on and off.',
+  dmr: 'Digital voice link: narrow but steady, with no carrier spike and no key-ups.', lte: 'Cell tower downlink: a wide flat block with patchy activity.',
+  gsm: 'Legacy cell site: several 200 kHz carriers side by side, one always on.', wifi: 'Wi-Fi bridge: a wide block that appears in short bursts near 2.4 GHz.',
+  atsc: 'Digital TV transmitter: very flat with sharp edges and a pilot spike near the low edge.', adsb: 'Aircraft transponders: short bursts at random times near 1 GHz.',
+  radar: 'Scanning radar: evenly spaced wideband pulses that swell and fade.', lora: 'Sensor network: diagonal chirps in the waterfall.', gps: 'A satellite navigation signal: a faint broad bump near the noise floor.'
+};
+const LP = { fm: [98.1e6, .05], nfm: [151.5e6, .024], dmr: [450.1e6, .026], lte: [751e6, .07], gsm: [935.6e6, .06], gps: [1575.42e6, .06], wifi: [2437e6, .05], atsc: [605e6, .06], adsb: [1090e6, .04], radar: [2800e6, .05], lora: [915e6, .03] };
+Object.assign(W0, { gsm: .4, atsc: .6, adsb: .2, radar: .3, lora: .3 });
+const LPDEF = { E: [['fm', 98.1e6, .05], ['nfm', 151.5e6, .024], ['dmr', 450.1e6, .026], ['lte', 751e6, .07], ['gps', 1575.42e6, .06], ['wifi', 2437e6, .05]], T: ['nfm', 'lte', 'wifi'].map(id => ({ id, t: LI[id] })) };
+function genListening(seed) {
+  const r = rng(seed), chosen = [];
+  for (const id of shufR(Object.keys(LP), r)) { if (chosen.every(c => Math.abs(fx(LP[c][0]) - fx(LP[id][0])) >= .06)) chosen.push(id); if (chosen.length === 6) break; }
+  const cand = chosen.filter(id => id !== 'gps' && id !== 'fm');
+  return { E: chosen.map(id => [id, LP[id][0], LP[id][1]]), T: shufR(cand, r).slice(0, 3).map(id => ({ id, t: LI[id] })) };
+}
+function runListening(root, done, cfg) {
+  const { E, T } = cfg || LPDEF; const found = new Set(); let curX = null, view;
+  root.innerHTML = `<p><b>Task:</b> scan the panorama and mark each target from the intel card. Tap the display to place the cursor, then mark it.</p><div id="tl" class="tl"></div><div id="sv"></div><div class="fb" id="fb" aria-live="polite"></div>
+    <div class="row"><button class="btn" id="mk" disabled>Mark signal</button><button class="btn" id="nx" hidden>Finish</button></div>`;
+  const list = () => { $('#tl', root).innerHTML = T.map((t, i) => `<div class="tg ${found.has(t.id) ? 'ok' : ''}">${found.has(t.id) ? '✓' : i + 1 + '.'} ${t.t}</div>`).join(''); };
+  const ticks = [[30e6, '30M'], [100e6, '100M'], [300e6, '300M'], [1e9, '1G'], [3e9, '3G']];
+  view = specView($('#sv', root), { W: 320, top: [G.cls === 'scout' ? 'PANORAMA · Sharp Eyes on' : 'PANORAMA', 'LOG SCALE 30 MHz – 3 GHz'], em: E.map(([id, f, dw]) => ({ id, x: fx(f), k: W0[id] / dw })),
+    ax: `<div class="axp">${ticks.map(([f, l]) => `<span style="left:${fx(f) * 100}%">${l}</span>`).join('')}</div>`,
+    onTap: x => { curX = x; $('#mk', root).disabled = false; const nb = E.find(([, f]) => Math.abs(fx(f) - x) < .03); $('#fb', root).innerHTML = `Cursor at <b>${fmtF(xf(x))}</b>.${G.cls === 'scout' && nb ? ` Occupied bandwidth about <b>${SIG[nb[0]].bw}</b>.` : ''}`; } });
+  $('#mk', root).onclick = () => {
+    if (curX == null) return; const hit = E.find(([, f]) => Math.abs(fx(f) - curX) < .03), fb = $('#fb', root);
+    if (!hit) { fb.innerHTML = `<span class="no">Nothing there.</span> ${fmtF(xf(curX))} is empty band. Move the cursor onto a signal.`; return; }
+    const [id, f] = hit, tg = T.find(t => t.id === id);
+    if (tg) { if (found.has(id)) { fb.textContent = 'Already marked.'; return; } found.add(id); fb.innerHTML = `<span class="yes">Marked at ${fmtF(f)}.</span> That matches the card.`; list(); if (found.size === T.length) { $('#mk', root).hidden = true; $('#nx', root).hidden = false; $('#nx', root).onclick = done; } }
+    else fb.innerHTML = `<span class="no">Not a target.</span> That looks like: ${LI[id]}`;
+  };
+  list(); return () => view.stop();
+}
+
+/* ---- cell site survey */
+const CELLT = { gsm: 'several 200 kHz carriers side by side, one always on and the rest flickering by time slot. That is <b>GSM (2G)</b>: TDMA on 200 kHz channels.', lte: 'one wide flat block, patchy as users are scheduled. That is <b>LTE (4G)</b>: OFDMA on a channel of up to 20 MHz.', nr: 'a much wider block with fast, beam-like patches. That is <b>5G NR</b>: channels up to 100 MHz and beamforming.' };
+const genCell = seed => ({ order: shufR(['gsm', 'lte', 'nr'], rng(seed)) });
+function runCell(root, done, cfg) {
+  const S3 = (cfg || { order: ['gsm', 'lte', 'nr'] }).order.map((id, i) => ({ id, sec: 'ABC'[i], t: `Sector ${'ABC'[i]}: ${CELLT[id]}` }));
+  let cur = 0, view; const rec = new Set();
+  function show() {
+    if (view) view.stop(); const s = S3[cur], sg = SIG[s.id];
+    root.innerHTML = `<p>Walk the sector arcs with your receiver and record what each one looks like on the display. Passive only: you are listening, not transmitting.</p><div class="chips">${S3.map((x, i) => `<button class="chip" data-i="${i}" aria-pressed="${i === cur}">Sector ${x.sec}${rec.has(i) ? ' ✓' : ''}</button>`).join('')}</div><div id="sv" style="margin-top:10px"></div>
+      <div class="fb" id="fb"></div><div class="row"><button class="btn" id="rc">${rec.has(cur) ? 'Recorded' : 'Record to notebook'}</button><button class="btn" id="nx" hidden>Finish survey</button></div>`;
+    view = specView($('#sv', root), { em: [{ id: s.id, x: .5, k: 1 }], top: ['RECEIVER', `CF <b>${sg.cf}</b>`, `SPAN <b>${sg.span}</b>`].concat(G.cls === 'scout' ? [`BW <b>${sg.bw}</b>`] : []), ax: `<div class="sdr-ax"><span>${sg.ax[0]}</span><span>${sg.ax[1]}</span><span>${sg.ax[2]}</span></div>` });
+    $$('.chip', root).forEach(b => b.onclick = () => { cur = +b.dataset.i; show(); });
+    $('#rc', root).disabled = rec.has(cur); if (rec.has(cur)) $('#fb', root).innerHTML = s.t;
+    $('#rc', root).onclick = () => { rec.add(cur); $('#fb', root).innerHTML = `<span class="yes">Logged.</span> ${s.t}`; $$('.chip', root).forEach((b, i) => b.textContent = `Sector ${S3[i].sec}${rec.has(i) ? ' ✓' : ''}`); $('#rc', root).disabled = true; $('#rc', root).textContent = 'Recorded'; if (rec.size === 3) { $('#nx', root).hidden = false; $('#nx', root).onclick = done; } };
+    if (rec.size === 3) { $('#nx', root).hidden = false; $('#nx', root).onclick = done; }
+  }
+  show(); return () => view && view.stop();
+}
+/* ---- NOC trace */
+function runNOC(root, done) {
+  const bad = (R() * 6) | 0, hosts = Array.from({ length: 6 }, (_, i) => ({ n: `WS-0${i + 1}`, ip: `10.0.0.${11 + i}` }));
+  const NORM = [['10.0.0.1', 'UDP 53', 74, 'DNS query intranet.local'], ['10.0.5.20', 'TCP 443', 1440, 'TLS application data'], ['172.16.4.9', 'TCP 443', 980, 'TLS application data'], ['10.0.0.1', 'UDP 53', 78, 'DNS query mail.local'], ['10.0.5.20', 'TCP 80', 620, 'HTTP GET /portal']];
+  let cap = false, sel = -1, wrong = 0;
+  const rows = i => { const out = []; for (let t = 0; t < 10; t += 1 + R() * 1.6) { const n = NORM[(R() * NORM.length) | 0]; out.push([t, ...n]); } if (i === bad) { for (let t = .4; t < 10; t += 5) { out.push([t, '203.0.113.9', 'TCP 4444', 118, 'PSH,ACK small payload']); out.push([t - .1, '10.0.0.1', 'UDP 53', 92, 'DNS query qz7x-update.example.net']); } } return out.sort((a, b) => a[0] - b[0]); };
+  const data = hosts.map((_, i) => rows(i));
+  function draw(msg) {
+    root.innerHTML = `<p>Users report the network is slow and something is calling out. Capture 10 seconds of traffic, look at each workstation, and isolate the infected one.</p>
+      <div class="chips" id="hs">${hosts.map((h, i) => `<button class="chip" data-i="${i}" aria-pressed="${i === sel}" ${cap ? '' : 'disabled'}>${h.n}</button>`).join('')}</div>
+      <div class="cap" id="tb">${cap ? (sel < 0 ? 'Select a host to read its packets.' : `<table><tr><th>t</th><th>Destination</th><th>Proto</th><th>Len</th><th>Info</th></tr>${data[sel].map(r => `<tr><td>${r[0].toFixed(1)}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</table>`) : 'Analyzer idle.'}</div>
+      <div class="fb" aria-live="polite">${msg || ''}</div><div class="row"><button class="btn" id="cp" ${cap ? 'hidden' : ''}>Capture 10 s</button><button class="btn" id="iso" ${cap && sel >= 0 ? '' : 'disabled'}>Isolate ${sel >= 0 ? hosts[sel].n : 'host'}</button><button class="btn" id="nx" hidden>Finish</button></div>`;
+    $('#cp', root).onclick = () => { cap = true; draw('Capture complete. Compare who talks to whom, and how often.'); };
+    $$('#hs .chip', root).forEach(b => b.onclick = () => { sel = +b.dataset.i; draw(); });
+    $('#iso', root).onclick = () => {
+      if (sel === bad) { draw(`<span class="yes">${hosts[sel].n} isolated.</span> It was sending a small packet every 5 seconds to an unknown outside address on port 4444, with a strange DNS lookup: a beacon to a command server.`); $('#nx', root).hidden = false; $('#iso', root).hidden = true; $('#nx', root).onclick = done; }
+      else { wrong++; draw(`<span class="no">${hosts[sel].n} was normal.</span> Ordinary DNS and web traffic, and it is now offline. Look for traffic that repeats on a timer to an outside address.`); }
+    };
+  }
+  draw();
+}
+
+/* =============================================================== quiz content */
+const QZ = [
+  ['A signal hops in 1 MHz bursts all over the 2.4 GHz band. Most likely:', ['Bluetooth', 'Wi-Fi channel 6', 'GPS L1', 'An FM station'], 0, 'Frequency hopping across many narrow slots is Bluetooth.'],
+  ['A wide, flat block whose patches brighten and dim as users are scheduled:', ['LTE downlink', 'Morse code', 'Paging', 'Scanning radar'], 0, 'LTE is OFDM: one wide block, scheduled in patches.'],
+  ['A faint, broad bump barely above the noise near 1575 MHz:', ['GPS L1', 'Barrage jamming', 'ADS-B', 'AM broadcast'], 0, 'GPS arrives below the noise floor. Only averaging shows a bump.'],
+  ['Evenly spaced wideband pulses that swell and fade as an antenna turns:', ['Scanning radar', 'ADS-B', 'Bluetooth', 'LoRa'], 0, 'Regular spacing plus a rotating beam is scanning radar.'],
+  ['Two bearing lines cross at a very shallow angle. What should you do?', ['Move so the lines cross at a wider angle', 'Trust the crossing point', 'Take the same bearing twice', 'Turn the gain up'], 0, 'Shallow crossings give a poor fix. Wide baselines and crossing angles help.'],
+  ['Position error from a bearing gets larger as:', ['Range to the emitter grows', 'The emitter is closer', 'The battery is full', 'The antenna is lower'], 0, 'The same angle error becomes a bigger sideways error at long range.'],
+  ['What does a Yagi antenna do for direction finding?', ['Narrows the beam so bearings tighten', 'Makes the emitter louder', 'Removes noise entirely', 'Encrypts the signal'], 0, 'A directional antenna has a narrower beam and sharper bearings.'],
+  ['A switch decides where to forward a frame using:', ['The destination MAC address', 'The destination IP address', 'The TCP port', 'The URL'], 0, 'Switches work at Layer 2 with MAC addresses.'],
+  ['A router decides where to forward a packet using:', ['The destination IP address', 'The source MAC only', 'The Wi-Fi channel', 'The frame CRC'], 0, 'Routers work at Layer 3 with IP addresses.'],
+  ['One workstation sends small packets every few seconds to an unknown outside IP on port 4444. This looks like:', ['Beaconing from a possible compromise', 'Normal web browsing', 'A printer test page', 'A DHCP renewal'], 0, 'Timed, repeating calls to an unknown address are a classic beacon.'],
+  ['The clearest tells of an evil-twin access point:', ['Same SSID, open security, and a much stronger signal', 'A different SSID and weak signal', 'A longer cable', 'A lower channel number'], 0, 'A copycat name with weaker security and a stronger signal is the classic pattern.'],
+  ['Doubling your standoff distance from a receiver changes J/S by about:', ['−6 dB', '+3 dB', '+6 dB', '0 dB'], 0, 'Free-space loss grows 6 dB every time distance doubles.'],
+  ['Flying a survey drone at higher altitude usually:', ['Widens the detection footprint but costs more battery', 'Narrows the footprint', 'Saves battery', 'Blocks radio signals'], 0, 'Higher altitude sees farther, but costs more energy.'],
+  ['200 kHz carriers shared by time slots describe:', ['GSM (2G)', 'LTE (4G)', '5G NR', 'Wi-Fi'], 0, 'GSM uses 200 kHz FDMA carriers with TDMA slots.'],
+  ['As the frequency goes up, a half-wave dipole gets:', ['Shorter', 'Longer', 'No different', 'Heavier'], 0, 'Wavelength shrinks as frequency rises, so the antenna does too.'],
+  ['An azimuth of 090° points:', ['East', 'North', 'West', 'South'], 0, 'Azimuth is measured clockwise from north, so 90° is east.']
+].map(([q, o, a, why]) => ({ q, o, a, why }));
+
+/* =============================================================== tiles + objects */
+const SOLT = new Set([3, 4, 5, 6]);
+const newScene = (id, w, h, fill, theme) => ({ id, w, h, theme: theme || 'out', t: new Uint8Array(w * h).fill(fill), o: [], sol: [] });
+const setR = (s, x, y, w, h, v) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (i >= 0 && j >= 0 && i < s.w && j < s.h) s.t[j * s.w + i] = v; };
+const walls = s => { setR(s, 0, 0, s.w, 1, 3); setR(s, 0, s.h - 1, s.w, 1, 3); setR(s, 0, 0, 1, s.h, 3); setR(s, s.w - 1, 0, 1, s.h, 3); };
+const npc = (id, name, x, y, style, talk) => ({ k: 'npc', id, name, x, y, w: 1, h: 1, style, act: talk, lbl: 'Talk', solid: true });
+const deco = (x, y, w, h, kind, solid = true, label) => ({ k: 'deco', x, y, w, h, kind, solid, label });
+const act = (x, y, w, h, kind, lbl, fn, solid = true) => ({ k: 'act', x, y, w, h, kind, lbl, act: fn, solid });
+const door = (x, y, to, sx, sy, lock, push = [0, 1]) => ({ k: 'door', x, y, w: 1, h: 1, to, sx, sy, lock, push });
+const exit = (x, y, w, h, to, sx, sy, lock, push) => ({ k: 'exit', x, y, w, h, to, sx, sy, lock, push });
+function bld(s, x, y, w, h, label, roof, d) {
+  s.o.push({ k: 'bld', x, y, w, h, label, roof });
+  if (!d) { s.sol.push([x * TS, y * TS, (x + w) * TS, (y + h) * TS]); return; }
+  s.sol.push([x * TS, y * TS, (x + w) * TS, (y + h - 1) * TS], [x * TS, (y + h - 1) * TS, (x + d.dx) * TS, (y + h) * TS], [(x + d.dx + 1) * TS, (y + h - 1) * TS, (x + w) * TS, (y + h) * TS]);
+  s.o.push(door(x + d.dx, y + h - 1, d.to, d.sx, d.sy, d.lock));
+}
+function trees(s, seed, p, keep) {
+  let z = seed; const r = () => (z = (z * 16807) % 2147483647) / 2147483647;
+  for (let y = 1; y < s.h - 1; y++) for (let x = 1; x < s.w - 1; x++) { if (s.t[y * s.w + x] === 0 && r() < p && !keep(x, y)) s.t[y * s.w + x] = 4; }
+}
+function finalize(s) { s.o.forEach(o => { if (o.solid) s.sol.push([o.x * TS, o.y * TS, (o.x + o.w) * TS, (o.y + o.h) * TS]); o.cx = (o.x + o.w / 2) * TS; o.cy = (o.y + o.h / 2) * TS; }); return s; }
+const rectNear = (rs, x, y, m) => rs.some(r => x >= r[0] - m && x <= r[0] + r[2] + m && y >= r[1] - m && y <= r[1] + r[3] + m);
+
+/* npc looks */
+const LOOK = {
+  vance: { body: '#5b6b3a', hair: '#7a5b2e', skin: '#d9a679', hat: 'drill' }, cole: { body: '#5b6b3a', hair: '#3b2a1c', skin: '#b27b52', hat: 'drill' },
+  hale: { body: '#6a7fa0', hair: '#8a8a8a', skin: '#e2b48c', hat: 'none', glasses: 1 }, reyes: { body: '#6f7b4c', hair: '#2b2118', skin: '#c58c5e', hat: 'none' },
+  tran: { body: '#8a7a4a', hair: '#2b2118', skin: '#f0c8a0', hat: 'cap' }, oka: { body: '#6f7b4c', hair: '#3b2a1c', skin: '#a8734b', hat: 'cap' }, cpt: { body: '#5b6b3a', hair: '#3b2a1c', skin: '#d9a679', hat: 'cap' },
+  civ: { body: '#c9561a', hair: '#3b2a1c', skin: '#e2b48c', hat: 'cap' }, lin: { body: '#6f7b4c', hair: '#1d1d1d', skin: '#f0c8a0', hat: 'none', glasses: 1 }
+};
+
+/* =============================================================== scene builders */
+const SB = {};
+const vanceTalk = () => {
+  const f = F(), packed = ['compass', 'radio', 'canteen'].every(i => G.bag.includes(i));
+  if (f.packed) return say(speak('DS Vance', ['Why are you still standing here? The field. Move!']));
+  if (packed) { f.packed = 1; save(); updateHud(); return say(speak('DS Vance', ['Compass, radio, canteen. Squared away.', 'Fall in on the drill field. Move!'])); }
+  say(speak('DS Vance', ['On your feet, Recruit! Reveille was five minutes ago.', 'Today: formation, land navigation, and a radio check. Your ruck holds four items. No more.', `Pack a compass, a radio, and a canteen. Pick one more. The footlocker is by your bunk.${G.bag.length ? ` You are missing: ${names(missing(['compass', 'radio', 'canteen'])) || 'nothing'}.` : ''}`]));
+};
+SB.bay = () => {
+  const s = newScene('bay', 14, 10, 2, 'in'); walls(s); s.t[9 * 14 + 7] = 2;
+  [[1, 1], [1, 3], [1, 5], [10, 1], [10, 3], [10, 5]].forEach(([x, y]) => s.o.push(deco(x, y, 3, 1, 'bunk')));
+  s.o.push(act(2, 7, 2, 1, 'foot', 'Open footlocker', () => openBag({ supply: true, title: 'Footlocker', need: ['compass', 'radio', 'canteen'], onDone: () => { if (!F().packed && ['compass', 'radio', 'canteen'].every(i => G.bag.includes(i))) toast('Ruck packed. Report to DS Vance.'); } })));
+  s.o.push(npc('vance', 'DS Vance', 7, 4, LOOK.vance, vanceTalk));
+  s.o.push(door(7, 9, 'field', 4, 6, () => F().packed ? null : 'DS Vance blocks the door: "Not without a packed ruck, Recruit."', [0, -1]));
+  s.onEnter = () => { if (!F().bayIntro) { F().bayIntro = 1; say(['Reception Battalion. 0430. The lights slam on.', 'Your first day of Basic Combat Training begins now.']); } };
+  return finalize(s);
+};
+SB.field = () => {
+  const s = newScene('field', 26, 18, 0); setR(s, 0, 9, 26, 1, 1); setR(s, 4, 6, 1, 4, 1); setR(s, 0, 0, 26, 1, 4); setR(s, 0, 17, 26, 1, 4);
+  bld(s, 2, 1, 6, 5, 'Barracks', '#8a6a4a', { dx: 2, to: 'bay', sx: 7, sy: 8 });
+  const box = { x: 11, y: 7, w: 5, h: 3 }; s.box = box;
+  s.o.push(deco(19, 3, 1, 2, 'flag')); s.o.push(deco(21, 6, 3, 1, 'sign', true, 'LAND NAV →'));
+  s.o.push(npc('vance', 'DS Vance', 13, 5, LOOK.vance, () => {
+    const f = F();
+    if (!f.packed) return say(speak('DS Vance', ['Get your ruck packed in the barracks first.']));
+    if (!f.formed) return say(speak('DS Vance', ['Stand on the yellow box and hold still. Attention.']));
+    if (!f.lnDone) return say(speak('DS Vance', ['Land navigation course is through the east gate. Cole has your card.']));
+    if (!f.radioDone) return say(speak('DS Vance', ['Cole says you still owe him a radio check. Finish it.']));
+    if (!f.graduated) return say(speak('DS Vance', ['Well, look at that. Compass in hand, radio on the net.', 'You are not a civilian anymore. Basic Training complete.', 'Next stop: the Cyber School at Fort Eisenhower, Georgia. Get on that bus.']), () => { f.graduated = 1; save(); fade = 1; enter('campus', 3, 12); say(['Fort Eisenhower, Georgia. Advanced Individual Training. The Cyber School.'], null); });
+    say(speak('DS Vance', ['Go. You are late for the bus.']));
+  }));
+  s.o.push(exit(25, 8, 1, 3, 'landnav', 2, 26, () => F().formed ? null : 'The gate is closed. Fall in for formation first.', [-1, 0]));
+  trees(s, 11, .22, (x, y) => y > 3 && y < 15);
+  s.stand = 0;
+  s.update = dt => { const f = F(); if (!f.packed || f.formed) return; const b = s.box, tx = P.x / TS, ty = (P.y - 4) / TS; if (tx > b.x && tx < b.x + b.w && ty > b.y && ty < b.y + b.h) { s.stand += dt; if (s.stand >= 2.5) { f.formed = 1; save(); updateHud(); say(speak('DS Vance', ['Good. Nobody moved. That is discipline.', 'Land navigation next. East gate. Cole has your card.'])); } } else s.stand = Math.max(0, s.stand - dt * 2); };
+  s.ground = () => { const b = s.box; const x = b.x * TS - camX, y = b.y * TS - camY; c.fillStyle = 'rgba(0,0,0,.08)'; c.fillRect(x, y, b.w * TS, b.h * TS); c.strokeStyle = '#f2c230'; c.lineWidth = 3; c.setLineDash([]); c.strokeRect(x + 2, y + 2, b.w * TS - 4, b.h * TS - 4); if (F().packed && !F().formed) { c.fillStyle = '#f2c230'; c.font = 'bold 11px sans-serif'; c.textAlign = 'center'; c.fillText('FALL IN', x + b.w * TS / 2, y + 16); } };
+  s.top = () => { if (F().packed && !F().formed && s.stand > 0) { const w = 44, x = P.x - camX - w / 2, y = P.y - camY - 44; c.fillStyle = '#000a'; c.fillRect(x, y, w, 8); c.fillStyle = '#f2c230'; c.fillRect(x + 1, y + 1, (w - 2) * s.stand / 2.5, 6); } };
+  return finalize(s);
+};
+SB.landnav = () => {
+  const s = newScene('landnav', 40, 30, 0); const S0 = [4, 26], PT = [[16, 26], [16, 18], [23, 11]]; s.pts = PT; s.leg = [{ az: 90, m: 120 }, { az: 0, m: 80 }, { az: 45, m: 100 }];
+  setR(s, 0, 0, 40, 1, 4); setR(s, 0, 29, 40, 1, 4); setR(s, 39, 0, 1, 30, 4); setR(s, 0, 0, 1, 30, 4); setR(s, 0, 25, 1, 3, 0);
+  const segs = [[S0, PT[0]], [PT[0], PT[1]], [PT[1], PT[2]]];
+  const dseg = (px, py, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy, t = clamp(((px - a[0]) * dx + (py - a[1]) * dy) / l2, 0, 1); return Math.hypot(px - a[0] - t * dx, py - a[1] - t * dy); };
+  trees(s, 5, .17, (x, y) => segs.some(sg => dseg(x, y, sg[0], sg[1]) < 2.4) || (x < 8 && y > 22));
+  s.o.push(npc('cole', 'DS Cole', 4, 24, LOOK.cole, () => {
+    const f = F();
+    if (f.lnDone) return say(speak('DS Cole', f.radioDone ? ['All done. Back to the field.'] : ['Key up your radio, channel five. Send a radio check.']));
+    if (!inBag('compass')) return say(speak('DS Cole', ['No compass, no land nav. Go back and repack.']));
+    f.lnCard = 1; save(); say(speak('DS Cole', ['It is night land nav. Your only friend is that compass.', 'Point 1: azimuth 090°, 120 meters. Point 2: azimuth 000°, 80 meters. Point 3: azimuth 045°, 100 meters.', 'Azimuth is degrees clockwise from north. Ten meters is one tile. Watch the counter.']));
+  }));
+  s.o.push(exit(0, 25, 1, 3, 'field', 24, 9, null, [1, 0]));
+  s.dist = 0; s.head = 0;
+  s.update = dt => {
+    const f = F(); if (!f.lnCard || f.lnDone) return; const n = (f.ln1 ? 1 : 0) + (f.ln2 ? 1 : 0) + (f.ln3 ? 1 : 0); if (n >= 3) return;
+    const t = PT[n]; if (Math.hypot(P.x / TS - t[0] - .5, (P.y - 8) / TS - t[1] - .5) < 2.2) { f['ln' + (n + 1)] = 1; s.dist = 0; save();
+      if (n === 2) { f.lnDone = 1; save(); updateHud(); ctxButtons(); say(speak('DS Cole', ['Point 3 found. Nicely done.', 'Key up your radio, channel five, and send a radio check.'])); } else say([`Point ${n + 1} found. Next: azimuth ${String(s.leg[n + 1].az).padStart(3, '0')}°, ${s.leg[n + 1].m} meters.`]); }
+  };
+  s.top = () => {
+    const f = F(); c.fillStyle = '#000b'; c.fillRect(0, 0, VW, 20); c.fillStyle = '#ffd9a0'; c.font = 'bold 11px monospace'; c.textAlign = 'left';
+    const n = (f.ln1 ? 1 : 0) + (f.ln2 ? 1 : 0) + (f.ln3 ? 1 : 0), l = s.leg[Math.min(n, 2)];
+    c.fillText(!inBag('compass') ? 'No compass' : `HDG ${String(Math.round(hd)).padStart(3, '0')}°  WALK ${Math.round(s.dist)} m${f.lnCard && !f.lnDone ? `  LEG ${n + 1}: ${String(l.az).padStart(3, '0')}° / ${l.m} m` : ''}`, 6, 14);
+    const g0 = c.createRadialGradient(VW / 2, VH / 2, 70, VW / 2, VH / 2, Math.max(VW, VH) * .6); g0.addColorStop(0, 'rgba(6,10,20,0)'); g0.addColorStop(1, 'rgba(6,10,20,.7)'); c.fillStyle = g0; c.fillRect(0, 20, VW, VH);
+    PT.forEach((p, i) => { if (F()['ln' + (i + 1)] || Math.hypot(P.x / TS - p[0] - .5, (P.y - 8) / TS - p[1] - .5) < 3.5) { const x = (p[0] + .5) * TS - camX, y = (p[1] + .5) * TS - camY; c.fillStyle = '#ff7a2f'; c.fillRect(x - 1, y - 16, 3, 16); c.fillRect(x + 2, y - 16, 10, 7); } });
+  };
+  return finalize(s);
+};
+
+/* ---- campus + AIT */
+SB.campus = () => {
+  const s = newScene('campus', 34, 22, 0); setR(s, 0, 12, 34, 2, 1); setR(s, 7, 8, 2, 4, 1); setR(s, 16, 8, 2, 4, 1); setR(s, 26, 9, 2, 3, 1); setR(s, 0, 0, 34, 1, 4); setR(s, 0, 21, 34, 1, 4);
+  bld(s, 4, 3, 8, 5, 'Cyber School', '#5f7896', { dx: 4, to: 'school', sx: 9, sy: 10 });
+  bld(s, 14, 3, 7, 5, 'Barracks', '#8a6a4a', { dx: 3, to: 'dorm', sx: 6, sy: 6 });
+  bld(s, 24, 3, 8, 5, 'Supply (S-4)', '#8a7a4a', null);
+  s.o.push(npc('reyes', 'Pvt Reyes', 12, 14, LOOK.reyes, () => {
+    const f = F(); say(speak('Pvt Reyes', !f.met ? ['Battle buddy! Professor Hale runs the foundations block. Cyber School is the blue building. Do not be late.'] : !f.gotSDR ? ['Hale makes everyone do the benches before he hands out a radio. Ours was the network bench first.'] : ['You got your SDR? Nice. Field Training Area is the east gate. Remember: four items in the ruck.']));
+  }));
+  s.o.push(npc('tran', 'SPC Tran', 27, 8, LOOK.tran, () => say(speak('SPC Tran', ['Supply window. Your ruck holds four items, so choose for the job.', 'Everything else stays in your locker. Swap whenever you like.']), () => openBag({ supply: true, title: 'Supply window' }))));
+  s.o.push(deco(30, 10, 3, 1, 'sign', true, 'FTX →'));
+  s.o.push(exit(33, 11, 1, 3, 'ftx', 2, 17, () => F().gotSDR ? null : 'Field Training Area gate is closed. Professor Hale has to sign you out with your SDR first.', [-1, 0]));
+  trees(s, 21, .16, (x, y) => y > 2 && y < 15);
+  return finalize(s);
+};
+SB.dorm = () => {
+  const s = newScene('dorm', 12, 8, 2, 'in'); walls(s); s.t[7 * 12 + 6] = 2;
+  s.o.push(deco(1, 1, 3, 1, 'bunk'), deco(1, 3, 3, 1, 'bunk'), deco(8, 1, 3, 1, 'bunk'));
+  s.o.push(act(9, 5, 2, 1, 'foot', 'Open locker', () => openBag({ supply: true, title: 'Locker' })));
+  s.o.push(door(6, 7, 'campus', 17, 8, null, [0, -1]));
+  return finalize(s);
+};
+SB.school = () => {
+  const s = newScene('school', 18, 12, 2, 'in'); walls(s); s.t[11 * 18 + 9] = 2; setR(s, 3, 6, 12, 1, 8);
+  s.o.push(deco(6, 1, 6, 1, 'board'));
+  [[2, 2], [14, 2], [2, 9], [14, 9]].forEach(([x, y]) => s.o.push(deco(x, y, 2, 1, 'desk')));
+  s.o.push(npc('hale', 'Prof. Hale', 9, 3, LOOK.hale, () => {
+    const f = F();
+    if (!f.met) return say(speak('Prof. Hale', ['Welcome to the Cyber School. I am Professor Hale.', 'Before you touch a radio, you learn two things: how networks connect, and how antennas work.', 'Two benches. Network bench on the left, antenna bench on the right. Finish both, then see me.', 'Tip for the antenna: a half-wave dipole in feet is about 468 divided by the frequency in MHz. Then tune for the lowest SWR.']), () => { f.met = 1; save(); updateHud(); });
+    if (!f.net || !f.ant) return say(speak('Prof. Hale', [`Still waiting on the ${f.net ? '' : 'network bench'}${!f.net && !f.ant ? ' and the ' : ''}${f.ant ? '' : 'antenna bench'}.`]));
+    if (!f.gotSDR) return say(speak('Prof. Hale', ['Both benches. Good. Foundations first, gear second.', 'Now you can be trusted with a receiver. Sign the hand receipt.']), () => openReceipt(() => giveItem('sdr', () => { f.gotSDR = 1; save(); updateHud(); say(speak('Prof. Hale', ['That is a basic SDR. It can watch the spectrum, nothing more. You will earn better gear in the field.', 'Field Training Area is out the east gate. Remember: four items in the ruck, plan your loadout.'])); })));
+    say(speak('Prof. Hale', ['Field Training Area. East gate. Go find your use cases.']));
+  }));
+  s.o.push(act(3, 7, 3, 2, 'bench', 'Network bench', () => { if (F().net) return say(['You already wired this lab.']); missionSheet('Network bench', (r, x) => runNetwork(r, x.win), () => { F().net = 1; save(); updateHud(); say(speak('Prof. Hale', ['Good wiring.'])); }); }));
+  s.o.push(act(12, 7, 3, 2, 'bench', 'Antenna bench', () => { if (F().ant) return say(['You already built this antenna.']); missionSheet('Antenna bench', (r, x) => runAntenna(r, x.win), () => { F().ant = 1; save(); updateHud(); say(speak('Prof. Hale', ['A clean match. Good work.'])); }); }));
+  s.o.push(door(9, 11, 'campus', 8, 8, null, [0, -1]));
+  return finalize(s);
+};
+
+/* ---- field training area */
+function cfgFor(id) { if (!act3()) return null; const sd = run ? run.seed : 1; return id === 'm1' ? genListening(sd) : id === 'm4' ? genCell(sd) : id === 'm7' ? genDrone(sd) : null; }
+function siteFlow(m, who, intro, start, outro) {
+  const f = F(), miss = missing(m.need);
+  if (!act3()) {
+    if (f[m.id]) return say(speak(who, ['Nice work earlier. Nothing more for you here.']));
+    if (miss.length) return say([...speak(who, [intro[0]]), [who, `You need in your ruck: ${names(miss)}. Swap at a supply point.`]]);
+    return say(speak(who, intro), () => start(null, () => finishM(m, who, outro)));
+  }
+  if (miss.length) return say(speak(who, [`You need in your ruck: ${names(miss)}. Swap at a supply point.`]));
+  const t = G.tk.active, mine = t && t.kind === m.id;
+  const go = task => { run = { task, seed: task ? task.seed : (R() * 1e9) | 0 }; start(cfgFor(m.id), () => finishM(m, who, outro)); };
+  if (mine) return say(speak(who, ['Your tasking: ' + t.brief]), () => go(t));
+  ask(`${who}: no tasking for this site. Run a practice session?`, ['Practice run', 'Not now'], i => { if (i === 0) go(null); });
+}
+function sceneGate(m, oldMsg) {
+  const miss = missing(m.need);
+  if (!act3()) return oldMsg();
+  if (miss.length) return `You need in your ruck: ${names(miss)}.`;
+  const t = G.tk.active; run = { task: t && t.kind === m.id ? t : null, seed: (R() * 1e9) | 0 }; return null;
+}
+function finishM(m, who, outro, back) {
+  if (act3()) return finishTask(m, who, outro, back);
+  F()[m.id] = 1; save(); updateHud(); unlockCard(m.reward, '', () => { if (back) enter(back[0], back[1], back[2]); say(speak(who, outro)); });
+}
+SB.ftx = () => {
+  const s = newScene('ftx', 50, 36, 0); setR(s, 0, 17, 50, 2, 1); setR(s, 11, 9, 2, 20, 1); setR(s, 24, 5, 2, 31, 1); setR(s, 41, 5, 2, 24, 1); setR(s, 26, 11, 15, 1, 1); setR(s, 26, 29, 12, 5, 7); setR(s, 0, 0, 50, 1, 4); setR(s, 0, 35, 50, 1, 4); setR(s, 49, 0, 1, 36, 4); setR(s, 0, 0, 1, 36, 4); setR(s, 0, 17, 1, 2, 1); setR(s, 24, 35, 2, 1, 1); setR(s, 24, 35, 2, 1, 1);
+  bld(s, 8, 4, 7, 5, 'Network Ops', '#4b6b7a', { dx: 3, to: 'ftx', sx: 11, sy: 9 }); s.o.pop();
+  s.o.push(act(10, 8, 3, 1, 'none', 'Enter NOC', () => siteFlow(EW[2], 'SPC Lin', ['Welcome to the NOC. Something on the floor is calling out and the network is crawling.', 'Capture traffic and isolate the infected workstation. Do not guess: read the packets.'], (cfg, done) => missionSheet('Network Ops Center', (r, x) => runNOC(r, x.win), done), ['Good catch. That workstation is off the wire.', 'Take a field laptop with the analyzer. It is yours now.']), false));
+  s.o.push(npc('lin', 'SPC Lin', 9, 9, LOOK.lin, () => s.o.find(o => o.lbl === 'Enter NOC').act()));
+  s.o.push(deco(22, 1, 6, 4, 'tent'));
+  s.o.push(npc('cpt', 'CPT Reyes', 25, 5, LOOK.cpt, () => {
+    const f = F(), n = EW.filter(m => f[m.id]).length;
+    if (act3()) return say(speak('CPT Reyes', [`Good to see you out here, ${rankName()}. Training area is yours. Take the board, or practice.`]));
+    if (f.quiz) return say(speak('CPT Reyes', ['You passed the board. Your orders are cut: Alpha Company, 5th EW Battalion, Fort Meridian.', 'Report to your first unit.']), toUnit);
+    if (n < 7) return say(speak('CPT Reyes', [`Certification board needs all seven field tasks. You have ${n}.`, 'Check your log for what is left.']));
+    say(speak('CPT Reyes', ['Seven use cases, seven wins. Now the board.', 'Ten questions. Eight right to certify. No more field work, just what you learned.']), () => missionSheet('Certification board', (r, x) => runQuiz(r, x, { qs: QZ, pick: 10, pass: 8, tag: 'Question' }), () => { f.quiz = 1; save(); updateHud(); finale(); }));
+  }));
+  bld(s, 39, 2, 6, 4, 'Range Control', '#7a5a4a', { dx: 2, to: 'range', sx: 2, sy: 10, lock: () => { const m = EW[5]; return sceneGate(m, () => { const miss = missing(m.need); return F().m6 ? 'Range Control: "The range is closed for the day."' : miss.length ? `Range Control needs you to bring: ${names(miss)}.` : null; }); } });
+  bld(s, 38, 24, 8, 5, 'HQ Building', '#6a6f7a', { dx: 3, to: 'hq', sx: 2, sy: 9, lock: () => sceneGate(EW[4], () => F().m5 ? 'HQ Wi-Fi is clean. Nothing more to do here.' : inBag('pkt') ? null : 'HQ security: "Bring the laptop with the analyzer for a Wi-Fi sweep."') });
+  bld(s, 28, 25, 8, 4, 'Hangar', '#7a7f6a', null);
+  s.o.push(npc('vega', 'WO Vega', 32, 30, LOOK.oka, () => siteFlow(EW[6], 'WO Vega', ['Airfield. Four emitters are marked on the map and I need them located from the air.', 'Plan waypoints on the laptop. Low is cheap; high sees farther and burns battery.'], (cfg, done) => missionSheet('Aerial Survey', (r, x) => runDrone(r, { ...x, ...(cfg || {}) }), done), ['All four found. That is a clean sweep.', 'The recon drone is yours.'])));
+  s.o.push(deco(31, 7, 2, 3, 'tower')); s.o.push(deco(29, 6, 6, 5, 'fence', false));
+  s.o.push(npc('alv', 'Mr. Alvarez', 30, 11, LOOK.civ, () => siteFlow(EW[3], 'Mr. Alvarez', ['I run this cell site. Three sectors face out from the tower.', 'Record what each sector looks like on your receiver. Passive only, listening.'], (cfg, done) => missionSheet('Cell site survey', (r, x) => runCell(r, x.win, cfg), done), ['Great. Now you can tell the generations apart at a glance.', 'Take the survey kit.'])));
+  s.o.push(deco(8, 24, 2, 3, 'tower')); s.o.push(npc('oka', 'SGT Okafor', 10, 26, LOOK.oka, () => siteFlow(EW[0], 'SGT Okafor', ['Listening Post. We need three emitters located on the panorama.', 'Read the shapes. Marks go on the signal, not next to it.'], (cfg, done) => missionSheet('Listening Post', (r, x) => runListening(r, x.win, cfg), done), ['Three for three. The S-2 will love this.', 'You earned a direction-finding SDR.'])));
+  s.o.push(act(22, 33, 2, 1, 'sign', 'Fox Hunt gate', () => say(['Fox Hunt Range, south gate. Bring a DF-SDR.']), false));
+  s.o.push(exit(24, 35, 2, 1, 'fox', 2, 14, () => { const m = EW[1]; return sceneGate(m, () => F().m2 ? 'The fox is caught. Range closed.' : inBag('df') ? null : 'Fox Hunt Range requires a DF-SDR in your ruck.'); }, [0, -1]));
+  s.o.push(npc('moss', 'SGT Moss', 4, 20, LOOK.tran, () => say(speak('SGT Moss', ['Field supply point. Four items in the ruck, no more.']), () => openBag({ supply: true, title: 'Field supply' }))));
+  s.o.push(deco(3, 21, 1, 1, 'crate'));
+  const ex1 = exit(0, 17, 1, 2, 'campus', 32, 12, null, [1, 0]); ex1.cond = () => !act3(); const ex2 = exit(0, 17, 1, 2, 'unit', 44, 14, null, [1, 0]); ex2.cond = act3; s.o.push(ex1, ex2);
+  trees(s, 33, .12, (x, y) => rectNear(s.sol.map(r => [r[0] / TS, r[1] / TS, (r[2] - r[0]) / TS, (r[3] - r[1]) / TS]), x, y, 2) || (y > 16 && y < 20) || s.o.some(o => (o.k === 'npc' || o.k === 'act') && Math.abs(o.x - x) < 3 && Math.abs(o.y - y) < 3));
+  return finalize(s);
+};
+
+/* ---- fox hunt */
+SB.fox = () => {
+  const s = newScene('fox', 40, 28, 0); setR(s, 0, 0, 40, 1, 4); setR(s, 0, 27, 40, 1, 4); setR(s, 39, 0, 1, 28, 4); setR(s, 0, 0, 1, 28, 4); setR(s, 0, 13, 1, 3, 0);
+  trees(s, 8, .11, (x, y) => x < 6 && y > 10 && y < 18);
+  s.o.push(exit(0, 13, 1, 3, 'ftx', 24, 33, null, [1, 0]));
+  s.round = 0; s.rays = []; s.est = null; s.em = null; s.rev = false;
+  s.reset = () => { s.rays = []; s.est = null; s.rev = false; do { s.em = { x: 12 + R() * 24, y: 3 + R() * 22 }; } while (s.t[(s.em.y | 0) * s.w + (s.em.x | 0)] !== 0); };
+  s.onEnter = () => { s.round = 0; s.reset(); ctxButtons(); };
+  s.ground = () => {
+    c.lineWidth = 2.5; c.setLineDash([9, 6]); c.strokeStyle = 'rgba(255,122,47,.95)';
+    s.rays.forEach(r => { c.beginPath(); c.moveTo(r.sx - camX, r.sy - camY); c.lineTo(r.sx - camX + Math.sin(r.th) * 1400, r.sy - camY - Math.cos(r.th) * 1400); c.stroke(); }); c.setLineDash([]);
+    if (s.est) { const x = s.est.x - camX, y = s.est.y - camY; c.strokeStyle = '#fff'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 11, 0, 7); c.stroke(); c.strokeStyle = '#c4372b'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 11, 0, 7); c.moveTo(x - 17, y); c.lineTo(x + 17, y); c.moveTo(x, y - 17); c.lineTo(x, y + 17); c.stroke(); }
+    if (s.rev) { const x = s.em.x * TS - camX, y = s.em.y * TS - camY; c.fillStyle = '#c4372b'; c.strokeStyle = INK; c.lineWidth = 3; c.beginPath(); c.moveTo(x, y - 26); c.lineTo(x + 8, y); c.lineTo(x - 8, y); c.closePath(); c.fill(); c.stroke(); c.beginPath(); c.arc(x, y - 30, 4, 0, 7); c.fill(); }
+  };
+  s.top = () => {
+    c.fillStyle = '#000b'; c.fillRect(0, 0, VW, 20); c.fillStyle = '#ffd9a0'; c.font = 'bold 11px monospace'; c.textAlign = 'left'; c.fillText(`FOX ${s.round + 1}/3  BEARINGS ${s.rays.length}  ${inBag('yagi') ? 'YAGI ±4°' : 'ERR ±9°'}`, 6, 14);
+    if (s.est) { const ex = s.est.x - camX, ey = s.est.y - camY; if (ex < 8 || ex > VW - 8 || ey < 28 || ey > VH - 8) { const a = Math.atan2(ey - VH / 2, ex - VW / 2), x = VW / 2 + Math.cos(a) * (Math.min(VW, VH) / 2 - 16), y = VH / 2 + Math.sin(a) * (Math.min(VW, VH) / 2 - 16); c.save(); c.translate(x, y); c.rotate(a); c.fillStyle = '#fff'; c.strokeStyle = '#c4372b'; c.lineWidth = 2; c.beginPath(); c.moveTo(10, 0); c.lineTo(-8, -8); c.lineTo(-8, 8); c.closePath(); c.fill(); c.stroke(); c.restore(); } }
+  };
+  return finalize(s);
+};
+function foxBearing() {
+  const s = scene; if (!inBag('df')) return toast('You need the DF-SDR in your ruck.');
+  const sig = inBag('yagi') ? 4 : 9, th = Math.atan2(s.em.x * TS - P.x, -(s.em.y * TS - P.y)) + gauss() * sig * Math.PI / 180;
+  s.rays.push({ sx: P.x, sy: P.y - 4, th }); s.est = s.rays.length > 1 ? fixLS(s.rays) : null;
+  const deg = Math.round(((th * 180 / Math.PI) % 360 + 360) % 360); toast(`Bearing ${s.rays.length}: ${String(deg).padStart(3, '0')}°` + (s.rays.length > 1 && !s.est ? ' (nearly parallel: move)' : ''));
+}
+function foxReport() {
+  const s = scene, d = Math.hypot(P.x - s.em.x * TS, P.y - s.em.y * TS) / TS;
+  if (d > 3.5) return say([`Nothing here. Your fix is about ${Math.round(d)} tiles off. Take more bearings from different spots, and get closer.`]);
+  s.rev = true; const m = EW[1];
+  if (s.round < 2) { s.round++; say(['Found it! The hidden transmitter is right here. Another one just keyed up somewhere else.'], () => s.reset()); }
+  else say(['Found it! Three foxes located.'], () => { finishM(m, 'Range NCO', ['Three fixes. Your bearings are getting sharp.', 'A Yagi kit will tighten them further.'], ['ftx', 24, 33]); });
+}
+
+/* ---- HQ Wi-Fi sweep */
+SB.hq = () => {
+  const s = newScene('hq', 32, 20, 2, 'in'); walls(s); setR(s, 1, 8, 30, 1, 3); setR(s, 1, 11, 30, 1, 3);
+  [9, 17, 25].forEach(x => { setR(s, x, 1, 1, 7, 3); setR(s, x, 12, 1, 7, 3); });
+  [5, 13, 21, 28].forEach(x => { setR(s, x, 8, 1, 1, 2); setR(s, x, 11, 1, 1, 2); });
+  s.o.push(exit(1, 9, 1, 2, 'ftx', 41, 29, null, [1, 0]));
+  s.rogue = { x: [5, 13, 21, 28][(R() * 4) | 0], y: R() < .5 ? 15 : 4 }; if (s.rogue.x === 13 && s.rogue.y === 4) s.rogue.x = 21;
+  s.legit = { x: 13, y: 4 }; s.v = (R() * 3) | 0;
+  s.o.push(act(s.legit.x, s.legit.y, 1, 1, 'ap', 'Inspect AP', () => apSheet(false, s.v), false));
+  s.o.push(act(s.rogue.x, s.rogue.y, 1, 1, 'ap', 'Inspect AP', () => apSheet(true, s.v), false));
+  s.o.push(deco(3, 3, 2, 1, 'desk'), deco(19, 14, 2, 1, 'desk'), deco(27, 3, 2, 1, 'desk'), deco(11, 15, 2, 1, 'desk'));
+  const TAG = ['HQ-Ops :04 OPEN', 'HQ-Ops :7E WPA2-Ent', 'HQ-0ps :3C WPA2-Ent'];
+  s.hud = () => {
+    if (!inBag('pkt')) return 'Bring the laptop to scan.'; const rssi = p => Math.round(clamp(-36 - 24 * Math.log10(1 + Math.hypot(P.x / TS - p.x - .5, P.y / TS - p.y - .5)), -95, -30));
+    const a = rssi(s.legit), b = rssi(s.rogue), bar = v => '▮'.repeat(clamp(Math.round((v + 95) / 13), 1, 5)) + '▯'.repeat(5 - clamp(Math.round((v + 95) / 13), 1, 5));
+    return `HQ-Ops :11 WPA2-Ent ${bar(a)} ${a} dBm  |  ${TAG[s.v]} ${bar(b)} ${b} dBm`;
+  };
+  return finalize(s);
+};
+function apSheet(rogue, v) {
+  const row = (k, x) => `<tr><th>${k}</th><td>${x}</td></tr>`;
+  const R0 = [['HQ-Ops', '3C:A7:2F:90:E1:04', 'Open', 'Unknown', '102 ms', 'None found in switch table', 'Same name as HQ-Ops, but open, from an unknown vendor, and not in the switch table. This is the rogue.'],
+    ['HQ-Ops', 'B8:27:EB:19:AA:7E', 'WPA2-Enterprise', 'Raspberry Pi', '102 ms', 'None found in switch table', 'Same name and security, but a single-board computer vendor and no switch port. This is the rogue.'],
+    ['HQ-0ps (zero)', '00:1B:0D:AA:0F:3C', 'WPA2-Enterprise', 'Cisco', '30 ms', 'None found in switch table', 'A lookalike name with a zero, an odd 30 ms beacon interval, and no switch port. This is the rogue.']][v];
+  const d = rogue ? R0 : ['HQ-Ops', '00:1B:0D:4A:11:90', 'WPA2-Enterprise', 'Cisco', '102 ms', 'Port 14, VLAN 10', 'This one matches the authorized HQ-Ops record.'];
+  openLayer(`<div class="mhd"><h2>Access point</h2><button class="btn alt sm" id="ax">Close</button></div><div class="cap"><table>${row('SSID', d[0])}${row('BSSID', d[1])}${row('Security', d[2])}${row('Vendor', d[3])}${row('Beacon', d[4])}${row('Wired uplink', d[5])}</table></div>
+    <p class="fb">${d[6]}</p><div class="row">${rogue ? '<button class="btn" id="dis">Disable rogue AP</button>' : ''}</div>`, true);
+  $('#ax').onclick = closeLayer; const b = $('#dis'); if (b) b.onclick = () => { closeLayer(); finishM(EW[4], 'HQ Security', ['Rogue removed. Nobody was joining the wrong network today.', 'Take a wireless IDS sensor to watch for the next one.'], ['ftx', 41, 29]); };
+}
+
+/* ---- EA range */
+const EAS_DEF = [{ Pt: 5, dl: 10, req: 6, cap: 200, min: 5 }, { Pt: 20, dl: 6, req: 10, cap: 400, min: 8 }, { Pt: 10, dl: 5, req: 12, cap: 100, min: 10 }];
+SB.range = () => {
+  const s = newScene('range', 30, 20, 7); setR(s, 0, 0, 30, 1, 6); setR(s, 0, 19, 30, 1, 6); setR(s, 29, 0, 1, 20, 6); setR(s, 0, 0, 1, 20, 6); setR(s, 0, 9, 1, 3, 7);
+  s.eas = act3() ? genEA(run ? run.seed : 1) : EAS_DEF; s.rx = { x: 14, y: 10 }; s.sc = 0; s.clear = false; s.G = 0;
+  s.o.push(exit(0, 9, 1, 3, 'ftx', 41, 6, null, [1, 0]));
+  s.o.push(npc('brandt', 'SFC Brandt', 3, 8, LOOK.cpt, () => {
+    if (!s.clear) return say(speak('SFC Brandt', ['Range Control. Nothing transmits without clearance.', 'Radio check with me on channel seven, and request to go hot.']), () => openRadio(7, 'SFC Brandt: "Set channel seven and call Range Control."', () => { s.clear = true; ctxButtons(); say(speak('SFC Brandt', ['Range Control copies. You are cleared hot.', 'Enemy link: transmitter on the left, receiver in the center. Stand outside the dashed ring, then open the pod controls.']));}));
+    say(speak('SFC Brandt', ['You are cleared. Position the pod, set power and gain, then transmit.']));
+  }));
+  s.ground = () => {
+    const sc = s.eas[s.sc], rx = s.rx, tx = { x: rx.x - sc.dl, y: rx.y }, X = p => (p.x + .5) * TS - camX, Y = p => (p.y + .5) * TS - camY;
+    c.strokeStyle = 'rgba(196,55,43,.9)'; c.lineWidth = 3; c.setLineDash([8, 6]); c.beginPath(); c.arc(X(rx), Y(rx), sc.min * TS, 0, 7); c.stroke(); c.setLineDash([]);
+    c.strokeStyle = '#1d2114'; c.lineWidth = 3; c.setLineDash([3, 5]); c.beginPath(); c.moveTo(X(tx), Y(tx)); c.lineTo(X(rx), Y(rx)); c.stroke(); c.setLineDash([]);
+    c.fillStyle = '#5ab0ff'; c.strokeStyle = INK; c.lineWidth = 3; c.beginPath(); c.arc(X(tx), Y(tx), 9, 0, 7); c.fill(); c.stroke();
+    c.fillStyle = '#f5f1df'; c.fillRect(X(rx) - 10, Y(rx) - 10, 20, 20); c.strokeRect(X(rx) - 10, Y(rx) - 10, 20, 20);
+    c.fillStyle = INK; c.font = 'bold 11px sans-serif'; c.textAlign = 'center'; c.fillText('Tx', X(tx), Y(tx) - 14); c.fillText('Rx', X(rx), Y(rx) - 14);
+  };
+  s.hud = () => { const sc = s.eas[s.sc], d = Math.hypot(P.x / TS - s.rx.x - .5, P.y / TS - s.rx.y - .5); return s.clear ? `Scenario ${s.sc + 1}/3 · distance to Rx ${d.toFixed(1)} km · standoff ≥ ${sc.min} km · goal J/S ≥ ${sc.req} dB` : 'Talk to SFC Brandt to get cleared hot.'; };
+  return finalize(s);
+};
+function podSheet() {
+  const s = scene, sc = s.eas[s.sc]; let Gn = 0;
+  const dNow = () => Math.max(.5, Math.hypot(P.x / TS - s.rx.x - .5, P.y / TS - s.rx.y - .5)), Pw = () => Math.max(1, Math.round(Math.pow(sc.cap, +$('#pw').value / 100)));
+  openLayer(`<div class="mhd"><h2>EA pod controls</h2><button class="btn alt sm" id="px">Close</button></div><p>Enemy link: <b>${sc.Pt} W</b> over <b>${sc.dl} km</b>. Goal J/S ≥ <b>${sc.req} dB</b>. Pod cap <b>${sc.cap} W</b>. Standoff ≥ <b>${sc.min} km</b> (your position sets the distance).</p>
+    <div class="calc"><label class="calcl">Pod power <b id="pv"></b><input type="range" id="pw" min="0" max="100" value="30"></label><div><b>Antenna gain</b><div class="chips" id="gc">${[['Omni 0 dBi', 0], ['Sector +6 dBi', 6], ['Directional +12 dBi', 12]].map(([t, v]) => `<button class="chip" data-g="${v}" aria-pressed="${v === 0}">${t}</button>`).join('')}</div></div>
+    <div><b id="js"></b></div><div class="gauge" id="gg"><i></i><u></u></div><div class="checks" id="ck"></div></div><div class="hintbox">J/S (dB) = 10·log10(pod W ÷ target W) + gain + 20·log10(link range ÷ standoff)</div><div class="fb" id="ef"></div>
+    <div class="row"><button class="btn" id="go">Transmit on the range</button></div>`, true);
+  const calc = () => { const p = Pw(), d = dNow(); return { p, d, js: 10 * Math.log10(p / sc.Pt) + Gn + 20 * Math.log10(sc.dl / d) }; };
+  const upd = () => { const { p, d, js } = calc(); $('#pv').textContent = p + ' W'; $('#js').textContent = `J/S now: ${js.toFixed(1)} dB at ${d.toFixed(1)} km`; const pct = v => clamp((v + 10) / 40 * 100, 0, 100); $('#gg i').style.width = pct(js) + '%'; $('#gg u').style.left = `calc(${pct(sc.req)}% - 2px)`;
+    $('#ck').innerHTML = `<div class="${js >= sc.req ? 'y' : 'n'}">${js >= sc.req ? '✓' : '✗'} J/S meets ${sc.req} dB</div><div class="${d >= sc.min ? 'y' : 'n'}">${d >= sc.min ? '✓' : '✗'} Standoff at least ${sc.min} km (you are ${d.toFixed(1)} km out)</div>`; };
+  $('#pw').oninput = upd; $$('#gc .chip').forEach(b => b.onclick = () => { Gn = +b.dataset.g; $$('#gc .chip').forEach(o => o.setAttribute('aria-pressed', o === b)); upd(); }); $('#px').onclick = closeLayer; upd();
+  $('#go').onclick = () => {
+    const { d, js } = calc();
+    if (js >= sc.req && d >= sc.min) { closeLayer(); if (s.sc < 2) { s.sc++; say(['Link denied. Range Control: "Good effect. Resetting the scenario."']); } else finishM(EW[5], 'SFC Brandt', ['Three scenarios, all inside the limits. That is disciplined electronic attack.', 'The EA pod is yours for authorized range use.'], ['ftx', 41, 6]); }
+    else $('#ef').innerHTML = `<span class="no">Not enough.</span> ${js < sc.req ? `J/S is ${js.toFixed(1)} dB and you need ${sc.req}.` : ''} ${d < sc.min ? `You are inside the ${sc.min} km standoff: walk farther from the receiver.` : ''}`;
+  };
+}
+
+/* =============================================================== story, taskings, first unit */
+const rng = seed => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
+const shufR = (a, r) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = (r() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const act3 = () => !!G.f.pcs;
+Object.assign(LOOK, { okoro: { body: '#5b6b3a', hair: '#1d1d1d', skin: '#a8734b', hat: 'none' }, nguyen: { body: '#5b6b3a', hair: '#1d1d1d', skin: '#e2b48c', hat: 'cap' }, bell: { body: '#7a6a3a', hair: '#8a8a8a', skin: '#c58c5e', hat: 'cap' },
+  marks: { body: '#3b5a7a', hair: '#3b2a1c', skin: '#e2b48c', hat: 'cap' }, ruiz: { body: '#e9e4cc', hair: '#2b2118', skin: '#c58c5e', hat: 'cap' }, dalton: { body: '#3b5a7a', hair: '#5b4a2e', skin: '#d9a679', hat: 'none' } });
+const rankName = () => { if (!G.f.graduated) return 'Recruit'; if (!act3()) return 'Private'; const x = G.xp; return x >= 1400 ? 'SSG' : x >= 600 ? 'SGT' : x >= 200 ? 'SPC' : 'PFC'; };
+const clockTxt = () => { const t = G.tk, h = Math.floor(t.hour), m = Math.round((t.hour - h) * 60) % 60; return `Day ${t.day} · ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; };
+function advance(h) { const t = G.tk; t.hour += h; while (t.hour >= 24) { t.hour -= 24; t.day++; t.board = null; } }
+function ask(prompt, opts, cb) {
+  openLayer(`<p><b>${prompt}</b></p><div class="opts">${opts.map((o, i) => `<button class="opt" data-i="${i}">${o}</button>`).join('')}</div>`, true);
+  $$('.opt', layer).forEach(b => b.onclick = () => { closeLayer(); cb(+b.dataset.i); });
+}
+function unlockRank(r) {
+  openLayer(`<div class="unlock"><div class="rays"></div><div class="kick">PROMOTED</div><h2>${r}</h2><p>Your leadership noticed the work. New rank, same ruck: four items.</p><button class="btn" id="ct">Continue</button></div>`, true);
+  $('#ct').onclick = closeLayer;
+}
+
+/* ---- random mission configs */
+function genEA(seed) {
+  const r = rng(seed), out = [];
+  for (let i = 0; i < 3; i++) { const Pt = [5, 10, 20, 30][(r() * 4) | 0], dl = 4 + ((r() * 9) | 0), min = 4 + ((r() * 7) | 0), req = 6 + ((r() * 7) | 0); let cap = [100, 200, 400][(r() * 3) | 0]; const best = c => 10 * Math.log10(c / Pt) + 12 + 20 * Math.log10(dl / min); while (best(cap) < req + 2) cap *= 2; out.push({ Pt, dl, req, cap, min }); }
+  return out;
+}
+function genDrone(seed) {
+  const r = rng(seed), em = [], nm = ['Repeater', 'Wi-Fi bridge', 'Cell node', 'Comms van'], base = { x: 40, y: 300 };
+  while (em.length < 4) { const p = { x: 70 + r() * 370, y: 40 + r() * 230, n: nm[em.length] }; if (em.every(e => Math.hypot(e.x - p.x, e.y - p.y) > 110)) em.push(p); }
+  let cur = base, left = [...em], len = 0; while (left.length) { left.sort((a, b) => Math.hypot(a.x - cur.x, a.y - cur.y) - Math.hypot(b.x - cur.x, b.y - cur.y)); const n = left.shift(); len += Math.max(0, Math.hypot(n.x - cur.x, n.y - cur.y) - 30); cur = n; }
+  return { em, budget: Math.round(len * 1.3) };
+}
+
+/* ---- taskings */
+const TEAMN = { collect: 'Collection Team', cyber: 'Cyber Team', attack: 'Attack and Air Team' };
+const TK = {
+  m1: { team: 'collect', xp: 60, title: 'Signal collection', b: ['Battalion S-2 wants the local emitter picture before tonight\'s lanes. Sweep the panorama and mark the targets.', 'A new net keeps showing up on the range. Find what the S-2 asked for.'] },
+  m2: { team: 'collect', xp: 70, title: 'Fox hunt', b: ['A stray transmitter keeps keying up on the training area. Get bearings and walk it down.', 'Range control lost a beacon. Find the transmitters before the next lane opens.'] },
+  m3: { team: 'cyber', xp: 60, title: 'Network incident', b: ['The S-6 flagged a workstation calling out on a timer. Capture traffic and isolate it.', 'Helpdesk says the network is slow. Something is beaconing. Find it.'] },
+  m4: { team: 'collect', xp: 50, title: 'Cell site survey', b: ['Command wants a passive survey of the tower sectors for the exercise plan.', 'Contractors reconfigured the tower. Record what each sector looks like now.'] },
+  m5: { team: 'cyber', xp: 70, title: 'HQ Wi-Fi sweep', b: ['Security reports a lookalike access point in HQ. Find it and shut it down.', 'A rogue AP is pulling in the wrong devices. Sweep the building with the laptop.'] },
+  m6: { team: 'attack', xp: 80, title: 'EA range support', b: ['Range Control has a training link to deny. Clear hot and set the pod for the J/S goal.', 'The exercise plan needs an attack rehearsal. Stay inside the limits.'] },
+  m7: { team: 'attack', xp: 70, title: 'Aerial survey', b: ['The airfield needs four emitters located from the air before the lanes open.', 'Plan the drone route on the laptop. Find every emitter before the battery runs out.'] }
+};
+function makeBoard() {
+  const t = G.tk, kinds = Object.keys(TK), team = t.team || 'collect', mine = kinds.filter(k => TK[k].team === team), other = kinds.filter(k => TK[k].team !== team);
+  const b = [...shuffle(mine).slice(0, 2), shuffle(other)[0]].map((k, i) => ({ id: `d${t.day}-${i}`, kind: k, seed: (R() * 1e9) | 0, xp: TK[k].xp, title: TK[k].title, brief: TK[k].b[(R() * TK[k].b.length) | 0] }));
+  if (t.ex >= 1 && t.ex <= 3) { const ph = [['m1', 'FIND it', 'The ghost emitter is somewhere on the panorama. Locate it.'], ['m2', 'FIX it', 'Take bearings and walk the ghost transmitter down.'], ['m6', 'FINISH it', 'Deny its link on the range, inside the limits.']][t.ex - 1]; b.unshift({ id: 'ex' + t.ex, kind: ph[0], seed: (R() * 1e9) | 0, xp: 120, title: `IRON STATIC: ${ph[1]}`, brief: ph[2], ex: t.ex }); }
+  t.board = b;
+}
+function openBoard() {
+  const t = G.tk; if (t.chap === 0) return say(['The board is empty. SFC Okoro wants to see you first.']);
+  if (!t.board) makeBoard(); const wh = k => EW.find(m => m.id === k);
+  openLayer(`<div class="mhd"><h2>Taskings board</h2><button class="btn alt sm" id="bx">Close</button></div><p><b>${clockTxt()}</b> · ${TEAMN[t.team] || 'No team'}</p>${t.active ? `<p class="hintbox"><b>Active:</b> ${t.active.title}. Site: ${wh(t.active.kind).where}. <button class="btn alt sm" id="ab">Drop it</button></p>` : ''}
+    ${t.board.length ? t.board.map((k, i) => `<div class="tg"><b>${k.title}</b> <small>+${k.xp} XP</small><br>${k.brief}<br><small>Site: ${wh(k.kind).where}. Bring: ${wh(k.kind).need.length ? names(wh(k.kind).need) : 'nothing special'}.</small><div class="row"><button class="btn sm" data-a="${i}" ${t.active && t.active.id === k.id ? 'disabled' : ''}>${t.active && t.active.id === k.id ? 'Active' : 'Accept'}</button></div></div>`).join('') : '<p>The board is clear. Run a practice session, hit the PT track, inspect the truck, or sleep in the barracks for a fresh board.</p>'}`, true);
+  $('#bx').onclick = closeLayer; const ab = $('#ab'); if (ab) ab.onclick = () => { t.active = null; save(); updateHud(); openBoard(); };
+  $$('[data-a]').forEach(b => b.onclick = () => { t.active = t.board[+b.dataset.a]; save(); updateHud(); closeLayer(); toast('Tasking accepted. Head out to the site.'); });
+}
+function finishTask(m, who, outro, back) {
+  const t = G.tk, task = run && run.task, before = rankName(), xp = task ? task.xp : 10; G.xp += xp;
+  if (task) { t.done++; t.active = null; advance(2); if (task.ex) { t.ex = task.ex + 1; t.board = null; } else if (t.board) t.board = t.board.filter(x => x.id !== task.id); } else advance(.5);
+  run = null; save(); updateHud(); if (back) enter(back[0], back[1], back[2]);
+  say([...speak(who, outro.slice(0, 1)), `+${xp} XP${task ? '' : ' (practice run)'}. ${clockTxt()}.`], () => { const after = rankName(); if (after !== before) unlockRank(after); else { const ch = CHAPS[t.chap]; if (ch && ch.ready()) toast('New orders: see SFC Okoro at Company HQ.'); } });
+}
+
+/* ---- story chapters (platoon sergeant) */
+const OK = 'SFC Okoro';
+const CHAPS = [
+  { ready: () => true, play() {
+    const t = G.tk; say(speak(OK, ['Specialist. Come in. Welcome to Alpha Company, 5th EW Battalion.', 'I am SFC Okoro, your platoon sergeant. Here is how this works.', 'The taskings board has jobs. Take one, drive to the site, finish it, and you earn XP. You can also run practice sessions any time.', 'First decision: which team do you want to work with?']),
+      () => ask('Choose your team', ['Collection Team: listening posts, fox hunts, cell surveys', 'Cyber Team: network incidents and Wi-Fi sweeps', 'Attack and Air Team: EA range support and drones'], i => { t.team = ['collect', 'cyber', 'attack'][i]; t.chap = 1; makeBoard(); save(); updateHud(); say(speak(OK, ['Good pick. Most of your board will match your team, with a curveball or two.', 'Read the board, drive on, and come back after two taskings.'])); })); } },
+  { ready: () => G.tk.done >= 2, play() { const t = G.tk; t.chap = 2; save(); updateHud(); say(speak(OK, ['Two down. Word is getting around.', 'Battalion runs Exercise IRON STATIC soon. Also, the range has been picking up a strange emitter at night. We are calling it the ghost.', 'Keep taking taskings. Sleep when you can. Ghosts tend to show up when you are tired.'])); } },
+  { ready: () => G.tk.done >= 5, play() { const t = G.tk; t.chap = 3; save(); updateHud(); say(speak(OK, ['Five taskings. The ghost showed up in three different collections, always near the airfield.', 'Not weather, not a bad radio. Something is transmitting on purpose, and it is probing our network too.', 'Keep your kit current. When the exercise starts, I want you ready.'])); } },
+  { ready: () => G.tk.done >= 8, play() { const t = G.tk; t.chap = 4; t.ex = 1; makeBoard(); save(); updateHud(); say(speak(OK, ['IRON STATIC starts now. Three phases: find the ghost, fix it, and finish its link.', 'Find it on the panorama. Fix it with bearings. Finish it on the range, inside the limits.', 'Those three taskings are at the top of the board. Good luck.'])); } },
+  { ready: () => G.tk.ex === 4, play() {
+    const t = G.tk; say(speak(OK, ['Debrief. You found it, you fixed it, and you finished it.', 'The ghost was Bravo Company\'s red team, testing us on purpose. They will be embarrassed for a month.', 'Command is putting you in for a commendation. And the battalion wants you flying our newest platform.']), () => { t.chap = 5; F().exAwarded = 1; save(); unlockCard('ewd', 'Exercise IRON STATIC complete.', () => say(speak(OK, ['That is the story so far. The training area is yours.', 'Keep taking taskings, keep learning, and keep that ruck at four items.']))); }); } }
+];
+const OKDEF = ['Taskings are on the board. Pick one and get after it.', 'Keep your ruck squared away: four items, no more.', 'Rest is part of the job. Sleep in your bunk and the board refreshes.', 'The training area is open. Practice runs never hurt.'];
+function psgTalk() {
+  const t = G.tk, ch = CHAPS[t.chap]; if (ch && ch.ready()) return ch.play();
+  say(speak(OK, [OKDEF[(R() * OKDEF.length) | 0]]));
+}
+
+/* ---- PMCS inspection */
+function runPMCS(root, done) {
+  const IDS = ['tire', 'antenna', 'mirror', 'battery', 'light', 'cable', 'latch', 'fluid']; let bad, hit, strikes, msg = '';
+  const init = () => { bad = new Set(shuffle(IDS).slice(0, 3)); hit = new Set(); strikes = 0; msg = ''; };
+  const S = 'stroke="#1d2114" stroke-width="3"';
+  const part = id => { const b = bad.has(id); const g0 = {
+    tire: b ? `<ellipse cx="110" cy="172" rx="29" ry="17" fill="#222" ${S}/><circle cx="110" cy="172" r="7" fill="#888"/>` : `<circle cx="110" cy="165" r="26" fill="#222" ${S}/><circle cx="110" cy="165" r="9" fill="#888"/>`,
+    antenna: b ? `<line x1="95" y1="95" x2="66" y2="46" stroke="#1d2114" stroke-width="5"/>` : `<line x1="95" y1="95" x2="95" y2="36" stroke="#1d2114" stroke-width="5"/>`,
+    mirror: b ? `<rect x="360" y="82" width="10" height="16" fill="#333" transform="rotate(40 362 80)" ${S}/>` : `<rect x="362" y="78" width="10" height="16" fill="#333" ${S}/>`,
+    battery: `<rect x="175" y="150" width="46" height="24" fill="#333" ${S}/>${b ? '<circle cx="185" cy="152" r="4" fill="#7fe07f"/><circle cx="197" cy="150" r="3" fill="#7fe07f"/><circle cx="208" cy="153" r="4" fill="#7fe07f"/>' : ''}`,
+    light: b ? `<circle cx="374" cy="118" r="8" fill="#555" ${S}/><path d="M368 112L380 124M378 112L370 122" stroke="#fff" stroke-width="2"/>` : `<circle cx="374" cy="118" r="8" fill="#ffd84a" ${S}/>`,
+    cable: b ? `<path d="M95 95Q170 58 270 78" fill="none" stroke="#1d2114" stroke-width="4" stroke-dasharray="7 7"/><path d="M180 66l6-8l4 10l6-9" fill="none" stroke="#ff7a2f" stroke-width="3"/>` : `<path d="M95 95Q170 58 270 78" fill="none" stroke="#1d2114" stroke-width="4"/>`,
+    latch: b ? `<rect x="338" y="58" width="18" height="7" fill="#c9c5b0" ${S}/>` : `<rect x="338" y="70" width="18" height="7" fill="#c9c5b0" ${S}/>`,
+    fluid: b ? `<ellipse cx="340" cy="200" rx="26" ry="6" fill="#2a2010"/><path d="M340 176q-5 9 0 12q5-3 0-12z" fill="#2a2010"/>` : ''
+  }[id]; const hb = { tire: [80, 135, 60, 60], antenna: [70, 30, 50, 70], mirror: [350, 70, 34, 34], battery: [170, 145, 56, 34], light: [360, 104, 30, 30], cable: [120, 56, 130, 40], latch: [330, 52, 34, 30], fluid: [310, 170, 60, 40] }[id];
+    return `<g data-p="${id}" style="cursor:pointer">${g0}<rect x="${hb[0]}" y="${hb[1]}" width="${hb[2]}" height="${hb[3]}" fill="transparent"/>${hit.has(id) ? `<circle cx="${hb[0] + hb[2] / 2}" cy="${hb[1] + hb[3] / 2}" r="${Math.max(hb[2], hb[3]) / 2 + 4}" fill="none" stroke="#3ddc84" stroke-width="4"/>` : ''}</g>`; };
+  function draw() {
+    root.innerHTML = `<p>Walk around the truck. <b>Three things are wrong</b> and each one looks off. Tap the faults. Three wrong taps ends the check.</p>
+      <svg class="nb" viewBox="0 0 420 230" role="group" aria-label="Truck"><rect x="50" y="90" width="230" height="70" fill="#5b6b3a" ${S}/><rect x="262" y="66" width="105" height="94" rx="6" fill="#6f7b4c" ${S}/><rect x="306" y="76" width="44" height="30" fill="#7fa8b8" ${S}/><circle cx="290" cy="165" r="26" fill="#222" ${S}/><circle cx="290" cy="165" r="9" fill="#888"/>${IDS.map(part).join('')}</svg>
+      <div class="fb" aria-live="polite">Faults found: <b>${hit.size}/3</b> · Wrong taps: <b>${strikes}/3</b>. ${msg}</div><div class="row"><button class="btn" id="nx" hidden>Finish</button><button class="btn" id="rt" hidden>Try a different truck</button></div>`;
+    $$('[data-p]', root).forEach(g0 => g0.onclick = () => {
+      if (strikes >= 3 || hit.size >= 3) return; const id = g0.dataset.p;
+      if (hit.has(id)) return; if (bad.has(id)) { hit.add(id); msg = '<span class="yes">Fault confirmed.</span>'; } else { strikes++; msg = '<span class="no">That part checks out.</span>'; }
+      draw(); if (hit.size >= 3) { $('#nx', root).hidden = false; $('#nx', root).onclick = done; } else if (strikes >= 3) { $('#rt', root).hidden = false; $('#rt', root).onclick = () => { init(); draw(); }; }
+    });
+  }
+  init(); draw();
+}
+
+/* ---- scenes: recruiting station and first unit */
+const dalton = () => {
+  const f = F(), who = 'SFC Dalton';
+  if (f.enlisted) return say(speak(who, ['Your bus leaves for basic. Go on, the door is right there.']));
+  say(speak(who, ['Come in, have a seat. You told me you want a job that matters, not just a paycheck.', 'The Army has a job for people who like radios, networks, and puzzles: 17E, Electronic Warfare Specialist.']),
+    () => ask('Which job do you want?', ['17E Electronic Warfare Specialist', 'Tell me about other jobs first'], i => {
+      if (i === 1) return say(speak(who, ['Infantry, medic, mechanic, cook. All good jobs. But you told me you like radios.']), dalton);
+      f.enlisted = 1; save(); updateHud(); say(speak(who, ['Raise your right hand. You are swearing to support and defend the Constitution and to obey the lawful orders of those appointed over you.', 'Congratulations. You are a soldier. Basic Combat Training starts now. The bus is outside.']));
+    }));
+};
+SB.station = () => {
+  const s = newScene('station', 14, 9, 2, 'in'); walls(s); s.t[8 * 14 + 7] = 2;
+  s.o.push(deco(4, 1, 6, 1, 'board'), deco(4, 3, 3, 1, 'desk'), deco(1, 1, 2, 1, 'desk'), deco(11, 1, 2, 1, 'desk'));
+  s.o.push(npc('dalton', 'SFC Dalton', 5, 2, LOOK.dalton, dalton));
+  s.o.push(door(7, 8, 'bay', 7, 8, () => F().enlisted ? null : 'Talk to SFC Dalton before you go anywhere.', [0, -1]));
+  return finalize(s);
+};
+SB.cohq = () => {
+  const s = newScene('cohq', 16, 10, 2, 'in'); walls(s); s.t[9 * 16 + 8] = 2;
+  s.o.push(deco(6, 1, 4, 1, 'board'), deco(2, 5, 2, 1, 'desk'), deco(12, 5, 2, 1, 'desk'));
+  s.o.push(npc('okoro', OK, 8, 3, LOOK.okoro, psgTalk));
+  s.o.push(npc('nguyen', 'CPT Nguyen', 13, 3, LOOK.nguyen, () => { const t = G.tk; say(speak('CPT Nguyen', t.chap < 2 ? ['New in the company? Good. Listen to SFC Okoro. She has forgotten more about EW than I will ever learn.'] : t.chap < 5 ? ['I hear about your collections. Keep it up. Iron Static will test everyone.'] : ['Nice work on the exercise. The battalion commander noticed.'])); }));
+  s.o.push(act(2, 2, 3, 1, 'board', 'Taskings board', openBoard));
+  s.o.push(door(8, 9, 'unit', 10, 10, null, [0, -1]));
+  return finalize(s);
+};
+SB.dorm2 = () => {
+  const s = newScene('dorm2', 12, 8, 2, 'in'); walls(s); s.t[7 * 12 + 6] = 2;
+  s.o.push(deco(1, 1, 3, 1, 'bunk'), deco(8, 1, 3, 1, 'bunk'));
+  s.o.push(act(1, 3, 3, 1, 'bunk', 'Sleep', () => ask('Sleep until 0600 for a fresh board?', ['Sleep', 'Not now'], i => { if (i) return; const t = G.tk; if (t.hour >= 6) t.day++; t.hour = 6; t.board = null; save(); updateHud(); fade = 1; say([`You wake up rested. ${clockTxt()}. The board has fresh taskings.`]); })));
+  s.o.push(act(9, 5, 2, 1, 'foot', 'Open locker', () => openBag({ supply: true, title: 'Locker' })));
+  s.o.push(door(6, 7, 'unit', 23, 10, null, [0, -1]));
+  return finalize(s);
+};
+SB.unit = () => {
+  const s = newScene('unit', 46, 30, 0);
+  setR(s, 0, 14, 46, 2, 1); setR(s, 10, 10, 2, 16, 1); setR(s, 23, 10, 2, 5, 1); setR(s, 35, 10, 2, 5, 1); setR(s, 20, 18, 14, 10, 7); setR(s, 22, 20, 10, 6, 0);
+  setR(s, 0, 0, 46, 1, 4); setR(s, 0, 29, 46, 1, 4); setR(s, 0, 0, 1, 30, 4); setR(s, 45, 0, 1, 30, 4); setR(s, 45, 14, 1, 2, 1);
+  bld(s, 7, 5, 7, 5, 'Company HQ', '#5f7896', { dx: 3, to: 'cohq', sx: 8, sy: 8 });
+  bld(s, 20, 5, 7, 5, 'Barracks', '#8a6a4a', { dx: 3, to: 'dorm2', sx: 6, sy: 6 });
+  bld(s, 32, 5, 7, 5, 'DFAC', '#8a7a4a', null); bld(s, 36, 19, 7, 4, 'Supply', '#8a7a4a', null);
+  s.o.push(deco(4, 18, 5, 2, 'truck'), deco(13, 18, 5, 2, 'truck'), deco(3, 17, 15, 6, 'fence', false), deco(40, 13, 3, 1, 'sign', true, 'TRAINING AREA →'));
+  s.o.push(npc('bell', 'SSG Bell', 9, 21, LOOK.bell, () => say(speak('SSG Bell', ['Motor pool. Before we roll, we do PMCS: preventive maintenance checks and services.', 'Walk the truck and find what is wrong. Real faults look off.']), () => ask('Inspect the truck?', ['Inspect', 'Not now'], i => { if (!i) missionSheet('PMCS inspection', (r, x) => runPMCS(r, x.win), () => { G.xp += 30; advance(.5); save(); updateHud(); say(speak('SSG Bell', ['Good eye. That truck would have broken down on the range.', '+30 XP.'])); }); }))));
+  s.o.push(npc('ruiz', 'SGT Ruiz', 36, 11, LOOK.ruiz, () => say(speak('SGT Ruiz', ['DFAC is open. Eat something, Specialist. You cannot collect on an empty stomach.']))));
+  s.o.push(npc('tran2', 'SPC Tran', 39, 24, LOOK.tran, () => say(speak('SPC Tran', ['Supply. Four in the ruck. Swap whenever you like.']), () => openBag({ supply: true, title: 'Supply window' }))));
+  s.o.push(npc('reyes2', 'SPC Reyes', 15, 16, LOOK.reyes, () => { const c = G.tk.chap; say(speak('SPC Reyes', c === 0 ? ['Hey, battle buddy! Company HQ is the building with the flag. Okoro is tough but fair.'] : c < 3 ? ['Guys on the night shift keep talking about a ghost signal near the airfield.'] : c < 5 ? ['I ran a collection last night. The ghost was there again. It knows when we look.'] : ['Bravo Company is buying the next round. Red team pride.'])); }));
+  s.pt = { on: 0, t: 0, k: 0 }; const CP = [[32, 19], [32, 26], [21, 26], [21, 19]];
+  s.o.push(npc('marks', 'SSG Marks', 19, 19, LOOK.marks, () => ask('SSG Marks: run two laps of the track in 35 seconds?', ['Start the run', 'Not now'], i => { if (i) return; s.pt = { on: 1, t: 0, k: 0 }; P.x = 21.5 * TS; P.y = 19.9 * TS; say(['Go! Hit every corner: right, down, left, up. Two laps.']); })));
+  s.update = dt => {
+    const p = s.pt; if (!p.on) return; p.t += dt; const c0 = CP[p.k % 4];
+    if (Math.hypot(P.x / TS - c0[0] - .5, P.y / TS - c0[1] - .5) < 1.3) p.k++;
+    if (p.k >= 8) { p.on = 0; G.xp += 25; advance(1); save(); updateHud(); say(['Run complete: ' + p.t.toFixed(1) + ' seconds. +25 XP.']); }
+    else if (p.t > 35) { p.on = 0; say(['Time. Try again when you are ready.']); }
+  };
+  s.hud = () => s.pt.on ? `PT RUN · lap ${Math.min(2, 1 + Math.floor(s.pt.k / 4))}/2 · ${Math.max(0, 35 - s.pt.t).toFixed(0)} s left` : '';
+  s.ground = () => { if (!s.pt.on) return; const c0 = CP[s.pt.k % 4]; c.strokeStyle = '#ffd84a'; c.lineWidth = 4; c.beginPath(); c.arc((c0[0] + .5) * TS - camX, (c0[1] + .5) * TS - camY, 16, 0, 7); c.stroke(); };
+  s.o.push(exit(45, 14, 1, 2, 'ftx', 2, 17, null, [-1, 0]));
+  trees(s, 47, .1, (x, y) => rectNear(s.sol.map(r => [r[0] / TS, r[1] / TS, (r[2] - r[0]) / TS, (r[3] - r[1]) / TS]), x, y, 2) || (y > 12 && y < 17) || (x > 2 && x < 19 && y > 16 && y < 24) || (x > 18 && x < 35 && y > 17 && y < 29));
+  return finalize(s);
+};
+
+/* ---- graduation, orders, log, objective */
+function finale() {
+  openLayer(`<div class="unlock"><div class="rays"></div><div class="kick">AIT GRADUATION</div><span class="big">${icon('sdr')}</span><h2>17E EW Specialist</h2><p>You passed the board and walk across the stage with your class. Orders come down: report to Alpha Company, 5th EW Battalion, Fort Meridian.</p><div class="lines">Callsign: ${G.name}<br>Gear earned: ${G.owned.filter(i => !BASIC.includes(i)).length}</div><button class="btn" id="ct">Report to your first unit</button></div>`, true);
+  $('#ct').onclick = () => { closeLayer(); toUnit(); };
+}
+function toUnit() { F().pcs = 1; G.tk = G.tk || { chap: 0, team: null, done: 0, day: 1, hour: 6, active: null, board: null, ex: 0 }; save(); enter('unit', 3, 15); say(['Fort Meridian. Alpha Company, 5th EW Battalion.', 'Your first unit. Find Company HQ, the building with the flag, and report to SFC Okoro.']); }
+function openLog() {
+  const f = F(), t = G.tk, row = (ok, x) => `<div class="tg ${ok ? 'ok' : ''}">${ok ? '✓' : '·'} ${x}</div>`;
+  let h = `<div class="mhd"><h2>Mission log</h2><button class="btn alt sm" id="lx">Close</button></div><p><b>Now:</b> ${objective()}</p>`;
+  h += `<h3>Story</h3>${row(f.enlisted, 'Enlist at the recruiting station')}${row(f.graduated, 'Basic Combat Training')}${row(f.quiz, 'AIT: Cyber School')}${row(f.pcs, 'Report to first unit')}${row(f.exAwarded, 'Exercise IRON STATIC')}`;
+  if (!f.pcs) h += `<h3>Basic Training</h3>${row(f.packed, 'Pack the ruck')}${row(f.formed, 'Formation')}${row(f.lnDone, 'Land navigation')}${row(f.radioDone, 'Radio check')}<h3>AIT foundations</h3>${row(f.net, 'Network bench')}${row(f.ant, 'Antenna bench')}${row(f.gotSDR, 'Sign for your SDR')}<h3>Field use cases</h3>${EW.map(m => row(f[m.id], `${m.n} <small>(${m.where}${m.need.length ? '; bring ' + names(m.need) : ''})</small>`)).join('')}<h3>Certification</h3>${row(f.quiz, 'Command tent board')}`;
+  else h += `<h3>Free play</h3><div class="tg">Taskings done: <b>${t.done}</b> · XP: <b>${G.xp}</b> · Rank: <b>${rankName()}</b><br>Team: <b>${TEAMN[t.team] || 'not chosen'}</b><br>${clockTxt()}</div>${t.active ? row(0, `Active tasking: ${t.active.title}`) : ''}<div class="tg">Sites: ${EW.map(m => m.n).join(', ')}. Practice runs at any site, PT track, PMCS, and sleep for a fresh board.</div>`;
+  openLayer(h); $('#lx').onclick = closeLayer;
+}
+function objective() {
+  const f = F(), t = G.tk;
+  if (!f.enlisted) return 'Talk to SFC Dalton at the recruiting station.';
+  if (!f.packed) return 'Pack your ruck: compass, radio, canteen, plus one. Use the footlocker.'; if (!f.formed) return 'Fall in on the yellow box on the drill field.'; if (!f.lnDone) return 'Land nav: go east from the field and see DS Cole.';
+  if (!f.radioDone) return 'Send a radio check on channel 5 with the Radio button.'; if (!f.graduated) return 'Report to DS Vance on the drill field.';
+  if (!f.pcs) {
+    if (!f.met) return 'Report to Professor Hale in the Cyber School.'; if (!f.net || !f.ant) return `Finish the labs in the Cyber School: ${[f.net ? '' : 'network bench', f.ant ? '' : 'antenna bench'].filter(Boolean).join(' and ')}.`; if (!f.gotSDR) return 'Return to Professor Hale for your SDR.';
+    const n = EW.filter(m => f[m.id]).length; if (n < 7) return `Field Training Area: find use cases for your gear (${n}/7). Check the log.`; if (!f.quiz) return 'Report to the Command Tent for the certification board.'; return 'Collect your orders from CPT Reyes at the Command Tent.';
+  }
+  if (t.active) return `Tasking: ${t.active.title}. Site: ${EW.find(m => m.id === t.active.kind).where}.`;
+  const ch = CHAPS[t.chap]; if (ch && ch.ready()) return t.chap === 0 ? 'Report to SFC Okoro at Company HQ.' : 'SFC Okoro has new orders at Company HQ.';
+  if (!t.board || !t.board.length) return 'Free play: practice runs, PT, PMCS, or sleep in the barracks for a fresh board.';
+  return 'Take a tasking from the board at Company HQ, or free-play around the post.';
+}
+const stage = () => { const f = F(); return !f.graduated ? (f.enlisted ? 'Basic Training' : 'Recruiting Station') : !f.pcs ? 'AIT · Cyber School' : `${rankName()} · ${clockTxt()}`; };
+
+/* =============================================================== engine */
+let scene = null, cv, c, VW = 352, VH = 448, camX = 0, camY = 0, fade = 0, hd = 0, dir = 0, walkT = 0, mv = false, target = null, raf = 0, last = 0, hintLast = '';
+const P = { x: 0, y: 0 }, keys = {}, joy = { x: 0, y: 0 };
+function sizeCanvas() { const wide = innerWidth >= 720; VW = wide ? 640 : 352; VH = wide ? 416 : 448; cv.width = VW; cv.height = VH; c.imageSmoothingEnabled = false; }
+function enter(id, sx, sy) {
+  if (G.f.pcs && (id === 'fox' || id === 'hq' || id === 'range')) delete SCN[id];
+  scene = SB[id] && (SCN[id] || (SCN[id] = SB[id]())); P.x = (sx + .5) * TS; P.y = (sy + .95) * TS; G.scene = id; G.x = sx; G.y = sy; save(); fade = 1; target = null;
+  if (scene.onEnter) scene.onEnter(); ctxButtons(); updateHud(); hintLast = '';
+}
+const SCN = {};
+function blocked(px, py) {
+  const x0 = px - 6, x1 = px + 6, y0 = py - 6, y1 = py + 2;
+  if (x0 < 0 || y0 < 0 || x1 > scene.w * TS || y1 > scene.h * TS) return true;
+  for (const [a, b] of [[x0, y0], [x1, y0], [x0, y1], [x1, y1]]) if (SOLT.has(scene.t[Math.floor(b / TS) * scene.w + Math.floor(a / TS)])) return true;
+  return scene.sol.some(r => x1 > r[0] && x0 < r[2] && y1 > r[1] && y0 < r[3]);
+}
+function update(dt) {
+  if (fade > 0) fade = Math.max(0, fade - dt * 3);
+  if (paused()) { mv = false; return; }
+  let vx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x, vy = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y; const l = Math.hypot(vx, vy);
+  mv = l > .15; if (l > 1) { vx /= l; vy /= l; }
+  if (mv) {
+    const sp = 104 * dt, ox = P.x, oy = P.y; if (!blocked(P.x + vx * sp, P.y)) P.x += vx * sp; if (!blocked(P.x, P.y + vy * sp)) P.y += vy * sp;
+    dir = Math.abs(vx) > Math.abs(vy) ? (vx < 0 ? 1 : 2) : (vy < 0 ? 3 : 0); hd = (Math.atan2(vx, -vy) * 180 / Math.PI + 360) % 360; walkT += dt * 9;
+    if (scene.id === 'landnav') scene.dist += Math.hypot(P.x - ox, P.y - oy) / TS * 10;
+  }
+  if (scene.update) scene.update(dt);
+  const tx = Math.floor(P.x / TS), ty = Math.floor((P.y - 4) / TS);
+  for (const o of scene.o) {
+    if (o.cond && !o.cond()) continue;
+    if (o.k === 'door' && o.x === tx && o.y === ty || o.k === 'exit' && tx >= o.x && tx < o.x + o.w && ty >= o.y && ty < o.y + o.h) {
+      const msg = o.lock && o.lock(); if (msg) { P.x += o.push[0] * TS * .8; P.y += o.push[1] * TS * .8; say([msg]); return; } enter(o.to, o.sx, o.sy); return;
+    }
+  }
+  let best = null, bd = 1e9; for (const o of scene.o) { if (!o.act) continue; const dx = Math.max(o.x * TS - P.x, 0, P.x - (o.x + o.w) * TS), dy = Math.max(o.y * TS - P.y, 0, P.y - (o.y + o.h) * TS), d = Math.hypot(dx, dy); if (d < 30 && d < bd) { bd = d; best = o; } } target = best;
+  camX = clamp(P.x - VW / 2, 0, Math.max(0, scene.w * TS - VW)); camY = clamp(P.y - VH / 2, 0, Math.max(0, scene.h * TS - VH));
+  if (scene.w * TS < VW) camX = (scene.w * TS - VW) / 2; if (scene.h * TS < VH) camY = (scene.h * TS - VH) / 2;
+  const h = scene.hud ? scene.hud() : ''; if (h !== hintLast) { hintLast = h; const el = $('#hint'); if (el) { el.textContent = h; el.hidden = !h; } }
+}
+function tile(id, tx, ty, x, y) {
+  const h = hh(tx, ty);
+  if (id === 0 || id === 4 || id === 6) { c.fillStyle = h < .33 ? '#8aa95f' : h < .66 ? '#84a45a' : '#90ae64'; c.fillRect(x, y, TS, TS); if (h > .82) { c.fillStyle = '#6f8f48'; c.fillRect(x + 8, y + 10, 3, 5); c.fillRect(x + 20, y + 18, 3, 5); } }
+  if (id === 1) { c.fillStyle = '#d6c393'; c.fillRect(x, y, TS, TS); c.fillStyle = '#c4b07c'; c.fillRect(x + h * 20, y + h * 24, 4, 3); c.fillRect(x + 20 - h * 10, y + 8, 3, 3); }
+  else if (id === 2) { c.fillStyle = (tx + ty) % 2 ? '#cfc9b4' : '#c6c0aa'; c.fillRect(x, y, TS, TS); }
+  else if (id === 3) { c.fillStyle = '#4a5238'; c.fillRect(x, y, TS, TS); c.fillStyle = '#5b6446'; c.fillRect(x, y, TS, 8); c.fillStyle = '#3b422c'; c.fillRect(x, y + TS - 3, TS, 3); }
+  else if (id === 4) { c.fillStyle = '#5a3f22'; c.fillRect(x + 13, y + 16, 6, 14); c.fillStyle = '#4d6a30'; c.beginPath(); c.arc(x + 16, y + 10, 15, 0, 7); c.fill(); c.fillStyle = '#5f7f3a'; c.beginPath(); c.arc(x + 12, y + 7, 8, 0, 7); c.fill(); }
+  else if (id === 5) { c.fillStyle = '#6fa9bd'; c.fillRect(x, y, TS, TS); }
+  else if (id === 7) { c.fillStyle = '#b8b39a'; c.fillRect(x, y, TS, TS); c.fillStyle = '#a49f86'; c.fillRect(x + h * 22, y + h * 20, 3, 3); c.fillRect(x + 6, y + 22 - h * 10, 3, 3); }
+  else if (id === 8) { c.fillStyle = '#b7b09a'; c.fillRect(x, y, TS, TS); c.fillStyle = '#9d9680'; c.fillRect(x, y + 12, TS, 3); }
+}
+function drawChar(x, y, o) {
+  const st = o.st || {}, dr = o.dir || 0, w = o.mv ? Math.round(Math.sin(o.t) * 2) : 0;
+  c.fillStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(x, y + 1, 9, 4, 0, 0, 7); c.fill();
+  c.fillStyle = '#3b3f2c'; c.fillRect(x - 5, y - 8 - (w > 0 ? 1 : 0), 4, 8); c.fillRect(x + 1, y - 8 - (w < 0 ? 1 : 0), 4, 8);
+  c.fillStyle = st.body; c.fillRect(x - 6, y - 19, 12, 12); c.fillRect(x - 9, y - 18, 3, 9); c.fillRect(x + 6, y - 18, 3, 9);
+  c.fillStyle = st.skin; c.fillRect(x - 9, y - 10, 3, 3); c.fillRect(x + 6, y - 10, 3, 3); c.fillRect(x - 5, y - 28, 10, 10);
+  c.fillStyle = st.hair; c.fillRect(x - 6, y - 30, 12, dr === 3 ? 12 : 5);
+  if (dr === 0) { c.fillStyle = INK; c.fillRect(x - 3, y - 24, 2, 2); c.fillRect(x + 1, y - 24, 2, 2); } else if (dr === 1) { c.fillStyle = INK; c.fillRect(x - 4, y - 24, 2, 2); } else if (dr === 2) { c.fillStyle = INK; c.fillRect(x + 2, y - 24, 2, 2); }
+  const hat = st.hat || st.acc;
+  if (hat === 'drill') { c.fillStyle = '#7a5b2e'; c.fillRect(x - 9, y - 32, 18, 3); c.fillRect(x - 5, y - 36, 10, 5); }
+  else if (hat === 'cap') { c.fillStyle = st.capc || '#5b6b3a'; c.fillRect(x - 6, y - 32, 12, 4); c.fillRect(dr === 2 ? x : x - 8, y - 29, 8, 2); }
+  else if (hat === 'helmet') { c.fillStyle = '#5b6b3a'; c.fillRect(x - 7, y - 33, 14, 7); c.fillStyle = '#ff7a2f'; c.fillRect(x - 7, y - 28, 14, 2); }
+  if ((st.glasses || hat === 'glasses') && dr !== 3) { c.fillStyle = 'rgba(30,30,30,.85)'; c.fillRect(x - 5, y - 25, 4, 3); c.fillRect(x + 1, y - 25, 4, 3); }
+}
+const DECOR = {
+  bunk: (x, y, w) => { c.fillStyle = '#6a4a2a'; c.fillRect(x, y + 2, w, 28); c.fillStyle = '#5b6b3a'; c.fillRect(x + 3, y + 5, w - 6, 20); c.fillStyle = '#e9e4cc'; c.fillRect(x + 4, y + 7, 14, 8); },
+  foot: (x, y, w) => { c.fillStyle = '#7a5a34'; c.fillRect(x + 2, y + 6, w - 4, 22); c.fillStyle = '#ff7a2f'; c.fillRect(x + w / 2 - 3, y + 12, 6, 6); },
+  bench: (x, y, w, h) => { c.fillStyle = '#c9b487'; c.fillRect(x, y + 4, w, h - 8); c.fillStyle = '#6a5a3a'; c.fillRect(x, y + h - 8, w, 4); c.fillStyle = '#1c2a2c'; c.fillRect(x + 8, y + 8, 22, 14); c.fillStyle = '#ff7a2f'; c.fillRect(x + 40, y + 10, 10, 6); c.fillStyle = '#5b6b3a'; c.fillRect(x + 60, y + 8, 16, 10); },
+  board: (x, y, w) => { c.fillStyle = '#f5f1df'; c.fillRect(x, y + 2, w, 26); c.strokeStyle = INK; c.lineWidth = 2; c.strokeRect(x, y + 2, w, 26); c.strokeStyle = '#5b6b3a'; c.beginPath(); c.moveTo(x + 8, y + 12); c.lineTo(x + w - 20, y + 12); c.moveTo(x + 8, y + 20); c.lineTo(x + w / 2, y + 20); c.stroke(); },
+  desk: (x, y, w) => { c.fillStyle = '#b89a66'; c.fillRect(x, y + 6, w, 20); c.fillStyle = '#7a5a34'; c.fillRect(x, y + 24, w, 4); },
+  flag: (x, y, w, h) => { c.fillStyle = '#ddd'; c.fillRect(x + 14, y, 4, h - 4); c.fillStyle = '#c4372b'; c.fillRect(x + 18, y + 2, 20, 12); c.fillStyle = '#f5f1df'; c.fillRect(x + 18, y + 6, 20, 3); },
+  crate: (x, y) => { c.fillStyle = '#9a7a44'; c.fillRect(x + 3, y + 8, 26, 22); c.strokeStyle = '#6a4a22'; c.lineWidth = 2; c.strokeRect(x + 3, y + 8, 26, 22); },
+  tent: (x, y, w, h) => { c.fillStyle = '#6f7b4c'; c.beginPath(); c.moveTo(x + w / 2, y); c.lineTo(x + w, y + h); c.lineTo(x, y + h); c.closePath(); c.fill(); c.strokeStyle = INK; c.lineWidth = 3; c.stroke(); c.fillStyle = '#2b3320'; c.fillRect(x + w / 2 - 12, y + h - 28, 24, 28); },
+  tower: (x, y, w, h) => { c.strokeStyle = '#5b6b3a'; c.lineWidth = 3; c.beginPath(); c.moveTo(x + w / 2, y); c.lineTo(x + 6, y + h); c.moveTo(x + w / 2, y); c.lineTo(x + w - 6, y + h); c.moveTo(x + 14, y + h * .55); c.lineTo(x + w - 14, y + h * .55); c.moveTo(x + 10, y + h * .8); c.lineTo(x + w - 10, y + h * .8); c.stroke(); c.fillStyle = '#ff7a2f'; c.beginPath(); c.arc(x + w / 2, y - 2, 4, 0, 7); c.fill(); },
+  fence: (x, y, w, h) => { c.strokeStyle = 'rgba(60,60,50,.8)'; c.lineWidth = 2; c.setLineDash([4, 4]); c.strokeRect(x + 2, y + 2, w - 4, h - 4); c.setLineDash([]); },
+  ap: (x, y) => { if (scene.id !== 'hq') return; const d = Math.hypot(P.x - (x + 16), P.y - (y + 16)); if (d < TS * 5) { c.fillStyle = '#f5f1df'; c.strokeStyle = INK; c.lineWidth = 2; c.fillRect(x + 8, y + 6, 16, 8); c.strokeRect(x + 8, y + 6, 16, 8); c.fillStyle = '#3ddc84'; c.fillRect(x + 12, y + 9, 3, 3); } },
+  sign: (x, y, w, h, o) => { c.fillStyle = '#7a5a34'; c.fillRect(x + 4, y + 4, w - 8, 20); c.fillStyle = '#f5f1df'; c.font = 'bold 10px sans-serif'; c.textAlign = 'center'; c.fillText(o.label || o.lbl || 'SIGN', x + w / 2, y + 18); c.fillStyle = '#5a3f22'; c.fillRect(x + w / 2 - 2, y + 24, 4, 8); },
+  truck: (x, y, w, h) => { c.fillStyle = '#5b6b3a'; c.fillRect(x + 4, y + 10, w - 8, h - 22); c.fillStyle = '#6f7b4c'; c.fillRect(x + w - 34, y + 4, 30, h - 16); c.fillStyle = '#7fa8b8'; c.fillRect(x + w - 28, y + 8, 18, 10); c.fillStyle = '#222'; c.beginPath(); c.arc(x + 18, y + h - 8, 8, 0, 7); c.arc(x + w - 18, y + h - 8, 8, 0, 7); c.fill(); c.strokeStyle = INK; c.lineWidth = 2; c.beginPath(); c.moveTo(x + 24, y + 10); c.lineTo(x + 24, y - 6); c.stroke(); },
+  none: () => {}
+};
+function drawObj(o, x, y) {
+  if (o.k === 'bld') { const w = o.w * TS, h = o.h * TS; c.fillStyle = '#e0d9c0'; c.fillRect(x, y, w, h); c.fillStyle = o.roof; c.fillRect(x, y, w, 26); c.fillStyle = 'rgba(0,0,0,.15)'; c.fillRect(x, y + 26, w, 4);
+    c.fillStyle = '#7fa8b8'; for (let i = 1; i < o.w - 1; i += 2) { c.fillRect(x + i * TS + 4, y + 40, 22, 18); } c.strokeStyle = INK; c.lineWidth = 3; c.strokeRect(x + 1, y + 1, w - 2, h - 2); c.fillStyle = '#fff'; c.font = 'bold 11px sans-serif'; c.textAlign = 'center'; c.fillText(o.label, x + w / 2, y + 17);
+    const d = scene.o.find(q => q.k === 'door' && q.x >= o.x && q.x < o.x + o.w && q.y === o.y + o.h - 1); if (d) { c.fillStyle = '#4a3a22'; c.fillRect(d.x * TS - camX + 4, d.y * TS - camY + 4, TS - 8, TS - 4); } return; }
+  if (o.k === 'npc') { drawChar(o.x * TS - camX + 16, o.y * TS - camY + 30, { st: o.style, dir: 0, t: 0 }); return; }
+  (DECOR[o.kind] || DECOR.none)(x, y, o.w * TS, o.h * TS, o);
+}
+function render() {
+  c.fillStyle = '#20261a'; c.fillRect(0, 0, VW, VH);
+  const x0 = Math.floor(camX / TS), y0 = Math.floor(camY / TS), x1 = Math.min(scene.w - 1, x0 + Math.ceil(VW / TS) + 1), y1 = Math.min(scene.h - 1, y0 + Math.ceil(VH / TS) + 1);
+  for (let ty = Math.max(0, y0); ty <= y1; ty++) for (let tx = Math.max(0, x0); tx <= x1; tx++) { const id = scene.t[ty * scene.w + tx]; if (id !== 4) tile(id, tx, ty, tx * TS - camX, ty * TS - camY); }
+  if (scene.ground) scene.ground();
+  const list = scene.o.filter(o => o.k === 'bld' || o.k === 'npc' || o.k === 'deco' || o.k === 'act').map(o => ({ y: (o.y + o.h) * TS - (o.k === 'act' && !o.solid ? 40 : 0), o })); list.push({ y: P.y, p: 1 }); list.sort((a, b) => a.y - b.y);
+  const trees = []; for (let ty = Math.max(0, y0); ty <= y1; ty++) for (let tx = Math.max(0, x0); tx <= x1; tx++) if (scene.t[ty * scene.w + tx] === 4) trees.push({ y: (ty + 1) * TS - 2, tx, ty });
+  const all = list.concat(trees).sort((a, b) => a.y - b.y);
+  for (const it of all) {
+    if (it.p) { const cls = CLASSES[G.cls]; drawChar(P.x - camX, P.y - camY, { st: { body: cls.body, hair: cls.hair, skin: cls.skin, acc: cls.acc, hat: F().graduated ? cls.acc : cls.acc }, dir, mv, t: walkT }); }
+    else if (it.o) drawObj(it.o, it.o.x * TS - camX, it.o.y * TS - camY); else tile(4, it.tx, it.ty, it.tx * TS - camX, it.ty * TS - camY);
+  }
+  if (scene.top) scene.top();
+  if (target && !paused()) { const x = target.cx - camX, y = target.y * TS - camY - (target.k === 'npc' ? 42 : 6); c.font = 'bold 11px sans-serif'; const w = c.measureText(target.lbl || 'Use').width + 16; c.fillStyle = '#1d2114ee'; c.fillRect(x - w / 2, y - 16, w, 18); c.fillStyle = '#ffd9a0'; c.textAlign = 'center'; c.fillText(target.lbl || 'Use', x, y - 3); }
+  if (scene.theme === 'in') { /* interior shading */ }
+  if (act3() && scene.theme !== 'in') { const h = G.tk.hour; let a = 0; if (h >= 20 || h < 5) a = .42; else if (h >= 18) a = (h - 18) / 2 * .42; else if (h < 7) a = (7 - h) / 2 * .3; if (a > 0) { c.fillStyle = `rgba(12,20,60,${a})`; c.fillRect(0, 0, VW, VH); } }
+  if (fade > 0) { c.fillStyle = `rgba(0,0,0,${fade})`; c.fillRect(0, 0, VW, VH); }
+}
+function loop(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; if (scene) { update(dt); render(); } const a = $('#abtn'); if (a) a.classList.toggle('hot', !!target && !paused()); raf = requestAnimationFrame(loop); }
+
+/* context buttons */
+function ctxButtons() {
+  const el = $('#ctxb'); if (!el || !scene) return; const B = [];
+  if (scene.id === 'landnav' && F().lnDone && !F().radioDone) B.push(['Radio check', () => { if (!inBag('radio')) return toast('You need the radio in your ruck.'); openRadio(5, 'DS Cole: "Set channel five, key up, and send a radio check."', () => { F().radioDone = 1; save(); updateHud(); ctxButtons(); say(speak('DS Cole', ['Loud and clear. Head back to the drill field. DS Vance is waiting.'])); }); }]);
+  if (scene.id === 'fox') { B.push(['Take bearing', foxBearing], ['Report position', foxReport], ['Clear lines', () => { scene.rays = []; scene.est = null; }]); }
+  if (scene.id === 'range' && scene.clear) B.push(['Pod controls', podSheet]);
+  el.innerHTML = B.map((b, i) => `<button class="btn sm" data-i="${i}">${b[0]}</button>`).join(''); $$('button', el).forEach(b => b.onclick = () => { if (!paused()) B[+b.dataset.i][1](); });
+}
+function pressA() { if (dlg) { nextDlg(); return; } if (!layer.hidden) return; if (target) target.act(); }
+function pad0() { joy.x = 0; joy.y = 0; const k = $('#knob'); if (k) k.style.transform = ''; Object.keys(keys).forEach(k2 => keys[k2] = 0); }
+function updateHud() {
+  const s = $('#stg'), o = $('#obj'), b = $('#bagbar'); if (!s) return; s.textContent = stage(); o.textContent = objective();
+  b.innerHTML = [0, 1, 2, 3].map(i => G.bag[i] ? `<button class="slot mini" data-i="${i}" aria-label="${ITEMS[G.bag[i]].n}">${icon(G.bag[i])}</button>` : `<div class="slot mini empty"></div>`).join('');
+  $$('.slot.mini', b).forEach(x => x.onclick = () => { if (!paused()) openBag({ title: 'Ruck' }); });
+}
+
+/* =============================================================== screens */
+function renderGame() {
+  app.innerHTML = `<div class="game"><header class="top case"><div class="tl"><div class="stg" id="stg"></div><div class="objt" id="obj"></div></div><div class="bagbar" id="bagbar" role="group" aria-label="Ruck, 4 slots"></div></header>
+    <div class="cvw case"><canvas id="gv" role="img" aria-label="Game view"></canvas><div class="dlg" id="dlg" hidden></div></div><div class="hintbar" id="hint" hidden></div><div class="ctxbar" id="ctxb"></div>
+    <div class="ctl"><div class="pad" id="pad" aria-label="Move"><div class="knob" id="knob"></div></div><div class="btns"><div class="rowb"><button class="btn sm alt" id="bagb">Ruck</button><button class="btn sm alt" id="logb">Log</button></div><button class="abtn" id="abtn" aria-label="Interact">A</button></div></div>
+    <div class="foot"><button id="reset">Reset progress</button></div></div>`;
+  cv = $('#gv'); c = cv.getContext('2d'); sizeCanvas();
+  $('#dlg').onclick = nextDlg; $('#abtn').onclick = pressA; $('#bagb').onclick = () => { if (!paused()) openBag({ title: 'Ruck' }); }; $('#logb').onclick = () => { if (!paused()) openLog(); };
+  const pad = $('#pad'), knob = $('#knob');
+  const jm = e => { const r = pad.getBoundingClientRect(); let dx = (e.clientX - r.left - r.width / 2) / (r.width / 2), dy = (e.clientY - r.top - r.height / 2) / (r.height / 2); const l = Math.hypot(dx, dy); if (l > 1) { dx /= l; dy /= l; } joy.x = dx; joy.y = dy; knob.style.transform = `translate(${dx * 38}px,${dy * 38}px)`; };
+  pad.addEventListener('pointerdown', e => { pad.setPointerCapture(e.pointerId); jm(e); }); pad.addEventListener('pointermove', e => { if (pad.hasPointerCapture(e.pointerId)) jm(e); });
+  const rel = () => { joy.x = 0; joy.y = 0; knob.style.transform = ''; }; pad.addEventListener('pointerup', rel); pad.addEventListener('pointercancel', rel);
+  let armed = false; $('#reset').onclick = e => { if (!armed) { armed = true; e.target.textContent = 'Tap again to erase your progress'; setTimeout(() => { armed = false; e.target.textContent = 'Reset progress'; }, 3000); return; } try { localStorage.removeItem(KEY); } catch (x) {} G = null; cancelAnimationFrame(raf); Object.keys(SCN).forEach(k => delete SCN[k]); scene = null; renderTitle(); };
+  last = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+}
+addEventListener('keydown', e => {
+  if (!G || !cv) return; const k = e.key.toLowerCase();
+  if (['arrowup', 'w'].includes(k)) keys.up = 1; else if (['arrowdown', 's'].includes(k)) keys.down = 1; else if (['arrowleft', 'a'].includes(k)) keys.left = 1; else if (['arrowright', 'd'].includes(k)) keys.right = 1;
+  else if (['e', 'enter', ' '].includes(k) && e.target.tagName !== 'BUTTON') { e.preventDefault(); pressA(); } else if (k === 'b' && layer.hidden && !dlg) openBag({ title: 'Ruck' }); else if (k === 'l' && layer.hidden && !dlg) openLog();
+  else if (k === 'escape' && !layer.hidden && !layer.querySelector('[data-noesc]')) closeLayer();
+  if (k.startsWith('arrow')) e.preventDefault();
+});
+addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (['arrowup', 'w'].includes(k)) keys.up = 0; else if (['arrowdown', 's'].includes(k)) keys.down = 0; else if (['arrowleft', 'a'].includes(k)) keys.left = 0; else if (['arrowright', 'd'].includes(k)) keys.right = 0; });
+
+function renderTitle() {
+  cancelAnimationFrame(raf); const saved = loadG(); let pick = saved ? saved.cls : 'scout';
+  const hero = `<svg class="hero" viewBox="0 0 560 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="560" height="250" fill="#bfd8df"/><circle cx="430" cy="90" r="46" fill="#ff7a2f"/><path d="M0 170 L90 110 L170 160 L260 90 L360 165 L450 120 L560 175 V250 H0Z" fill="#8a8f7a" stroke="${INK}" stroke-width="3"/><path d="M0 205 C120 170 220 220 340 195 S500 180 560 200 V250 H0Z" fill="#7d9250" stroke="${INK}" stroke-width="3"/>
+    <path d="M110 214 L128 110 L146 214Z" fill="#e9e4cc" stroke="${INK}" stroke-width="3"/><path d="M116 190H140M120 160H136M124 130H132" stroke="${INK}" stroke-width="3"/><circle cx="128" cy="104" r="7" fill="#ff7a2f" stroke="${INK}" stroke-width="3"/><path d="M104 86 C92 96 92 112 104 122M152 86 C164 96 164 112 152 122M92 76 C74 92 74 116 92 132M164 76 C182 92 182 116 164 132" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+    <g transform="translate(300 150)"><ellipse cx="0" cy="8" rx="12" ry="4" fill="rgba(0,0,0,.25)"/><rect x="-5" y="-6" width="4" height="8" fill="#3b3f2c"/><rect x="1" y="-6" width="4" height="8" fill="#3b3f2c"/><rect x="-6" y="-17" width="12" height="12" fill="#6f7b4c"/><rect x="-5" y="-26" width="10" height="10" fill="#e2ac82"/><rect x="-7" y="-30" width="14" height="7" fill="#5b6b3a"/></g></svg>`;
+  app.innerHTML = `<main class="title">${hero}<h1>E-WIT Field Ops</h1><p class="tag">Enlist, train, and serve: the recruiting station, Basic Training, AIT, and your first unit. Four items in the ruck, so choose well.</p>
+    <section class="pick"><h2>${saved ? 'Welcome back' : 'Choose your operator'}</h2><div class="cards" id="cards">${Object.entries(CLASSES).map(([k, cl]) => `<button class="case cc" data-k="${k}" aria-pressed="${k === pick}">${avatar(k)}<span><b>${cl.n}</b><small>${cl.b} ${cl.perk}</small></span></button>`).join('')}</div>
+    <label class="call">Callsign<input id="call" maxlength="14" value="${saved ? saved.name : CLASSES[pick].call}" autocomplete="off"></label>
+    <div class="row">${saved ? '<button class="btn" id="cont">Continue</button><button class="btn alt" id="newg">New game</button>' : '<button class="btn" id="start">Enlist</button>'}</div></section></main>`;
+  const call = $('#call'); let edited = !!saved; call.oninput = () => edited = true;
+  $('#cards').onclick = e => { const b = e.target.closest('.cc'); if (!b) return; pick = b.dataset.k; $$('.cc').forEach(o => o.setAttribute('aria-pressed', o === b)); if (!edited) call.value = CLASSES[pick].call; };
+  const begin = fresh_ => { G = fresh_ ? fresh(pick, call.value.trim() || CLASSES[pick].call) : saved; save(); renderGame(); enter(G.scene, G.x, G.y); if (fresh_) say(['Recruiting station. Your future starts with a conversation.']); };
+  if (saved) { $('#cont').onclick = () => begin(false); $('#newg').onclick = () => { try { localStorage.removeItem(KEY); } catch (x) {} G = null; renderTitle(); }; } else $('#start').onclick = () => begin(true);
+}
+
+/*DBG*/
+renderTitle();
+})();
+
+</script>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:14px 16px 0;font-family:sans-serif;font-size:11px">
+  <span style="color:#585d42">Related:</span>
+  <a href="../sdrguide/" style="color:#ff7a2f;text-decoration:none">📻 Software-Defined Radio Explained</a>
+  <a href="../sdrsim/" style="color:#ff7a2f;text-decoration:none">📻 SDR Console Simulator</a>
+  <a href="../army/land-nav/" style="color:#ff7a2f;text-decoration:none">🧭 Land Nav Toolkit</a>
+  <a href="../df/" style="color:#ff7a2f;text-decoration:none">🎯 DF Trainer</a>
+</div>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif">
+  <a href="/feedback/" style="color:#585d42;text-decoration:none;border-bottom:1px dotted #585d42;padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<div style="text-align:center;padding:8px 16px 12px;font-family:sans-serif"><a href="/" style="color:#585d42;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+</body>
+</html>
