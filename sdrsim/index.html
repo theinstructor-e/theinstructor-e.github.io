@@ -1,305 +1,2024 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SDR Console Simulator — E-WIT</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
-  --green:#00ff88;--green-dim:#00aa5a;--green-dark:#003322;
-  --amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
-  --cyan:#00d4ff;--red:#ff4444;
-  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
-  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
-}
-[data-theme="light"]{
-  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
-  --green:#007744;--green-dim:#005c34;--green-dark:#d0ffe8;
-  --amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
-  --cyan:#0077aa;--red:#cc2222;
-  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh}
-a{color:inherit}
-header{border-bottom:1px solid var(--border-bright);padding:16px 24px;background:var(--panel);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.hl{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.mil-badge{font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid var(--amber-dim);padding:4px 9px;letter-spacing:2px;background:var(--amber-dark)}
-h1{font-size:22px;font-weight:700;letter-spacing:1px}
-.theme-btn{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;text-decoration:none;display:inline-block}
-.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
-.wrap{max-width:1000px;margin:0 auto;padding:20px 20px 50px}
-.sub{font-family:var(--mono);font-size:12px;color:var(--text-dim);text-align:center;margin-bottom:16px}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SDR Learning Lab</title>
 
-.panel{background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:14px 16px;margin-bottom:14px}
-.panel-title{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-
-#freqDisplay{font-family:var(--mono);font-size:38px;font-weight:700;color:var(--green);text-align:center;letter-spacing:2px;margin-bottom:4px}
-#freqDisplay span{font-size:16px;color:var(--text-dim)}
-.freq-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.freq-row input[type=range]{flex:1}
-.fine-btns{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
-.fine-btns button{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text);padding:5px 12px;cursor:pointer;border-radius:3px}
-.fine-btns button:hover{border-color:var(--cyan);color:var(--cyan)}
-
-canvas{width:100%;display:block;border:1px solid var(--border-bright);border-radius:4px;background:#050708}
-#specCanvas{height:110px;margin-bottom:2px}
-#wfCanvas{height:150px}
-
-.controls-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
-@media(max-width:600px){.controls-row{grid-template-columns:1fr}}
-.ctrl-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px;display:flex;justify-content:space-between}
-.mode-btns{display:flex;gap:6px;flex-wrap:wrap}
-.mode-btns button{flex:1;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:8px 4px;cursor:pointer;border-radius:3px;min-width:52px}
-.mode-btns button.on{border-color:var(--green);color:var(--green);background:var(--green-dark)}
-
-.objective{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.sig-list{display:flex;flex-direction:column;gap:6px}
-.sig-item{font-family:var(--mono);font-size:12.5px;padding:8px 10px;border:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center;color:var(--text-dim)}
-.sig-item.found{border-color:var(--green);color:var(--green)}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--green);color:var(--green);
-  font-family:var(--mono);font-size:13px;padding:10px 20px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200}
-.toast.on{opacity:1}
-.toast.bad{border-color:var(--red);color:var(--red)}
-</style>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070a0c;--panel:#0d1318;--panel2:#101820;--line:#25384a;
+      --text:#d8ecf5;--muted:#6a8090;--accent:#00ff88;--good:#00ff88;
+      --warn:#ffb830;--bad:#ff4a4a;--purple:#00d4ff;
+      --mono:'Share Tech Mono',monospace;--ui:'Rajdhani',sans-serif;
+    }
+    [data-theme="light"]{
+      --bg:#eef2f0;--panel:#ffffff;--panel2:#f5f7f6;--line:#b8c4c0;
+      --text:#1a2a30;--muted:#5a6a70;--accent:#00884a;--good:#00884a;
+      --warn:#b3690a;--bad:#cc2222;--purple:#0088aa;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;min-height:100vh;color:var(--text);
+      background:var(--bg);
+      font-family:var(--mono)
+    }
+    h1{font-family:var(--ui)}
+    header{max-width:1500px;margin:auto;padding:22px 20px 10px}
+    h1{margin:0;color:var(--accent);font-size:clamp(1.45rem,2.5vw,2.2rem)}
+    header p{max-width:950px;margin:8px 0 0;color:var(--muted);line-height:1.5}
+    .app{
+      max-width:1500px;margin:auto;padding:10px 20px 35px;
+      display:grid;grid-template-columns:minmax(0,2fr) minmax(320px,.95fr);
+      gap:16px;align-items:start
+    }
+    .panel{
+      overflow:hidden;background:rgba(16,29,42,.96);border:1px solid var(--line);
+      border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.24)
+    }
+    .panel-title,.display-header{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:12px 14px;background:rgba(3,9,14,.38);border-bottom:1px solid var(--line)
+    }
+    .panel-title strong,.display-header strong{color:var(--accent)}
+    .body{padding:14px}
+    .side{display:block}
+    #spectrumPanel{overscroll-behavior:contain;user-select:none}
+    .header-controls{
+      display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px
+    }
+    .wheel-tune{
+      padding:5px 8px;color:#d9f8ff;background:rgba(55,213,255,.10);
+      border:1px solid rgba(55,213,255,.35);border-radius:6px;font-size:.76rem;
+      font-weight:750;font-variant-numeric:tabular-nums
+    }
+    .wheel-tune.tuning{color:#071018;background:var(--accent);border-color:#c9f7ff}
+    .status{
+      padding:4px 9px;border-radius:999px;color:var(--good);
+      background:rgba(101,232,156,.13);font-size:.76rem;font-weight:800
+    }
+    .status.paused{color:var(--warn);background:rgba(255,194,96,.13)}
+    canvas{display:block;width:100%;cursor:ns-resize;background:#02070b}
+    .readout,.measurement{
+      display:flex;flex-wrap:wrap;gap:7px 18px;padding:10px 14px;
+      color:var(--muted);font-size:.84rem;border-top:1px solid var(--line)
+    }
+    .readout b,.measurement b{color:var(--text);font-variant-numeric:tabular-nums}
+    button{
+      padding:9px 10px;color:var(--text);background:#172b3d;border:1px solid #32516c;
+      border-radius:8px;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer
+    }
+    button:hover:not(:disabled){background:#1c3850;border-color:var(--accent)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    button.active{color:#ecfbff;background:#15506b;border-color:var(--accent)}
+    button.good{color:#e7fff0;background:#17663d;border-color:var(--good)}
+    button.warn{color:#fff4dd;background:#654717;border-color:var(--warn)}
+    .preset-grid,.classification-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .classification-grid .wide{grid-column:1/-1}
+    .row{margin:13px 0}
+    label{
+      display:flex;justify-content:space-between;gap:12px;margin-bottom:7px;
+      color:var(--muted);font-size:.88rem
+    }
+    label.output-label output{color:var(--text);font-weight:800;font-variant-numeric:tabular-nums}
+    input[type="range"]{width:100%;accent-color:var(--accent)}
+    select,textarea{
+      width:100%;color:var(--text);background:var(--panel2);border:1px solid #31506c;
+      border-radius:7px;padding:9px;font:inherit
+    }
+    textarea{min-height:92px;resize:vertical;line-height:1.4}
+    .toggle{
+      display:flex;align-items:center;justify-content:flex-start;gap:8px;
+      color:var(--text);cursor:pointer
+    }
+    .toggle input{accent-color:var(--accent)}
+    .lesson{padding:14px;color:var(--muted);line-height:1.52;font-size:.91rem}
+    .lesson h2{margin:0 0 8px;color:var(--accent);font-size:1.06rem}
+    .lesson p{margin:8px 0}.lesson b{color:var(--text)}
+    .objective{
+      margin:12px 0;padding:10px;color:#e4dcff;background:rgba(181,156,255,.09);
+      border-left:3px solid var(--purple);border-radius:4px;line-height:1.45
+    }
+    .result{margin-top:10px;padding:10px;border-radius:6px;line-height:1.42;font-size:.86rem}
+    .neutral{color:var(--muted);background:rgba(145,170,189,.08)}
+    .good-result{color:#ddffeb;background:rgba(101,232,156,.10);border-left:3px solid var(--good)}
+    .warn-result{color:#fff0d0;background:rgba(255,194,96,.10);border-left:3px solid var(--warn)}
+    .bad-result{color:#ffd9d9;background:rgba(255,118,118,.10);border-left:3px solid var(--bad)}
+    .progress-wrap{padding:12px 14px 14px;border-top:1px solid var(--line)}
+    .progress-label{display:flex;justify-content:space-between;margin-bottom:7px;color:var(--muted);font-size:.82rem}
+    .progress{overflow:hidden;height:9px;background:#071019;border:1px solid #294154;border-radius:999px}
+    .progress>div{
+      width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--good));
+      transition:width 180ms ease
+    }
+    .checklist{display:grid;gap:8px}
+    .check{
+      display:flex;align-items:flex-start;gap:8px;color:var(--muted);
+      font-size:.84rem;line-height:1.35
+    }
+    .check span{
+      display:inline-grid;place-items:center;flex:0 0 20px;width:20px;height:20px;
+      color:#8197aa;background:#0a1620;border:1px solid #294154;border-radius:50%;
+      font-size:.75rem;font-weight:900
+    }
+    .check.complete{color:#d7ffea}
+    .check.complete span{color:#062b17;background:var(--good);border-color:var(--good)}
+    .tiny{margin-top:10px;color:var(--muted);font-size:.78rem;line-height:1.42}
+    .sidebar-tabs{
+      display:flex;flex-wrap:wrap;gap:6px;padding:10px;margin-bottom:12px;
+      background:rgba(3,9,14,.38);border:1px solid var(--line);border-radius:12px
+    }
+    .sidebar-tab{
+      flex:1 1 auto;padding:7px 9px;color:var(--muted);background:#0d1b28;
+      border:1px solid #294154;border-radius:7px;font-size:.78rem;font-weight:750
+    }
+    .sidebar-tab.active{color:#ecfbff;background:#15506b;border-color:var(--accent)}
+    body.tabs-ready .side>.panel{display:none}
+    body.tabs-ready .side>.panel.active-pane{display:block}
+    @media(max-width:1020px){
+      .app{grid-template-columns:1fr}
+      .sidebar-tabs{flex-wrap:nowrap;overflow-x:auto;border-radius:9px}
+      .sidebar-tab{flex:0 0 auto;white-space:nowrap}
+    }
+    @media(max-width:650px){
+      .display-header{align-items:flex-start;flex-direction:column}
+      .header-controls{justify-content:flex-start}
+    }
+  </style>
 </head>
+
 <body>
-<header>
-  <div class="hl">
-    <div class="mil-badge">MIL-SPEC</div>
-    <h1>SDR Console Simulator</h1>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px">
-    <a href="../sdrguide/" class="theme-btn">📘 SDR Guide</a>
-    <button class="theme-btn" id="pause-btn" onclick="togglePause()">⏸ PAUSE</button>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
-  </div>
-</header>
-<div class="sub" style="padding-top:10px">UNCLASSIFIED &nbsp;|&nbsp; Tune, adjust gain, and demodulate real practice signals hidden across the band</div>
+  <header style="position:relative">
+    <button id="themeToggle" type="button" style="position:absolute;top:22px;right:20px;padding:9px 14px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:8px;font-family:var(--ui);font-size:13px;font-weight:700;cursor:pointer">&#9789; THEME</button>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--warn);border:1px solid var(--warn);display:inline-block;padding:3px 9px;letter-spacing:2px;border-radius:3px;margin-bottom:8px">MIL-SPEC</div>
+    <h1>SDR Learning Lab</h1>
+    <p>
+      A synthetic learning environment for spectrum displays, waterfalls,
+      gain, filters, antenna effects, and simulated audio. This page does
+      not connect to HackRF hardware or receive real RF.
+    </p>
+  </header>
 
-<div class="wrap">
+  <main class="app">
+    <section id="spectrumPanel" class="panel">
+      <div class="display-header">
+        <strong>Simulated Spectrum and Waterfall</strong>
 
-  <div class="panel">
-    <div id="freqDisplay">142.500<span> MHz</span></div>
-    <div class="freq-row">
-      <input type="range" id="freqSlider" min="1200" max="1800" value="1425" step="1">
-    </div>
-    <div class="fine-btns">
-      <button onclick="nudge(-1)">&minus;100 kHz</button>
-      <button onclick="nudge(-0.1)">&minus;10 kHz</button>
-      <button onclick="nudge(0.1)">+10 kHz</button>
-      <button onclick="nudge(1)">+100 kHz</button>
-    </div>
-    <canvas id="specCanvas"></canvas>
-    <canvas id="wfCanvas"></canvas>
-  </div>
+        <div class="header-controls">
+          <span id="wheelTuneReadout" class="wheel-tune">
+            Wheel Tune: 100.100 MHz · Step: 1 MHz
+          </span>
 
-  <div class="controls-row">
-    <div class="panel">
-      <div class="ctrl-label"><span>GAIN</span><span id="gainVal">30 dB</span></div>
-      <input type="range" id="gainSlider" min="0" max="50" value="30" style="width:100%;margin-bottom:14px">
-      <div class="ctrl-label">DEMODULATION MODE</div>
-      <div class="mode-btns">
-        <button data-m="AM" class="on" onclick="setMode('AM')">AM</button>
-        <button data-m="FM" onclick="setMode('FM')">FM</button>
-        <button data-m="USB" onclick="setMode('USB')">USB</button>
-        <button data-m="LSB" onclick="setMode('LSB')">LSB</button>
-        <button data-m="CW" onclick="setMode('CW')">CW</button>
+          <span id="status" class="status">RECEIVING — SIMULATED</span>
+        </div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="objective">
-        <div class="panel-title" style="margin-bottom:0">Practice Signals</div>
-        <div class="panel-title" style="margin-bottom:0" id="progressLabel">0 / 5 found</div>
+
+      <canvas id="display" width="1000" height="560"></canvas>
+
+      <div class="readout">
+        <span>Center: <b id="centerReadout">100.100 MHz</b></span>
+        <span>Span: <b id="spanReadout">2.000 MHz</b></span>
+        <span>Filter: <b id="filterReadout">200 kHz</b></span>
+        <span>Mode: <b id="modeReadout">FFT</b></span>
+        <span>Noise floor: <b id="noiseReadout">-105 dB</b></span>
       </div>
-      <div class="sig-list" id="sigList"></div>
-    </div>
-  </div>
 
-  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px;font-family:var(--mono);font-size:11px">
-    <span style="color:var(--text-dim)">Related:</span>
-    <a href="../sigid/" style="color:var(--cyan);text-decoration:none">📻 Signal ID Trainer</a>
-    <a href="../rftheory/" style="color:var(--cyan);text-decoration:none">📡 RF Theory</a>
-    <a href="../cuas/" style="color:var(--cyan);text-decoration:none">🛸 Drone Signal Spectrum</a>
-    <a href="../cuasdemo/" style="color:var(--cyan);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
-    <a href="../fieldops/" style="color:var(--cyan);text-decoration:none">🎮 Field Ops: Enlist to First Unit</a>
-  </div>
+      <div class="measurement">
+        Cursor:
+        <b id="cursorFrequency">Move cursor over spectrum</b>
+        <span>|</span>
+        <b id="cursorPower">—</b>
+      </div>
+    </section>
 
-</div>
+    <aside class="side">
 
-<div class="toast" id="toast"></div>
+      <section class="panel">
+        <div class="panel-title">
+          <strong>Guided learning lab</strong>
+          <span id="labNumber">Lab 1 of 6</span>
+        </div>
 
-<script>
-const MIN_F=120,MAX_F=180; // MHz, tunable range (x10 internally for slider precision)
-const SIGNALS=[
-  {freq:132.3,mode:'AM',name:'Signal 1 — AM voice net'},
-  {freq:144.9,mode:'FM',name:'Signal 2 — FM voice net'},
-  {freq:156.2,mode:'USB',name:'Signal 3 — USB voice'},
-  {freq:163.7,mode:'CW',name:'Signal 4 — CW beacon'},
-  {freq:171.4,mode:'LSB',name:'Signal 5 — LSB voice'}
-];
-let found={};
-let curMode='AM';
-let curFreq=142.5;
-let gain=30;
+        <div id="lesson" class="lesson"></div>
 
-function renderSigList(){
-  document.getElementById('sigList').innerHTML=SIGNALS.map((s,i)=>{
-    const f=found[i];
-    return `<div class="sig-item${f?' found':''}"><span>${f?s.name:'Signal '+(i+1)+' — ??? (find it)'}</span><span>${f?'\u2713 '+s.mode:''}</span></div>`;
-  }).join('');
-  const n=Object.keys(found).length;
-  document.getElementById('progressLabel').textContent=n+' / '+SIGNALS.length+' found';
-}
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>Current lab progress</span>
+            <span id="progressText">0 / 3 objectives</span>
+          </div>
 
-function setMode(m){
-  curMode=m;
-  document.querySelectorAll('.mode-btns button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
-  checkSignal();
-}
+          <div class="progress"><div id="progressBar"></div></div>
+          <div id="checklist" class="checklist" style="margin-top:12px;"></div>
 
-function nudge(deltaMHz){
-  curFreq=Math.max(MIN_F,Math.min(MAX_F,curFreq+deltaMHz));
-  document.getElementById('freqSlider').value=Math.round(curFreq*10);
-  updateFreqDisplay();
-  checkSignal();
-}
+          <button id="nextLab" class="good" style="width:100%;margin-top:14px;">
+            Next lab
+          </button>
+        </div>
+      </section>
 
-function updateFreqDisplay(){
-  document.getElementById('freqDisplay').innerHTML=curFreq.toFixed(3)+'<span> MHz</span>';
-}
+      <section class="panel">
+        <div class="panel-title"><strong>Signal scenario</strong></div>
 
-let toastTimer=null;
-function toast(msg,bad){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.toggle('bad',!!bad);t.classList.add('on');
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2200);
-}
+        <div class="body">
+          <div class="preset-grid">
+            <button class="preset active" data-preset="fm">FM Broadcast</button>
+            <button class="preset" data-preset="nfm">Narrowband FM</button>
+            <button class="preset" data-preset="burst">Burst Signal</button>
+            <button class="preset" data-preset="overload">Overload Demo</button>
+          </div>
 
-function checkSignal(){
-  SIGNALS.forEach((s,i)=>{
-    if(found[i]) return;
-    if(Math.abs(curFreq-s.freq)<0.15){
-      if(curMode===s.mode){
-        found[i]=true;
-        renderSigList();
-        toast('SIGNAL CONFIRMED: '+s.name);
-        if(Object.keys(found).length===SIGNALS.length) setTimeout(()=>toast('ALL SIGNALS FOUND — nice tuning'),2400);
+          <button id="unknownButton" class="warn" style="width:100%;margin-top:10px;">
+            Generate unknown signal challenge
+          </button>
+
+          <label class="toggle" style="margin-top:14px;">
+            <input id="reveal" type="checkbox">
+            Reveal simulated signal labels
+          </label>
+
+          <p class="tiny">
+            Describe width, timing, strength, and location before assuming a
+            signal’s purpose or identity.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title"><strong>Tune, filter, and observe</strong></div>
+
+        <div class="body">
+          <div class="row">
+            <label class="output-label">
+              Center frequency
+              <output id="freqValue"></output>
+            </label>
+            <input id="frequency" type="range" min="88" max="435"
+              step="0.005" value="100.100">
+          </div>
+
+          <div class="row">
+            <label for="wheelStep">Mouse-wheel tuning step</label>
+            <select id="wheelStep">
+              <option value="0.001">1 kHz per wheel step</option>
+              <option value="0.005">5 kHz per wheel step</option>
+              <option value="0.025">25 kHz per wheel step</option>
+              <option value="0.100">100 kHz per wheel step</option>
+              <option value="1.000" selected>1 MHz per wheel step</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label class="output-label">
+              Spectrum span
+              <output id="spanValue"></output>
+            </label>
+            <input id="span" type="range" min="0.25" max="10"
+              step="0.25" value="2">
+          </div>
+
+          <div class="row">
+            <label class="output-label">
+              Receive filter width
+              <output id="filterValue"></output>
+            </label>
+            <input id="filter" type="range" min="5" max="300"
+              step="5" value="200">
+          </div>
+
+          <div class="row">
+            <label for="mode">Listening / observation mode</label>
+            <select id="mode">
+              <option value="FFT">FFT only — observe</option>
+              <option value="WFM">WFM — wide FM</option>
+              <option value="NFM">NFM — narrow FM</option>
+              <option value="AM">AM</option>
+              <option value="USB">USB</option>
+              <option value="LSB">LSB</option>
+            </select>
+          </div>
+
+          <p class="tiny">
+            Hover anywhere over the spectrum panel and scroll. Wheel up raises
+            frequency; wheel down lowers frequency. One wheel movement is
+            limited to one tuning adjustment. Hold <b>Shift</b> for 10 MHz.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title"><strong>Gain and antenna environment</strong></div>
+
+        <div class="body">
+          <div class="row">
+            <label class="output-label">
+              LNA gain
+              <output id="lnaValue"></output>
+            </label>
+            <input id="lna" type="range" min="0" max="40" step="8" value="16">
+          </div>
+
+          <div class="row">
+            <label class="output-label">
+              VGA gain
+              <output id="vgaValue"></output>
+            </label>
+            <input id="vga" type="range" min="0" max="62" step="2" value="20">
+          </div>
+
+          <label class="toggle">
+            <input id="rfAmp" type="checkbox">
+            Enable extra RF amplifier
+          </label>
+
+          <div class="row">
+            <label for="antenna">Simulated antenna condition</label>
+            <select id="antenna">
+              <option value="matched">Matched-band antenna</option>
+              <option value="wideband">Wideband antenna</option>
+              <option value="poor">Poorly matched antenna</option>
+              <option value="strongEnv">Strong-signal environment</option>
+            </select>
+          </div>
+
+          <button id="runButton" style="width:100%;">Pause waterfall</button>
+
+          <div id="gainObservation" class="result neutral">
+            Adjust one variable at a time. Compare the desired signal,
+            noise floor, and unexpected peaks.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title"><strong>Simulated audio</strong></div>
+
+        <div class="body">
+          <button id="audioButton" style="width:100%;">Start simulated audio</button>
+
+          <div id="audioStatus" class="result neutral">
+            Audio is off. This tool generates synthetic training audio only.
+          </div>
+
+          <div class="row">
+            <label for="audioDiagnosis">What does the audio condition suggest?</label>
+            <select id="audioDiagnosis">
+              <option value="">Select an assessment</option>
+              <option value="clear">Clear signal / appropriate settings</option>
+              <option value="wrongMode">Wrong demodulation mode</option>
+              <option value="wrongFilter">Filter mismatch</option>
+              <option value="poorTune">Poor tuning</option>
+              <option value="overload">Receiver overload</option>
+              <option value="burst">Intermittent burst timing</option>
+            </select>
+          </div>
+
+          <button id="checkAudio" style="width:100%;">Check audio assessment</button>
+
+          <div id="audioCheckResult" class="result neutral">
+            Listen, then select the condition that best explains the sound.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title"><strong>Signal classification worksheet</strong></div>
+
+        <div class="body">
+          <div class="classification-grid">
+            <div>
+              <label for="signalWidth">Visible width</label>
+              <select id="signalWidth">
+                <option value="">Select</option>
+                <option value="narrow">Narrow</option>
+                <option value="wide">Wide</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="signalTiming">Timing behavior</label>
+              <select id="signalTiming">
+                <option value="">Select</option>
+                <option value="continuous">Continuous</option>
+                <option value="bursty">Bursty / intermittent</option>
+              </select>
+            </div>
+
+            <div class="wide">
+              <label for="signalStrength">Relative strength</label>
+              <select id="signalStrength">
+                <option value="">Select</option>
+                <option value="weak">Weak</option>
+                <option value="moderate">Moderate</option>
+                <option value="strong">Strong</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="checkClassification" style="width:100%;margin-top:12px;">
+            Check classification
+          </button>
+
+          <div id="classificationResult" class="result neutral">
+            Describe observable characteristics before interpreting a signal.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title"><strong>Observation log</strong></div>
+
+        <div class="body">
+          <label for="observation">
+            Record what you see before revealing labels.
+          </label>
+
+          <textarea id="observation"
+            placeholder="Example: Wide continuous signal centered near 100.100 MHz. Stronger than the local noise and approximately 200 kHz wide."></textarea>
+
+          <button id="saveObservation" style="width:100%;margin-top:10px;">
+            Save observation
+          </button>
+
+          <div id="observationResult" class="result neutral">
+            No observation saved yet.
+          </div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("display");
+    const ctx = canvas.getContext("2d");
+    const spectrumPanel = document.getElementById("spectrumPanel");
+
+    const waterfall = document.createElement("canvas");
+    waterfall.width = canvas.width;
+    waterfall.height = 260;
+
+    const wctx = waterfall.getContext("2d");
+
+    const els = {
+      frequency: document.getElementById("frequency"),
+      wheelStep: document.getElementById("wheelStep"),
+      wheelTuneReadout: document.getElementById("wheelTuneReadout"),
+      span: document.getElementById("span"),
+      filter: document.getElementById("filter"),
+      lna: document.getElementById("lna"),
+      vga: document.getElementById("vga"),
+      rfAmp: document.getElementById("rfAmp"),
+      mode: document.getElementById("mode"),
+      antenna: document.getElementById("antenna"),
+      reveal: document.getElementById("reveal"),
+
+      freqValue: document.getElementById("freqValue"),
+      spanValue: document.getElementById("spanValue"),
+      filterValue: document.getElementById("filterValue"),
+      lnaValue: document.getElementById("lnaValue"),
+      vgaValue: document.getElementById("vgaValue"),
+
+      centerReadout: document.getElementById("centerReadout"),
+      spanReadout: document.getElementById("spanReadout"),
+      filterReadout: document.getElementById("filterReadout"),
+      modeReadout: document.getElementById("modeReadout"),
+      noiseReadout: document.getElementById("noiseReadout"),
+
+      cursorFrequency: document.getElementById("cursorFrequency"),
+      cursorPower: document.getElementById("cursorPower"),
+
+      status: document.getElementById("status"),
+      runButton: document.getElementById("runButton"),
+
+      labNumber: document.getElementById("labNumber"),
+      lesson: document.getElementById("lesson"),
+      checklist: document.getElementById("checklist"),
+      progressText: document.getElementById("progressText"),
+      progressBar: document.getElementById("progressBar"),
+      nextLab: document.getElementById("nextLab"),
+
+      unknownButton: document.getElementById("unknownButton"),
+      gainObservation: document.getElementById("gainObservation"),
+
+      audioButton: document.getElementById("audioButton"),
+      audioStatus: document.getElementById("audioStatus"),
+      audioDiagnosis: document.getElementById("audioDiagnosis"),
+      checkAudio: document.getElementById("checkAudio"),
+      audioCheckResult: document.getElementById("audioCheckResult"),
+
+      signalWidth: document.getElementById("signalWidth"),
+      signalTiming: document.getElementById("signalTiming"),
+      signalStrength: document.getElementById("signalStrength"),
+      checkClassification: document.getElementById("checkClassification"),
+      classificationResult: document.getElementById("classificationResult"),
+
+      observation: document.getElementById("observation"),
+      saveObservation: document.getElementById("saveObservation"),
+      observationResult: document.getElementById("observationResult")
+    };
+
+    const state = {
+      center: 100.100,
+      wheelStep: 1.000,
+      wheelLocked: false,
+      wheelLockTimer: null,
+      wheelFlashTimer: null,
+
+      span: 2.0,
+      filter: 200,
+      lna: 16,
+      vga: 20,
+      rfAmp: false,
+      mode: "FFT",
+      antenna: "matched",
+
+      preset: "fm",
+      reveal: false,
+      running: true,
+      audioOn: false,
+
+      time: 0,
+      cursorX: null,
+      cursorY: null,
+
+      savedObservation: false,
+      classificationCorrect: false,
+      audioCorrect: false,
+
+      lab: 0,
+      unknown: null
+    };
+
+    const presetSettings = {
+      fm: {
+        center: 100.100, span: 2.0, filter: 200,
+        mode: "FFT", lna: 16, vga: 20, rfAmp: false
+      },
+
+      nfm: {
+        center: 162.550, span: 1.0, filter: 15,
+        mode: "FFT", lna: 16, vga: 20, rfAmp: false
+      },
+
+      burst: {
+        center: 433.920, span: 1.0, filter: 25,
+        mode: "FFT", lna: 16, vga: 20, rfAmp: false
+      },
+
+      overload: {
+        center: 100.100, span: 6.0, filter: 200,
+        mode: "FFT", lna: 32, vga: 42, rfAmp: true
+      }
+    };
+
+    const labs = [
+      {
+        title: "Lab 1: Read the display",
+        objective: "Identify the spectrum and waterfall as two views of received energy.",
+        instruction:
+          "<p>Select <b>FM Broadcast</b>. Move the cursor over the broad central signal. Record an observation describing width, timing, and approximate frequency.</p>",
+        labels: [
+          "FM Broadcast scenario selected",
+          "Cursor used on spectrum",
+          "Observation saved"
+        ],
+        checks: [
+          () => state.preset === "fm",
+          () => state.cursorX !== null,
+          () => state.savedObservation
+        ]
+      },
+
+      {
+        title: "Lab 2: Filter lesson",
+        objective: "Match the receive filter to the visible width of a narrow signal.",
+        instruction:
+          "<p>Select <b>Narrowband FM</b>. Set the receive filter to about <b>10–20 kHz</b>. Then classify the signal.</p>",
+        labels: [
+          "Narrowband FM selected",
+          "Filter set to 10–20 kHz",
+          "Classification checked correctly"
+        ],
+        checks: [
+          () => state.preset === "nfm",
+          () => state.filter >= 10 && state.filter <= 20,
+          () => state.classificationCorrect
+        ]
+      },
+
+      {
+        title: "Lab 3: Time behavior",
+        objective: "Use the waterfall to identify intermittent transmissions.",
+        instruction:
+          "<p>Select <b>Burst Signal</b>. Watch the waterfall for several seconds. In FFT-only mode, classify timing as continuous or bursty.</p>",
+        labels: [
+          "Burst Signal selected",
+          "FFT-only mode selected",
+          "Classification checked correctly"
+        ],
+        checks: [
+          () => state.preset === "burst",
+          () => state.mode === "FFT",
+          () => state.classificationCorrect
+        ]
+      },
+
+      {
+        title: "Lab 4: Antenna comparison",
+        objective: "See how antenna condition affects visible signal strength and noise.",
+        instruction:
+          "<p>Use the FM Broadcast scenario. Compare matched-band, wideband, and poorly matched antenna conditions. Record an observation after selecting the poorly matched condition.</p>",
+        labels: [
+          "FM Broadcast selected",
+          "Poorly matched antenna selected",
+          "Observation saved"
+        ],
+        checks: [
+          () => state.preset === "fm",
+          () => state.antenna === "poor",
+          () => state.savedObservation
+        ]
+      },
+
+      {
+        title: "Lab 5: Gain, overload, and audio",
+        objective: "Recognize that excessive gain can degrade both display quality and audio.",
+        instruction:
+          "<p>Select <b>Overload Demo</b>. Start audio. Reduce LNA/VGA gain, disable the RF amplifier, and identify the improved audio condition.</p>",
+        labels: [
+          "Overload Demo selected",
+          "Gain reduced and RF amplifier disabled",
+          "Audio assessment correct"
+        ],
+        checks: [
+          () => state.preset === "overload",
+          () => !state.rfAmp && state.lna <= 16 && state.vga <= 24,
+          () => state.audioCorrect
+        ]
+      },
+
+      {
+        title: "Lab 6: Unknown signal challenge",
+        objective: "Describe a signal based on observable evidence rather than assumptions.",
+        instruction:
+          "<p>Generate an unknown challenge. Tune near its center, select a reasonable filter and mode, then classify width, timing, and strength.</p>",
+        labels: [
+          "Unknown signal generated",
+          "Observation saved",
+          "Classification checked correctly"
+        ],
+        checks: [
+          () => state.preset === "unknown",
+          () => state.savedObservation,
+          () => state.classificationCorrect
+        ]
+      }
+    ];
+
+    function setResult(element, type, text) {
+      element.className = "result " + type;
+      element.textContent = text;
+    }
+
+    function gainAmount() {
+      return state.lna * 0.55 + state.vga * 0.28 + (state.rfAmp ? 12 : 0);
+    }
+
+    function bell(distanceMHz, widthMHz, peakDb) {
+      const x = distanceMHz / widthMHz;
+      return peakDb * Math.exp(-0.5 * x * x);
+    }
+
+    function antennaEffect() {
+      return {
+        matched: {
+          signal: 8,
+          noise: -2,
+          description: "Matched-band antenna: strongest useful signal in this simulation."
+        },
+
+        wideband: {
+          signal: 0,
+          noise: 2,
+          description: "Wideband antenna: general coverage with more environmental noise."
+        },
+
+        poor: {
+          signal: -15,
+          noise: 1,
+          description: "Poorly matched antenna: desired signal is weaker."
+        },
+
+        strongEnv: {
+          signal: 4,
+          noise: 8,
+          description: "Strong-signal environment: nearby energy makes overload more likely."
+        }
+      }[state.antenna];
+    }
+
+    function overloaded() {
+      const highGain =
+        state.lna >= 24 ||
+        state.vga >= 34 ||
+        state.rfAmp;
+
+      return (
+        (state.preset === "overload" && highGain) ||
+        (state.antenna === "strongEnv" && highGain)
+      );
+    }
+
+    function targetFrequency() {
+      if (state.preset === "fm") return 100.100;
+      if (state.preset === "nfm") return 162.550;
+      if (state.preset === "burst") return 433.920;
+      if (state.preset === "overload") return 100.100;
+      if (state.preset === "unknown") return state.unknown.frequency;
+      return state.center;
+    }
+
+    function expectedMode() {
+      if (state.preset === "fm") return "WFM";
+      if (state.preset === "nfm") return "NFM";
+      if (state.preset === "burst") return "FFT";
+      if (state.preset === "overload") return "WFM";
+      if (state.preset === "unknown") return state.unknown.mode;
+      return "FFT";
+    }
+
+    function expectedFilter() {
+      if (state.preset === "fm" || state.preset === "overload") return [150, 260];
+      if (state.preset === "nfm") return [8, 25];
+      if (state.preset === "burst") return [10, 50];
+      if (state.preset === "unknown") return state.unknown.filter;
+      return [5, 300];
+    }
+
+    function tunedCorrectly() {
+      return Math.abs(state.center - targetFrequency()) <= Math.max(0.015, state.span * 0.08);
+    }
+
+    function filteredCorrectly() {
+      const range = expectedFilter();
+      return state.filter >= range[0] && state.filter <= range[1];
+    }
+
+    function modeCorrectlySelected() {
+      return state.mode === expectedMode();
+    }
+
+    function signals() {
+      if (state.preset === "fm") {
+        return [
+          { f: 99.700, w: 0.070, p: 22, label: "Wide signal A" },
+          { f: 100.100, w: 0.095, p: 48, label: "Wide signal B" },
+          { f: 100.700, w: 0.080, p: 30, label: "Wide signal C" }
+        ];
+      }
+
+      if (state.preset === "nfm") {
+        return [
+          { f: 162.475, w: 0.006, p: 16, label: "Narrow signal A" },
+          { f: 162.550, w: 0.008, p: 42, label: "Narrow signal B" },
+          { f: 162.600, w: 0.006, p: 20, label: "Narrow signal C" }
+        ];
+      }
+
+      if (state.preset === "burst") {
+        const active = Math.sin(state.time * 0.055) > 0.35;
+
+        return [
+          {
+            f: 433.920,
+            w: 0.018,
+            p: active ? 47 : 0,
+            label: active ? "Burst active" : "Burst inactive"
+          },
+          {
+            f: 434.120,
+            w: 0.012,
+            p: 12,
+            label: "Weak steady signal"
+          }
+        ];
+      }
+
+      if (state.preset === "overload") {
+        return [
+          { f: 99.900, w: 0.090, p: 57, label: "Very strong signal A" },
+          { f: 100.100, w: 0.090, p: 63, label: "Very strong signal B" },
+          { f: 100.300, w: 0.090, p: 51, label: "Strong signal C" }
+        ];
+      }
+
+      if (state.preset === "unknown") {
+        const u = state.unknown;
+
+        const active = u.timing === "bursty"
+          ? Math.sin(state.time * u.burstRate) > 0.30
+          : true;
+
+        return [
+          {
+            f: u.frequency,
+            w: u.widthMHz,
+            p: active ? u.power : 0,
+            label: "Unknown training signal"
+          },
+          {
+            f: u.frequency + u.secondaryOffset,
+            w: u.widthMHz * 0.55,
+            p: u.secondaryPower,
+            label: "Secondary signal"
+          }
+        ];
+      }
+
+      return [];
+    }
+
+    function classificationAnswer() {
+      if (state.preset === "fm") {
+        return { width: "wide", timing: "continuous", strength: "strong" };
+      }
+
+      if (state.preset === "nfm") {
+        return { width: "narrow", timing: "continuous", strength: "strong" };
+      }
+
+      if (state.preset === "burst") {
+        return { width: "narrow", timing: "bursty", strength: "strong" };
+      }
+
+      if (state.preset === "overload") {
+        return { width: "wide", timing: "continuous", strength: "strong" };
+      }
+
+      if (state.preset === "unknown") {
+        return {
+          width: state.unknown.width,
+          timing: state.unknown.timing,
+          strength: state.unknown.strength
+        };
+      }
+
+      return {};
+    }
+
+    function createUnknown() {
+      const profiles = [
+        {
+          frequency: 145.780,
+          widthMHz: 0.008,
+          power: 38,
+          secondaryOffset: 0.055,
+          secondaryPower: 12,
+          width: "narrow",
+          timing: "continuous",
+          strength: "strong",
+          mode: "NFM",
+          filter: [8, 25],
+          burstRate: 0.05
+        },
+
+        {
+          frequency: 315.000,
+          widthMHz: 0.014,
+          power: 31,
+          secondaryOffset: 0.180,
+          secondaryPower: 8,
+          width: "narrow",
+          timing: "bursty",
+          strength: "moderate",
+          mode: "FFT",
+          filter: [10, 45],
+          burstRate: 0.09
+        },
+
+        {
+          frequency: 97.900,
+          widthMHz: 0.085,
+          power: 42,
+          secondaryOffset: 0.480,
+          secondaryPower: 19,
+          width: "wide",
+          timing: "continuous",
+          strength: "strong",
+          mode: "WFM",
+          filter: [150, 260],
+          burstRate: 0.04
+        },
+
+        {
+          frequency: 433.650,
+          widthMHz: 0.011,
+          power: 22,
+          secondaryOffset: 0.095,
+          secondaryPower: 10,
+          width: "narrow",
+          timing: "bursty",
+          strength: "weak",
+          mode: "FFT",
+          filter: [10, 35],
+          burstRate: 0.13
+        }
+      ];
+
+      state.unknown = profiles[Math.floor(Math.random() * profiles.length)];
+      state.preset = "unknown";
+      state.center = Number((state.unknown.frequency + 0.110).toFixed(3));
+      state.span = state.unknown.width === "wide" ? 2.0 : 0.75;
+      state.filter = 50;
+      state.mode = "FFT";
+      state.lna = 16;
+      state.vga = 20;
+      state.rfAmp = false;
+      state.antenna = "matched";
+
+      syncInputsFromState();
+      resetExercises();
+
+      document.querySelectorAll(".preset").forEach(button => {
+        button.classList.remove("active");
+      });
+
+      setResult(
+        els.observationResult,
+        "neutral",
+        "Unknown challenge generated. Describe the signal before revealing labels."
+      );
+    }
+
+    function makeSpectrum(width) {
+      const values = new Array(width);
+      const gain = gainAmount();
+      const antenna = antennaEffect();
+      const overloadedNow = overloaded();
+
+      const noiseFloor =
+        -111 +
+        gain * 0.32 +
+        antenna.noise +
+        (overloadedNow ? 12 : 0);
+
+      const signalList = signals();
+
+      for (let x = 0; x < width; x++) {
+        const fraction = x / (width - 1);
+        const frequency = state.center - state.span / 2 + fraction * state.span;
+
+        let db =
+          noiseFloor +
+          Math.sin(x * 0.19 + state.time * 0.018) * 2.0 +
+          Math.sin(x * 0.043 - state.time * 0.010) * 1.6 +
+          (Math.random() - 0.5) * 5.2;
+
+        for (const signal of signalList) {
+          db += bell(
+            frequency - signal.f,
+            signal.w,
+            signal.p + gain * 0.55 + antenna.signal
+          );
+        }
+
+        if (overloadedNow) {
+          const offsets = [-1.25, -0.82, -0.41, 0.52, 0.91, 1.38];
+
+          for (const offset of offsets) {
+            db += bell(
+              frequency - (targetFrequency() + offset),
+              0.025,
+              16 + gain * 0.18
+            );
+          }
+        }
+
+        values[x] = Math.max(-125, Math.min(-5, db));
+      }
+
+      return { values, noiseFloor };
+    }
+
+    function waterfallColor(db) {
+      const n = Math.max(0, Math.min(1, (db + 120) / 105));
+
+      if (n < 0.34) {
+        const t = n / 0.34;
+        return [3, Math.round(10 + 36 * t), Math.round(18 + 72 * t)];
+      }
+
+      if (n < 0.61) {
+        const t = (n - 0.34) / 0.27;
+        return [
+          Math.round(2 + 8 * t),
+          Math.round(47 + 153 * t),
+          Math.round(92 + 120 * t)
+        ];
+      }
+
+      if (n < 0.82) {
+        const t = (n - 0.61) / 0.21;
+        return [
+          Math.round(10 + 240 * t),
+          Math.round(195 + 40 * t),
+          Math.round(210 - 125 * t)
+        ];
+      }
+
+      const t = (n - 0.82) / 0.18;
+
+      return [255, Math.round(235 - 140 * t), Math.round(84 - 55 * t)];
+    }
+
+    function drawGrid(width, spectrumHeight) {
+      ctx.strokeStyle = "rgba(120,160,190,.17)";
+      ctx.lineWidth = 1;
+      ctx.font = "11px system-ui";
+      ctx.fillStyle = "#82a0b6";
+
+      for (let i = 0; i <= 10; i++) {
+        const x = (width / 10) * i;
+
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, spectrumHeight);
+        ctx.stroke();
+
+        const frequency =
+          state.center - state.span / 2 + state.span * (i / 10);
+
+        ctx.fillText(
+          frequency.toFixed(state.span < 2 ? 3 : 2),
+          x + 4,
+          spectrumHeight - 6
+        );
+      }
+
+      for (let db = -120; db <= 0; db += 20) {
+        const y = ((0 - db) / 120) * (spectrumHeight - 25);
+
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+
+        ctx.fillText(db + " dB", 5, y - 4);
       }
     }
-  });
-}
 
-document.getElementById('freqSlider').addEventListener('input',e=>{
-  curFreq=e.target.value/10;
-  updateFreqDisplay();
-  checkSignal();
-});
-document.getElementById('gainSlider').addEventListener('input',e=>{
-  gain=+e.target.value;
-  document.getElementById('gainVal').textContent=gain+' dB';
-});
+    function drawFilter(width, spectrumHeight) {
+      const filterMHz = state.filter / 1000;
+      const leftEdge = state.center - state.span / 2;
 
-/* ===== spectrum + waterfall rendering ===== */
-const specCanvas=document.getElementById('specCanvas'), wfCanvas=document.getElementById('wfCanvas');
-const specCtx=specCanvas.getContext('2d'), wfCtx=wfCanvas.getContext('2d');
-let wfHistory=[];
+      const x1 =
+        ((state.center - filterMHz / 2 - leftEdge) / state.span) * width;
 
-function resizeCanvases(){
-  [specCanvas,wfCanvas].forEach(c=>{
-    const r=c.getBoundingClientRect();
-    c.width=r.width*devicePixelRatio;c.height=r.height*devicePixelRatio;
-  });
-}
-window.addEventListener('resize',resizeCanvases);
+      const x2 =
+        ((state.center + filterMHz / 2 - leftEdge) / state.span) * width;
 
-function computeRow(w){
-  const row=new Array(w);
-  const gainFactor=gain/50;
-  for(let x=0;x<w;x++){
-    const f=MIN_F+(x/w)*(MAX_F-MIN_F);
-    let v=0.05+Math.random()*0.05*(0.4+gainFactor);
-    SIGNALS.forEach(s=>{
-      const d=Math.abs(f-s.freq);
-      if(d<0.6){
-        const spike=Math.exp(-(d*d)/(2*0.12*0.12))*(0.5+gainFactor*0.6)*(0.85+Math.random()*0.15);
-        if(spike>v) v=spike;
+      ctx.fillStyle = "rgba(0,255,136,.09)";
+      ctx.fillRect(x1, 0, x2 - x1, spectrumHeight);
+
+      ctx.strokeStyle = "rgba(0,255,136,.72)";
+      ctx.strokeRect(x1, 0, x2 - x1, spectrumHeight);
+    }
+
+    function drawLabels() {
+      const leftEdge = state.center - state.span / 2;
+
+      ctx.font = "11px system-ui";
+      ctx.fillStyle = "#e4f5ff";
+
+      for (const signal of signals()) {
+        const x = ((signal.f - leftEdge) / state.span) * canvas.width;
+
+        if (x >= 0 && x <= canvas.width && signal.p > 0) {
+          ctx.fillText(
+            signal.label,
+            Math.min(x + 4, canvas.width - 155),
+            24
+          );
+        }
+      }
+    }
+
+    function drawCursor(values, spectrumHeight) {
+      if (state.cursorX === null || state.cursorY === null) return;
+      if (state.cursorY > spectrumHeight) return;
+
+      const index = Math.max(
+        0,
+        Math.min(values.length - 1, Math.round(state.cursorX))
+      );
+
+      const db = values[index];
+      const y = ((0 - db) / 120) * (spectrumHeight - 25);
+
+      ctx.strokeStyle = "rgba(255,255,255,.62)";
+      ctx.setLineDash([3, 3]);
+
+      ctx.beginPath();
+      ctx.moveTo(state.cursorX, 0);
+      ctx.lineTo(state.cursorX, spectrumHeight);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#fff";
+
+      ctx.beginPath();
+      ctx.arc(state.cursorX, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawSpectrum(values, spectrumHeight) {
+      drawFilter(canvas.width, spectrumHeight);
+
+      ctx.beginPath();
+
+      values.forEach((db, x) => {
+        const y = ((0 - db) / 120) * (spectrumHeight - 25);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.lineTo(canvas.width, spectrumHeight - 25);
+      ctx.lineTo(0, spectrumHeight - 25);
+      ctx.closePath();
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, spectrumHeight);
+      gradient.addColorStop(0, "rgba(0,255,136,.38)");
+      gradient.addColorStop(1, "rgba(0,255,136,.02)");
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      ctx.beginPath();
+
+      values.forEach((db, x) => {
+        const y = ((0 - db) / 120) * (spectrumHeight - 25);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.strokeStyle = "#00ff88";
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      ctx.strokeStyle = "#ffb830";
+      ctx.setLineDash([5, 4]);
+
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0);
+      ctx.lineTo(canvas.width / 2, spectrumHeight);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      if (state.reveal) drawLabels();
+      drawCursor(values, spectrumHeight);
+    }
+
+    function updateWaterfall(values) {
+      wctx.drawImage(
+        waterfall,
+        0, 0, waterfall.width, waterfall.height - 1,
+        0, 1, waterfall.width, waterfall.height - 1
+      );
+
+      const line = wctx.createImageData(waterfall.width, 1);
+
+      for (let x = 0; x < waterfall.width; x++) {
+        const [r, g, b] = waterfallColor(values[x]);
+        const i = x * 4;
+
+        line.data[i] = r;
+        line.data[i + 1] = g;
+        line.data[i + 2] = b;
+        line.data[i + 3] = 255;
+      }
+
+      wctx.putImageData(line, 0, 0);
+    }
+
+    function drawWaterfall(spectrumHeight) {
+      const y = spectrumHeight + 1;
+
+      ctx.drawImage(waterfall, 0, y);
+
+      ctx.strokeStyle = "rgba(255,184,48,.7)";
+      ctx.setLineDash([4, 4]);
+
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, y);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(225,240,250,.72)";
+      ctx.font = "12px system-ui";
+
+      ctx.fillText(
+        "WATERFALL — newest data at top; older data moves downward",
+        8,
+        y + 17
+      );
+    }
+
+    let audio = null;
+
+    function noiseBuffer(audioContext, seconds = 2) {
+      const buffer = audioContext.createBuffer(
+        1,
+        audioContext.sampleRate * seconds,
+        audioContext.sampleRate
+      );
+
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < data.length; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      return buffer;
+    }
+
+    function startAudio() {
+      if (audio) {
+        audio.ctx.resume();
+        state.audioOn = true;
+        els.audioButton.textContent = "Stop simulated audio";
+        return;
+      }
+
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContextClass) {
+        setResult(
+          els.audioStatus,
+          "bad-result",
+          "This browser does not support the Web Audio API."
+        );
+        return;
+      }
+
+      const ac = new AudioContextClass();
+
+      const master = ac.createGain();
+      master.gain.value = 0.16;
+      master.connect(ac.destination);
+
+      const tone1 = ac.createOscillator();
+      const tone2 = ac.createOscillator();
+      const voice = ac.createOscillator();
+
+      tone1.type = "sine";
+      tone2.type = "triangle";
+      voice.type = "sine";
+
+      tone1.frequency.value = 440;
+      tone2.frequency.value = 660;
+      voice.frequency.value = 2.3;
+
+      const tone1Gain = ac.createGain();
+      const tone2Gain = ac.createGain();
+      const voiceGain = ac.createGain();
+
+      tone1Gain.gain.value = 0;
+      tone2Gain.gain.value = 0;
+      voiceGain.gain.value = 0;
+
+      tone1.connect(tone1Gain);
+      tone2.connect(tone2Gain);
+      tone1Gain.connect(master);
+      tone2Gain.connect(master);
+
+      voice.connect(voiceGain);
+      voiceGain.connect(tone1Gain.gain);
+
+      const noise = ac.createBufferSource();
+      const noiseFilter = ac.createBiquadFilter();
+      const noiseGain = ac.createGain();
+
+      noise.buffer = noiseBuffer(ac);
+      noise.loop = true;
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.value = 1700;
+      noiseFilter.Q.value = 0.7;
+      noiseGain.gain.value = 0.001;
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(master);
+
+      tone1.start();
+      tone2.start();
+      voice.start();
+      noise.start();
+
+      audio = {
+        ctx: ac,
+        tone1,
+        tone2,
+        tone1Gain,
+        tone2Gain,
+        voiceGain,
+        noiseGain
+      };
+
+      state.audioOn = true;
+      els.audioButton.textContent = "Stop simulated audio";
+
+      setResult(
+        els.audioStatus,
+        "good-result",
+        "Simulated audio started. Adjust tuning, mode, filter, gain, and antenna condition."
+      );
+    }
+
+    function stopAudio() {
+      if (!audio) return;
+
+      audio.ctx.suspend();
+      state.audioOn = false;
+      els.audioButton.textContent = "Start simulated audio";
+
+      setResult(els.audioStatus, "neutral", "Simulated audio paused.");
+    }
+
+    function audioCondition() {
+      if (!tunedCorrectly()) return "poorTune";
+      if (state.preset === "burst") return "burst";
+      if (overloaded()) return "overload";
+      if (!modeCorrectlySelected()) return "wrongMode";
+      if (!filteredCorrectly()) return "wrongFilter";
+      return "clear";
+    }
+
+    function updateAudio() {
+      if (!audio || !state.audioOn) return;
+
+      const now = audio.ctx.currentTime;
+      const condition = audioCondition();
+      const gain = gainAmount();
+
+      let tone1Level = 0;
+      let tone2Level = 0;
+      let voiceLevel = 0;
+      let noiseLevel = 0.006 + Math.max(0, gain - 18) * 0.0012;
+
+      if (condition === "poorTune") {
+        noiseLevel = 0.03;
+
+        setResult(
+          els.audioStatus,
+          "warn-result",
+          "Audio condition: poor tuning. The target is not centered well enough."
+        );
+      }
+
+      if (condition === "burst") {
+        const active = Math.sin(state.time * 0.055) > 0.35;
+
+        tone1Level = active ? 0.08 : 0;
+        noiseLevel = 0.008;
+
+        audio.tone1.frequency.setTargetAtTime(900, now, 0.02);
+        audio.tone2.frequency.setTargetAtTime(1200, now, 0.02);
+
+        setResult(
+          els.audioStatus,
+          "neutral",
+          "Audio condition: short tones represent burst timing."
+        );
+      }
+
+      if (condition === "overload") {
+        tone1Level = 0.06;
+        tone2Level = 0.05;
+        noiseLevel = 0.10;
+
+        audio.tone1.frequency.setTargetAtTime(390, now, 0.03);
+        audio.tone2.frequency.setTargetAtTime(735, now, 0.03);
+
+        setResult(
+          els.audioStatus,
+          "bad-result",
+          "Audio condition: overload simulated. Reduce gain and disable the RF amplifier."
+        );
+      }
+
+      if (condition === "wrongMode") {
+        tone1Level = 0.008;
+        noiseLevel = 0.045;
+
+        audio.tone1.frequency.setTargetAtTime(520, now, 0.03);
+
+        setResult(
+          els.audioStatus,
+          "warn-result",
+          "Audio condition: selected demodulation mode is not appropriate."
+        );
+      }
+
+      if (condition === "wrongFilter") {
+        tone1Level = 0.05;
+        tone2Level = state.preset === "fm" ? 0.025 : 0.005;
+        noiseLevel = 0.028;
+
+        setResult(
+          els.audioStatus,
+          "warn-result",
+          "Audio condition: selected mode is appropriate, but filter width is mismatched."
+        );
+      }
+
+      if (condition === "clear") {
+        if (expectedMode() === "WFM") {
+          tone1Level = 0.09;
+          tone2Level = 0.045;
+          noiseLevel = 0.008;
+
+          audio.tone1.frequency.setTargetAtTime(440, now, 0.03);
+          audio.tone2.frequency.setTargetAtTime(660, now, 0.03);
+        }
+
+        if (expectedMode() === "NFM") {
+          tone1Level = 0.07;
+          tone2Level = 0.008;
+          voiceLevel = 0.025;
+          noiseLevel = 0.010;
+
+          audio.tone1.frequency.setTargetAtTime(760, now, 0.03);
+          audio.tone2.frequency.setTargetAtTime(1080, now, 0.03);
+        }
+
+        setResult(
+          els.audioStatus,
+          "good-result",
+          "Audio condition: clear simulated signal. Tuning, mode, and filter are appropriately matched."
+        );
+      }
+
+      audio.tone1Gain.gain.setTargetAtTime(tone1Level, now, 0.03);
+      audio.tone2Gain.gain.setTargetAtTime(tone2Level, now, 0.03);
+      audio.noiseGain.gain.setTargetAtTime(noiseLevel, now, 0.03);
+      audio.voiceGain.gain.setTargetAtTime(voiceLevel, now, 0.05);
+    }
+
+    function resetExercises() {
+      state.savedObservation = false;
+      state.classificationCorrect = false;
+      state.audioCorrect = false;
+
+      els.observation.value = "";
+      els.signalWidth.value = "";
+      els.signalTiming.value = "";
+      els.signalStrength.value = "";
+      els.audioDiagnosis.value = "";
+
+      setResult(els.observationResult, "neutral", "No observation saved yet.");
+
+      setResult(
+        els.classificationResult,
+        "neutral",
+        "Describe visible characteristics before interpreting a signal."
+      );
+
+      setResult(
+        els.audioCheckResult,
+        "neutral",
+        "Listen, then select the condition that best explains the sound."
+      );
+    }
+
+    function updateLesson() {
+      const lab = labs[state.lab];
+
+      const checks = lab.checks.map((check, index) => ({
+        complete: check(),
+        label: lab.labels[index]
+      }));
+
+      const done = checks.filter(item => item.complete).length;
+      const complete = done === checks.length;
+
+      els.labNumber.textContent = `Lab ${state.lab + 1} of ${labs.length}`;
+
+      els.lesson.innerHTML = `
+        <h2>${lab.title}</h2>
+        <div class="objective"><b>Objective:</b> ${lab.objective}</div>
+        ${lab.instruction}
+      `;
+
+      els.checklist.innerHTML = checks.map(item => `
+        <div class="check ${item.complete ? "complete" : ""}">
+          <span>${item.complete ? "✓" : "○"}</span>
+          <div>${item.label}</div>
+        </div>
+      `).join("");
+
+      els.progressText.textContent = `${done} / ${checks.length} objectives`;
+      els.progressBar.style.width = `${(done / checks.length) * 100}%`;
+
+      if (complete && state.lab < labs.length - 1) {
+        els.nextLab.textContent = "Lab complete — continue";
+        els.nextLab.className = "good";
+        els.nextLab.disabled = false;
+      } else if (complete) {
+        els.nextLab.textContent = "All labs complete";
+        els.nextLab.className = "good";
+        els.nextLab.disabled = true;
+      } else {
+        els.nextLab.textContent = "Next lab";
+        els.nextLab.className = "";
+        els.nextLab.disabled = false;
+      }
+    }
+
+    function updateGainMessage() {
+      const antenna = antennaEffect();
+      const gain = gainAmount();
+
+      if (overloaded()) {
+        setResult(
+          els.gainObservation,
+          "bad-result",
+          "Overload is simulated. Noise rises and false-looking peaks appear. Reduce gain or disable the RF amplifier."
+        );
+        return;
+      }
+
+      if (state.antenna === "poor") {
+        setResult(
+          els.gainObservation,
+          "warn-result",
+          antenna.description + " More gain may also raise noise."
+        );
+        return;
+      }
+
+      if (state.antenna === "strongEnv") {
+        setResult(
+          els.gainObservation,
+          "warn-result",
+          antenna.description + " High gain can create misleading artifacts."
+        );
+        return;
+      }
+
+      if (state.lna <= 8 && state.vga <= 10) {
+        setResult(
+          els.gainObservation,
+          "warn-result",
+          "Gain is low. The display is clean, but weaker signals may be difficult to separate from noise."
+        );
+        return;
+      }
+
+      if (gain > 36 || state.rfAmp) {
+        setResult(
+          els.gainObservation,
+          "warn-result",
+          "Gain is high. Check whether the signal is actually clearer—not merely taller."
+        );
+        return;
+      }
+
+      setResult(
+        els.gainObservation,
+        "good-result",
+        antenna.description + " Gain is moderate, which is a useful baseline."
+      );
+    }
+
+    function updateReadouts(noiseFloor) {
+      els.freqValue.textContent = state.center.toFixed(3) + " MHz";
+      els.spanValue.textContent = state.span.toFixed(2) + " MHz";
+      els.filterValue.textContent = state.filter + " kHz";
+      els.lnaValue.textContent = state.lna + " dB";
+      els.vgaValue.textContent = state.vga + " dB";
+
+      els.centerReadout.textContent = state.center.toFixed(3) + " MHz";
+      els.spanReadout.textContent = state.span.toFixed(3) + " MHz";
+      els.filterReadout.textContent = state.filter + " kHz";
+      els.modeReadout.textContent = state.mode;
+      els.noiseReadout.textContent = Math.round(noiseFloor) + " dB";
+
+      const stepText =
+        state.wheelStep >= 1
+          ? `${state.wheelStep.toFixed(0)} MHz`
+          : `${state.wheelStep * 1000} kHz`;
+
+      els.wheelTuneReadout.textContent =
+        `Wheel Tune: ${state.center.toFixed(3)} MHz · Step: ${stepText}`;
+    }
+
+    function updateCursor(values) {
+      const spectrumHeight = 280;
+
+      if (
+        state.cursorX === null ||
+        state.cursorY === null ||
+        state.cursorY > spectrumHeight
+      ) {
+        els.cursorFrequency.textContent = "Move cursor over spectrum";
+        els.cursorPower.textContent = "—";
+        return;
+      }
+
+      const fraction = state.cursorX / canvas.width;
+      const frequency = state.center - state.span / 2 + fraction * state.span;
+
+      const index = Math.max(
+        0,
+        Math.min(values.length - 1, Math.round(state.cursorX))
+      );
+
+      els.cursorFrequency.textContent = frequency.toFixed(4) + " MHz";
+      els.cursorPower.textContent = values[index].toFixed(1) + " dB";
+    }
+
+    function syncStateFromInputs() {
+      state.center = Number(els.frequency.value);
+      state.wheelStep = Number(els.wheelStep.value);
+      state.span = Number(els.span.value);
+      state.filter = Number(els.filter.value);
+      state.lna = Number(els.lna.value);
+      state.vga = Number(els.vga.value);
+      state.rfAmp = els.rfAmp.checked;
+      state.mode = els.mode.value;
+      state.antenna = els.antenna.value;
+      state.reveal = els.reveal.checked;
+    }
+
+    function syncInputsFromState() {
+      els.frequency.value = state.center;
+      els.wheelStep.value = state.wheelStep;
+      els.span.value = state.span;
+      els.filter.value = state.filter;
+      els.lna.value = state.lna;
+      els.vga.value = state.vga;
+      els.rfAmp.checked = state.rfAmp;
+      els.mode.value = state.mode;
+      els.antenna.value = state.antenna;
+      els.reveal.checked = state.reveal;
+    }
+
+    function choosePreset(name) {
+      const preset = presetSettings[name];
+
+      state.preset = name;
+      state.unknown = null;
+      state.center = preset.center;
+      state.span = preset.span;
+      state.filter = preset.filter;
+      state.mode = preset.mode;
+      state.lna = preset.lna;
+      state.vga = preset.vga;
+      state.rfAmp = preset.rfAmp;
+      state.antenna = "matched";
+
+      syncInputsFromState();
+      resetExercises();
+
+      document.querySelectorAll(".preset").forEach(button => {
+        button.classList.toggle("active", button.dataset.preset === name);
+      });
+    }
+
+    function setupTabs() {
+      const sidebar = document.querySelector("aside.side");
+
+      const names = [
+        "Learn",
+        "Scenario",
+        "Receiver",
+        "Gain / Antenna",
+        "Audio",
+        "Classify",
+        "Log"
+      ];
+
+      const panels = Array.from(sidebar.children).filter(element =>
+        element.classList.contains("panel")
+      );
+
+      const tabBar = document.createElement("nav");
+      tabBar.className = "sidebar-tabs";
+
+      const tabs = [];
+
+      function selectTab(index) {
+        panels.forEach((panel, panelIndex) => {
+          panel.classList.toggle("active-pane", panelIndex === index);
+        });
+
+        tabs.forEach((tab, tabIndex) => {
+          tab.classList.toggle("active", tabIndex === index);
+        });
+      }
+
+      panels.forEach((panel, index) => {
+        const tab = document.createElement("button");
+
+        tab.type = "button";
+        tab.className = "sidebar-tab";
+        tab.textContent = names[index] || `Panel ${index + 1}`;
+
+        tab.addEventListener("click", () => selectTab(index));
+
+        tabs.push(tab);
+        tabBar.appendChild(tab);
+      });
+
+      sidebar.insertBefore(tabBar, panels[0]);
+      selectTab(2);
+      document.body.classList.add("tabs-ready");
+    }
+
+    function tuneByWheel(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      /*
+        Many mice and trackpads emit several browser wheel events for
+        one physical scroll movement. The lock prevents a single scroll
+        from repeatedly changing the center frequency.
+      */
+      if (state.wheelLocked) return;
+
+      state.wheelLocked = true;
+
+      const direction = event.deltaY < 0 ? 1 : -1;
+      const multiplier = event.shiftKey ? 10 : 1;
+
+      /*
+        Default: 1 MHz.
+        Shift + wheel: 10 MHz.
+        Decimal offset is preserved:
+        100.100 -> 101.100 -> 102.100.
+      */
+      const adjustment = state.wheelStep * multiplier;
+
+      let newCenter = state.center + (direction * adjustment);
+
+      newCenter = Math.min(
+        Number(els.frequency.max),
+        Math.max(Number(els.frequency.min), newCenter)
+      );
+
+      state.center = Number(newCenter.toFixed(3));
+      els.frequency.value = state.center;
+
+      els.wheelTuneReadout.classList.add("tuning");
+
+      clearTimeout(state.wheelFlashTimer);
+
+      state.wheelFlashTimer = setTimeout(() => {
+        els.wheelTuneReadout.classList.remove("tuning");
+      }, 180);
+
+      clearTimeout(state.wheelLockTimer);
+
+      state.wheelLockTimer = setTimeout(() => {
+        state.wheelLocked = false;
+      }, 180);
+    }
+
+    document.querySelectorAll("input,select").forEach(control => {
+      control.addEventListener("input", syncStateFromInputs);
+      control.addEventListener("change", syncStateFromInputs);
+    });
+
+    document.querySelectorAll(".preset").forEach(button => {
+      button.addEventListener("click", () => choosePreset(button.dataset.preset));
+    });
+
+    els.unknownButton.addEventListener("click", createUnknown);
+
+    els.runButton.addEventListener("click", () => {
+      state.running = !state.running;
+
+      els.runButton.textContent =
+        state.running ? "Pause waterfall" : "Resume waterfall";
+
+      els.status.textContent =
+        state.running ? "RECEIVING — SIMULATED" : "WATERFALL PAUSED";
+
+      els.status.classList.toggle("paused", !state.running);
+    });
+
+    els.audioButton.addEventListener("click", () => {
+      if (state.audioOn) stopAudio();
+      else startAudio();
+    });
+
+    els.checkAudio.addEventListener("click", () => {
+      const expected = audioCondition();
+      const answer = els.audioDiagnosis.value;
+
+      if (!answer) {
+        setResult(els.audioCheckResult, "warn-result", "Select an assessment first.");
+        return;
+      }
+
+      if (answer === expected) {
+        state.audioCorrect = true;
+
+        setResult(
+          els.audioCheckResult,
+          "good-result",
+          "Correct. Your assessment matches the simulated receiver condition."
+        );
+      } else {
+        state.audioCorrect = false;
+
+        setResult(
+          els.audioCheckResult,
+          "warn-result",
+          "Not yet. Recheck tuning, selected mode, filter width, gain, and antenna condition."
+        );
       }
     });
-    const tuneD=Math.abs(f-curFreq);
-    if(tuneD<0.15) v=Math.min(1,v+0.15);
-    row[x]=v;
-  }
-  return row;
-}
 
-function drawSpectrum(){
-  const w=specCanvas.width,h=specCanvas.height;
-  specCtx.fillStyle='#050708';specCtx.fillRect(0,0,w,h);
-  const row=computeRow(w);
-  specCtx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--green').trim();
-  specCtx.lineWidth=1.5*devicePixelRatio;
-  specCtx.beginPath();
-  row.forEach((v,x)=>{
-    const y=h-(v*h*0.92);
-    if(x===0) specCtx.moveTo(x,y);else specCtx.lineTo(x,y);
-  });
-  specCtx.stroke();
-  // tuned cursor
-  const cx=((curFreq-MIN_F)/(MAX_F-MIN_F))*w;
-  specCtx.strokeStyle='#ffb300';specCtx.lineWidth=1*devicePixelRatio;
-  specCtx.beginPath();specCtx.moveTo(cx,0);specCtx.lineTo(cx,h);specCtx.stroke();
-  return row;
-}
+    els.checkClassification.addEventListener("click", () => {
+      const expected = classificationAnswer();
 
-function drawWaterfall(row){
-  const w=wfCanvas.width,h=wfCanvas.height;
-  wfHistory.unshift(row);
-  if(wfHistory.length>Math.floor(h/2)) wfHistory.pop();
-  wfCtx.fillStyle='#050708';wfCtx.fillRect(0,0,w,h);
-  wfHistory.forEach((r,ry)=>{
-    for(let x=0;x<w;x+=2){
-      const v=r[Math.floor(x/w*r.length)];
-      if(v>0.12){
-        const g=Math.min(255,Math.floor(v*255));
-        wfCtx.fillStyle='rgba(0,'+g+',136,'+Math.min(1,v+0.15)+')';
-        wfCtx.fillRect(x,ry*2,2,2);
+      const widthCorrect = els.signalWidth.value === expected.width;
+      const timingCorrect = els.signalTiming.value === expected.timing;
+      const strengthCorrect = els.signalStrength.value === expected.strength;
+
+      if (widthCorrect && timingCorrect && strengthCorrect) {
+        state.classificationCorrect = true;
+
+        setResult(
+          els.classificationResult,
+          "good-result",
+          "Correct. You classified the signal from observable characteristics."
+        );
+      } else {
+        state.classificationCorrect = false;
+
+        const feedback = [];
+
+        if (!widthCorrect) feedback.push("reconsider visible width");
+        if (!timingCorrect) feedback.push("watch the waterfall for timing");
+        if (!strengthCorrect) feedback.push("compare the signal with the local noise floor");
+
+        setResult(
+          els.classificationResult,
+          "warn-result",
+          "Not quite. " + feedback.join("; ") + "."
+        );
       }
+    });
+
+    els.saveObservation.addEventListener("click", () => {
+      if (els.observation.value.trim().length < 18) {
+        setResult(
+          els.observationResult,
+          "warn-result",
+          "Add more detail. Include frequency, width, strength, timing, or a comparison with noise."
+        );
+        return;
+      }
+
+      state.savedObservation = true;
+
+      setResult(
+        els.observationResult,
+        "good-result",
+        "Observation saved. Document visible characteristics before assigning meaning."
+      );
+    });
+
+    els.nextLab.addEventListener("click", () => {
+      if (state.lab >= labs.length - 1) return;
+
+      state.lab++;
+      resetExercises();
+
+      if (state.lab === 1) choosePreset("nfm");
+      if (state.lab === 2) choosePreset("burst");
+      if (state.lab === 3) choosePreset("fm");
+      if (state.lab === 4) choosePreset("overload");
+      if (state.lab === 5) createUnknown();
+    });
+
+    canvas.addEventListener("mousemove", event => {
+      const rect = canvas.getBoundingClientRect();
+
+      state.cursorX =
+        ((event.clientX - rect.left) / rect.width) * canvas.width;
+
+      state.cursorY =
+        ((event.clientY - rect.top) / rect.height) * canvas.height;
+    });
+
+    canvas.addEventListener("mouseleave", () => {
+      state.cursorX = null;
+      state.cursorY = null;
+    });
+
+    canvas.addEventListener("click", event => {
+      const rect = canvas.getBoundingClientRect();
+      const fraction = (event.clientX - rect.left) / rect.width;
+
+      let newCenter =
+        state.center - state.span / 2 + fraction * state.span;
+
+      newCenter = Math.min(
+        Number(els.frequency.max),
+        Math.max(Number(els.frequency.min), newCenter)
+      );
+
+      state.center = Number(newCenter.toFixed(3));
+      els.frequency.value = state.center;
+    });
+
+    /*
+      Do not add another canvas.addEventListener("wheel", ...) handler.
+      This is the only wheel listener in the application.
+    */
+    spectrumPanel.addEventListener("wheel", tuneByWheel, { passive:false });
+
+    function render() {
+      const spectrumHeight = 280;
+      const { values, noiseFloor } = makeSpectrum(canvas.width);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#02070b";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawGrid(canvas.width, spectrumHeight);
+      drawSpectrum(values, spectrumHeight);
+
+      if (state.running) updateWaterfall(values);
+
+      drawWaterfall(spectrumHeight);
+      updateReadouts(noiseFloor);
+      updateCursor(values);
+      updateGainMessage();
+      updateAudio();
+      updateLesson();
+
+      state.time++;
+      requestAnimationFrame(render);
     }
-  });
-}
 
-var paused=false;
-function animate(){
-  if(!paused){
-    const row=drawSpectrum();
-    drawWaterfall(row);
-  }
-  requestAnimationFrame(animate);
-}
-function togglePause(){
-  paused=!paused;
-  document.getElementById('pause-btn').textContent=paused?'\u25b6 RESUME':'\u23f8 PAUSE';
-}
+    setupTabs();
+    choosePreset("fm");
+    render();
 
-function toggleTheme(){
-  const h=document.documentElement,light=h.getAttribute('data-theme')==='light';
-  h.setAttribute('data-theme',light?'dark':'light');
-  document.getElementById('theme-btn').textContent=light?'\u2600 LIGHT MODE':'\u263e DARK MODE';
-}
-
-updateFreqDisplay();
-renderSigList();
-resizeCanvases();
-animate();
-</script>
+    document.getElementById('themeToggle').addEventListener('click', function(){
+      var h = document.documentElement, isDark = h.getAttribute('data-theme') !== 'light';
+      h.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      this.innerHTML = isDark ? '&#9788; THEME' : '&#9789; THEME';
+    });
+  </script>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px;max-width:1500px;margin:0 auto">
+  <span style="color:var(--muted)">Related:</span>
+  <a href="../sdrguide/" style="color:var(--accent);text-decoration:none">&#128251; Software-Defined Radio Explained</a>
+  <a href="../cuas/" style="color:var(--accent);text-decoration:none">&#128760; Drone Signal Spectrum</a>
+  <a href="../cuasdemo/" style="color:var(--accent);text-decoration:none">&#128760; C-UAS Engagement Simulator</a>
+  <a href="../dronedef/" style="color:var(--accent);text-decoration:none">&#127918; Drone Defender Simulator</a>
+  <a href="../fobdefense/" style="color:var(--accent);text-decoration:none">&#127970; FOB Defense</a>
+</div>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif">
+<div style="text-align:center;padding:8px 16px 0;opacity:.62;font-family:sans-serif">
   <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
-<div style="text-align:center;padding:14px 16px 0;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+<div style="text-align:center;padding:8px 16px 6px;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:var(--panel);border:1px solid var(--line);
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:var(--text);
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:var(--accent);text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:var(--muted);font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not &#8212; takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {

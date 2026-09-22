@@ -849,6 +849,8 @@ $('btnMenu').onclick=function(){if(!started)return;menuOpen?closeMenu():(closePa
 mmCanvas.onclick=function(){
   if(!started||scene!=='ground')return;
   $('minimapOverlay').classList.add('on');
+  var lr=mmLargeCanvas.getBoundingClientRect();
+  mmLargeCanvas.width=Math.floor(lr.width*dpr);mmLargeCanvas.height=Math.floor(lr.height*dpr);
   renderMapTo(mmLargeCanvas,mmLargeCtx,true);
 };
 $('minimapClose').onclick=function(){$('minimapOverlay').classList.remove('on');};

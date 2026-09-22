@@ -1,523 +1,2129 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOB Defense — E-WIT</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#070a0c; --panel:#0d1318; --panel2:#101820; --b1:#1c2a36; --b2:#25384a;
-  --green:#00ff88; --gdim:#00883a; --gfaint:#001a0d;
-  --amber:#ffb830; --red:#ff4a4a; --blue:#38bdf8; --cyan:#00d4ff;
-  --txt:#ffffff; --txtd:#6a8090; --txtb:#d8ecf5;
-  --mono:'Share Tech Mono',monospace; --ui:'Rajdhani',sans-serif;
-}
-[data-theme="light"]{
-  --bg:#eef2f0; --panel:#ffffff; --panel2:#f5f7f6; --b1:#d4dcd9; --b2:#b8c4c0;
-  --green:#00884a; --gdim:#00a05a; --gfaint:#e0f5e8;
-  --amber:#b3690a; --red:#cc2222; --blue:#0077bb; --cyan:#0088aa;
-  --txt:#3a5560; --txtd:#8296a0; --txtb:#0a1a20;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:var(--ui);height:100vh;width:100vw;overflow:hidden;display:flex;flex-direction:column;user-select:none}
-.hidden{display:none !important}
-header{border-bottom:1px solid var(--b2);padding:10px 16px;background:var(--panel);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;z-index:20}
-.hl{display:flex;align-items:center;gap:10px}
-.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber);padding:3px 8px;letter-spacing:2px;background:var(--gfaint)}
-h1{font-size:17px;font-weight:700;letter-spacing:1px}
-.hud-stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.stat{background:var(--panel2);border:1px solid var(--b2);border-radius:4px;padding:4px 9px;text-align:center;font-family:var(--mono)}
-.stat-label{display:block;font-size:8px;color:var(--txtd);letter-spacing:1px}
-.stat-val{font-size:13px;font-weight:700}
-.v-green{color:var(--green)} .v-amber{color:var(--amber)} .v-red{color:var(--red)} .v-cyan{color:var(--cyan)}
-.theme-btn{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px solid var(--b2);color:var(--txtd);padding:6px 12px;border-radius:4px;cursor:pointer}
-.theme-btn:hover{border-color:var(--amber);color:var(--amber)}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOB RF-CUAS Layered Defense Simulator</title>
 
-.playfield-wrap{flex:1;position:relative;overflow:hidden;background:#050708}
-#gameCanvas{display:block;width:100%;height:100%;cursor:crosshair}
-.build-banner{
-  position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:15;
-  background:rgba(0,26,13,.9);border:1px solid var(--green);color:var(--green);
-  font-family:var(--mono);font-size:12px;padding:6px 16px;border-radius:6px;display:none;text-align:center;
-}
-.build-banner.show{display:block}
-.wave-banner{
-  position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:15;
-  background:rgba(51,10,10,.9);border:1px solid var(--red);color:#ffb3b3;
-  font-family:var(--mono);font-size:13px;padding:6px 16px;border-radius:6px;display:none;text-align:center;
-}
-.wave-banner.show{display:block}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-.tower-bar{
-  display:flex; gap:8px; padding:10px 12px; background:var(--panel); border-top:1px solid var(--b2);
-  overflow-x:auto; z-index:20; align-items:center;
-}
-.tower-card{
-  flex-shrink:0; width:118px; background:var(--panel2); border:2px solid var(--b2); border-radius:6px;
-  padding:8px; cursor:pointer; text-align:center; transition:border-color .15s;
-}
-.tower-card.sel{border-color:var(--green); box-shadow:0 0 0 1px var(--green)}
-.tower-card.unaffordable{opacity:.45; cursor:not-allowed}
-.tower-icon{font-size:22px; margin-bottom:2px}
-.tower-name{font-size:10.5px; font-weight:700; color:var(--txtb); line-height:1.2; margin-bottom:2px}
-.tower-cost{font-family:var(--mono); font-size:11px; color:var(--amber)}
-.tower-desc{font-size:8.5px; color:var(--txtd); margin-top:2px; line-height:1.3}
-.sell-btn{
-  flex-shrink:0; padding:8px 12px; background:var(--gfaint); border:2px solid var(--b2); border-radius:6px;
-  color:var(--txtd); font-size:11px; cursor:pointer; height:76px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-}
-.sell-btn.on{border-color:var(--red); color:var(--red)}
+  <style>
+    :root{
+      --bg:#070a0c; --panel:#0d1318; --panel2:#101820; --b1:#1c2a36; --b2:#25384a;
+      --green:#00ff88; --gdim:#00883a; --gfaint:#001a0d;
+      --amber:#ffb830; --red:#ff4a4a; --blue:#30aaff; --cyan:#00d4ff; --purple:#cc88ff;
+      --txt:#ffffff; --txtd:#33505f; --txtb:#d8ecf5;
+      --mono:'Share Tech Mono',monospace; --ui:'Rajdhani',sans-serif;
+    }
 
-.modal-overlay{position:fixed; inset:0; z-index:100; background:rgba(7,10,12,.92); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:16px}
-.brief-card{max-width:600px; width:100%; background:var(--panel); border:2px solid var(--gdim); border-radius:8px; padding:20px; box-shadow:0 20px 50px rgba(0,0,0,.5); color:var(--txtb); max-height:90vh; overflow-y:auto}
-.brief-card.debrief{border-color:var(--red)}
-.brief-title{font-size:22px; font-weight:700; color:var(--green); text-align:center; margin-bottom:4px}
-.debrief .brief-title{color:var(--red)}
-.brief-sub{font-size:11px; color:var(--txtd); text-align:center; margin-bottom:14px}
-.brief-section{background:var(--bg); border-left:3px solid var(--green); padding:10px 12px; border-radius:4px; margin-bottom:8px; font-size:12px; line-height:1.5}
-.brief-section b{color:var(--green)}
-.layer-grid{display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:10px}
-@media(min-width:500px){.layer-grid{grid-template-columns:1fr 1fr 1fr}}
-.layer-box{background:var(--bg); border:1px solid var(--b1); border-radius:4px; padding:8px; text-align:center}
-.layer-box .ic{font-size:20px}
-.layer-box .nm{font-size:10.5px; font-weight:700; color:var(--txtb); margin:3px 0}
-.layer-box .ds{font-size:9px; color:var(--txtd)}
-.start-btn{width:100%; padding:12px; background:var(--green); color:#0a0c0f; font-weight:700; font-size:15px; border:none; border-radius:5px; cursor:pointer; margin-top:6px}
-.start-btn:active{transform:scale(.97)}
-.aar-row{display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; border-bottom:1px solid var(--b1); padding:5px 0}
-.aar-row .k{color:var(--txtd)}
-</style>
+    [data-theme="light"]{
+      --bg:#eef2f0; --panel:#ffffff; --panel2:#f5f7f6; --b1:#d4dcd9; --b2:#b8c4c0;
+      --green:#00884a; --gdim:#00a05a; --gfaint:#e0f5e8;
+      --amber:#b3690a; --red:#cc2222; --blue:#0077bb; --cyan:#0088aa; --purple:#8855cc;
+      --txt:#3a5560; --txtd:#8296a0; --txtb:#0a1a20;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--txtb);
+      font-family:var(--mono);
+      background:
+        linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px),
+        var(--bg);
+      background-size:28px 28px;
+    }
+
+    button{font:inherit;cursor:pointer}
+    button:disabled{opacity:.5;cursor:not-allowed}
+
+    .app{max-width:1540px;margin:0 auto;padding:22px 18px 46px}
+
+    .theme-toggle{
+      position:fixed;top:14px;right:14px;z-index:30;
+      min-height:42px;padding:0 14px;
+      border:1px solid var(--b2);border-radius:8px;
+      background:var(--panel);color:var(--txtb);
+      font-family:var(--ui);font-size:16px;font-weight:700;letter-spacing:.07em;
+      box-shadow:0 8px 24px rgba(0,0,0,.22);
+    }
+
+    .theme-toggle:hover{border-color:var(--green);color:var(--green)}
+
+    .classification{
+      display:flex;align-items:center;justify-content:center;
+      min-height:28px;margin:-22px -18px 18px;
+      border-bottom:1px solid var(--gdim);
+      background:var(--gfaint);color:var(--green);
+      font-family:var(--ui);font-size:15px;font-weight:700;letter-spacing:.18em;
+    }
+
+    .hero{
+      padding:22px;border:1px solid var(--b2);border-left:4px solid var(--green);
+      border-radius:10px;background:linear-gradient(120deg,var(--panel),var(--panel2));
+    }
+
+    .eyebrow{margin:0 0 5px;color:var(--green);font-size:12px;letter-spacing:.15em}
+    h1,h2,h3,p{margin-top:0}
+
+    h1{
+      margin-bottom:8px;color:var(--txt);
+      font-family:var(--ui);font-size:clamp(31px,5vw,49px);
+      line-height:.9;letter-spacing:.03em;
+    }
+
+    .hero p{max-width:1060px;margin-bottom:0;color:var(--txtb);font-size:12px;line-height:1.6}
+    .warning{margin-top:12px!important;color:var(--amber)!important;font-size:10px!important}
+
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+
+    .tab{
+      min-height:42px;padding:8px 18px;
+      border:1px solid var(--b2);border-radius:999px;
+      background:var(--panel);color:var(--txtd);
+      font-family:var(--ui);font-size:17px;font-weight:700;letter-spacing:.08em;
+    }
+
+    .tab:hover{border-color:var(--cyan);color:var(--cyan)}
+    .tab.active{border-color:var(--green);background:var(--gfaint);color:var(--green)}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+
+    .card{
+      overflow:hidden;border:1px solid var(--b2);
+      border-radius:10px;background:var(--panel);
+    }
+
+    .card-title{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:10px 13px;border-bottom:1px solid var(--b1);
+      background:var(--panel2);color:var(--green);
+      font-family:var(--ui);font-size:17px;font-weight:700;letter-spacing:.08em;
+    }
+
+    .card-body{padding:14px}
+
+    .howto{margin-bottom:16px;border-left:3px solid var(--cyan)}
+    .howto strong{color:var(--cyan)}
+    .howto p{margin:7px 0 0;color:var(--txtb);font-size:11px;line-height:1.55}
+
+    .main-layout{
+      display:grid;
+      grid-template-columns:290px minmax(440px,1fr) 330px;
+      gap:16px;
+      align-items:start;
+    }
+
+    .palette-card{grid-column:1;grid-row:1}
+    .map-card{grid-column:2;grid-row:1}
+    .right-stack{grid-column:3;grid-row:1;display:grid;gap:16px}
+
+    .device-list{display:grid;gap:9px}
+
+    .device{
+      width:100%;padding:11px;
+      border:1px solid var(--b1);border-radius:8px;
+      background:var(--panel2);color:var(--txtb);text-align:left;
+      transition:.15s ease;
+    }
+
+    .device:hover{border-color:var(--cyan);transform:translateY(-1px)}
+    .device.selected{
+      border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber);
+      background:linear-gradient(135deg,var(--panel2),rgba(255,184,48,.11));
+    }
+
+    .device-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .device-name{color:var(--txt);font-family:var(--ui);font-size:18px;font-weight:700;line-height:1;letter-spacing:.035em}
+    .device-icon{font-size:21px;line-height:1}
+    .device-meta{margin-top:6px;color:var(--txtd);font-size:9px;line-height:1.45}
+    .device-meta b{color:var(--cyan);font-weight:400}
+
+    .profile-title{
+      margin:16px 0 7px;
+      color:var(--cyan);
+      font-family:var(--ui);font-size:16px;font-weight:700;letter-spacing:.08em;
+    }
+
+    .profile-grid{display:grid;gap:7px}
+
+    .profile-btn{
+      width:100%;padding:10px;
+      border:1px solid var(--b1);border-radius:7px;
+      background:var(--panel2);color:var(--txtb);text-align:left;
+    }
+
+    .profile-btn:hover{border-color:var(--cyan)}
+
+    .profile-btn.active{
+      border-color:var(--purple);
+      background:linear-gradient(90deg,rgba(204,136,255,.14),var(--panel2));
+      box-shadow:inset 0 0 0 1px rgba(204,136,255,.25);
+    }
+
+    .profile-btn strong{
+      display:block;color:var(--txt);
+      font-family:var(--ui);font-size:17px;letter-spacing:.04em;
+    }
+
+    .profile-btn.active strong{color:var(--purple)}
+    .profile-btn span{display:block;margin-top:3px;color:var(--txtd);font-size:9px;line-height:1.4}
+
+    .canvas-wrap{
+      position:relative;width:100%;overflow:hidden;
+      border:1px solid var(--b2);border-radius:8px;
+      background:#1f3d29;aspect-ratio:1.28/1;
+    }
+
+    #battleMap{
+      display:block;width:100%;height:100%;
+      cursor:crosshair;touch-action:manipulation;
+    }
+
+    .map-hud{
+      position:absolute;top:10px;left:10px;z-index:2;
+      width:min(250px,calc(100% - 20px));padding:9px 10px;
+      border:1px solid rgba(0,212,255,.4);border-radius:6px;
+      background:rgba(7,10,12,.79);color:var(--txtb);
+      font-size:9px;line-height:1.52;pointer-events:none;
+      backdrop-filter:blur(4px);
+    }
+
+    .map-hud b{color:var(--cyan);font-weight:400}
+    .map-hud strong{color:var(--green);font-weight:400}
+
+    .legend{
+      display:flex;flex-wrap:wrap;gap:8px 12px;
+      margin-top:10px;color:var(--txtd);font-size:9px;
+    }
+
+    .legend i{
+      display:inline-block;width:8px;height:8px;
+      margin-right:4px;border-radius:50%;
+    }
+
+    .btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+    .btn{
+      min-height:40px;padding:8px 13px;
+      border:1px solid var(--b2);border-radius:6px;
+      background:var(--panel2);color:var(--txtb);
+      font-family:var(--ui);font-size:16px;font-weight:700;letter-spacing:.055em;
+    }
+
+    .btn:hover{border-color:var(--cyan);color:var(--cyan)}
+    .btn.primary{border-color:var(--green);background:var(--gfaint);color:var(--green)}
+    .btn.warning{border-color:var(--amber);color:var(--amber)}
+    .btn.danger:hover{border-color:var(--red);color:var(--red)}
+
+    .incident-log{
+      min-height:270px;max-height:360px;overflow:auto;
+      padding:10px;border:1px solid var(--b1);border-radius:8px;
+      background:var(--bg);font-size:10px;line-height:1.55;
+    }
+
+    .logline{padding:4px 0;border-bottom:1px solid rgba(37,56,74,.5)}
+    .logtime{color:var(--txtd)}
+    .log-info{color:var(--txtb)}
+    .log-good{color:var(--green)}
+    .log-warn{color:var(--amber)}
+    .log-bad{color:var(--red)}
+    .log-cyan{color:var(--cyan)}
+    .log-purple{color:var(--purple)}
+
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+    .stat{
+      padding:11px 7px;border:1px solid var(--b1);
+      border-radius:7px;background:var(--panel2);text-align:center;
+    }
+
+    .stat-value{
+      color:var(--green);font-family:var(--ui);
+      font-size:29px;font-weight:700;line-height:.95;
+    }
+
+    .stat-label{margin-top:5px;color:var(--txtd);font-size:8px;line-height:1.2}
+
+    .readiness{margin-top:14px}
+
+    .readiness-line{
+      display:flex;justify-content:space-between;gap:10px;
+      margin-bottom:6px;color:var(--txtd);font-size:10px;
+    }
+
+    .readiness-line b{color:var(--green);font-weight:400}
+
+    .meter{
+      height:10px;overflow:hidden;border:1px solid var(--b2);
+      border-radius:20px;background:var(--bg);
+    }
+
+    .meter > div{
+      width:0;height:100%;background:var(--red);
+      transition:width .25s ease,background .25s ease;
+    }
+
+    .status-block{
+      margin-top:14px;padding:11px;border:1px solid var(--b1);
+      border-radius:7px;background:var(--panel2);
+    }
+
+    .status-label{color:var(--txtd);font-size:9px;letter-spacing:.08em}
+    .status-value{
+      margin-top:5px;color:var(--green);
+      font-family:var(--ui);font-size:19px;font-weight:700;
+      line-height:1.05;letter-spacing:.04em;
+    }
+
+    .status-note{margin-top:7px;color:var(--txtb);font-size:10px;line-height:1.52}
+    .small-note{margin:14px 0 0;color:var(--txtd);font-size:10px;line-height:1.55}
+
+    .phase-list{display:grid;gap:8px}
+
+    .phase{
+      display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:start;
+      padding:10px;border:1px solid var(--b1);
+      border-radius:7px;background:var(--panel2);
+    }
+
+    .phase-icon{
+      display:grid;place-items:center;width:26px;height:26px;
+      border:1px solid var(--b2);border-radius:50%;
+      color:var(--txtd);font-size:12px;
+    }
+
+    .phase.active{
+      border-color:var(--cyan);
+      background:linear-gradient(90deg,rgba(0,212,255,.11),var(--panel2));
+    }
+
+    .phase.active .phase-icon{border-color:var(--cyan);color:var(--cyan)}
+
+    .phase.success{
+      border-color:var(--green);
+      background:linear-gradient(90deg,rgba(0,255,136,.09),var(--panel2));
+    }
+
+    .phase.success .phase-icon{border-color:var(--green);color:var(--green)}
+
+    .phase.fail{
+      border-color:var(--red);
+      background:linear-gradient(90deg,rgba(255,74,74,.09),var(--panel2));
+    }
+
+    .phase.fail .phase-icon{border-color:var(--red);color:var(--red)}
+
+    .phase h3{
+      margin:0 0 3px;color:var(--txt);
+      font-family:var(--ui);font-size:17px;
+      line-height:1;letter-spacing:.04em;
+    }
+
+    .phase p{margin:0;color:var(--txtd);font-size:9px;line-height:1.45}
+
+    .aar-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+    .score-row{
+      display:grid;grid-template-columns:112px 1fr;
+      gap:16px;align-items:center;
+    }
+
+    .score-ring{
+      display:grid;place-items:center;width:108px;height:108px;
+      border:6px solid var(--b2);border-radius:50%;
+      background:var(--panel2);text-align:center;
+    }
+
+    .score-ring strong{
+      display:block;color:var(--green);
+      font-family:var(--ui);font-size:38px;line-height:.8;
+    }
+
+    .score-ring span{color:var(--txtd);font-size:8px;letter-spacing:.08em}
+
+    .result-title{
+      margin:0 0 6px;color:var(--txt);
+      font-family:var(--ui);font-size:28px;line-height:.95;letter-spacing:.03em;
+    }
+
+    .result-summary{margin:0;color:var(--txtb);font-size:11px;line-height:1.55}
+
+    .finding{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--b1)}
+    .finding-mark{min-width:22px;font-size:18px;line-height:1}
+
+    .finding h3{
+      margin:0 0 4px;color:var(--txt);
+      font-family:var(--ui);font-size:18px;line-height:1;letter-spacing:.04em;
+    }
+
+    .finding p{margin:0;color:var(--txtd);font-size:10px;line-height:1.52}
+
+    .checklist{display:grid;gap:9px}
+
+    .check{
+      display:flex;align-items:flex-start;gap:9px;padding:10px;
+      border:1px solid var(--b1);border-radius:7px;
+      background:var(--panel2);color:var(--txtb);
+      font-size:10px;line-height:1.5;
+    }
+
+    .check span{font-size:16px;line-height:1}
+
+    footer{
+      padding-top:24px;color:var(--txtd);
+      font-size:10px;text-align:center;letter-spacing:.06em;
+    }
+
+    @media(max-width:1200px){
+      .main-layout{grid-template-columns:290px 1fr}
+      .palette-card{grid-column:1;grid-row:2}
+      .map-card{grid-column:1/-1;grid-row:1}
+      .right-stack{grid-column:2;grid-row:2}
+      .incident-log{min-height:240px}
+    }
+
+    @media(max-width:760px){
+      .app{padding:14px 10px 34px}
+      .classification{margin:-14px -10px 14px;font-size:11px}
+      .hero{padding:18px 15px}
+      .theme-toggle{top:9px;right:9px;min-height:36px;font-size:14px}
+      .tabs{gap:6px}
+      .tab{padding:7px 13px;font-size:15px}
+      .main-layout,.aar-layout{grid-template-columns:1fr}
+      .palette-card,.map-card,.right-stack{grid-column:auto;grid-row:auto}
+      .right-stack{display:grid;gap:16px}
+      .stat-grid{grid-template-columns:repeat(4,1fr)}
+      .stat{padding:8px 3px}
+      .stat-value{font-size:21px}
+      .stat-label{font-size:7px}
+      .canvas-wrap{aspect-ratio:1/1}
+      .map-hud{font-size:8px}
+      .score-row{grid-template-columns:88px 1fr;gap:12px}
+      .score-ring{width:86px;height:86px}
+      .score-ring strong{font-size:31px}
+    }
+  </style>
 </head>
+
 <body>
-<button class="theme-btn" style="position:fixed;top:10px;right:10px;z-index:300" onclick="toggleTheme()">&#9789;</button>
+  <button class="theme-toggle" id="themeToggle" type="button">◐ THEME</button>
 
-<header>
-  <div class="hl">
-    <div class="mil-badge">MIL-SPEC</div>
-    <h1>FOB DEFENSE</h1>
-  </div>
-  <div class="hud-stats">
-    <div class="stat"><span class="stat-label">FOB HP</span><span id="ui-hp" class="stat-val v-red">100</span></div>
-    <div class="stat"><span class="stat-label">CREDITS</span><span id="ui-credits" class="stat-val v-amber">150</span></div>
-    <div class="stat"><span class="stat-label">WAVE</span><span id="ui-wave" class="stat-val v-green">1</span></div>
-    <div class="stat"><span class="stat-label">SCORE</span><span id="ui-score" class="stat-val v-cyan">0</span></div>
-  </div>
-</header>
+  <main class="app">
+    <div class="classification">UNCLASSIFIED // TRAINING USE ONLY</div>
 
-<div class="playfield-wrap">
-  <canvas id="gameCanvas"></canvas>
-  <div id="buildBanner" class="build-banner">BUILD PHASE — <span id="buildTimer">15</span>s until Wave <span id="nextWaveNum">2</span></div>
-  <div id="waveBanner" class="wave-banner">WAVE <span id="waveNumBanner">1</span> INBOUND</div>
-</div>
+    <header class="hero">
+      <div class="eyebrow">INTERACTIVE RF / EW-FOCUSED CUAS TRAINING SIMULATOR</div>
+      <h1>FOB RF-CUAS LAYERED DEFENSE</h1>
+      <p>
+        Build a notional forward operating base defense using passive radio-frequency awareness,
+        directional RF cueing, fusion and coordination, authorized active effects, and FOB resilience.
+        Randomized simulated aircraft will fly over or approach the FOB when you press
+        <strong>RUN RANDOM INCIDENT</strong>.
+      </p>
+      <p class="warning">
+        ⚠ Training abstraction only. This simulator does not model real device performance, effective range,
+        RF waveforms, satellite-navigation characteristics, equipment settings, response procedures,
+        airspace controls, rules of engagement, or legal authority.
+      </p>
+    </header>
 
-<div class="tower-bar" id="towerBar"></div>
+    <nav class="tabs" aria-label="Simulator navigation">
+      <button class="tab active" type="button" data-tab="simulator">01 · SITE & LIVE SIMULATION</button>
+      <button class="tab" type="button" data-tab="aar">02 · AFTER-ACTION REVIEW</button>
+    </nav>
 
-<div id="modal-start" class="modal-overlay">
-  <div class="brief-card">
-    <div class="brief-title">FOB DEFENSE</div>
-    <div class="brief-sub">Layered Counter-UAS &amp; Spectrum Monitoring — 17E Electronic Warfare AIT</div>
-    <div class="brief-section"><b>Mission:</b> Your FOB is under sustained drone reconnaissance and attack. Build a layered defense — detect early, disrupt their control links, then destroy what gets through. Survive escalating waves.</div>
-    <div class="layer-grid">
-      <div class="layer-box"><div class="ic">📡</div><div class="nm">Spectrum Detector</div><div class="ds">Reveals drones early &amp; extends ally range in its radius. No direct damage.</div></div>
-      <div class="layer-box"><div class="ic">📻</div><div class="nm">EW Jammer</div><div class="ds">Disrupts control links — heavily slows drones in range. No damage.</div></div>
-      <div class="layer-box"><div class="ic">🎯</div><div class="nm">C-UAS Turret</div><div class="ds">Kinetic hard-kill — the only tower that actually destroys drones.</div></div>
-    </div>
-    <div class="brief-section">Between waves you get a build phase to place or sell towers with earned credits. Drones that reach the FOB deal damage — lose all FOB HP and the mission ends.</div>
-    <button class="start-btn" id="btnStart">▶ START DEFENSE</button>
-  </div>
-</div>
+    <section class="tab-content active" id="simulator">
+      <article class="card howto">
+        <div class="card-title">HOW TO USE <span>▣</span></div>
+        <div class="card-body">
+          <strong>1.</strong> Select a system from the palette.
+          <strong>2.</strong> Click or tap terrain to place it.
+          <strong>3.</strong> Select the conceptual active-effect profile.
+          <strong>4.</strong> Run a random incident.
+          <p>
+            Random incidents vary the approach route, aircraft behavior, emitting condition,
+            weather or terrain complication, and simulated control/navigation dependency.
+            The selected effect profile is evaluated only as a high-level training abstraction.
+          </p>
+        </div>
+      </article>
 
-<div id="modal-debrief" class="modal-overlay hidden">
-  <div class="brief-card debrief">
-    <div class="brief-title">FOB OVERRUN</div>
-    <div class="brief-sub">After Action Report</div>
-    <div class="aar-row"><span class="k">Waves Survived:</span><span id="aar-wave">1</span></div>
-    <div class="aar-row"><span class="k">Drones Neutralized:</span><span id="aar-kills">0</span></div>
-    <div class="aar-row"><span class="k">Final Score:</span><span id="aar-score">0</span></div>
-    <button class="start-btn" id="btnRestart" style="background:var(--amber)">&#8635; RE-ENGAGE</button>
-  </div>
-</div>
+      <div class="main-layout">
+        <aside class="card palette-card">
+          <div class="card-title">RF-CUAS PALETTE <span id="selectedLabel">SELECT ITEM</span></div>
+          <div class="card-body">
+            <div class="device-list" id="deviceList"></div>
 
-<script>
-/* ===================== FOB DEFENSE — core game ===================== */
-var W=0,H=0,dpr=1;
-var canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d');
-function resize(){
-  var wrap=canvas.parentElement,r=wrap.getBoundingClientRect();
-  dpr=Math.min(window.devicePixelRatio||1,2);
-  W=r.width;H=r.height;
-  canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-}
-window.addEventListener('resize',resize);
+            <div class="profile-title">ACTIVE-EFFECT PROFILE</div>
+            <div class="profile-grid" id="profileGrid"></div>
 
-var FOB={x:0,y:0,r:44,hp:100,maxHp:100};
-var GRID=52; // cell size for placement snapping
+            <p class="small-note">
+              Select the notional effect type configured for all placed authorized active-effect stations.
+              This setting changes only the simulator's conceptual incident outcome logic.
+            </p>
 
-var TOWER_TYPES={
-  detector:{name:'Spectrum Detector',icon:'📡',cost:40,range:170,color:'#00d4ff',dmg:0,slow:0,detect:true,desc:'Reveals early, buffs range'},
-  jammer:{name:'EW Jammer',icon:'📻',cost:60,range:120,color:'#ffb830',dmg:0,slow:0.55,detect:false,desc:'Slows drones in range'},
-  turret:{name:'C-UAS Turret',icon:'🎯',cost:90,range:150,color:'#ff4a4a',dmg:34,slow:0,detect:false,rate:0.55,desc:'Hard-kill, damages drones'}
-};
+            <div class="btn-row">
+              <button class="btn primary" id="exampleBtn" type="button">LOAD BALANCED EXAMPLE</button>
+              <button class="btn danger" id="clearBtn" type="button">CLEAR SITE</button>
+            </div>
+          </div>
+        </aside>
 
-var towers=[]; // {type,x,y,cellX,cellY,cooldown}
-var drones=[]; // {x,y,hp,maxHp,speed,baseSpeed,angle,r,detected}
-var particles=[];
-var credits=150, score=0, wave=1, kills=0, fobHp=100;
-var state='START'; // START, BUILD, WAVE, OVER
-var buildTimer=0, BUILD_TIME=15;
-var selectedType=null;
-var mouse={x:0,y:0};
+        <section class="card map-card">
+          <div class="card-title">
+            <span>FOB TERRAIN / LIVE DEFENSE VIEW</span>
+            <span id="mapMode">BUILD MODE</span>
+          </div>
 
-function $(id){return document.getElementById(id);}
+          <div class="card-body">
+            <div class="canvas-wrap">
+              <canvas id="battleMap" aria-label="Interactive FOB terrain and drone incident map"></canvas>
 
-function resetGame(){
-  towers=[];drones=[];particles=[];
-  credits=150;score=0;wave=1;kills=0;
-  FOB.hp=FOB.maxHp=100;
-  FOB.x=W/2;FOB.y=H/2;
-  state='BUILD';buildTimer=BUILD_TIME;
-  updateHUD();
-  renderTowerBar();
-}
+              <div class="map-hud">
+                <div><b>SITE:</b> <strong>NOTIONAL FOB ALPHA</strong></div>
+                <div><b>MODE:</b> <span id="hudMode">PLACE SYSTEMS</span></div>
+                <div><b>EFFECT:</b> <span id="hudEffect">RF LINK</span></div>
+                <div><b>INCIDENT:</b> <span id="hudIncident">STANDBY</span></div>
+                <div><b>TRACK:</b> <span id="hudTrack">NO ACTIVE TRACK</span></div>
+              </div>
+            </div>
 
-function updateHUD(){
-  $('ui-hp').textContent=Math.max(0,Math.round(FOB.hp));
-  $('ui-credits').textContent=credits;
-  $('ui-wave').textContent=wave;
-  $('ui-score').textContent=score;
-}
+            <div class="legend">
+              <span><i style="background:var(--cyan)"></i>Passive RF sensing</span>
+              <span><i style="background:var(--blue)"></i>Directional RF cueing</span>
+              <span><i style="background:var(--purple)"></i>Fusion / coordination</span>
+              <span><i style="background:var(--amber)"></i>Authorized active effect</span>
+              <span><i style="background:var(--green)"></i>Protection / resilience</span>
+              <span><i style="background:var(--red)"></i>Simulated aircraft</span>
+            </div>
 
-/* ---------- tower bar ---------- */
-function renderTowerBar(){
-  var html='';
-  Object.keys(TOWER_TYPES).forEach(function(key){
-    var t=TOWER_TYPES[key];
-    var afford=credits>=t.cost;
-    html+='<div class="tower-card'+(selectedType===key?' sel':'')+(afford?'':' unaffordable')+'" data-type="'+key+'">'+
-      '<div class="tower-icon">'+t.icon+'</div><div class="tower-name">'+t.name+'</div>'+
-      '<div class="tower-cost">◆ '+t.cost+'</div><div class="tower-desc">'+t.desc+'</div></div>';
-  });
-  html+='<div class="sell-btn" id="sellBtn">💰<span>SELL MODE</span></div>';
-  $('towerBar').innerHTML=html;
-  document.querySelectorAll('.tower-card').forEach(function(el){
-    el.addEventListener('click',function(){
-      var type=el.dataset.type;
-      if(TOWER_TYPES[type].cost>credits)return;
-      selectedType=(selectedType===type)?null:type;
-      sellMode=false;
-      renderTowerBar();
-    });
-  });
-  var sb=$('sellBtn');
-  sb.classList.toggle('on',sellMode);
-  sb.addEventListener('click',function(){sellMode=!sellMode;selectedType=null;renderTowerBar();});
-}
-var sellMode=false;
+            <div class="btn-row">
+              <button class="btn primary" id="runBtn" type="button">▶ RUN RANDOM INCIDENT</button>
+              <button class="btn warning" id="resetBtn" type="button">RESET INCIDENT VIEW</button>
+            </div>
+          </div>
+        </section>
 
-/* ---------- placement ---------- */
-function snapCell(x,y){return {cx:Math.floor(x/GRID),cy:Math.floor(y/GRID)};}
-function cellCenter(cx,cy){return {x:cx*GRID+GRID/2,y:cy*GRID+GRID/2};}
-function cellOccupied(cx,cy){return towers.some(function(t){return t.cellX===cx&&t.cellY===cy;});}
-function cellBlockedByFob(x,y){return Math.hypot(x-FOB.x,y-FOB.y)<FOB.r+30;}
+        <aside class="right-stack">
+          <section class="card">
+            <div class="card-title">LIVE INCIDENT LOG <span id="incidentState">READY</span></div>
+            <div class="card-body">
+              <div class="incident-log" id="incidentLog" aria-live="polite">
+                <div class="logline">
+                  <span class="logtime">[SYSTEM]</span>
+                  <span class="log-info">Build a layout, configure the active-effect profile, then run a randomized incident.</span>
+                </div>
+              </div>
+            </div>
+          </section>
 
-function handleCanvasClick(px,py){
-  if(state==='OVER'||state==='START')return;
-  var cell=snapCell(px,py),center=cellCenter(cell.cx,cell.cy);
+          <section class="card">
+            <div class="card-title">DEFENSE STATUS <span id="statusHeader">STANDBY</span></div>
+            <div class="card-body">
+              <div class="stat-grid">
+                <div class="stat">
+                  <div class="stat-value" id="resourceUsed">0</div>
+                  <div class="stat-label">RESOURCE USED</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" id="resourceLeft">24</div>
+                  <div class="stat-label">RESOURCE LEFT</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" id="layerCount">0/4</div>
+                  <div class="stat-label">LAYERS PRESENT</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" id="assetCount">0</div>
+                  <div class="stat-label">ASSETS PLACED</div>
+                </div>
+              </div>
 
-  if(sellMode){
-    var hit=towers.find(function(t){return t.cellX===cell.cx&&t.cellY===cell.cy;});
-    if(hit){
-      credits+=Math.round(TOWER_TYPES[hit.type].cost*0.6);
-      towers=towers.filter(function(t){return t!==hit;});
-      updateHUD();renderTowerBar();
+              <div class="readiness">
+                <div class="readiness-line">
+                  <span>CONCEPTUAL READINESS</span>
+                  <b id="readinessText">0%</b>
+                </div>
+                <div class="meter"><div id="readinessMeter"></div></div>
+              </div>
+
+              <div class="status-block">
+                <div class="status-label">CURRENT DEFENSE ASSESSMENT</div>
+                <div class="status-value" id="assessmentTitle">AWAITING LAYOUT</div>
+                <div class="status-note" id="assessmentNote">
+                  Start with passive RF awareness and a fusion layer. Add authorized active response and protective measures for a balanced conceptual defense.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-title">LAYER STATUS <span>SIMULATION FLOW</span></div>
+            <div class="card-body">
+              <div class="phase-list">
+                <div class="phase" id="phaseApproach">
+                  <div class="phase-icon">1</div>
+                  <div>
+                    <h3>Drone Approach</h3>
+                    <p>Random route, behavior, conditions, and control/navigation dependency.</p>
+                  </div>
+                </div>
+
+                <div class="phase" id="phaseDetect">
+                  <div class="phase-icon">2</div>
+                  <div>
+                    <h3>Passive RF Cue</h3>
+                    <p>Passive sensing may cue when the simulated aircraft emits.</p>
+                  </div>
+                </div>
+
+                <div class="phase" id="phaseTrack">
+                  <div class="phase-icon">3</div>
+                  <div>
+                    <h3>Track / Assess</h3>
+                    <p>Directional cueing or sensing redundancy improves the conceptual track.</p>
+                  </div>
+                </div>
+
+                <div class="phase" id="phaseCoordinate">
+                  <div class="phase-icon">4</div>
+                  <div>
+                    <h3>Fusion / Coordinate</h3>
+                    <p>Coordination connects the track to reporting and an authorized decision path.</p>
+                  </div>
+                </div>
+
+                <div class="phase" id="phaseRespond">
+                  <div class="phase-icon">5</div>
+                  <div>
+                    <h3>Active Effect</h3>
+                    <p>Outcome depends on conceptual response coverage and the selected effect profile.</p>
+                  </div>
+                </div>
+
+                <div class="phase" id="phaseProtect">
+                  <div class="phase-icon">6</div>
+                  <div>
+                    <h3>FOB Resilience</h3>
+                    <p>Protection reduces exposure if an outer layer is delayed or incomplete.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tab-content" id="aar">
+      <article class="card howto">
+        <div class="card-title">AFTER-ACTION REVIEW <span>▤</span></div>
+        <div class="card-body">
+          Review the latest run to identify RF-awareness, tracking, coordination, active-effect,
+          and resilience dependencies. This is a discussion aid and does not validate real system performance.
+        </div>
+      </article>
+
+      <div class="aar-layout">
+        <section class="card">
+          <div class="card-title">LATEST RANDOM INCIDENT <span id="aarStatus">NO RUN YET</span></div>
+          <div class="card-body">
+            <div class="score-row">
+              <div class="score-ring">
+                <div>
+                  <strong id="aarScore">--</strong>
+                  <span>READINESS</span>
+                </div>
+              </div>
+
+              <div>
+                <h2 class="result-title" id="aarTitle">Awaiting Incident</h2>
+                <p class="result-summary" id="aarSummary">
+                  Run a randomized drone incident from the Site & Live Simulation tab to generate an after-action review.
+                </p>
+              </div>
+            </div>
+
+            <div id="findings"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-title">HUMAN REVIEW CHECKLIST <span>VERIFY LOCALLY</span></div>
+          <div class="card-body">
+            <div class="checklist" id="checklist">
+              <div class="check"><span>○</span><div><b>RF awareness:</b> Does the layout avoid dependence on one sensor or one aircraft-emission condition?</div></div>
+              <div class="check"><span>○</span><div><b>Track development:</b> Can a first cue become a useful track or assessment?</div></div>
+              <div class="check"><span>○</span><div><b>Effect selection:</b> Is the selected active-effect profile appropriate under approved local policy and authority?</div></div>
+              <div class="check"><span>○</span><div><b>Coordination:</b> Is there a defined process to receive, assess, report, and synchronize action?</div></div>
+              <div class="check"><span>○</span><div><b>Resilience:</b> Are critical personnel and functions protected if sensing or response is delayed?</div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer>FOB RF-CUAS Layered Defense Simulator · Conceptual Training Aid · UNCLASSIFIED</footer>
+  </main>
+
+  <script>
+    const RESOURCE_CAP = 24;
+    const canvas = document.getElementById("battleMap");
+    const ctx = canvas.getContext("2d");
+    const $ = id => document.getElementById(id);
+
+    const terrain = {
+      cols:24,
+      rows:18,
+      cells:[]
+    };
+
+    const activeProfiles = [
+      {
+        id:"rf",
+        title:"RF Link",
+        hud:"RF LINK",
+        icon:"⌁",
+        desc:"Conceptual effect profile for simulated aircraft assessed as dependent on an active RF command or control link."
+      },
+      {
+        id:"gnss",
+        title:"GNSS / GPS Navigation",
+        hud:"GNSS / GPS",
+        icon:"⌖",
+        desc:"Conceptual effect profile for simulated aircraft assessed as dependent on satellite-navigation support."
+      },
+      {
+        id:"multi",
+        title:"Multi-Mode",
+        hud:"MULTI-MODE",
+        icon:"◌",
+        desc:"Conceptual combined profile for training comparisons. Real capability, authority, and safety constraints are not represented."
+      }
+    ];
+
+    const devices = [
+      {
+        id:"rfArray",
+        name:"Passive RF Observation Array",
+        icon:"⌁",
+        type:"sensor",
+        color:"#00d4ff",
+        cost:3,
+        range:4.5,
+        short:"PASSIVE RF",
+        desc:"Notional passive RF awareness point that can cue when a simulated aircraft is emitting."
+      },
+      {
+        id:"rfCue",
+        name:"Directional RF Cueing Post",
+        icon:"◉",
+        type:"sensor",
+        color:"#30aaff",
+        cost:3,
+        range:3.3,
+        short:"RF CUEING",
+        desc:"Conceptual directional RF cueing point that helps turn an initial cue into a better track."
+      },
+      {
+        id:"fusion",
+        name:"CUAS Fusion & Coordination Cell",
+        icon:"⌘",
+        type:"command",
+        color:"#cc88ff",
+        cost:3,
+        range:7,
+        short:"FUSION CELL",
+        desc:"Coordination node for assessment, reporting, deconfliction, and synchronization of authorized actions."
+      },
+      {
+        id:"activeEffect",
+        name:"Authorized Active-Effect Station",
+        icon:"◌",
+        type:"response",
+        color:"#ffb830",
+        cost:4,
+        range:4.1,
+        short:"ACTIVE EFFECT",
+        desc:"Generic authorized response layer. Its conceptual profile is configured below the system palette."
+      },
+      {
+        id:"responseTeam",
+        name:"Mobile Response Element",
+        icon:"△",
+        type:"response",
+        color:"#ffb830",
+        cost:3,
+        range:2.8,
+        short:"RESPONSE",
+        desc:"Trained response element available after awareness and coordination under approved procedures."
+      },
+      {
+        id:"hardening",
+        name:"Protected Critical Node",
+        icon:"▰",
+        type:"protect",
+        color:"#00ff88",
+        cost:2,
+        range:1.8,
+        short:"PROTECTION",
+        desc:"Resilience measure that conceptually reduces exposure around important FOB functions."
+      },
+      {
+        id:"shelter",
+        name:"Protected Personnel Shelter",
+        icon:"▣",
+        type:"protect",
+        color:"#00ff88",
+        cost:2,
+        range:1.6,
+        short:"SHELTER",
+        desc:"Protective measure that improves conceptual resilience when the FOB core is threatened."
+      }
+    ];
+
+    const state = {
+      selectedDevice:null,
+      activeProfile:"rf",
+      placements:[],
+      running:false,
+      terrainSeed:173,
+      incident:null,
+      lastResult:null,
+      animationFrame:null,
+      startTime:0
+    };
+
+    function choose(items){
+      return items[Math.floor(Math.random() * items.length)];
     }
-    return;
-  }
-  if(!selectedType)return;
-  var t=TOWER_TYPES[selectedType];
-  if(credits<t.cost)return;
-  if(cellOccupied(cell.cx,cell.cy))return;
-  if(cellBlockedByFob(center.x,center.y))return;
-  if(center.x<20||center.x>W-20||center.y<20||center.y>H-20)return;
 
-  towers.push({type:selectedType,x:center.x,y:center.y,cellX:cell.cx,cellY:cell.cy,cooldown:0});
-  credits-=t.cost;
-  updateHUD();renderTowerBar();
-}
-canvas.addEventListener('click',function(e){
-  var r=canvas.getBoundingClientRect();
-  handleCanvasClick(e.clientX-r.left,e.clientY-r.top);
-});
-canvas.addEventListener('mousemove',function(e){
-  var r=canvas.getBoundingClientRect();
-  mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
-});
-
-/* ---------- waves ---------- */
-function droneCountForWave(w){return 4+Math.floor(w*1.8);}
-var waveSpawnLeft=0, waveSpawnTimer=0, waveSpawnInterval=0.65, waveBaseSpeed=0, waveBaseHp=0;
-function spawnWave(){
-  state='WAVE';
-  waveSpawnLeft=droneCountForWave(wave);
-  waveSpawnTimer=0;
-  waveBaseSpeed=26+wave*2.2;
-  waveBaseHp=40+wave*9;
-  showWaveBanner();
-}
-function spawnOneDrone(){
-  var edge=Math.floor(Math.random()*4);
-  var x,y;
-  if(edge===0){x=Math.random()*W;y=-30;}
-  else if(edge===1){x=W+30;y=Math.random()*H;}
-  else if(edge===2){x=Math.random()*W;y=H+30;}
-  else{x=-30;y=Math.random()*H;}
-  var swarm=Math.random()<0.25;
-  drones.push({
-    x:x,y:y,hp:swarm?waveBaseHp*0.6:waveBaseHp,maxHp:swarm?waveBaseHp*0.6:waveBaseHp,
-    baseSpeed:swarm?waveBaseSpeed*1.4:waveBaseSpeed,speed:swarm?waveBaseSpeed*1.4:waveBaseSpeed,
-    r:swarm?9:13,detected:false,color:swarm?'#fbbf24':'#f87171'
-  });
-}
-function showWaveBanner(){
-  $('waveNumBanner').textContent=wave;
-  $('waveBanner').classList.add('show');
-  setTimeout(function(){$('waveBanner').classList.remove('show');},2200);
-}
-function startBuildPhase(){
-  state='BUILD';buildTimer=BUILD_TIME;
-  $('buildBanner').classList.add('show');
-  $('nextWaveNum').textContent=wave+1;
-}
-
-/* ---------- update ---------- */
-var lastT=performance.now();
-function update(dt){
-  if(state==='BUILD'){
-    buildTimer-=dt;
-    $('buildTimer').textContent=Math.max(0,Math.ceil(buildTimer));
-    if(buildTimer<=0){
-      $('buildBanner').classList.remove('show');
-      spawnWave();
+    function randomBetween(min,max){
+      return min + Math.random() * (max-min);
     }
-    return;
-  }
-  if(state!=='WAVE')return;
 
-  // dt-driven drone spawning (replaces old setInterval approach)
-  if(waveSpawnLeft>0){
-    waveSpawnTimer+=dt;
-    if(waveSpawnTimer>=waveSpawnInterval){
-      waveSpawnTimer=0;
-      spawnOneDrone();
-      waveSpawnLeft--;
+    function seededRandom(seed){
+      const x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
     }
-  }
 
-  // towers acquire targets / act
-  towers.forEach(function(t){
-    var def=TOWER_TYPES[t.type];
-    if(def.detect)return; // detectors are passive, handled in drone-detection pass
-    if(t.type==='jammer')return; // handled in drone slow pass
-    t.cooldown-=dt;
-    if(t.cooldown>0)return;
-    var target=null,bestD=def.range;
-    drones.forEach(function(d){
-      if(!d.detected)return;
-      var dist=Math.hypot(d.x-t.x,d.y-t.y);
-      if(dist<=def.range&&dist<bestD+1){target=d;bestD=dist;}
-    });
-    if(target){
-      target.hp-=def.dmg;
-      t.cooldown=def.rate;
-      particles.push({x:t.x,y:t.y,tx:target.x,ty:target.y,life:0.12,color:def.color,beam:true});
-      if(target.hp<=0){
-        for(var i=0;i<8;i++)particles.push({x:target.x,y:target.y,vx:(Math.random()-0.5)*90,vy:(Math.random()-0.5)*90,life:0.5,color:'#38bdf8'});
-        score+=Math.round(20+wave*3);kills++;
-        drones=drones.filter(function(d){return d!==target;});
-        credits+=6;
-        updateHUD();
+    function distance(a,b){
+      return Math.hypot(a.x-b.x,a.y-b.y);
+    }
+
+    function hexToRgba(hex,alpha){
+      const clean = hex.replace("#","");
+      const r = parseInt(clean.slice(0,2),16);
+      const g = parseInt(clean.slice(2,4),16);
+      const b = parseInt(clean.slice(4,6),16);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function getProfile(){
+      return activeProfiles.find(profile => profile.id === state.activeProfile);
+    }
+
+    function getCore(){
+      return {x:12,y:9};
+    }
+
+    function getAssets(type){
+      return state.placements.filter(asset => {
+        const device = devices.find(item => item.id === asset.deviceId);
+        return device.type === type;
+      });
+    }
+
+    function mapSize(){
+      const rect = canvas.getBoundingClientRect();
+      return {w:rect.width,h:rect.height};
+    }
+
+    function gridToPixel(x,y){
+      const {w,h} = mapSize();
+      return {
+        x:(x / terrain.cols) * w,
+        y:(y / terrain.rows) * h
+      };
+    }
+
+    function pixelToGrid(px,py){
+      const {w,h} = mapSize();
+      return {
+        x:Math.max(0,Math.min(terrain.cols-.01,(px/w)*terrain.cols)),
+        y:Math.max(0,Math.min(terrain.rows-.01,(py/h)*terrain.rows))
+      };
+    }
+
+    function buildTerrain(){
+      terrain.cells = [];
+
+      for(let y=0;y<terrain.rows;y++){
+        for(let x=0;x<terrain.cols;x++){
+          const noise = seededRandom(state.terrainSeed + x*11.7 + y*37.4);
+          let kind = "open";
+
+          if(noise > .74) kind = "vegetation";
+          if(noise < .11) kind = "elevation";
+          if(x > 10 && x < 15 && y > 6 && y < 12) kind = "fob";
+          if(Math.abs(y - (8.5 + Math.sin(x*.55)*.85)) < .48) kind = "road";
+          if(Math.abs(x - (5 + Math.cos(y*.48)*.5)) < .35) kind = "road";
+
+          terrain.cells.push({x,y,kind,noise});
+        }
       }
     }
-  });
 
-  // detection pass: any detector or turret in range reveals a drone; extends detection via detector range
-  drones.forEach(function(d){
-    var revealed=false;
-    towers.forEach(function(t){
-      var def=TOWER_TYPES[t.type];
-      var rng=def.range*(def.detect?1.35:1);
-      if(Math.hypot(d.x-t.x,d.y-t.y)<=rng)revealed=true;
-    });
-    if(revealed)d.detected=true;
-  });
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
 
-  // jammer slow pass (recompute each frame — not cumulative)
-  drones.forEach(function(d){
-    d.speed=d.baseSpeed;
-    towers.forEach(function(t){
-      if(t.type!=='jammer')return;
-      if(Math.hypot(d.x-t.x,d.y-t.y)<=TOWER_TYPES.jammer.range){
-        d.speed=d.baseSpeed*(1-TOWER_TYPES.jammer.slow);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+
+      drawMap();
+    }
+
+    function drawMap(){
+      const {w,h} = mapSize();
+      if(!w || !h) return;
+
+      ctx.clearRect(0,0,w,h);
+      drawTerrain(w,h);
+      drawFOB(w,h);
+      drawCoverage(w,h);
+      drawPlacements(w,h);
+      drawDrone(w,h);
+      drawBorder(w,h);
+    }
+
+    function drawTerrain(w,h){
+      const cw = w / terrain.cols;
+      const ch = h / terrain.rows;
+
+      ctx.fillStyle = "#233d2b";
+      ctx.fillRect(0,0,w,h);
+
+      terrain.cells.forEach(cell => {
+        const x = cell.x * cw;
+        const y = cell.y * ch;
+        let color = "#31543a";
+
+        if(cell.kind === "vegetation") color = cell.noise > .88 ? "#1d482c" : "#285733";
+        if(cell.kind === "elevation") color = cell.noise < .05 ? "#6a6141" : "#5d593d";
+        if(cell.kind === "road") color = "#6c6048";
+        if(cell.kind === "fob") color = "#655f4e";
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x,y,cw+1,ch+1);
+
+        if(cell.kind === "vegetation"){
+          ctx.fillStyle = "rgba(15,38,22,.35)";
+          for(let i=0;i<3;i++){
+            const nx = seededRandom(cell.x*17 + i*5 + cell.y*11) * cw;
+            const ny = seededRandom(cell.y*13 + i*8 + cell.x*7) * ch;
+            ctx.beginPath();
+            ctx.arc(x+nx,y+ny,Math.max(1,cw*.1),0,Math.PI*2);
+            ctx.fill();
+          }
+        }
+
+        if(cell.kind === "elevation"){
+          ctx.strokeStyle = "rgba(225,190,110,.19)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(x+cw*.45,y+ch*.52,Math.min(cw,ch)*.32,0,Math.PI*2);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "rgba(0,0,0,.10)";
+        ctx.fillRect(x,y,cw,ch);
+      });
+
+      ctx.strokeStyle = "rgba(220,240,230,.07)";
+      ctx.lineWidth = 1;
+
+      for(let x=0;x<=terrain.cols;x++){
+        ctx.beginPath();
+        ctx.moveTo(x*cw,0);
+        ctx.lineTo(x*cw,h);
+        ctx.stroke();
       }
+
+      for(let y=0;y<=terrain.rows;y++){
+        ctx.beginPath();
+        ctx.moveTo(0,y*ch);
+        ctx.lineTo(w,y*ch);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(0,0,0,.13)";
+      ctx.fillRect(0,0,w,h);
+    }
+
+    function drawFOB(w,h){
+      const core = getCore();
+      const p = gridToPixel(core.x,core.y);
+      const cellW = w / terrain.cols;
+      const cellH = h / terrain.rows;
+      const rx = cellW * 3.3;
+      const ry = cellH * 2.8;
+
+      ctx.save();
+
+      ctx.setLineDash([7,5]);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(0,255,136,.72)";
+      ctx.beginPath();
+      ctx.ellipse(p.x,p.y,rx,ry,0,0,Math.PI*2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const buildings = [
+        {x:-1.5,y:-.9,w:1.5,h:.85,label:"CP"},
+        {x:.25,y:-1.05,w:1.7,h:.9,label:"C2"},
+        {x:-1.8,y:.35,w:1.45,h:.85,label:"S"},
+        {x:.1,y:.35,w:2,h:1.15,label:"OPS"}
+      ];
+
+      buildings.forEach(building => {
+        const bx = p.x + building.x*cellW;
+        const by = p.y + building.y*cellH;
+
+        ctx.fillStyle = "#34414a";
+        ctx.fillRect(bx,by,building.w*cellW,building.h*cellH);
+
+        ctx.strokeStyle = "#8b9aa0";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx,by,building.w*cellW,building.h*cellH);
+
+        ctx.fillStyle = "rgba(220,240,245,.82)";
+        ctx.font = `${Math.max(8,cellW*.23)}px Share Tech Mono`;
+        ctx.textAlign = "center";
+        ctx.fillText(building.label,bx+(building.w*cellW/2),by+(building.h*cellH/2)+3);
+      });
+
+      ctx.fillStyle = "rgba(0,255,136,.88)";
+      ctx.font = `bold ${Math.max(11,cellW*.37)}px Rajdhani`;
+      ctx.textAlign = "center";
+      ctx.fillText("FOB ALPHA",p.x,p.y+ry+17);
+
+      ctx.restore();
+    }
+
+    function drawCoverage(w){
+      state.placements.forEach(asset => {
+        const device = devices.find(item => item.id === asset.deviceId);
+        const p = gridToPixel(asset.x,asset.y);
+        const radius = (device.range / terrain.cols) * w;
+
+        let alpha = .035;
+        if(device.type === "sensor") alpha = .05;
+        if(device.type === "command") alpha = .028;
+        if(device.type === "response") alpha = .04;
+        if(device.type === "protect") alpha = .06;
+
+        const active = state.incident &&
+          state.incident.activeAssets &&
+          state.incident.activeAssets.includes(asset.id);
+
+        if(active) alpha = .15;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,radius,0,Math.PI*2);
+        ctx.fillStyle = hexToRgba(device.color,alpha);
+        ctx.fill();
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = hexToRgba(device.color,Math.min(alpha*2.7,.4));
+        ctx.stroke();
+      });
+    }
+
+    function drawPlacements(w,h){
+      state.placements.forEach(asset => {
+        const device = devices.find(item => item.id === asset.deviceId);
+        const p = gridToPixel(asset.x,asset.y);
+        const size = Math.max(22,Math.min(w,h)*.04);
+
+        const active = state.incident &&
+          state.incident.activeAssets &&
+          state.incident.activeAssets.includes(asset.id);
+
+        ctx.save();
+
+        if(active){
+          ctx.shadowColor = device.color;
+          ctx.shadowBlur = 17;
+        }
+
+        ctx.fillStyle = "rgba(7,10,12,.88)";
+        ctx.strokeStyle = device.color;
+        ctx.lineWidth = active ? 3 : 2;
+
+        ctx.beginPath();
+        ctx.roundRect(p.x-size/2,p.y-size/2,size,size,5);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = device.color;
+        ctx.textAlign = "center";
+        ctx.font = `bold ${Math.max(15,size*.58)}px Rajdhani`;
+        ctx.fillText(device.icon,p.x,p.y+size*.19);
+
+        let label = device.short;
+        if(device.id === "activeEffect"){
+          label = getProfile().hud;
+        }
+
+        ctx.fillStyle = "rgba(7,10,12,.85)";
+        ctx.fillRect(p.x-size*.95,p.y+size*.63,size*1.9,11);
+
+        ctx.fillStyle = device.color;
+        ctx.font = `${Math.max(6,size*.20)}px Share Tech Mono`;
+        ctx.fillText(label,p.x,p.y+size*.63+8);
+
+        ctx.restore();
+      });
+    }
+
+    function drawDrone(){
+      const incident = state.incident;
+      if(!incident || !incident.active) return;
+
+      const drone = incident.drone;
+      const p = gridToPixel(drone.x,drone.y);
+
+      ctx.save();
+
+      if(incident.detected){
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,22,0,Math.PI*2);
+        ctx.strokeStyle = incident.tracked ? "rgba(0,212,255,.85)" : "rgba(255,184,48,.8)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4,3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      if(incident.tracked){
+        const core = gridToPixel(getCore().x,getCore().y);
+        ctx.strokeStyle = "rgba(0,212,255,.38)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(core.x,core.y);
+        ctx.stroke();
+      }
+
+      if(incident.responding){
+        const pulse = 14 + Math.sin(Date.now()/100)*5;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,pulse,0,Math.PI*2);
+        ctx.strokeStyle = "rgba(255,184,48,.85)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      if(incident.disrupted){
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,34+Math.sin(Date.now()/90)*4,0,Math.PI*2);
+        ctx.strokeStyle = "rgba(0,255,136,.85)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      ctx.translate(p.x,p.y);
+      ctx.rotate(drone.heading);
+
+      ctx.shadowColor = incident.disrupted ? "#00ff88" : "#ff4a4a";
+      ctx.shadowBlur = 16;
+      ctx.fillStyle = incident.disrupted ? "#00ff88" : "#ff4a4a";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(11,0);
+      ctx.lineTo(-6,-6);
+      ctx.lineTo(-3,0);
+      ctx.lineTo(-6,6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = incident.disrupted ? "#00ff88" : "#ff4a4a";
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      ctx.moveTo(-3,0);
+      ctx.lineTo(-14,0);
+      ctx.moveTo(-8,-8);
+      ctx.lineTo(-8,8);
+      ctx.stroke();
+
+      ctx.restore();
+
+      ctx.fillStyle = "rgba(7,10,12,.84)";
+      ctx.fillRect(p.x-70,p.y-38,140,16);
+
+      ctx.fillStyle = incident.disrupted ? "#00ff88" : "#ffb830";
+      ctx.font = "9px Share Tech Mono";
+      ctx.textAlign = "center";
+
+      const text = incident.disrupted
+        ? "SIMULATED RESPONSE EFFECT"
+        : `UAS: ${incident.dependency.short}`;
+
+      ctx.fillText(text,p.x,p.y-27);
+    }
+
+    function drawBorder(w,h){
+      ctx.strokeStyle = "rgba(0,255,136,.42)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1,1,w-2,h-2);
+
+      ctx.fillStyle = "rgba(220,240,245,.55)";
+      ctx.font = "9px Share Tech Mono";
+      ctx.textAlign = "left";
+      ctx.fillText("N",10,18);
+
+      ctx.beginPath();
+      ctx.moveTo(14,22);
+      ctx.lineTo(14,35);
+      ctx.strokeStyle = "rgba(220,240,245,.55)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(14,20);
+      ctx.lineTo(10,26);
+      ctx.lineTo(18,26);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(220,240,245,.55)";
+      ctx.fill();
+    }
+
+    function renderDevices(){
+      $("deviceList").innerHTML = devices.map(device => `
+        <button class="device ${state.selectedDevice === device.id ? "selected" : ""}" data-device="${device.id}" type="button">
+          <div class="device-top">
+            <span class="device-name">${device.name}</span>
+            <span class="device-icon" style="color:${device.color}">${device.icon}</span>
+          </div>
+          <div class="device-meta"><b>${device.short}</b> · COST ${device.cost} · NOTIONAL COVERAGE ${device.range}</div>
+          <div class="device-meta">${device.desc}</div>
+        </button>
+      `).join("");
+
+      document.querySelectorAll("[data-device]").forEach(button => {
+        button.addEventListener("click",() => {
+          if(state.running) return;
+
+          state.selectedDevice = button.dataset.device;
+          const device = devices.find(item => item.id === state.selectedDevice);
+
+          $("selectedLabel").textContent = device.short;
+          $("mapMode").textContent = "PLACEMENT READY";
+          $("hudMode").textContent = `PLACE ${device.short}`;
+
+          renderDevices();
+        });
+      });
+    }
+
+    function renderProfiles(){
+      $("profileGrid").innerHTML = activeProfiles.map(profile => `
+        <button class="profile-btn ${state.activeProfile === profile.id ? "active" : ""}" data-profile="${profile.id}" type="button">
+          <strong>${profile.icon} ${profile.title}</strong>
+          <span>${profile.desc}</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll("[data-profile]").forEach(button => {
+        button.addEventListener("click",() => {
+          if(state.running) return;
+
+          state.activeProfile = button.dataset.profile;
+          const profile = getProfile();
+
+          $("hudEffect").textContent = profile.hud;
+          log(`Active-effect profile configured: ${profile.title}.`,"purple","CONFIG");
+
+          renderProfiles();
+          drawMap();
+        });
+      });
+    }
+
+    function resourceUsed(){
+      return state.placements.reduce((total,asset) => {
+        const device = devices.find(item => item.id === asset.deviceId);
+        return total + device.cost;
+      },0);
+    }
+
+    function layerTypes(){
+      return [...new Set(state.placements.map(asset => {
+        return devices.find(item => item.id === asset.deviceId).type;
+      }))];
+    }
+
+    function readinessScore(){
+      const layers = layerTypes();
+      const sensors = getAssets("sensor").length;
+      const command = getAssets("command").length;
+      const response = getAssets("response").length;
+      const protect = getAssets("protect").length;
+
+      let score = 0;
+
+      score += Math.min(18,state.placements.length*3);
+      score += layers.length*12;
+      if(sensors >= 2) score += 12;
+      if(command >= 1 && sensors >= 1) score += 14;
+      if(response >= 1 && command >= 1) score += 14;
+      if(protect >= 2) score += 8;
+
+      return Math.min(100,score);
+    }
+
+    function updateStatus(){
+      const used = resourceUsed();
+      const layers = layerTypes();
+      const score = readinessScore();
+
+      $("resourceUsed").textContent = used;
+      $("resourceLeft").textContent = RESOURCE_CAP-used;
+      $("layerCount").textContent = `${layers.length}/4`;
+      $("assetCount").textContent = state.placements.length;
+      $("readinessText").textContent = `${score}%`;
+      $("readinessMeter").style.width = `${score}%`;
+
+      if(score >= 72){
+        $("readinessMeter").style.background = "var(--green)";
+        $("assessmentTitle").textContent = "BALANCED CONCEPT";
+        $("assessmentNote").textContent = "The site includes multiple conceptual layers. Run repeated random incidents to identify route-specific or dependency-specific gaps.";
+      }else if(layers.includes("sensor") && !layers.includes("command")){
+        $("readinessMeter").style.background = "var(--amber)";
+        $("assessmentTitle").textContent = "COORDINATION GAP";
+        $("assessmentNote").textContent = "RF sensing is present, but there is no fusion and coordination layer to convert awareness into a response opportunity.";
+      }else if(layers.includes("command") && !layers.includes("sensor")){
+        $("readinessMeter").style.background = "var(--amber)";
+        $("assessmentTitle").textContent = "AWARENESS GAP";
+        $("assessmentNote").textContent = "A coordination node is present, but passive RF systems are not positioned to provide initial cueing.";
+      }else if(layers.includes("response") && !layers.includes("sensor")){
+        $("readinessMeter").style.background = "var(--amber)";
+        $("assessmentTitle").textContent = "RESPONSE WITHOUT CUEING";
+        $("assessmentNote").textContent = "A response layer has limited training value without awareness, assessment, and coordinated decision-making.";
+      }else{
+        $("readinessMeter").style.background = "var(--red)";
+        $("assessmentTitle").textContent = "AWAITING LAYOUT";
+        $("assessmentNote").textContent = "Start with passive RF awareness and a fusion layer. Add authorized active response and protection for a balanced conceptual defense.";
+      }
+
+      $("hudEffect").textContent = getProfile().hud;
+      drawMap();
+    }
+
+    function log(message,type="info",time="SYSTEM"){
+      const line = document.createElement("div");
+      line.className = "logline";
+      line.innerHTML = `<span class="logtime">[${time}]</span> <span class="log-${type}">${message}</span>`;
+
+      $("incidentLog").appendChild(line);
+      $("incidentLog").scrollTop = $("incidentLog").scrollHeight;
+    }
+
+    function addPlacement(x,y){
+      if(state.running) return;
+
+      if(!state.selectedDevice){
+        $("mapMode").textContent = "SELECT SYSTEM";
+        $("hudMode").textContent = "SELECT A PALETTE ITEM";
+        return;
+      }
+
+      const device = devices.find(item => item.id === state.selectedDevice);
+      const used = resourceUsed();
+
+      if(used + device.cost > RESOURCE_CAP){
+        $("mapMode").textContent = "RESOURCE LIMIT";
+        $("hudMode").textContent = "RESOURCE LIMIT REACHED";
+        log("Resource cap reached. Remove or replace an asset before placing another system.","warn","SYSTEM");
+        return;
+      }
+
+      const existingIndex = state.placements.findIndex(asset => distance(asset,{x,y}) < .75);
+
+      if(existingIndex >= 0){
+        const oldDevice = devices.find(item => item.id === state.placements[existingIndex].deviceId);
+        const adjustedUse = used-oldDevice.cost+device.cost;
+
+        if(adjustedUse > RESOURCE_CAP){
+          log("Replacing this system would exceed the resource cap.","warn","SYSTEM");
+          return;
+        }
+
+        state.placements[existingIndex] = {
+          id:`asset-${Date.now()}-${Math.random()}`,
+          x,y,
+          deviceId:device.id
+        };
+      }else{
+        state.placements.push({
+          id:`asset-${Date.now()}-${Math.random()}`,
+          x,y,
+          deviceId:device.id
+        });
+      }
+
+      $("mapMode").textContent = "SYSTEM PLACED";
+      $("hudMode").textContent = `PLACED ${device.short}`;
+      log(`${device.name} placed on the notional terrain map.`,"cyan","SITE");
+
+      updateStatus();
+    }
+
+    function loadExample(){
+      state.placements = [
+        {id:"a1",x:3.2,y:3.4,deviceId:"rfArray"},
+        {id:"a2",x:19.5,y:4.0,deviceId:"rfArray"},
+        {id:"a3",x:17.8,y:13.6,deviceId:"rfCue"},
+        {id:"a4",x:11.1,y:8.2,deviceId:"fusion"},
+        {id:"a5",x:15.2,y:10.7,deviceId:"activeEffect"},
+        {id:"a6",x:8.3,y:11.8,deviceId:"responseTeam"},
+        {id:"a7",x:11.0,y:9.8,deviceId:"hardening"},
+        {id:"a8",x:13.2,y:9.8,deviceId:"shelter"}
+      ];
+
+      state.selectedDevice = null;
+
+      $("selectedLabel").textContent = "EXAMPLE LOADED";
+      $("mapMode").textContent = "BALANCED EXAMPLE";
+      $("hudMode").textContent = "BALANCED EXAMPLE LOADED";
+
+      log("Balanced conceptual RF-CUAS layout loaded.","good","SYSTEM");
+      updateStatus();
+    }
+
+    function clearSite(){
+      if(state.running) return;
+
+      state.placements = [];
+      state.selectedDevice = null;
+
+      $("selectedLabel").textContent = "SELECT ITEM";
+      $("mapMode").textContent = "BUILD MODE";
+      $("hudMode").textContent = "PLACE SYSTEMS";
+
+      log("Site layout cleared.","warn","SYSTEM");
+      updateStatus();
+    }
+
+    function resetPhases(){
+      ["Approach","Detect","Track","Coordinate","Respond","Protect"].forEach(name => {
+        $(`phase${name}`).className = "phase";
+      });
+    }
+
+    function setPhase(name,status){
+      $(`phase${name}`).className = `phase ${status}`;
+    }
+
+    function randomPath(profile){
+      const core = getCore();
+      const side = choose(["north","south","east","west"]);
+      let start,end;
+
+      if(side === "north"){
+        start = {x:randomBetween(1,22),y:-1};
+        end = {x:randomBetween(2,21),y:19};
+      }else if(side === "south"){
+        start = {x:randomBetween(1,22),y:19};
+        end = {x:randomBetween(2,21),y:-1};
+      }else if(side === "east"){
+        start = {x:25,y:randomBetween(1,17)};
+        end = {x:-1,y:randomBetween(1,17)};
+      }else{
+        start = {x:-1,y:randomBetween(1,17)};
+        end = {x:25,y:randomBetween(1,17)};
+      }
+
+      if(profile === "observation"){
+        const mid = {
+          x:core.x+randomBetween(-3.4,3.4),
+          y:core.y+randomBetween(-2.6,2.6)
+        };
+
+        return [
+          start,
+          {x:(start.x+mid.x)*.55,y:(start.y+mid.y)*.55},
+          {x:mid.x+1.5,y:mid.y-1.2},
+          {x:mid.x-1.6,y:mid.y+1.0},
+          {x:mid.x+1.2,y:mid.y+1.5},
+          end
+        ];
+      }
+
+      if(profile === "direct"){
+        return [
+          start,
+          {x:(start.x+core.x)*.45,y:(start.y+core.y)*.45},
+          {x:core.x+randomBetween(-.5,.5),y:core.y+randomBetween(-.5,.5)},
+          end
+        ];
+      }
+
+      if(profile === "perimeter"){
+        const near = {
+          x:core.x+randomBetween(-5.2,5.2),
+          y:core.y+randomBetween(-4.1,4.1)
+        };
+
+        return [
+          start,
+          {x:(start.x+near.x)*.55,y:(start.y+near.y)*.55},
+          near,
+          {x:near.x+randomBetween(-2,2),y:near.y+randomBetween(-2,2)},
+          end
+        ];
+      }
+
+      return [start,{x:12,y:randomBetween(2,16)},end];
+    }
+
+    function generateIncident(){
+      const profiles = [
+        {
+          id:"transit",
+          label:"TRANSITING OVERFLIGHT",
+          description:"A small UAS crosses the area near the FOB without dwelling.",
+          emission:"steady",
+          requiredTrack:1,
+          threat:"LOW"
+        },
+        {
+          id:"observation",
+          label:"OBSERVATION ORBIT",
+          description:"A small UAS approaches and loiters near the FOB perimeter to observe.",
+          emission:"intermittent",
+          requiredTrack:2,
+          threat:"MODERATE"
+        },
+        {
+          id:"direct",
+          label:"DIRECT CORE APPROACH",
+          description:"A small UAS approaches the FOB core on a compressed timeline.",
+          emission:"limited",
+          requiredTrack:2,
+          threat:"HIGH"
+        },
+        {
+          id:"perimeter",
+          label:"PERIMETER PROBING",
+          description:"A small UAS probes multiple sectors near the FOB perimeter before departing.",
+          emission:"burst",
+          requiredTrack:2,
+          threat:"MODERATE"
+        }
+      ];
+
+      const weather = choose([
+        {name:"CLEAR CONDITIONS",sensorFactor:1},
+        {name:"TERRAIN / VEGETATION CLUTTER",sensorFactor:.9},
+        {name:"REDUCED VISIBILITY",sensorFactor:.83},
+        {name:"INTERMITTENT EMISSIONS",sensorFactor:.72}
+      ]);
+
+      const dependencies = [
+        {
+          id:"rf",
+          short:"RF-LINK DEPENDENT",
+          title:"RF Link Dependency",
+          desc:"The simulated aircraft is assessed as reliant on an active RF command/control link."
+        },
+        {
+          id:"gnss",
+          short:"GNSS/GPS-ASSISTED",
+          title:"GNSS / GPS Navigation Dependency",
+          desc:"The simulated aircraft is assessed as reliant on satellite-navigation support."
+        },
+        {
+          id:"hybrid",
+          short:"HYBRID DEPENDENCY",
+          title:"Hybrid RF and Navigation Dependency",
+          desc:"The simulated aircraft is assessed as using both command-link and navigation support."
+        }
+      ];
+
+      const profile = choose(profiles);
+      const dependency = choose(dependencies);
+
+      return {
+        active:true,
+        profile,
+        dependency,
+        weather,
+        path:randomPath(profile.id),
+        detected:false,
+        tracked:false,
+        coordinated:false,
+        responding:false,
+        disrupted:false,
+        reachedCore:false,
+        completed:false,
+        activeAssets:[],
+        triggerTimes:{
+          detect:null,
+          track:null,
+          coordinate:null,
+          response:null,
+          protect:null
+        },
+        drone:{x:0,y:0,heading:0}
+      };
+    }
+
+    function interpolatePath(path,progress){
+      const segments = path.length-1;
+      const scaled = Math.min(.999,Math.max(0,progress))*segments;
+      const index = Math.floor(scaled);
+      const local = scaled-index;
+      const a = path[index];
+      const b = path[Math.min(index+1,path.length-1)];
+
+      return {
+        x:a.x+(b.x-a.x)*local,
+        y:a.y+(b.y-a.y)*local,
+        heading:Math.atan2(b.y-a.y,b.x-a.x)
+      };
+    }
+
+    function isEmitting(incident,elapsed){
+      if(incident.profile.emission === "steady") return true;
+      if(incident.profile.emission === "limited") return elapsed%2.7 < .75;
+      if(incident.profile.emission === "burst") return elapsed%2.1 < .58;
+      return elapsed%3.3 < 1.35;
+    }
+
+    function assetsWithin(type,point,rangeMultiplier=1){
+      return getAssets(type).filter(asset => {
+        const device = devices.find(item => item.id === asset.deviceId);
+        return distance(asset,point) <= device.range*rangeMultiplier;
+      });
+    }
+
+    function protectNearCore(){
+      const core = getCore();
+      return getAssets("protect").filter(asset => distance(asset,core) <= 4).length;
+    }
+
+    function markActive(assets){
+      assets.forEach(asset => {
+        if(!state.incident.activeAssets.includes(asset.id)){
+          state.incident.activeAssets.push(asset.id);
+        }
+      });
+    }
+
+    function effectMatchesDependency(profileId,dependencyId){
+      if(profileId === "multi") return true;
+      if(dependencyId === "hybrid") return profileId === "rf" || profileId === "gnss";
+      return profileId === dependencyId;
+    }
+
+    function resetIncident(){
+      cancelAnimationFrame(state.animationFrame);
+
+      state.running = false;
+      state.incident = null;
+
+      $("runBtn").disabled = false;
+      $("runBtn").textContent = "▶ RUN RANDOM INCIDENT";
+      $("incidentState").textContent = "READY";
+      $("statusHeader").textContent = "STANDBY";
+      $("mapMode").textContent = "BUILD MODE";
+      $("hudMode").textContent = state.selectedDevice ? "PLACE SYSTEMS" : "SITE READY";
+      $("hudIncident").textContent = "STANDBY";
+      $("hudTrack").textContent = "NO ACTIVE TRACK";
+
+      resetPhases();
+      drawMap();
+    }
+
+    function startIncident(){
+      if(state.running) return;
+
+      if(state.placements.length === 0){
+        log("Place at least one conceptual defense asset before running an incident.","warn","SYSTEM");
+        $("mapMode").textContent = "BUILD SITE FIRST";
+        return;
+      }
+
+      resetIncident();
+
+      state.running = true;
+      state.incident = generateIncident();
+      state.incident.drone = {
+        x:state.incident.path[0].x,
+        y:state.incident.path[0].y,
+        heading:0
+      };
+
+      state.startTime = performance.now();
+
+      $("runBtn").disabled = true;
+      $("runBtn").textContent = "INCIDENT IN PROGRESS";
+      $("incidentState").textContent = "LIVE";
+      $("statusHeader").textContent = "LIVE INCIDENT";
+      $("mapMode").textContent = "LIVE SIMULATION";
+      $("hudMode").textContent = "LIVE SIMULATION";
+      $("hudIncident").textContent = state.incident.profile.label;
+      $("hudTrack").textContent = "SEARCHING";
+
+      $("incidentLog").innerHTML = "";
+      resetPhases();
+
+      const configuredProfile = getProfile();
+
+      log(`Random incident generated: ${state.incident.profile.label}.`,"warn","00:00");
+      log(state.incident.profile.description,"info","00:00");
+      log(`Conditions: ${state.incident.weather.name}. RF emission pattern: ${state.incident.profile.emission.toUpperCase()}.`,"cyan","00:00");
+      log(`Simulated aircraft dependency: ${state.incident.dependency.title}.`,"purple","00:00");
+      log(`Configured active-effect profile: ${configuredProfile.title}.`,"purple","00:00");
+
+      setPhase("Approach","active");
+      state.animationFrame = requestAnimationFrame(animateIncident);
+    }
+
+    function finishIncident(outcome){
+      const incident = state.incident;
+      if(!incident || incident.completed) return;
+
+      incident.completed = true;
+      incident.active = false;
+      state.running = false;
+
+      $("runBtn").disabled = false;
+      $("runBtn").textContent = "▶ RUN RANDOM INCIDENT";
+      $("incidentState").textContent = outcome.code;
+      $("statusHeader").textContent = outcome.code;
+      $("hudTrack").textContent = outcome.trackText;
+      $("mapMode").textContent = "INCIDENT COMPLETE";
+
+      log(`RESULT: ${outcome.title}.`,outcome.type,"END");
+      log(outcome.detail,"info","END");
+
+      state.lastResult = {
+        incident,
+        outcome,
+        score:outcome.score,
+        readiness:readinessScore(),
+        selectedProfile:getProfile()
+      };
+
+      renderAAR();
+      drawMap();
+    }
+
+    function animateIncident(now){
+      const incident = state.incident;
+      if(!incident || !incident.active) return;
+
+      const elapsed = (now-state.startTime)/1000;
+      const duration = 13;
+      const progress = Math.min(1,elapsed/duration);
+
+      const drone = interpolatePath(incident.path,progress);
+      incident.drone = drone;
+
+      const emitting = isEmitting(incident,elapsed);
+      const passiveSensors = assetsWithin("sensor",drone,incident.weather.sensorFactor);
+      const passiveArrays = passiveSensors.filter(asset => asset.deviceId === "rfArray");
+      const cuePosts = passiveSensors.filter(asset => asset.deviceId === "rfCue");
+      const fusion = getAssets("command");
+      const activeResponse = assetsWithin("response",drone,1);
+      const activeEffectStations = activeResponse.filter(asset => asset.deviceId === "activeEffect");
+      const mobileTeams = activeResponse.filter(asset => asset.deviceId === "responseTeam");
+      const coreDistance = distance(drone,getCore());
+      const profileMatch = effectMatchesDependency(state.activeProfile,incident.dependency.id);
+
+      if(elapsed < 1.5){
+        setPhase("Approach","active");
+      }else{
+        setPhase("Approach","success");
+      }
+
+      if(emitting && passiveArrays.length > 0 && !incident.detected){
+        incident.detected = true;
+        incident.triggerTimes.detect = elapsed;
+        markActive(passiveArrays);
+
+        setPhase("Detect","success");
+        $("hudTrack").textContent = "PASSIVE RF CUE";
+
+        log("Passive RF sensing layer generated an initial cue from simulated aircraft emissions.","good",elapsed.toFixed(1));
+      }
+
+      if(!incident.detected && elapsed > 6 && !incident.triggerTimes.detect){
+        incident.triggerTimes.detect = elapsed;
+        setPhase("Detect","fail");
+      }else if(!incident.detected){
+        setPhase("Detect","active");
+      }
+
+      const trackCondition =
+        incident.detected &&
+        (
+          cuePosts.length > 0 ||
+          passiveArrays.length >= 2 ||
+          (incident.profile.requiredTrack === 1 && passiveArrays.length >= 1)
+        );
+
+      if(trackCondition && !incident.tracked){
+        incident.tracked = true;
+        incident.triggerTimes.track = elapsed;
+
+        markActive([...cuePosts,...passiveArrays]);
+
+        setPhase("Track","success");
+        $("hudTrack").textContent = "TRACK / ASSESSMENT";
+
+        log("Directional RF cueing or redundant sensing improved the conceptual track and assessment.","good",elapsed.toFixed(1));
+      }
+
+      if(incident.detected && !incident.tracked){
+        setPhase("Track","active");
+      }
+
+      if(incident.tracked && fusion.length > 0 && !incident.coordinated){
+        incident.coordinated = true;
+        incident.triggerTimes.coordinate = elapsed;
+
+        markActive(fusion);
+
+        setPhase("Coordinate","success");
+        $("hudTrack").textContent = "COORDINATED TRACK";
+
+        log("Fusion and coordination cell received the track and created a conceptual reporting and response path.","good",elapsed.toFixed(1));
+      }else if(incident.tracked && fusion.length === 0 && !incident.triggerTimes.coordinate){
+        incident.triggerTimes.coordinate = elapsed;
+        setPhase("Coordinate","fail");
+
+        log("Track exists, but no fusion and coordination layer is positioned to organize a response.","warn",elapsed.toFixed(1));
+      }else if(incident.tracked && !incident.coordinated){
+        setPhase("Coordinate","active");
+      }
+
+      if(incident.coordinated && activeResponse.length > 0 && !incident.responding){
+        incident.responding = true;
+        incident.triggerTimes.response = elapsed;
+
+        markActive(activeResponse);
+
+        setPhase("Respond","active");
+        $("hudTrack").textContent = "AUTHORIZED RESPONSE WINDOW";
+
+        log("A response layer is within the notional response area.","warn",elapsed.toFixed(1));
+
+        if(activeEffectStations.length > 0){
+          if(profileMatch){
+            log(`Configured ${getProfile().title} effect profile conceptually matches the simulated dependency.`,"good",elapsed.toFixed(1));
+          }else{
+            log(`Configured ${getProfile().title} effect profile does not conceptually match the simulated dependency.`,"warn",elapsed.toFixed(1));
+          }
+        }
+
+        if(activeEffectStations.length === 0 && mobileTeams.length > 0){
+          log("A mobile response element is present, but no active-effect station covers this simulated position.","warn",elapsed.toFixed(1));
+        }
+      }
+
+      if(
+        incident.responding &&
+        elapsed-incident.triggerTimes.response > 1.3 &&
+        !incident.disrupted &&
+        activeEffectStations.length > 0 &&
+        profileMatch
+      ){
+        incident.disrupted = true;
+
+        setPhase("Respond","success");
+        $("hudTrack").textContent = "SIMULATED RESPONSE EFFECT";
+
+        log("Conceptual active-effect sequence completed. Simulated aircraft departs the protected area.","good",elapsed.toFixed(1));
+      }
+
+      if(
+        incident.responding &&
+        elapsed-incident.triggerTimes.response > 1.4 &&
+        !incident.disrupted &&
+        activeEffectStations.length > 0 &&
+        !profileMatch
+      ){
+        setPhase("Respond","fail");
+      }
+
+      if(incident.coordinated && activeResponse.length === 0 && !incident.triggerTimes.response){
+        incident.triggerTimes.response = elapsed;
+        setPhase("Respond","fail");
+
+        log("Coordination exists, but no response layer covers the simulated aircraft position.","warn",elapsed.toFixed(1));
+      }
+
+      const protection = protectNearCore();
+
+      if(coreDistance < 3.2 && protection > 0 && !incident.triggerTimes.protect){
+        incident.triggerTimes.protect = elapsed;
+
+        const protectAssets = getAssets("protect").filter(asset => {
+          return distance(asset,getCore()) <= 4;
+        });
+
+        markActive(protectAssets);
+        setPhase("Protect","success");
+
+        log("Protective measures around FOB functions are available as a resilience layer.","good",elapsed.toFixed(1));
+      }else if(coreDistance < 2 && protection === 0 && !incident.triggerTimes.protect){
+        incident.triggerTimes.protect = elapsed;
+        setPhase("Protect","fail");
+
+        log("No nearby resilience layer is positioned around the FOB core.","warn",elapsed.toFixed(1));
+      }else if(protection > 0 && !incident.triggerTimes.protect){
+        setPhase("Protect","active");
+      }
+
+      if(coreDistance < 1.15 && !incident.disrupted && !incident.reachedCore){
+        incident.reachedCore = true;
+        log("Simulated aircraft reached the FOB core area before a conceptual active-effect sequence completed.","bad",elapsed.toFixed(1));
+      }
+
+      drawMap();
+
+      if(incident.disrupted && elapsed > incident.triggerTimes.response+2.2){
+        finishIncident({
+          code:"RESPONSE WINDOW CREATED",
+          title:"Layered Response Opportunity Created",
+          type:"good",
+          trackText:"SIMULATED AIRCRAFT DEPARTED",
+          score:Math.min(100,76+Math.round(readinessScore()/5)),
+          detail:"Passive RF awareness, track development, fusion and coordination, and a conceptually matched active-effect profile created a timely response opportunity."
+        });
+        return;
+      }
+
+      if(progress >= 1){
+        if(incident.reachedCore && protection > 0){
+          setPhase("Protect","success");
+
+          finishIncident({
+            code:"RESILIENCE USED",
+            title:"Outer Layers Delayed; Resilience Layer Remained",
+            type:"warn",
+            trackText:"CORE APPROACH OBSERVED",
+            score:Math.min(75,38+Math.round(readinessScore()/3)),
+            detail:"The simulated aircraft approached the FOB core before an effect occurred. Protective measures improved conceptual resilience, but RF awareness, coordination, response coverage, or selected effect profile should be reviewed."
+          });
+        }else if(incident.reachedCore){
+          setPhase("Protect","fail");
+
+          finishIncident({
+            code:"DEFENSE GAP",
+            title:"Conceptual Defense Sequence Incomplete",
+            type:"bad",
+            trackText:"CORE APPROACH OBSERVED",
+            score:Math.min(42,Math.round(readinessScore()/3)),
+            detail:"The simulated aircraft reached the FOB core without a completed response sequence or nearby resilience layer. Reassess sensing, fusion, response coverage, active-effect profile, and protection."
+          });
+        }else if(incident.detected){
+          finishIncident({
+            code:"PARTIAL COVERAGE",
+            title:"Awareness Achieved; Response Chain Incomplete",
+            type:"warn",
+            trackText:"TRACK ENDED",
+            score:Math.min(68,36+Math.round(readinessScore()/3)),
+            detail:"The layout created awareness, but the response sequence did not complete. The issue may be coverage, timing, missing coordination, or a mismatch between the selected effect profile and simulated aircraft dependency."
+          });
+        }else{
+          finishIncident({
+            code:"NO RELIABLE CUE",
+            title:"No Reliable RF Awareness in This Run",
+            type:"bad",
+            trackText:"NO TRACK",
+            score:Math.min(35,Math.round(readinessScore()/3)),
+            detail:"The simulated aircraft did not generate a usable passive RF cue under the randomized conditions. Review sensing placement, redundancy, and the inherent limits of RF-dependent awareness."
+          });
+        }
+
+        return;
+      }
+
+      state.animationFrame = requestAnimationFrame(animateIncident);
+    }
+
+    function renderAAR(){
+      const result = state.lastResult;
+      if(!result) return;
+
+      const incident = result.incident;
+      const outcome = result.outcome;
+      const selectedProfile = result.selectedProfile;
+
+      $("aarStatus").textContent = outcome.code;
+      $("aarScore").textContent = outcome.score;
+      $("aarTitle").textContent = incident.profile.label;
+      $("aarSummary").textContent = outcome.detail;
+
+      const profileMatched = effectMatchesDependency(selectedProfile.id,incident.dependency.id);
+
+      const findings = [
+        incident.detected
+          ? ["✓","Passive RF Awareness","The simulated aircraft emitted during a period in which at least one passive RF array had conceptual coverage.","good"]
+          : ["!","Passive RF Awareness","No reliable RF cue was generated during this run. Passive RF awareness depends on aircraft emissions and sensor placement.","bad"],
+
+        incident.tracked
+          ? ["✓","Track Development","The initial cue was supported by directional RF cueing or sensing redundancy, improving the conceptual track picture.","good"]
+          : ["!","Track Development","The initial cue did not become a robust conceptual track. Test directional cueing or additional sensing coverage.","warn"],
+
+        incident.coordinated
+          ? ["✓","Fusion and Coordination","A fusion and coordination cell connected awareness to a reporting and response decision path.","good"]
+          : ["!","Fusion and Coordination","The run lacked a completed coordination path. A sensing cue alone does not create an organized response opportunity.","warn"],
+
+        incident.responding && profileMatched
+          ? ["✓","Configured Active Effect","The selected profile, "+selectedProfile.title+", conceptually matched the simulated "+incident.dependency.title+".","good"]
+          : ["!","Configured Active Effect","The selected profile, "+selectedProfile.title+", did not create a conceptual effect against the simulated "+incident.dependency.title+".","warn"],
+
+        protectNearCore() > 0
+          ? ["✓","FOB Resilience","Protective assets were positioned near the FOB core as a fallback layer.","good"]
+          : ["!","FOB Resilience","No protective resilience asset was positioned near the FOB core. Add measures that reduce exposure when outer layers are late.","warn"]
+      ];
+
+      $("findings").innerHTML = findings.map(item => `
+        <div class="finding">
+          <div class="finding-mark" style="color:var(--${item[3] === "good" ? "green" : item[3] === "bad" ? "red" : "amber"})">${item[0]}</div>
+          <div>
+            <h3>${item[1]}</h3>
+            <p>${item[2]}</p>
+          </div>
+        </div>
+      `).join("");
+
+      const checks = [
+        ["Passive RF cueing",incident.detected],
+        ["Track or assessment development",incident.tracked],
+        ["Fusion / coordination",incident.coordinated],
+        ["Selected effect profile conceptually matched dependency",profileMatched],
+        ["FOB resilience layer",protectNearCore() > 0]
+      ];
+
+      $("checklist").innerHTML = checks.map(check => `
+        <div class="check">
+          <span style="color:${check[1] ? "var(--green)" : "var(--amber)"}">${check[1] ? "✓" : "!"}</span>
+          <div><b>${check[0]}:</b> ${check[1] ? "Observed in the latest conceptual incident." : "Identify an adjustment to test during the next randomized run."}</div>
+        </div>
+      `).join("") + `
+        <div class="check">
+          <span>○</span>
+          <div><b>Real-world validation:</b> Confirm current approved policy, command direction, airspace coordination, spectrum controls, safety requirements, equipment-specific guidance, and legal authorities before actual employment.</div>
+        </div>
+      `;
+    }
+
+    function switchTab(tabId){
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active",tab.dataset.tab === tabId);
+      });
+
+      document.querySelectorAll(".tab-content").forEach(content => {
+        content.classList.toggle("active",content.id === tabId);
+      });
+
+      if(tabId === "simulator"){
+        setTimeout(resizeCanvas,40);
+      }
+    }
+
+    canvas.addEventListener("click",event => {
+      if(state.running) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const grid = pixelToGrid(event.clientX-rect.left,event.clientY-rect.top);
+
+      addPlacement(grid.x,grid.y);
     });
-  });
 
-  // move drones toward FOB
-  for(var i=drones.length-1;i>=0;i--){
-    var d=drones[i];
-    var dx=FOB.x-d.x,dy=FOB.y-d.y,dist=Math.hypot(dx,dy)||1;
-    d.x+=dx/dist*d.speed*dt;
-    d.y+=dy/dist*d.speed*dt;
-    if(dist<FOB.r+d.r){
-      FOB.hp-=14;
-      drones.splice(i,1);
-      updateHUD();
-      if(FOB.hp<=0){endGame();return;}
-    }
-  }
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click",() => switchTab(tab.dataset.tab));
+    });
 
-  // particles
-  for(i=particles.length-1;i>=0;i--){
-    var p=particles[i];
-    p.life-=dt;
-    if(!p.beam){p.x+=(p.vx||0)*dt;p.y+=(p.vy||0)*dt;}
-    if(p.life<=0)particles.splice(i,1);
-  }
+    $("themeToggle").addEventListener("click",() => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      $("themeToggle").textContent = next === "dark" ? "◐ THEME" : "◑ THEME";
+      drawMap();
+    });
 
-  // wave cleared — only once every drone for this wave has both spawned and been cleared
-  if(waveSpawnLeft===0&&drones.length===0){
-    wave++;
-    startBuildPhase();
-  }
-}
+    $("clearBtn").addEventListener("click",clearSite);
+    $("exampleBtn").addEventListener("click",loadExample);
+    $("runBtn").addEventListener("click",startIncident);
+    $("resetBtn").addEventListener("click",resetIncident);
+    window.addEventListener("resize",resizeCanvas);
 
-/* ---------- draw ---------- */
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#050708';ctx.fillRect(0,0,W,H);
-
-  // grid
-  ctx.strokeStyle='rgba(0,255,136,.05)';ctx.lineWidth=1;
-  for(var x=0;x<=W;x+=GRID){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(var y=0;y<=H;y+=GRID){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-
-  // placement preview
-  if(selectedType&&!sellMode){
-    var cell=snapCell(mouse.x,mouse.y),c=cellCenter(cell.cx,cell.cy);
-    var t=TOWER_TYPES[selectedType];
-    var ok=!cellOccupied(cell.cx,cell.cy)&&!cellBlockedByFob(c.x,c.y)&&credits>=t.cost;
-    ctx.strokeStyle=ok?'rgba(0,255,136,.5)':'rgba(255,74,74,.5)';
-    ctx.fillStyle=ok?'rgba(0,255,136,.08)':'rgba(255,74,74,.08)';
-    ctx.beginPath();ctx.arc(c.x,c.y,t.range,0,7);ctx.fill();ctx.stroke();
-    ctx.fillStyle=ok?'rgba(0,255,136,.35)':'rgba(255,74,74,.35)';
-    ctx.fillRect(c.x-GRID/2+2,c.y-GRID/2+2,GRID-4,GRID-4);
-  }
-
-  // FOB
-  ctx.fillStyle='rgba(0,255,136,.06)';ctx.beginPath();ctx.arc(FOB.x,FOB.y,FOB.r+26,0,7);ctx.fill();
-  ctx.fillStyle='#12241a';ctx.beginPath();ctx.arc(FOB.x,FOB.y,FOB.r,0,7);ctx.fill();
-  ctx.strokeStyle='#00ff88';ctx.lineWidth=3;ctx.stroke();
-  ctx.fillStyle='#00ff88';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('⛺',FOB.x,FOB.y);
-  // FOB hp bar
-  var hpw=90;
-  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(FOB.x-hpw/2,FOB.y-FOB.r-16,hpw,8);
-  ctx.fillStyle=FOB.hp>40?'#00ff88':'#ff4a4a';
-  ctx.fillRect(FOB.x-hpw/2,FOB.y-FOB.r-16,hpw*Math.max(0,FOB.hp/FOB.maxHp),8);
-  ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.strokeRect(FOB.x-hpw/2,FOB.y-FOB.r-16,hpw,8);
-
-  // towers
-  towers.forEach(function(t){
-    var def=TOWER_TYPES[t.type];
-    ctx.fillStyle=hexA(def.color,.06);ctx.beginPath();ctx.arc(t.x,t.y,def.range,0,7);ctx.fill();
-    ctx.fillStyle='#161e27';ctx.beginPath();ctx.arc(t.x,t.y,18,0,7);ctx.fill();
-    ctx.strokeStyle=def.color;ctx.lineWidth=2;ctx.stroke();
-    ctx.font='16px sans-serif';ctx.fillStyle=def.color;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(def.icon,t.x,t.y);
-  });
-
-  // drones
-  drones.forEach(function(d){
-    ctx.save();ctx.translate(d.x,d.y);
-    ctx.fillStyle=d.detected?d.color:'#3a4048';
-    ctx.fillRect(-d.r,-d.r*0.5,d.r*2,d.r);
-    ctx.fillStyle='#000';ctx.fillRect(-3,-2,6,4);
-    ctx.restore();
-    if(d.detected){
-      var bw=26;
-      ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(d.x-bw/2,d.y-d.r-10,bw,4);
-      ctx.fillStyle='#ff4a4a';ctx.fillRect(d.x-bw/2,d.y-d.r-10,bw*Math.max(0,d.hp/d.maxHp),4);
-    }
-  });
-
-  // particles
-  particles.forEach(function(p){
-    if(p.beam){
-      ctx.strokeStyle=hexA(p.color,Math.max(0,p.life/0.12));ctx.lineWidth=2;
-      ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.tx,p.ty);ctx.stroke();
-    }else{
-      ctx.fillStyle=hexA(p.color,Math.max(0,p.life/0.5));
-      ctx.fillRect(p.x,p.y,3,3);
-    }
-  });
-}
-function hexA(hex,a){
-  hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');
-  var n=parseInt(hex,16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
-}
-
-function endGame(){
-  state='OVER';
-  $('aar-wave').textContent=wave;
-  $('aar-kills').textContent=kills;
-  $('aar-score').textContent=score;
-  $('modal-debrief').classList.remove('hidden');
-}
-
-function loop(ts){
-  var dt=Math.min(0.05,(ts-lastT)/1000||0);lastT=ts;
-  update(dt);draw();
-  requestAnimationFrame(loop);
-}
-
-function toggleTheme(){
-  var h=document.documentElement,d=h.getAttribute('data-theme')!=='light';
-  h.setAttribute('data-theme',d?'light':'dark');
-}
-
-$('btnStart').addEventListener('click',function(){
-  $('modal-start').classList.add('hidden');
-  resize();resetGame();
-});
-$('btnRestart').addEventListener('click',function(){
-  $('modal-debrief').classList.add('hidden');
-  resize();resetGame();
-});
-
-resize();
-requestAnimationFrame(loop);
-
-window.__FOB={get state(){return state;},get towers(){return towers;},get drones(){return drones;},
-  get credits(){return credits;},get wave(){return wave;},resetGame:resetGame,
-  place:function(type,x,y){selectedType=type;handleCanvasClick(x,y);selectedType=null;},
-  step:function(dt){update(dt);draw();},
-  startWaveNow:function(){buildTimer=0;}};
-</script>
-
-<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    buildTerrain();
+    renderDevices();
+    renderProfiles();
+    updateStatus();
+    resizeCanvas();
+  </script>
 <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px">
   <span style="color:var(--txtd)">Related:</span>
   <a href="../cuas/" style="color:var(--cyan);text-decoration:none">🛸 Drone Signal Spectrum</a>
   <a href="../cuasdemo/" style="color:var(--cyan);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
   <a href="../dronedef/" style="color:var(--cyan);text-decoration:none">🎮 Drone Defender Simulator</a>
-  <a href="../sdrguide/" style="color:var(--cyan);text-decoration:none">📻 Software-Defined Radio Explained</a>
+  <a href="../sdrsim/" style="color:var(--cyan);text-decoration:none">📻 SDR Console Simulator</a>
 </div>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <div style="text-align:center;padding:8px 16px 0;opacity:.62;font-family:sans-serif">
   <a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a>
 </div>
 <div style="text-align:center;padding:8px 16px 6px;font-family:sans-serif"><a href="/" style="color:#7fa8b8;text-decoration:none;font-size:11px;letter-spacing:.03em">&#8592; Back to E-WIT</a></div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:var(--panel);border:1px solid var(--b2);
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:var(--txtb);
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:var(--green);text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:var(--txtd);font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
