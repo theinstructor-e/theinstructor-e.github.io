@@ -215,6 +215,11 @@ button:focus-visible,input:focus-visible,.node:focus-visible{outline:3px solid v
 .calcl{display:flex;flex-wrap:wrap;justify-content:space-between;font-weight:800;margin-top:8px}
 .calcl input{width:100%;accent-color:var(--signal);height:32px}
 .tl{display:grid;gap:6px;margin:6px 0 10px}
+.idc{display:flex;align-items:center;gap:6px;cursor:help}
+.idc svg{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:#8fb0b8;flex-shrink:0}
+.idc span{display:flex;align-items:baseline;gap:5px;line-height:1.1}
+.idc b{font:900 13px/1 var(--disp)}
+.idc small{color:var(--muted);font-weight:600;font-size:10px}
 .tg{padding:7px 10px;border:3px solid var(--line);border-radius:10px;background:var(--panel2);font-weight:700;line-height:1.3}
 .tg.ok{background:color-mix(in srgb,var(--ok) 30%,var(--panel2))}
 .cap{margin:10px 0;border:3px solid var(--line);border-radius:10px;background:var(--panel2);overflow-x:auto;padding:6px;font:600 12px/1.4 var(--mono)}
@@ -1425,11 +1430,12 @@ function updateHud() {
   const s = $('#stg'), o = $('#obj'), b = $('#bagbar'); if (!s) return; s.textContent = stage(); o.textContent = objective();
   b.innerHTML = [0, 1, 2, 3].map(i => G.bag[i] ? `<button class="slot mini" data-i="${i}" aria-label="${ITEMS[G.bag[i]].n}">${icon(G.bag[i])}</button>` : `<div class="slot mini empty"></div>`).join('');
   $$('.slot.mini', b).forEach(x => x.onclick = () => { if (!paused()) openBag({ title: 'Ruck' }); });
+  const idc = $('#idc'); if (idc) { const cl = CLASSES[G.cls]; idc.innerHTML = `${avatar(G.cls)}<span><b>${G.name || cl.call}</b><small>${cl.n}</small></span>`; idc.title = cl.perk; }
 }
 
 /* =============================================================== screens */
 function renderGame() {
-  app.innerHTML = `<div class="game"><header class="top case"><div class="tl"><div class="stg" id="stg"></div><div class="objt" id="obj"></div></div><div class="bagbar" id="bagbar" role="group" aria-label="Ruck, 4 slots"></div></header>
+  app.innerHTML = `<div class="game"><header class="top case"><div class="tl"><div class="idc" id="idc"></div><div class="stg" id="stg"></div><div class="objt" id="obj"></div></div><div class="bagbar" id="bagbar" role="group" aria-label="Ruck, 4 slots"></div></header>
     <div class="cvw case"><canvas id="gv" role="img" aria-label="Game view"></canvas><div class="dlg" id="dlg" hidden></div></div><div class="hintbar" id="hint" hidden></div><div class="ctxbar" id="ctxb"></div>
     <div class="ctl"><div class="pad" id="pad" aria-label="Move"><div class="knob" id="knob"></div></div><div class="btns"><div class="rowb"><button class="btn sm alt" id="bagb">Ruck</button><button class="btn sm alt" id="logb">Log</button></div><button class="abtn" id="abtn" aria-label="Interact">A</button></div></div>
     <div class="foot"><button id="reset">Reset progress</button></div></div>`;
@@ -1491,6 +1497,33 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+</script>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#f5f1df;border:1px solid #ff7a2f;
+  border-radius:6px;padding:14px 16px;font-family:'Public Sans',sans-serif;font-size:12.5px;color:#3a3a2e;
+  box-shadow:0 4px 18px rgba(0,0,0,.25);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#ff7a2f;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#585d42;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
 </script>
 </body>
 </html>
