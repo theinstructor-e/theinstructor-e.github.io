@@ -265,7 +265,7 @@
   <div class="roster-modal">
     <div class="roster-badge">ATTENDANCE LOG — REQUIRED</div>
     <h2>Before You Begin</h2>
-    <p>Enter your name and MOS to start <strong>Module 8: Electronic Warfare Math</strong>. This creates an attendance record for your instructor.</p>
+    <p>Enter your name and MOS to start <strong>Module 8: Electromagnetic Warfare Math</strong>. This creates an attendance record for your instructor.</p>
     <input type="text" id="rosterName" placeholder="Full name" autocomplete="name">
     <input type="text" id="rosterMos" placeholder="MOS (e.g., 17E)" autocomplete="off">
     <div class="roster-err" id="rosterErr"></div>
@@ -330,7 +330,7 @@
         </svg>
 
         <h1 class="start-title">WRAVEN Training Program</h1>
-        <p class="start-subtitle">Module 8: Electronic Warfare Math</p>
+        <p class="start-subtitle">Module 8: Electromagnetic Warfare Math</p>
 <!-- Paste this HTML block right here: -->
         <div class="project-owner-info">
           <div><strong>Curriculum Manager:</strong> <span>Mr. Phillip Crandell</span></div>
@@ -347,7 +347,7 @@
     <section class="slide">
       <span class="tag">Section 1: The Basics of RF Power</span>
       <h1>Why Standard Math Fails Us</h1>
-      <p class="lead">In the world of Radio Frequency (RF), Radar, and Electronic Warfare (EW), we deal with extreme extremes.</p>
+      <p class="lead">In the world of Radio Frequency (RF), Radar, and Electromagnetic Warfare (EW), we deal with extreme extremes.</p>
       <div class="card">
         <p> <p>A ground-based tactical radar might push out <b>1,000,000 Watts</b> of energy to scan the horizon. But the returning echo bouncing off an incoming artillery shell or a small enemy drone miles away might only hit the receiving antenna with <b>0.0000000001 Watts</b>.</p>
         <p>If we tried to use standard decimal math to calculate the difference, the massive strings of zeros would cause constant human errors. To solve this, RF engineers abandoned linear math in favor of a <b>Logarithmic scale</b>.</p>
@@ -377,7 +377,7 @@
     <section class="slide">
       <span class="tag">Section 1: The Basics of RF Power</span>
       <h1>The Decibel (dB)</h1>
-      <p class="lead">The fundamental unit of measurement in Electronic Warfare.</p>
+      <p class="lead">The fundamental unit of measurement in Electromagnetic Warfare.</p>
       <div class="card">
         <p>The "Bel" was originally invented by Bell Telephone Labs to measure signal loss over miles of telegraph wire. It was too large of a unit, so we use the <b>Deci-bel (one tenth of a Bel).</b></p>
         <p>A <span class="kw">Decibel (dB)</span> is simply a ratio between two power levels. It describes how much a signal grew (Gain) or how much a signal shrank (Loss).</p>
@@ -798,7 +798,7 @@
         <p class="cert-text" style="margin-bottom: 5px;">has successfully completed the WRAVEN Training Program's</p>
         <div style="font-size: 28px; font-weight: bold; color: #1a365d; margin-bottom: 20px;">Technician Prep Course</div>
         
-        <div class="cert-course">Module 8: Electronic Warfare Math</div>
+        <div class="cert-course">Module 8: Electromagnetic Warfare Math</div>
         
         <p id="certDate" class="cert-text" style="margin-top: 40px;"></p>
         
@@ -1011,7 +1011,7 @@ const ROSTER_ENTRY_NAME = 'entry.416366255';
 const ROSTER_ENTRY_MOS = 'entry.1944865718';
 const ROSTER_ENTRY_MODULE = 'entry.836736366';
 const ROSTER_ENTRY_EVENT = 'entry.2113594468';
-const MODULE_LABEL_8 = 'Module 8: Electronic Warfare Math';
+const MODULE_LABEL_8 = 'Module 8: Electromagnetic Warfare Math';
 
 function submitToRoster(eventType, name, mos) {
   if (!ROSTER_FORM_URL.startsWith('http')) return; // not configured yet — safe no-op

@@ -134,6 +134,7 @@ body{background:radial-gradient(900px 500px at 85% -8%, rgba(0,255,136,.05), tra
     <a href="../EW Principles/">📖 EW Principles</a>
     <a href="../Physics2/">🌊 Wave Behavior &amp; Propagation</a>
     <a href="../sdrguide/">📻 Software-Defined Radio Explained</a>
+    <a href="../ewguide/">⚡ Electromagnetic Warfare Explained</a>
   </div>
 </div>
 
@@ -404,7 +405,7 @@ const SIGNALS = [
   { id:'ssr', cat:'Aviation & Maritime', name:'Secondary Surveillance Radar (SSR)', freq:'1030 MHz (interrogation)', bw:'~3 MHz',
     duty:'Pulsed interrogation/reply', pattern:'radar-pulse',
     clues:['The system air traffic control actually relies on day to day — not a primary radar bouncing energy off the aircraft\'s skin, but a request-and-reply exchange with a transponder onboard','1030 MHz up (interrogation), 1090 MHz down (reply) — the same 1090 MHz reply frequency ADS-B also broadcasts on','Pulse position modulation (PPM) encodes the reply — similar pulsed shape to ADS-B since they share the same transponder hardware'] },
-  { id:'radaralt', cat:'Radar & EW', name:'Radar Altimeter', freq:'4,200 – 4,300 MHz', bw:'20 MHz',
+  { id:'radaralt', cat:'Radar & EW', name:'Radar Altimeter', freq:'4,200 – 4,400 MHz', bw:'20 MHz',
     duty:'Continuous frequency sweep (FMCW)', pattern:'chirp-radar',
     clues:['Tells an aircraft its precise height above the ground directly below it — critical for landing, not just general altitude like a barometric altimeter','FMCW sweep just like the OTH radars elsewhere in this reference, just at a vastly higher frequency and much shorter range','This exact band has been a source of real 5G interference concerns, since some 5G C-band deployments sit close to it'] },
 

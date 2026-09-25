@@ -1222,8 +1222,8 @@ function runPMCS(root, done) {
 const dalton = () => {
   const f = F(), who = 'SFC Dalton';
   if (f.enlisted) return say(speak(who, ['Your bus leaves for basic. Go on, the door is right there.']));
-  say(speak(who, ['Come in, have a seat. You told me you want a job that matters, not just a paycheck.', 'The Army has a job for people who like radios, networks, and puzzles: 17E, Electronic Warfare Specialist.']),
-    () => ask('Which job do you want?', ['17E Electronic Warfare Specialist', 'Tell me about other jobs first'], i => {
+  say(speak(who, ['Come in, have a seat. You told me you want a job that matters, not just a paycheck.', 'The Army has a job for people who like radios, networks, and puzzles: 17E, Electromagnetic Warfare Specialist.']),
+    () => ask('Which job do you want?', ['17E Electromagnetic Warfare Specialist', 'Tell me about other jobs first'], i => {
       if (i === 1) return say(speak(who, ['Infantry, medic, mechanic, cook. All good jobs. But you told me you like radios.']), dalton);
       f.enlisted = 1; save(); updateHud(); say(speak(who, ['Raise your right hand. You are swearing to support and defend the Constitution and to obey the lawful orders of those appointed over you.', 'Congratulations. You are a soldier. Basic Combat Training starts now. The bus is outside.']));
     }));
