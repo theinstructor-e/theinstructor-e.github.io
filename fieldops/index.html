@@ -512,7 +512,7 @@ const ITEMS = {
   pkt:   { n: 'Laptop + Analyzer', d: 'Field laptop with a protocol analyzer and Wi-Fi adapter. It also runs drone ground control.' },
   cell:  { n: 'Cell Survey Kit', d: 'Passive cellular survey gear. It records towers by generation and signal level without transmitting.' },
   ids:   { n: 'Wireless IDS', d: 'A sensor that watches the Wi-Fi environment for spoofed beacons and unknown access points.' },
-  ea:    { n: 'EA Pod', d: 'Electronic attack pod for authorized range use. You size it with a jam-to-signal budget.' },
+  ea:    { n: 'EA Pod', d: 'Electromagnetic attack pod for authorized range use. You size it with a jam-to-signal budget.' },
   drone: { n: 'Recon Drone', d: 'Extends collection by air. Higher altitude sees farther and burns more battery.' },
   ewd:   { n: 'EW Drone', d: 'A recon drone carrying DF and EA payloads: find, fix, and deny from the air.' }
 };
@@ -1103,7 +1103,7 @@ function podSheet() {
   $('#pw').oninput = upd; $$('#gc .chip').forEach(b => b.onclick = () => { Gn = +b.dataset.g; $$('#gc .chip').forEach(o => o.setAttribute('aria-pressed', o === b)); upd(); }); $('#px').onclick = closeLayer; upd();
   $('#go').onclick = () => {
     const { d, js } = calc();
-    if (js >= sc.req && d >= sc.min) { closeLayer(); if (s.sc < 2) { s.sc++; say(['Link denied. Range Control: "Good effect. Resetting the scenario."']); } else finishM(EW[5], 'SFC Brandt', ['Three scenarios, all inside the limits. That is disciplined electronic attack.', 'The EA pod is yours for authorized range use.'], ['ftx', 41, 6]); }
+    if (js >= sc.req && d >= sc.min) { closeLayer(); if (s.sc < 2) { s.sc++; say(['Link denied. Range Control: "Good effect. Resetting the scenario."']); } else finishM(EW[5], 'SFC Brandt', ['Three scenarios, all inside the limits. That is disciplined electromagnetic attack.', 'The EA pod is yours for authorized range use.'], ['ftx', 41, 6]); }
     else $('#ef').innerHTML = `<span class="no">Not enough.</span> ${js < sc.req ? `J/S is ${js.toFixed(1)} dB and you need ${sc.req}.` : ''} ${d < sc.min ? `You are inside the ${sc.min} km standoff: walk farther from the receiver.` : ''}`;
   };
 }

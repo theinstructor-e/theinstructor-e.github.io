@@ -151,7 +151,7 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="switchTab('ew',this)"><span class="tnum">01</span> EW Principles</button>
   <button class="tab-btn" onclick="switchTab('ant',this)"><span class="tnum">02</span> Antenna Fundamentals</button>
-  <button class="tab-btn" onclick="switchTab('ea',this)"><span class="tnum">03</span> Electronic Attack</button>
+  <button class="tab-btn" onclick="switchTab('ea',this)"><span class="tnum">03</span> Electromagnetic Attack</button>
 </nav>
 <div class="related-bar">
   <span class="related-label">Related:</span>
@@ -254,9 +254,9 @@ canvas{width:100%;background:var(--canvas-bg);border:1px solid var(--border);dis
   </div>
 </div>
 
-<!-- TAB 3: ELECTRONIC ATTACK -->
+<!-- TAB 3: ELECTROMAGNETIC ATTACK -->
 <div id="tab-ea" class="tab-content">
-  <div class="section-head">MODULE 03 — BASICS OF ELECTRONIC ATTACK</div>
+  <div class="section-head">MODULE 03 — BASICS OF ELECTROMAGNETIC ATTACK</div>
   <div class="two-col">
     <div class="panel">
       <div class="ptitle">Jamming Type Selector</div>
@@ -335,15 +335,15 @@ function col(k){return getComputedStyle(document.documentElement).getPropertyVal
 
 // ══════════════ MODULE 1: EW PRINCIPLES ══════════════
 const EW_DISCIPLINES=[
-  {id:'es',title:'ES \u2014 Electronic Warfare Support',color:'#00ff88',
+  {id:'es',title:'ES \u2014 Electromagnetic Support',color:'#00ff88',
    sub:'Passive | Intelligence-driven | Feeds EA & EP',
-   detail:'Electronic Warfare Support is the PASSIVE collection and processing of EM energy to support EW operations and other tactical actions. ES does NOT transmit \u2014 it only listens.\n\nES Tasks (FM 3-12):\n\u2022 Electronic reconnaissance \u2014 locate/characterize emitters\n\u2022 Electromagnetic battle management (EMBM)\n\u2022 Intercept / direction finding (DF)\n\u2022 Signal analysis / SIGINT support\n\u2022 Threat warning\n\nES is the ENABLER for EA. You must know where and what to jam before you can jam it effectively. ES also feeds targeting for lethal effects (HPM, anti-radiation missiles).'},
-  {id:'ea',title:'EA \u2014 Electronic Attack',color:'#ff4444',
+   detail:'Electromagnetic Support is the PASSIVE collection and processing of EM energy to support EW operations and other tactical actions. ES does NOT transmit \u2014 it only listens.\n\nES Tasks (FM 3-12):\n\u2022 Electronic reconnaissance \u2014 locate/characterize emitters\n\u2022 Electromagnetic battle management (EMBM)\n\u2022 Intercept / direction finding (DF)\n\u2022 Signal analysis / SIGINT support\n\u2022 Threat warning\n\nES is the ENABLER for EA. You must know where and what to jam before you can jam it effectively. ES also feeds targeting for lethal effects (HPM, anti-radiation missiles).'},
+  {id:'ea',title:'EA \u2014 Electromagnetic Attack',color:'#ff4444',
    sub:'Active | Offensive | Denies / Disrupts / Destroys',
-   detail:'Electronic Attack involves use of EM energy, directed energy, or anti-radiation weapons to attack personnel, facilities, or equipment with intent to degrade, neutralize, or destroy enemy combat capability.\n\nEA Tasks (FM 3-12):\n\u2022 Jamming (comms, radar, nav)\n\u2022 Deception (false targets, meaconing)\n\u2022 Anti-radiation weapons (ARM/HARM)\n\u2022 High-power microwave (HPM)\n\u2022 Directed energy weapons (DEW)\n\u2022 Counter-IED EW (JCREW/Duke)\n\nEA ALWAYS risks EW fratricide. Coordination with friendly forces is non-negotiable before any jamming operation.'},
-  {id:'ep',title:'EP \u2014 Electronic Protection',color:'#00d4ff',
+   detail:'Electromagnetic Attack involves use of EM energy, directed energy, or anti-radiation weapons to attack personnel, facilities, or equipment with intent to degrade, neutralize, or destroy enemy combat capability.\n\nEA Tasks (FM 3-12):\n\u2022 Jamming (comms, radar, nav)\n\u2022 Deception (false targets, meaconing)\n\u2022 Anti-radiation weapons (ARM/HARM)\n\u2022 High-power microwave (HPM)\n\u2022 Directed energy weapons (DEW)\n\u2022 Counter-IED EW (JCREW/Duke)\n\nEA ALWAYS risks EW fratricide. Coordination with friendly forces is non-negotiable before any jamming operation.'},
+  {id:'ep',title:'EP \u2014 Electromagnetic Protection',color:'#00d4ff',
    sub:'Active/Passive | Defensive | Preserves EM access',
-   detail:'Electronic Protection involves actions taken to protect personnel, facilities, and equipment from any effects of friendly or enemy employment of EW that degrade, neutralize, or destroy friendly combat capability.\n\nEP Tasks (FM 3-12):\n\u2022 Frequency management and deconfliction\n\u2022 Emission control (EMCON)\n\u2022 Low probability of intercept/detection (LPI/LPD)\n\u2022 Frequency hopping / spread spectrum\n\u2022 Antenna management (nulling, directional)\n\u2022 Electronic masking / deception\n\u2022 Anti-jam waveform design\n\nEP also protects against FRIENDLY EA \u2014 the most overlooked aspect for entry-level 17Es.'},
+   detail:'Electromagnetic Protection involves actions taken to protect personnel, facilities, and equipment from any effects of friendly or enemy employment of EW that degrade, neutralize, or destroy friendly combat capability.\n\nEP Tasks (FM 3-12):\n\u2022 Frequency management and deconfliction\n\u2022 Emission control (EMCON)\n\u2022 Low probability of intercept/detection (LPI/LPD)\n\u2022 Frequency hopping / spread spectrum\n\u2022 Antenna management (nulling, directional)\n\u2022 Electronic masking / deception\n\u2022 Anti-jam waveform design\n\nEP also protects against FRIENDLY EA \u2014 the most overlooked aspect for entry-level 17Es.'},
 ];
 
 const J_SERIES=[
@@ -653,7 +653,7 @@ function drawPolCanvas(pol){
   ctx.textAlign='left';
 }
 
-// ══════════════ MODULE 3: ELECTRONIC ATTACK ══════════════
+// ══════════════ MODULE 3: ELECTROMAGNETIC ATTACK ══════════════
 const EA_DATA={
   noise:{name:'Noise Jamming',color:'#ff4444',
     desc:'Broadband noise transmitted to mask target comms. Simple to implement, high power, easily direction-found. Noise raises receiver noise floor, degrading SNR. J/S > 0dB needed for effect, >20dB for reliable denial. Subtype of all-source jamming.'},
