@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Route Planning Trainer — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#b8cc4c;--purple-dim:#8fa338;--purple-dark:#1f2408;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#0e1f18;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#7a8a2e;--purple-dim:#647523;--purple-dark:#f0f4e1;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#dcf0e4;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .tab-nav{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:11px}
+  .tab-content{padding:16px 14px 30px}
+}
+.stepstrip{display:flex;gap:4px;margin:10px 0 14px}
+.stepstrip i{flex:1;height:10px;border:1px solid var(--acc);display:block}
+.stepstrip i.done{background:var(--acc)}.stepstrip i.cur{background:var(--amber);border-color:var(--amber)}
+.wk-card{font-family:var(--display);font-size:19px;font-weight:600;color:var(--text-bright);line-height:1.4;padding:16px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-bottom:12px}
+.wk-card small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--acc);font-weight:400;text-transform:uppercase;margin-bottom:6px}
+.wk-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.wk-opts button{font-family:var(--display);font-size:14px;font-weight:600;text-align:center;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:12px 10px;cursor:pointer;min-height:52px;line-height:1.25}
+.wk-opts button .sub{display:block;font-family:var(--mono);font-size:9.5px;color:var(--text-dim);font-weight:400;margin-top:2px}
+.wk-opts button:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.wk-opts button.right{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.wk-opts button.miss{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.wk-opts button:disabled{cursor:default}
+.explain{font-family:var(--mono);font-size:12.5px;color:var(--text);line-height:1.6;padding:12px 14px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-top:12px;display:none}
+.explain.show{display:block}
+.explain b{color:var(--acc)}
+
+/* ===== Danger area crossing diagram ===== */
+.rp-stage{position:relative;background:var(--canvas-bg);border:1px solid var(--border-bright);width:100%;aspect-ratio:16/10;max-width:760px;margin:0 auto;overflow:hidden;touch-action:none}
+.rp-stage svg{position:absolute;inset:0;width:100%;height:100%}
+.rp-zone{position:absolute;width:38px;height:38px;margin-left:-19px;margin-top:-19px;border:2px dashed var(--border-bright);border-radius:8px;opacity:.55}
+.rp-zone.filled{opacity:0}
+.rp-chip{position:absolute;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.3px;text-align:center;color:var(--text-bright);background:var(--panel);border:2px solid var(--acc);border-radius:8px;padding:6px 8px;cursor:grab;user-select:none;touch-action:none;line-height:1.3;box-shadow:0 2px 6px rgba(0,0,0,.4);z-index:5;max-width:120px}
+.rp-chip.placed.correct{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.rp-chip.placed.wrong{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.rp-chip.dragging{opacity:.85;cursor:grabbing;z-index:20}
+.rp-tray{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;min-height:50px;padding:10px;border:1px dashed var(--border-bright);background:var(--canvas-bg)}
+.rp-tray .rp-chip{position:static;margin:0}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>Route Planning Trainer <span>// Danger Area Drill — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; TACTICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav" id="tabnav">
+  <button class="tab-btn active" onclick="switchTab('cross',this)">Set Up the Crossing</button>
+  <button class="tab-btn" onclick="switchTab('drill',this)">Choose the Technique</button>
+</nav>
+
+<div id="tab-cross" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">Place each element of a linear danger area crossing</div>
+    <div class="lead">Your squad must cross this dirt road (a linear danger area) and cannot bypass it. Drag each element onto the diagram where it belongs, then check your placement.</div>
+    <div class="rp-stage" id="rpStage">
+      <svg id="rpSvg" viewBox="0 0 760 475" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="rp-tray" id="rpTray"></div>
+    <div class="btn-row"><button class="cbtn primary" id="rpCheck">Check Placement</button><button class="cbtn" id="rpReset">Reset</button></div>
+    <div class="explain" id="rpExplain"></div>
+  </div>
+  <div class="callout amber"><span class="key">SEQUENCE:</span> designate rally points &#8594; emplace near-side security &#8594; clear the far side &#8594; cross &#8594; retrieve near-side security.</div>
+</div>
+
+<div id="tab-drill" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Pick the correct crossing technique for the situation</div>
+    <div class="lead">Read the danger area and the mission constraint, then choose the best technique. 15 scenarios, drawn from ATP 3-21.8 and TC 3-21.76.</div>
+    <div class="stepstrip" id="strip"></div>
+    <div class="wk-card"><small id="wk-round">Round 1 / 15</small><span id="wk-text"></span></div>
+    <div class="wk-opts" id="wk-opts"></div>
+    <div class="explain" id="wk-explain"></div>
+    <div class="score">Score: <b id="wk-score">0</b> / <b id="wk-total">0</b></div>
+    <div class="btn-row"><button class="cbtn" id="wk-next" disabled>Next &#8594;</button><button class="cbtn" id="wk-restart">Restart &amp; Reshuffle</button></div>
+  </div>
+  <div class="callout amber"><span class="key">TIP:</span> the first question is always the same in the field — can this danger area be avoided entirely? Only pick a crossing technique once the answer is no.</div>
+</div>
+
+<div class="src-strip" style="max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:'Share Tech Mono',monospace;font-size:11.5px;line-height:1.7;color:var(--text-dim)"><b style="color:var(--text-bright);letter-spacing:1.5px">SOURCE</b> ATP 3-21.8, Infantry Platoon and Squad (Jan 2024) &middot; TC 3-21.76, Ranger Handbook &middot; <a href="../route-planning-guide/" style="color:var(--amber)">Route Planning Explained (guide)</a> &middot; Training aid — confirm with instructor.</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').innerHTML=d?'&#9728; LIGHT MODE':'&#9789; DARK MODE';drawCrossing();}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function cssv(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+/* ===================== CROSSING DRAG DIAGRAM ===================== */
+const RP_ZONES=[
+  {id:'nrp',  x:190, y:340, label:'Near-side rally point'},
+  {id:'frp',  x:190, y:135, label:'Far-side rally point'},
+  {id:'secL', x:340, y:345, label:'Near-side security (left)'},
+  {id:'secR', x:560, y:345, label:'Near-side security (right)'},
+  {id:'cross',x:450, y:238, label:'Crossing point'}
+];
+const RP_CHIPS=[
+  {id:'nrp', label:'Near-side RP', target:'nrp'},
+  {id:'frp', label:'Far-side RP', target:'frp'},
+  {id:'secL', label:'Security', target:'secL'},
+  {id:'secR', label:'Security', target:'secR'},
+  {id:'cross', label:'Cross Here', target:'cross'}
+];
+const RP_TOL=60;
+const RP_TYPE_GROUPS={nrp:'nrp',frp:'frp',secL:'sec',secR:'sec',cross:'cross'};
+let rpPlacements={};
+
+function drawCrossing(){
+  const svg=document.getElementById('rpSvg');
+  if(!svg)return;
+  const dim=cssv('--text-dim'), roadc=cssv('--border-bright');
+  svg.innerHTML=
+    '<rect x="0" y="0" width="760" height="475" fill="'+cssv('--canvas-bg')+'"/>'+
+    // the road (linear danger area) running roughly horizontal across the middle
+    '<rect x="0" y="218" width="760" height="40" fill="'+roadc+'" opacity="0.55"/>'+
+    '<line x1="0" y1="238" x2="760" y2="238" stroke="'+cssv('--amber-dim')+'" stroke-width="2" stroke-dasharray="16 10" opacity="0.7"/>'+
+    '<text x="30" y="205" fill="'+dim+'" font-family="Share Tech Mono, monospace" font-size="13">LINEAR DANGER AREA (road)</text>'+
+    // near side / far side labels
+    '<text x="30" y="440" fill="'+dim+'" font-family="Share Tech Mono, monospace" font-size="13">NEAR SIDE (squad approaches from here)</text>'+
+    '<text x="30" y="35" fill="'+dim+'" font-family="Share Tech Mono, monospace" font-size="13">FAR SIDE</text>'+
+    treeCluster(650,60)+treeCluster(690,100)+treeCluster(70,80)+treeCluster(700,400)+treeCluster(60,400);
+
+  const stage=document.getElementById('rpStage');
+  Array.from(stage.querySelectorAll('.rp-zone')).forEach(z=>z.remove());
+  RP_ZONES.forEach(z=>{
+    const d=document.createElement('div');
+    d.className='rp-zone';
+    d.dataset.zone=z.id;
+    positionOnStage(d,z.x,z.y);
+    stage.appendChild(d);
+  });
+}
+function treeCluster(x,y){
+  return '<circle cx="'+x+'" cy="'+y+'" r="14" fill="'+cssv('--green-dim')+'" opacity="0.5"/>';
+}
+function positionOnStage(el,vx,vy){
+  el.style.left=(vx/760*100)+'%';
+  el.style.top=(vy/475*100)+'%';
+}
+function buildTray(){
+  const tray=document.getElementById('rpTray');
+  tray.innerHTML='';
+  Array.from(document.querySelectorAll('#rpStage .rp-chip')).forEach(c=>c.remove());
+  shuffle(RP_CHIPS).forEach(c=>{
+    const chip=document.createElement('div');
+    chip.className='rp-chip';
+    chip.textContent=c.label;
+    chip.dataset.id=c.id;
+    attachDragHandlers(chip);
+    tray.appendChild(chip);
+  });
+  rpPlacements={};
+  document.getElementById('rpExplain').classList.remove('show');
+  Array.from(document.querySelectorAll('.rp-zone')).forEach(z=>z.classList.remove('filled'));
+}
+let activeDragChip=null, dragOffsetX=0, dragOffsetY=0;
+function attachDragHandlers(chip){
+  chip.addEventListener('pointerdown',function(e){
+    e.preventDefault();
+    activeDragChip=chip;
+    chip.classList.add('dragging');
+    const rect=chip.getBoundingClientRect();
+    dragOffsetX=e.clientX-rect.left;
+    dragOffsetY=e.clientY-rect.top;
+    document.body.appendChild(chip);
+    chip.style.position='fixed';
+    chip.style.left=(e.clientX-dragOffsetX)+'px';
+    chip.style.top=(e.clientY-dragOffsetY)+'px';
+  });
+}
+document.addEventListener('pointermove',function(e){
+  if(!activeDragChip)return;
+  activeDragChip.style.left=(e.clientX-dragOffsetX)+'px';
+  activeDragChip.style.top=(e.clientY-dragOffsetY)+'px';
+});
+document.addEventListener('pointerup',function(e){
+  if(!activeDragChip)return;
+  const chip=activeDragChip;
+  activeDragChip=null;
+  chip.classList.remove('dragging');
+  const stage=document.getElementById('rpStage');
+  const stageRect=stage.getBoundingClientRect();
+  const chipRect=chip.getBoundingClientRect();
+  const clientX=chipRect.left+chipRect.width/2, clientY=chipRect.top+chipRect.height/2;
+  const inStage = clientX>=stageRect.left && clientX<=stageRect.right && clientY>=stageRect.top && clientY<=stageRect.bottom;
+  chip.style.position='';chip.style.left='';chip.style.top='';
+  if(inStage){
+    const vx=(clientX-stageRect.left)/stageRect.width*760;
+    const vy=(clientY-stageRect.top)/stageRect.height*475;
+    stage.appendChild(chip);
+    chip.style.position='absolute';
+    positionOnStage(chip,vx,vy);
+    chip.classList.add('placed');
+    rpPlacements[chip.dataset.id]={vx:vx,vy:vy};
+  }else{
+    document.getElementById('rpTray').appendChild(chip);
+    chip.classList.remove('placed','correct','wrong');
+    chip.style.position='';
+    delete rpPlacements[chip.dataset.id];
+  }
+});
+document.getElementById('rpCheck').onclick=function(){
+  const claimedZones={};
+  const results={};
+  RP_CHIPS.forEach(c=>{
+    const placement=rpPlacements[c.id];
+    if(!placement){results[c.id]={correct:false};return;}
+    const myType=RP_TYPE_GROUPS[c.id];
+    const candidates=RP_ZONES.filter(z=>RP_TYPE_GROUPS[z.id]===myType && !claimedZones[z.id]);
+    let best=null,bestDist=Infinity;
+    candidates.forEach(z=>{
+      const d=Math.hypot(placement.vx-z.x, placement.vy-z.y);
+      if(d<bestDist){bestDist=d;best=z;}
+    });
+    if(best && bestDist<=RP_TOL){
+      claimedZones[best.id]=true;
+      results[c.id]={correct:true,zoneId:best.id};
+    }else{
+      results[c.id]={correct:false};
+    }
+  });
+  let correctCount=0;
+  RP_CHIPS.forEach(c=>{
+    const chip=document.querySelector('.rp-chip[data-id="'+c.id+'"]');
+    if(!chip)return;
+    chip.classList.remove('correct','wrong');
+    if(!rpPlacements[c.id])return;
+    const r=results[c.id];
+    chip.classList.add(r.correct?'correct':'wrong');
+    if(r.correct){
+      correctCount++;
+      const zoneEl=document.querySelector('.rp-zone[data-zone="'+r.zoneId+'"]');
+      if(zoneEl)zoneEl.classList.add('filled');
+    }
+  });
+  const ex=document.getElementById('rpExplain');
+  const placedCount=Object.keys(rpPlacements).length;
+  let msg='<b>'+correctCount+' / '+RP_CHIPS.length+' correctly placed.</b>';
+  if(placedCount<RP_CHIPS.length)msg+=' ('+(RP_CHIPS.length-placedCount)+' still in the tray.)';
+  if(correctCount<RP_CHIPS.length){
+    msg+='<br><br>Reminder: rally points go on both sides before anyone crosses (far-side RP across, near-side RP on your side). Security covers the crossing point from the near side, left and right. The crossing point itself is where the far side gets cleared first, then the unit crosses.';
+  }
+  ex.innerHTML=msg;
+  ex.classList.add('show');
+};
+document.getElementById('rpReset').onclick=buildTray;
+drawCrossing();
+buildTray();
+window.addEventListener('resize',drawCrossing);
+
+/* ===================== TECHNIQUE-CHOICE QUIZ ===================== */
+const TECH = [
+  {id:'BYP', label:'Bypass / Detour', sub:'90&deg; box around it'},
+  {id:'CON', label:'Contour Method', sub:'Hug the perimeter'},
+  {id:'LIN', label:'Full Linear Crossing', sub:'Rally pts + security'},
+  {id:'BND', label:'Bounding Overwatch', sub:'Fast, less secure'},
+  {id:'COMBO', label:'Traveling + Bounding Combo', sub:'Big area, can\'t bypass'}
+];
+const BANK = [
+  {f:'BYP', t:'A 60-meter-wide clearing sits on your route with plenty of time left before your report time.', e:'Small enough to go around without hurting the timeline — bypass method: 90&deg; turn, skirt the clearing, 90&deg; turn back onto azimuth at the far-side rally point.'},
+  {f:'BYP', t:'A small pond blocks your direct route, but the tree line around it is easy to follow and going around costs only a few minutes.', e:'When an obstacle can be avoided without real cost to the mission clock, bypass it rather than crossing it.'},
+  {f:'CON', t:'A large rock formation blocks your route, but its edge is a clear, easily followed terrain feature back to your original azimuth.', e:'When the perimeter itself is a good navigational handrail, hugging it (contour method) works — though it keeps you closer to the danger area than a bypass would.'},
+  {f:'CON', t:'Thick fog limits visibility to under 30 meters, and the danger area\'s edge is the only reliable feature you can follow without a compass check every few steps.', e:'Low visibility makes precise 90&deg; bypass turns risky; contouring the identifiable edge keeps the patrol oriented.'},
+  {f:'LIN', t:'A two-lane paved road with observation for 300 meters in both directions crosses directly over your route. Command time allows a deliberate crossing.', e:'A linear danger area with a long axis cannot be bypassed. With time available, do the full crossing: near/far rally points, near-side security, clear the far side, cross, retrieve security.'},
+  {f:'LIN', t:'Your route crosses a narrow but fast-moving stream. There is no way around it for several kilometers in either direction.', e:'No bypass exists, so this linear danger area gets the full deliberate crossing procedure.'},
+  {f:'LIN', t:'A single-track trail with light vegetation on both sides crosses your route; the platoon has plenty of time before its next timed event.', e:'Plenty of time plus a linear feature that can\'t be bypassed calls for the full, more secure linear crossing rather than trading security for speed.'},
+  {f:'BND', t:'Your squad, moving independently, must cross an open road, and you are now behind your movement timeline with a hard report time approaching.', e:'A squad moving on its own and pressed for time can cross using the bounding overwatch movement technique — faster, at some cost to security.'},
+  {f:'BND', t:'A four-man team needs to cross a narrow firebreak quickly before losing the last light needed for the rest of the movement.', e:'Small element, hard time pressure — bounding overwatch trades some security for speed to keep the mission on schedule.'},
+  {f:'COMBO', t:'A 500-meter-wide plowed field lies directly on your route. Bypassing it would cost more time than the mission allows.', e:'Too large to bypass without wrecking the timeline: cross using a combination of traveling overwatch (for speed) and bounding overwatch (as risk increases toward the far side).'},
+  {f:'COMBO', t:'Your platoon must cross a wide, open valley floor with almost no cover, and there is no time in the schedule to route around it.', e:'A large open area that can\'t be bypassed calls for the traveling-plus-bounding overwatch combination, not a single technique alone.'},
+  {f:'LIN', t:'The lead team signals "danger area" at a drainage ditch running across the route. The platoon leader confirms it and determines it cannot be bypassed.', e:'Once a linear danger area is confirmed as unavoidable, the leader sets up the full crossing: rally points, security, clear far side, cross, retrieve security.'},
+  {f:'BYP', t:'A short gap in the tree line, about 40 meters across, is easily walked around without adding meaningful distance to the leg.', e:'Small, low-cost detour — the bypass method is the simple, secure choice here.'},
+  {f:'CON', t:'An open rock slide area has a well-defined tree line boundary that leads back to the original line of march on the far side.', e:'A clearly followable perimeter that reconnects with your azimuth is exactly what the contour method is built for.'},
+  {f:'COMBO', t:'A kilometer-wide dry lakebed sits on the only feasible route to the objective, with the mission clock too tight to detour around it.', e:'When a large open area truly cannot be bypassed, the traveling-plus-bounding overwatch combination is the technique — not a full linear crossing, which is for linear features, not open areas.'}
+];
+let order=[], idx=0, score=0, answered=false;
+function buildStrip(){
+  const strip=document.getElementById('strip');
+  strip.innerHTML='';
+  for(let i=0;i<BANK.length;i++){
+    const s=document.createElement('i');
+    if(i<idx)s.className='done';else if(i===idx)s.className='cur';
+    strip.appendChild(s);
+  }
+}
+function renderRound(){
+  answered=false;
+  const item=BANK[order[idx]];
+  document.getElementById('wk-round').textContent='Round '+(idx+1)+' / '+BANK.length;
+  document.getElementById('wk-text').innerHTML=item.t;
+  document.getElementById('wk-explain').classList.remove('show');
+  document.getElementById('wk-next').disabled=true;
+  const opts=document.getElementById('wk-opts');
+  opts.innerHTML='';
+  const shuffledTech=shuffle(TECH);
+  shuffledTech.forEach(function(f){
+    const b=document.createElement('button');
+    b.innerHTML=f.label+'<span class="sub">'+f.sub+'</span>';
+    b.onclick=function(){pick(f.id,item,b,opts);};
+    opts.appendChild(b);
+  });
+  buildStrip();
+  document.getElementById('wk-total').textContent=BANK.length;
+}
+function pick(chosenId,item,btn,opts){
+  if(answered)return;
+  answered=true;
+  const correct=chosenId===item.f;
+  if(correct)score++;
+  Array.from(opts.children).forEach(function(b){b.disabled=true;});
+  btn.classList.add(correct?'right':'miss');
+  if(!correct){
+    const correctLabel=TECH.find(function(f){return f.id===item.f;}).label;
+    Array.from(opts.children).forEach(function(b){
+      if(b.innerHTML.indexOf(correctLabel)>-1)b.classList.add('right');
+    });
+  }
+  const ex=document.getElementById('wk-explain');
+  ex.innerHTML=(correct?'<b>Correct.</b> ':'<b>Not quite.</b> ')+item.e;
+  ex.classList.add('show');
+  document.getElementById('wk-score').textContent=score;
+  document.getElementById('wk-next').disabled=false;
+  buildStrip();
+}
+document.getElementById('wk-next').onclick=function(){
+  idx++;
+  if(idx>=BANK.length){
+    document.getElementById('wk-text').innerHTML='Round complete. Final score: '+score+' / '+BANK.length+'.';
+    document.getElementById('wk-opts').innerHTML='';
+    document.getElementById('wk-round').textContent='Complete';
+    document.getElementById('wk-next').disabled=true;
+    document.getElementById('wk-explain').classList.remove('show');
+    buildStrip();
+    return;
+  }
+  renderRound();
+};
+document.getElementById('wk-restart').onclick=function(){
+  order=shuffle(BANK.map(function(_,i){return i;}));
+  idx=0;score=0;
+  document.getElementById('wk-score').textContent='0';
+  renderRound();
+};
+order=shuffle(BANK.map(function(_,i){return i;}));
+renderRound();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

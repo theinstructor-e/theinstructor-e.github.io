@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9-Line MEDEVAC Simulator — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#e05050;--purple-dim:#b83e3e;--purple-dark:#240a0a;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#b02e2e;--purple-dim:#942424;--purple-dark:#f6dcdc;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.wrap{max-width:900px;margin:0 auto;padding:22px 22px 50px}
+.scenario-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:20px}
+.scenario-card{background:var(--panel);border:1px solid var(--border-bright);padding:16px;cursor:pointer;transition:all .15s}
+.scenario-card:hover{border-color:var(--acc)}
+.scenario-card.active{border-color:var(--acc);background:var(--acc-dark)}
+.scenario-card .sc-label{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--acc);text-transform:uppercase;margin-bottom:4px}
+.scenario-card .sc-title{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text-bright)}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.sitrep{font-family:var(--display);font-size:16.5px;color:var(--text-bright);line-height:1.6;background:var(--canvas-bg);border:1px solid var(--border-bright);padding:16px;margin-bottom:8px}
+.sitrep b{color:var(--amber)}
+.progress-track{display:flex;gap:4px;margin:14px 0}
+.progress-track i{flex:1;height:8px;border:1px solid var(--border-bright);display:block}
+.progress-track i.done{background:var(--green);border-color:var(--green)}
+.progress-track i.cur{background:var(--amber);border-color:var(--amber)}
+.wk-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:10px}
+.wk-opts button{font-family:var(--display);font-size:14px;font-weight:600;text-align:left;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:12px 14px;cursor:pointer;min-height:46px;line-height:1.3}
+.wk-opts button .sub{display:block;font-family:var(--mono);font-size:9.5px;color:var(--text-dim);font-weight:400;margin-top:3px}
+.wk-opts button:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.wk-opts button.right{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.wk-opts button.miss{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.wk-opts button:disabled{cursor:default}
+.explain{font-family:var(--mono);font-size:12.5px;color:var(--text);line-height:1.6;padding:12px 14px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-top:12px;display:none}
+.explain.show{display:block}
+.explain b{color:var(--acc)}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.line-field{margin-bottom:6px}
+.line-field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px}
+.line-field input{width:100%;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text-bright);font-family:var(--mono);font-size:15px;padding:10px 11px;min-height:42px}
+.line-field input:focus{outline:none;border-color:var(--acc)}
+.transcript{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.9;background:var(--canvas-bg);border:1px solid var(--border-bright);padding:16px;white-space:pre-wrap}
+.transcript .ln{color:var(--acc);font-weight:700}
+.transcript .good{color:var(--green)}
+.transcript .bad{color:var(--red)}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .wrap{padding:16px 14px 30px}
+}
+.casualty-stage{position:relative;background:var(--canvas-bg);border:1px solid var(--border-bright);width:100%;max-width:220px;margin:0 auto 12px;aspect-ratio:2/3}
+.casualty-stage svg{position:absolute;inset:0;width:100%;height:100%}
+.device-body{background:linear-gradient(180deg,#1c2128,#14171c);border:1px solid var(--border-bright);border-radius:10px;padding:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 4px 14px rgba(0,0,0,.4)}
+[data-theme="light"] .device-body{background:linear-gradient(180deg,#3a3f47,#2a2e34)}
+.device-screen{background:#0a1a10;border:2px solid #000;border-radius:4px;padding:10px 12px;margin-bottom:14px;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)}
+.scr-line{font-family:var(--mono);font-size:12.5px;color:#5dffb0;letter-spacing:.5px;line-height:1.55;text-shadow:0 0 4px rgba(93,255,176,.5)}
+.scr-tag{color:#2a9a68;font-size:10px;margin-right:4px}
+.scr-big{font-size:16px;font-weight:700;margin:2px 0}
+.devgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.devgrid button{font-family:var(--display);font-size:13px;font-weight:600;background:linear-gradient(180deg,#2e343c,#1c2026);border:1px solid #000;border-top:1px solid #454b53;border-radius:6px;color:var(--text-bright);padding:11px 10px;cursor:pointer;box-shadow:0 2px 0 #000,inset 0 1px 0 rgba(255,255,255,.06);text-align:left}
+.devgrid button .sub{display:block;font-family:var(--mono);font-size:9px;color:var(--text-dim);font-weight:400;margin-top:2px}
+.devgrid button:hover:not(:disabled){filter:brightness(1.15)}
+.devgrid button:active:not(:disabled){box-shadow:0 0px 0 #000;transform:translateY(2px)}
+.devgrid button.right{border-color:var(--green);background:linear-gradient(180deg,var(--green-dim),#003322);color:#fff}
+.devgrid button.miss{border-color:var(--red);background:linear-gradient(180deg,var(--red-dim),#330000);color:#fff}
+.devgrid button:disabled{cursor:default;opacity:.6}
+.vitals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:12px 0}
+.vital{background:var(--canvas-bg);border:1px solid var(--border-bright);padding:8px;text-align:center;transition:border-color .3s,background .3s}
+.vital .vl{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase}
+.vital .vv{font-family:var(--display);font-size:12px;font-weight:700;margin-top:3px}
+.vital.crit{border-color:var(--red);background:var(--red-dark)}
+.vital.crit .vv{color:var(--red)}
+.vital.ok{border-color:var(--green);background:var(--green-dark)}
+.vital.ok .vv{color:var(--green)}
+.vital.pending{border-color:var(--border-bright)}
+.vital.pending .vv{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>9-Line MEDEVAC Simulator <span>// Scenario Drill — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; TACTICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine. This is not medical guidance for real casualty care.</div>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="panel-title">Pick a scenario</div>
+    <div class="scenario-picker" id="scenarioPicker"></div>
+  </div>
+  <div id="simMount"></div>
+</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').innerHTML=d?'&#9728; LIGHT MODE':'&#9789; DARK MODE';}
+
+// ===================== SCENARIO DATA =====================
+const SCENARIOS = [
+{
+  id:'ied',
+  label:'IED Strike',
+  title:'Pressure-plate IED, single casualty',
+  sitrep:'Your squad hits a pressure-plate IED on a dirt road. One Soldier is down — the blast has traumatically amputated his lower right leg. He is conscious, screaming, and bleeding heavily from the stump. No other casualties.<br><br><b>Grid:</b> 11S NU 48251 11932 &nbsp; <b>Freq:</b> 38.55 &nbsp; <b>Callsign:</b> RAVEN 6<br><b>Enemy:</b> No contact since the blast.<br><b>On hand:</b> A spare VS-17 marking panel.',
+  injury:{part:'leg-r-lower', label:'Traumatic amputation'},
+  vitals:{M:'crit', A:'ok', R:'ok', C:'crit', H:'ok'},
+  fixVital:'M',
+  march:{
+    q:'What is your FIRST action for this casualty?',
+    opts:[
+      {id:'a',label:'Apply a tourniquet above the wound',correct:true},
+      {id:'b',label:'Check his airway'},
+      {id:'c',label:'Move him to cover first'},
+      {id:'d',label:'Start rescue breathing'}
+    ],
+    explainRight:'Correct — Massive Hemorrhage is the first letter in MARCH for a reason. A traumatic amputation will kill through blood loss faster than almost anything else. Tourniquet first, above the wound, before doing anything else.',
+    explainWrong:'MARCH puts Massive Hemorrhage first, ahead of airway, breathing, or moving the casualty. A traumatic amputation is actively bleeding out — a tourniquet above the wound comes before anything else.'
+  },
+  lines:{
+    l1:{grid:'11S NU 48251 11932'},
+    l2:{freq:'38.55',callsign:'RAVEN 6'},
+    l3:{opts:[
+      {id:'A',label:'A — Urgent'},
+      {id:'B',label:'B — Urgent Surgical',correct:true},
+      {id:'C',label:'C — Priority'},
+      {id:'D',label:'D — Routine'},
+      {id:'E',label:'E — Convenience'}
+    ],e:'A traumatic amputation with hemorrhage needs surgery, not just stabilization — that\'s Urgent Surgical (B), not just Urgent (A).'},
+    l4:{opts:[
+      {id:'A',label:'A — None',correct:true},
+      {id:'B',label:'B — Hoist'},
+      {id:'C',label:'C — Extraction equipment'},
+      {id:'D',label:'D — Ventilator'}
+    ],e:'You\'re on a dirt road with no obstruction to landing — no special equipment is needed for pickup.'},
+    l5:{opts:[
+      {id:'L',label:'L — Litter (1)',correct:true},
+      {id:'A',label:'A — Ambulatory (1)'}
+    ],e:'A traumatic leg amputation means he cannot walk — this is a litter patient.'},
+    l6:{opts:[
+      {id:'N',label:'N — No enemy',correct:true},
+      {id:'P',label:'P — Possible enemy'},
+      {id:'E',label:'E — Enemy in area'},
+      {id:'X',label:'X — Armed escort required'}
+    ],e:'No enemy contact since the blast — the site is currently clear.'},
+    l7:{opts:[
+      {id:'A',label:'A — Panels',correct:true},
+      {id:'B',label:'B — Pyrotechnic'},
+      {id:'C',label:'C — Smoke'},
+      {id:'D',label:'D — None'}
+    ],e:'You have a VS-17 panel on hand — that\'s Line 7 code A, Panels.'},
+    l8:{opts:[
+      {id:'A',label:'A — US Military',correct:true},
+      {id:'B',label:'B — US Civilian'},
+      {id:'C',label:'C — Non-US Military'},
+      {id:'D',label:'D — Non-US Civilian'},
+      {id:'E',label:'E — EPW'}
+    ],e:'The casualty is a Soldier from your own squad — US Military.'},
+    l9:{opts:[
+      {id:'NA',label:'None / Not applicable',correct:true},
+      {id:'N',label:'N — Nuclear'},
+      {id:'B',label:'B — Biological'},
+      {id:'C',label:'C — Chemical'}
+    ],e:'Nothing in this scenario indicates NBC contamination — nothing to report on Line 9.'}
+  }
+},
+{
+  id:'gsw',
+  label:'GSW to Chest',
+  title:'Gunshot wound, enemy still in contact',
+  sitrep:'Enemy contact — one of your team members takes a gunshot wound to the chest. He\'s having increasing difficulty breathing, and you hear a sucking sound from the wound with each breath. Your squad is still receiving intermittent fire from a tree line roughly 200m away.<br><br><b>Grid:</b> 11S NU 51023 12876 &nbsp; <b>Freq:</b> 42.10 &nbsp; <b>Callsign:</b> TALON 3<br><b>Terrain:</b> Thick jungle canopy overhead — no clear spot for a helicopter to land nearby.<br><b>On hand:</b> No marking panels or smoke available right now.',
+  injury:{part:'chest', label:'Sucking chest wound'},
+  vitals:{M:'ok', A:'ok', R:'crit', C:'ok', H:'ok'},
+  fixVital:'R',
+  march:{
+    q:'What is your FIRST action for this casualty?',
+    opts:[
+      {id:'a',label:'Immediately seal the sucking chest wound'},
+      {id:'b',label:'Quickly confirm there\'s no uncontrolled bleeding elsewhere, then seal the chest wound',correct:true},
+      {id:'c',label:'Splint the injury and reassess in five minutes'},
+      {id:'d',label:'Move him to the rear before treating anything'}
+    ],
+    explainRight:'Correct — even when a chest wound looks like the obvious problem, MARCH still starts by ruling out massive hemorrhage first. Once that\'s clear, the sucking chest wound is a Respiration problem and gets sealed next.',
+    explainWrong:'The chest wound is dramatic, but MARCH doesn\'t skip straight to Respiration — Massive Hemorrhage is always checked first, even briefly, before moving on to airway and then the chest seal.'
+  },
+  lines:{
+    l1:{grid:'11S NU 51023 12876'},
+    l2:{freq:'42.10',callsign:'TALON 3'},
+    l3:{opts:[
+      {id:'A',label:'A — Urgent',correct:true},
+      {id:'B',label:'B — Urgent Surgical'},
+      {id:'C',label:'C — Priority'},
+      {id:'D',label:'D — Routine'},
+      {id:'E',label:'E — Convenience'}
+    ],e:'A chest wound with breathing difficulty needs evacuation within 2 hours — Urgent (A). Without more specific surgical indicators, Urgent is the correct call here.'},
+    l4:{opts:[
+      {id:'A',label:'A — None'},
+      {id:'B',label:'B — Hoist',correct:true},
+      {id:'C',label:'C — Extraction equipment'},
+      {id:'D',label:'D — Ventilator'}
+    ],e:'Thick canopy with no landing zone means the aircraft will have to hoist the casualty up rather than land.'},
+    l5:{opts:[
+      {id:'L',label:'L — Litter (1)',correct:true},
+      {id:'A',label:'A — Ambulatory (1)'}
+    ],e:'A casualty with a chest wound and breathing difficulty is a litter patient, not walking out.'},
+    l6:{opts:[
+      {id:'N',label:'N — No enemy'},
+      {id:'P',label:'P — Possible enemy'},
+      {id:'E',label:'E — Enemy in area',correct:true},
+      {id:'X',label:'X — Armed escort required'}
+    ],e:'You\'re still receiving intermittent fire — that\'s enemy in the area, approach with caution (E).'},
+    l7:{opts:[
+      {id:'A',label:'A — Panels'},
+      {id:'B',label:'B — Pyrotechnic'},
+      {id:'C',label:'C — Smoke'},
+      {id:'D',label:'D — None',correct:true}
+    ],e:'No panels or smoke on hand right now — Line 7 is None.'},
+    l8:{opts:[
+      {id:'A',label:'A — US Military',correct:true},
+      {id:'B',label:'B — US Civilian'},
+      {id:'C',label:'C — Non-US Military'},
+      {id:'D',label:'D — Non-US Civilian'},
+      {id:'E',label:'E — EPW'}
+    ],e:'A member of your own team — US Military.'},
+    l9:{opts:[
+      {id:'NA',label:'None / Not applicable',correct:true},
+      {id:'N',label:'N — Nuclear'},
+      {id:'B',label:'B — Biological'},
+      {id:'C',label:'C — Chemical'}
+    ],e:'No NBC indicators in this scenario.'}
+  }
+},
+{
+  id:'rollover',
+  label:'Vehicle Rollover',
+  title:'Two casualties, different precedence',
+  sitrep:'Your vehicle rolls during a movement. Two Soldiers are injured. <b>Soldier A</b> is unconscious, has a deep scalp laceration bleeding steadily, and feels unusually cold to the touch. <b>Soldier B</b> has a broken wrist from bracing during the roll but is awake, alert, and can walk.<br><br><b>Grid:</b> 11S NU 55678 13421 &nbsp; <b>Freq:</b> 35.90 &nbsp; <b>Callsign:</b> PALADIN 7<br><b>Enemy:</b> No activity reported in the area.<br><b>On hand:</b> Smoke grenades.',
+  injury:{part:'head', label:'Scalp laceration (Soldier A)'},
+  vitals:{M:'crit', A:'ok', R:'ok', C:'ok', H:'crit'},
+  fixVital:'M',
+  march:{
+    q:'For Soldier A (unconscious, cold, scalp bleeding) — what do you address, and in what order?',
+    opts:[
+      {id:'a',label:'Warm him up first, since he\'s cold and losing body heat fast'},
+      {id:'b',label:'Control the scalp bleeding first, then address hypothermia and monitor for head injury',correct:true},
+      {id:'c',label:'Focus entirely on the head injury since he\'s unconscious'},
+      {id:'d',label:'Wake him up before doing anything else'}
+    ],
+    explainRight:'Correct — Massive Hemorrhage still comes first, even for a scalp wound. Once bleeding is controlled, Hypothermia/Head injury (the "H" in MARCH) is the last step: keep him warm and watch for signs of worsening head injury.',
+    explainWrong:'Bleeding control always comes first in MARCH, even before hypothermia — a steadily bleeding scalp laceration is a Massive Hemorrhage concern. Hypothermia and head injury are addressed last, as the "H" step.'
+  },
+  lines:{
+    l1:{grid:'11S NU 55678 13421'},
+    l2:{freq:'35.90',callsign:'PALADIN 7'},
+    l3:{opts:[
+      {id:'BD',label:'1x B, 1x D',correct:true},
+      {id:'AD',label:'1x A, 1x D'},
+      {id:'AA',label:'2x A'},
+      {id:'BB',label:'2x B'}
+    ],e:'Soldier A (unconscious, possible head injury) is Urgent Surgical (B); Soldier B (stable, minor fracture) is Routine (D) — one of each.'},
+    l4:{opts:[
+      {id:'A',label:'A — None',correct:true},
+      {id:'B',label:'B — Hoist'},
+      {id:'C',label:'C — Extraction equipment'},
+      {id:'D',label:'D — Ventilator'}
+    ],e:'Nothing in the scenario suggests an obstructed landing zone — no special equipment needed.'},
+    l5:{opts:[
+      {id:'LA',label:'1x Litter, 1x Ambulatory',correct:true},
+      {id:'LL',label:'2x Litter'},
+      {id:'AA',label:'2x Ambulatory'}
+    ],e:'Soldier A is unconscious (litter); Soldier B can walk (ambulatory) — one of each.'},
+    l6:{opts:[
+      {id:'N',label:'N — No enemy',correct:true},
+      {id:'P',label:'P — Possible enemy'},
+      {id:'E',label:'E — Enemy in area'},
+      {id:'X',label:'X — Armed escort required'}
+    ],e:'No enemy activity reported in the area.'},
+    l7:{opts:[
+      {id:'A',label:'A — Panels'},
+      {id:'B',label:'B — Pyrotechnic'},
+      {id:'C',label:'C — Smoke',correct:true},
+      {id:'D',label:'D — None'}
+    ],e:'You have smoke grenades on hand — Line 7 code C.'},
+    l8:{opts:[
+      {id:'A',label:'A — US Military',correct:true},
+      {id:'B',label:'B — US Civilian'},
+      {id:'C',label:'C — Non-US Military'},
+      {id:'D',label:'D — Non-US Civilian'},
+      {id:'E',label:'E — EPW'}
+    ],e:'Both casualties are your own Soldiers — US Military.'},
+    l9:{opts:[
+      {id:'NA',label:'None / Not applicable',correct:true},
+      {id:'N',label:'N — Nuclear'},
+      {id:'B',label:'B — Biological'},
+      {id:'C',label:'C — Chemical'}
+    ],e:'No NBC indicators in this scenario.'}
+  }
+}
+];
+
+const LINE_ORDER=['l1','l2','l3','l4','l5','l6','l7','l8','l9'];
+const LINE_TITLES={
+  l1:'Line 1 — Location of pickup site',
+  l2:'Line 2 — Radio frequency and callsign',
+  l3:'Line 3 — Number of patients by precedence',
+  l4:'Line 4 — Special equipment required',
+  l5:'Line 5 — Number of patients by type',
+  l6:'Line 6 — Security at pickup site',
+  l7:'Line 7 — Method of marking pickup site',
+  l8:'Line 8 — Patient nationality and status',
+  l9:'Line 9 — NBC contamination'
+};
+
+let currentScenario=null;
+let simState={stage:'march',lineIdx:0,answers:{},marchCorrect:null};
+
+function renderPicker(){
+  const p=document.getElementById('scenarioPicker');
+  p.innerHTML='';
+  SCENARIOS.forEach(function(s){
+    const d=document.createElement('div');
+    d.className='scenario-card'+(currentScenario&&currentScenario.id===s.id?' active':'');
+    d.innerHTML='<div class="sc-label">'+s.label+'</div><div class="sc-title">'+s.title+'</div>';
+    d.onclick=function(){ startScenario(s); };
+    p.appendChild(d);
+  });
+}
+
+function startScenario(s){
+  currentScenario=s;
+  simState={stage:'march',lineIdx:0,answers:{},marchCorrect:null};
+  renderPicker();
+  renderSim();
+}
+
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+const VITAL_LABELS={M:'Hemorrhage',A:'Airway',R:'Respiration',C:'Circulation',H:'Hypo/Head'};
+function vitalsGridHtml(vitals){
+  return Object.keys(VITAL_LABELS).map(function(k){
+    const state=vitals[k]||'pending';
+    const valText = state==='crit' ? 'CHECK' : 'OK';
+    return '<div class="vital '+state+'" id="vital-'+k+'"><div class="vl">'+k+' &middot; '+VITAL_LABELS[k]+'</div><div class="vv">'+valText+'</div></div>';
+  }).join('');
+}
+function markVitalOk(letter){
+  const el=document.getElementById('vital-'+letter);
+  if(!el)return;
+  el.className='vital ok';
+  el.querySelector('.vv').textContent='OK';
+}
+
+function drawCasualty(injuryPart){
+  const svg=document.getElementById('casualtySvg');
+  if(!svg)return;
+  const skin=css('--text-dim'), outline=css('--border-bright'), mark=css('--red');
+  let body=
+    '<rect width="120" height="200" fill="'+css('--canvas-bg')+'"/>'+
+    '<circle cx="60" cy="28" r="18" fill="none" stroke="'+outline+'" stroke-width="2.5"/>'+ // head
+    '<rect x="40" y="48" width="40" height="66" rx="10" fill="none" stroke="'+outline+'" stroke-width="2.5"/>'+ // torso
+    '<rect x="16" y="52" width="13" height="62" rx="6" fill="none" stroke="'+outline+'" stroke-width="2.5"/>'+ // left arm
+    '<rect x="91" y="52" width="13" height="62" rx="6" fill="none" stroke="'+outline+'" stroke-width="2.5"/>'+ // right arm
+    '<rect x="43" y="114" width="14" height="72" rx="6" fill="none" stroke="'+outline+'" stroke-width="2.5"/>'+ // left leg
+    '<rect x="63" y="114" width="14" height="72" rx="6" fill="none" stroke="'+outline+'" stroke-width="2.5"/>'; // right leg
+
+  const marks={
+    'leg-r-lower':{x:70,y:175,r:16,note:'AMPUTATION'},
+    'chest':{x:60,y:80,r:16,note:'GSW'},
+    'head':{x:60,y:28,r:20,note:'LACERATION'}
+  };
+  const m=marks[injuryPart];
+  if(m){
+    body+='<circle cx="'+m.x+'" cy="'+m.y+'" r="'+m.r+'" fill="'+mark+'" opacity="0.35"/>'+
+      '<circle cx="'+m.x+'" cy="'+m.y+'" r="'+(m.r-6)+'" fill="'+mark+'" opacity="0.6"/>'+
+      '<text x="60" y="196" fill="'+mark+'" font-family="Share Tech Mono, monospace" font-size="9" text-anchor="middle">'+m.note+'</text>';
+  }
+  svg.innerHTML=body;
+}
+
+function renderSim(){
+  const mount=document.getElementById('simMount');
+  if(!currentScenario){mount.innerHTML='';return;}
+
+  if(simState.stage==='march'){
+    const vitalsHtml=vitalsGridHtml(currentScenario.vitals);
+    mount.innerHTML=
+      '<div class="panel"><div class="panel-title">Situation</div>'+
+      '<div class="sitrep">'+currentScenario.sitrep+'</div></div>'+
+      '<div class="panel"><div class="panel-title">Casualty</div>'+
+      '<div class="casualty-stage" id="casualtyStage"><svg id="casualtySvg" viewBox="0 0 120 200" preserveAspectRatio="xMidYMid meet"></svg></div>'+
+      '<div class="vitals-grid" id="vitalsGrid">'+vitalsHtml+'</div>'+
+      '</div>'+
+      '<div class="panel"><div class="panel-title">MARCH check</div>'+
+      '<div class="sitrep" style="font-size:15px">'+currentScenario.march.q+'</div>'+
+      '<div class="devgrid" id="marchOpts"></div>'+
+      '<div class="explain" id="marchExplain"></div>'+
+      '<div class="btn-row"><button class="cbtn primary" id="marchNext" disabled>Continue to 9-Line &#8594;</button></div></div>';
+    drawCasualty(currentScenario.injury.part);
+    const opts=document.getElementById('marchOpts');
+    currentScenario.march.opts.forEach(function(o){
+      const b=document.createElement('button');
+      b.textContent=o.label;
+      b.onclick=function(){marchPick(o,b,opts);};
+      opts.appendChild(b);
+    });
+    document.getElementById('marchNext').onclick=function(){
+      simState.stage='lines';
+      simState.lineIdx=0;
+      renderSim();
+    };
+    return;
+  }
+
+  if(simState.stage==='lines'){
+    const key=LINE_ORDER[simState.lineIdx];
+    const lineData=currentScenario.lines[key];
+    let html='<div class="panel"><div class="panel-title">Situation (reference)</div><div class="sitrep" style="font-size:14px">'+currentScenario.sitrep+'</div></div>';
+    html+='<div class="panel"><div class="panel-title">Build the 9-Line</div>';
+    html+='<div class="progress-track" id="lineProgress"></div>';
+    html+='<div class="sitrep" style="font-size:16px">'+LINE_TITLES[key]+'</div>';
+
+    if(key==='l1'){
+      html+='<div class="line-field"><label>Grid coordinates (copy from the situation above)</label><input type="text" id="l1input" placeholder="e.g. 11S NU 48251 11932"></div>';
+      html+='<div class="btn-row"><button class="cbtn primary" id="lineCheck">Check Line 1</button></div>';
+      html+='<div class="explain" id="lineExplain"></div>';
+      mount.innerHTML=html;
+      buildProgress();
+      document.getElementById('lineCheck').onclick=function(){
+        const val=document.getElementById('l1input').value.trim();
+        const correct=val.replace(/\s+/g,'')===lineData.grid.replace(/\s+/g,'');
+        simState.answers.l1={val:val,correct:correct};
+        showLineExplain(correct, correct?'Grid matches — that\'s exactly what goes on Line 1.':'Check the grid again — Line 1 needs to match the pickup site location exactly: '+lineData.grid);
+      };
+      return;
+    }
+    if(key==='l2'){
+      html+='<div class="line-field"><label>Radio frequency</label><input type="text" id="l2freq" placeholder="e.g. 38.55"></div>';
+      html+='<div class="line-field"><label>Callsign</label><input type="text" id="l2call" placeholder="e.g. RAVEN 6"></div>';
+      html+='<div class="btn-row"><button class="cbtn primary" id="lineCheck">Check Line 2</button></div>';
+      html+='<div class="explain" id="lineExplain"></div>';
+      mount.innerHTML=html;
+      buildProgress();
+      document.getElementById('lineCheck').onclick=function(){
+        const f=document.getElementById('l2freq').value.trim();
+        const c=document.getElementById('l2call').value.trim();
+        const correct=f===lineData.freq && c.toUpperCase()===lineData.callsign.toUpperCase();
+        simState.answers.l2={val:f+' / '+c,correct:correct};
+        showLineExplain(correct, correct?'Frequency and callsign both match.':'Line 2 needs the exact frequency ('+lineData.freq+') and callsign ('+lineData.callsign+') from the situation.');
+      };
+      return;
+    }
+
+    // multiple-choice lines 3-9
+    html+='<div class="devgrid" id="lineOpts"></div><div class="explain" id="lineExplain"></div>';
+    mount.innerHTML=html;
+    buildProgress();
+    const opts=document.getElementById('lineOpts');
+    lineData.opts.forEach(function(o){
+      const b=document.createElement('button');
+      b.textContent=o.label;
+      b.onclick=function(){linePick(o,lineData,b,opts);};
+      opts.appendChild(b);
+    });
+    return;
+  }
+
+  if(simState.stage==='done'){
+    renderTranscript();
+  }
+}
+
+function buildProgress(){
+  const track=document.getElementById('lineProgress');
+  if(!track)return;
+  track.innerHTML='';
+  LINE_ORDER.forEach(function(k,i){
+    const s=document.createElement('i');
+    if(i<simState.lineIdx)s.className='done';else if(i===simState.lineIdx)s.className='cur';
+    track.appendChild(s);
+  });
+}
+
+function marchPick(o,btn,opts){
+  if(simState.marchCorrect!==null)return;
+  simState.marchCorrect=!!o.correct;
+  Array.from(opts.children).forEach(function(b){b.disabled=true;});
+  btn.classList.add(o.correct?'right':'miss');
+  if(!o.correct){
+    const rightOpt=currentScenario.march.opts.find(function(x){return x.correct;});
+    Array.from(opts.children).forEach(function(b){if(b.textContent===rightOpt.label)b.classList.add('right');});
+  }else{
+    markVitalOk(currentScenario.fixVital);
+  }
+  const ex=document.getElementById('marchExplain');
+  ex.innerHTML=(o.correct?'<b>Correct.</b> ':'<b>Not quite.</b> ')+(o.correct?currentScenario.march.explainRight:currentScenario.march.explainWrong);
+  ex.classList.add('show');
+  document.getElementById('marchNext').disabled=false;
+}
+
+function linePick(o,lineData,btn,opts){
+  const key=LINE_ORDER[simState.lineIdx];
+  if(simState.answers[key])return;
+  const correct=!!o.correct;
+  simState.answers[key]={val:o.label,correct:correct};
+  Array.from(opts.children).forEach(function(b){b.disabled=true;});
+  btn.classList.add(correct?'right':'miss');
+  if(!correct){
+    const rightOpt=lineData.opts.find(function(x){return x.correct;});
+    Array.from(opts.children).forEach(function(b){if(b.textContent===rightOpt.label)b.classList.add('right');});
+  }
+  showLineExplain(correct, (correct?'Correct. ':'Not quite. ')+lineData.e);
+}
+
+function showLineExplain(correct,msg){
+  const ex=document.getElementById('lineExplain');
+  ex.innerHTML=(correct?'<b>Correct.</b> ':'<b>Check again.</b> ')+msg.replace(/^Correct\.\s*|^Not quite\.\s*/,'');
+  ex.classList.add('show');
+  // add next button
+  let nextBtn=document.getElementById('toNextLine');
+  if(!nextBtn){
+    const row=document.createElement('div');
+    row.className='btn-row';
+    row.innerHTML='<button class="cbtn primary" id="toNextLine">'+(simState.lineIdx<LINE_ORDER.length-1?'Next Line &#8594;':'Finish &amp; Review Transcript')+'</button>';
+    ex.insertAdjacentElement('afterend',row);
+    nextBtn=document.getElementById('toNextLine');
+  }
+  nextBtn.onclick=function(){
+    if(simState.lineIdx<LINE_ORDER.length-1){
+      simState.lineIdx++;
+      renderSim();
+    }else{
+      simState.stage='done';
+      renderSim();
+    }
+  };
+}
+
+function renderTranscript(){
+  const mount=document.getElementById('simMount');
+  let correctCount=0;
+  let body='';
+  LINE_ORDER.forEach(function(k,i){
+    const a=simState.answers[k];
+    if(a && a.correct)correctCount++;
+    const cls=a&&a.correct?'good':'bad';
+    body+='<span class="ln">Line '+(i+1)+':</span> <span class="'+cls+'">'+(a?a.val:'&mdash;')+'</span>\n';
+  });
+  const marchLine=simState.marchCorrect?1:0;
+  const total=LINE_ORDER.length+1;
+  const score=correctCount+marchLine;
+  mount.innerHTML=
+    '<div class="panel"><div class="panel-title">Transmission Transcript</div>'+
+    '<div class="transcript">'+body+'</div>'+
+    '<div class="score">MARCH check: <b>'+(simState.marchCorrect?'Correct':'Missed')+'</b> &nbsp;|&nbsp; Lines correct: <b>'+correctCount+' / '+LINE_ORDER.length+'</b> &nbsp;|&nbsp; Overall: <b>'+score+' / '+total+'</b></div>'+
+    '<div class="btn-row"><button class="cbtn primary" id="tryAgain">Try This Scenario Again</button><button class="cbtn" id="pickAnother">Pick Another Scenario</button></div></div>';
+  document.getElementById('tryAgain').onclick=function(){ startScenario(currentScenario); };
+  document.getElementById('pickAnother').onclick=function(){ currentScenario=null; renderPicker(); renderSim(); };
+}
+
+renderPicker();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

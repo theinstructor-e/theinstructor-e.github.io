@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OAKOC Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;--border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#233d1f;--hero-eyebrow:#a8d88a;--hero-sub:#cbe6b8;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;--toggle-bg:rgba(255,255,255,0.15);
+  --accent:#4c8a2e;--accent-soft:#e9f4e1;--c1:#1f6fe0;--c1s:#e2edfb;--c2:#c0392b;--c2s:#fbe4e0;--c3:#159c72;--c3s:#dcf3ea;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;--border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#152a12;--hero-eyebrow:#8fc46f;--hero-sub:#9fc488;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;--toggle-bg:rgba(255,255,255,0.08);
+  --accent:#6fbf46;--accent-soft:#152a12;--c1:#5a9bf0;--c1s:#0a2240;--c2:#e0685a;--c2s:#2e0e0a;--c3:#33b98d;--c3s:#0a2e22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:580px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn.prev{text-align:left}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+h4{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:1rem 0 .5rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:1rem 0}
+.card-row .card{margin-bottom:0}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}.fact-card-text strong{color:var(--text-primary)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+table.compare td:first-child{font-weight:700;color:var(--text-primary)}
+.tbl-wrap{overflow-x:auto;margin:1rem 0}
+.tbl-wrap table.compare{margin:0;min-width:520px}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+.steps{counter-reset:s;margin:1rem 0}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:.5rem}
+.step::before{counter-increment:s;content:counter(s);background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step .st{font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-primary)}.step .sd{font-size:12.5px;color:var(--text-secondary)}
+.mnem{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;font-size:13.5px}
+.mnem .k{font-family:'Nunito',sans-serif;font-weight:800;color:var(--accent)}
+@media print{
+  body{background:#fff}
+  .hero{background:#fff!important;color:#000!important;padding:1rem 0 .5rem}
+  .hero h1,.hero h1 span,.hero-eyebrow,.hero-sub{color:#000!important}
+  .theme-toggle,.tab-nav,.tab-jump,#fbNudge{display:none!important}
+  .qc{position:static!important;display:inline-block;color:#000!important;border-color:#999!important;background:none!important;margin-bottom:.5rem}
+  .tab-content{display:block!important;animation:none!important}
+  .tab-content+.tab-content{margin-top:2rem;break-before:page}
+  .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
+  .section-wrap{padding-top:1rem}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>OAKOC <span>Terrain Analysis</span><br>Reading the ground before it reads you.</h1>
+  <p class="hero-sub">The five military aspects of terrain every leader checks before moving, defending, or planning fires — plus the weather factors that go with them.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('big',this)">📋 The Big Picture</button><button class="tab-btn" onclick="switchTab('oa',this)">👁️ O &amp; A</button><button class="tab-btn" onclick="switchTab('koc',this)">🏔️ K, O &amp; C</button><button class="tab-btn" onclick="switchTab('wx',this)">🌦️ Weather</button><button class="tab-btn" onclick="switchTab('ex',this)">🧩 Worked Example</button>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <div class="tab-content active" id="tab-big">
+
+    <h2>OAKOC — the five military aspects of terrain</h2>
+    <p class="lede">Before you can plan a route, place a weapon, or pick a patrol base, you have to read the ground the same way every time. OAKOC is the checklist that makes sure you don't miss anything.</p>
+    <div class="analogy">🏠 <strong>Think of it like house-hunting with a tactical eye:</strong> where can I see out from (Observation), what's the driveway in (Avenues of Approach), which room matters most (Key Terrain), what's blocking the door (Obstacles), and where would I duck if someone shot at the house (Cover and Concealment)?</div>
+    <h3>Where it fits</h3>
+    <p>OAKOC is the terrain half of the <strong>"T" in METT-TC</strong> — the mission analysis framework used in both <a href="../tlp-guide/" style="color:var(--accent)">TLP</a> and MDMP. Whenever a leader says "let's talk terrain and weather," this is the tool they reach for.</p>
+    <div class="mnem"><span class="k">O</span><span><strong>Observation and Fields of Fire</strong> — what you can see, what you can hit</span><span class="k">A</span><span><strong>Avenues of Approach</strong> — routes in, for you and the enemy</span><span class="k">K</span><span><strong>Key Terrain</strong> — ground worth fighting for</span><span class="k">O</span><span><strong>Obstacles</strong> — anything that stops or slows movement</span><span class="k">C</span><span><strong>Cover and Concealment</strong> — protection from fire, protection from being seen</span></div>
+    <p>Some older references order it <strong>OCOKA</strong> (Observation and Fields of Fire, Cover and Concealment, Obstacles, Key Terrain, Avenues of Approach) — same five factors, different order. Either way, analyze all five before you decide anything.</p>
+    <div class="fact-card"><span class="fact-card-emoji">🔁</span><span class="fact-card-text"><strong>Use it both ways.</strong> Every one of these five factors gets evaluated twice — once for what it means for the enemy, once for what it means for you. Terrain that helps you observe an avenue of approach might also expose you to enemy observation from the same spot.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('oa')"><span class="tj-label">Next &rarr;</span><span class="tj-title">👁️ O &amp; A</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-oa">
+
+    <h2>Observation and Fields of Fire, Avenues of Approach</h2>
+    <p class="lede">These two go together: observation tells you what you can see, avenues of approach tell you where the fight is likely to come from.</p>
+    <h3>Observation and Fields of Fire</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">👁️</span><div><div class="card-title">Observation</div><div class="card-sub">Can you see the threat?</div></div></div><p style="margin:0">The ability to see the enemy, either visually or through surveillance devices (optics, sensors, radar). Anything that offers cover or concealment to the enemy denies or limits your observation of them.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🎯</span><div><div class="card-title">Fields of Fire</div><div class="card-sub">Can you hit what you see?</div></div></div><p style="margin:0">The area that a weapon, or a group of weapons, can cover effectively with fire from a given position. Terrain that offers cover also tends to limit fields of fire — you can't shoot through what you can't see through.</p></div>
+    </div>
+    <p>When you evaluate observation and fields of fire, you're looking for places that give clear sight lines and engagement ranges over key terrain, obstacles, and — most importantly — avenues of approach.</p>
+    <h3>Avenues of Approach</h3>
+    <p>An <strong>avenue of approach (AA)</strong> is an air or ground route that leads an attacking force of a given size to its objective, or to key terrain in its path. Every avenue of approach gets evaluated twice:</p>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">🔵</span><div><div class="card-title">Friendly AA</div><div class="card-sub">Blue arrow</div></div></div><p style="margin:0">The routes your own element can use to reach the objective or key terrain.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🔴</span><div><div class="card-title">Enemy AA</div><div class="card-sub">Red arrow</div></div></div><p style="margin:0">The routes the enemy is most likely to use against you or the objective.</p></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">🚦</span><span class="fact-card-text"><strong>Canalizing terrain.</strong> Avenues of approach are often shaped by natural lines of drift — valleys, roads, ridgelines, waterways. Terrain that funnels movement into a narrow path is called canalizing terrain, and it's exactly where you'd expect an ambush or a choke-point obstacle.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('big')"><span class="tj-label">&larr; Back</span><span class="tj-title">📋 The Big Picture</span></button><button class="tab-jump-btn next" onclick="goToTab('koc')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🏔️ K, O &amp; C</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-koc">
+
+    <h2>Key Terrain, Obstacles, Cover and Concealment</h2>
+    <p class="lede">These three decide who controls the ground, what slows people down on it, and where you're safe once you're on it.</p>
+    <h3>Key Terrain</h3>
+    <p>Any locality, or area, that — if seized, retained, or controlled — affords a marked advantage to either combatant. Common examples: high ground overlooking an avenue of approach, bridges, road junctions, and towns that sit astride a route. A hilltop with great observation isn't automatically key terrain — it only matters if controlling it actually changes the fight. <strong>Decisive terrain</strong> is the rarer case where controlling it is essential to mission success.</p>
+    <h3>Obstacles</h3>
+    <p>Any natural or man-made terrain feature that stops, slows, impedes, or diverts movement. Natural obstacles include rivers, steep slopes, and dense vegetation; man-made obstacles include wire, minefields, and craters. Consider obstacles to air mobility as well as ground movement.</p>
+    <h3>Cover and Concealment</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">🛡️</span><div><div class="card-title">Cover</div><div class="card-sub">Protection from fire</div></div></div><p style="margin:0">Shelter or protection from the effects of direct and indirect fire — natural (a berm, a ditch) or artificial (a wall, a fighting position).</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🌳</span><div><div class="card-title">Concealment</div><div class="card-sub">Protection from observation</div></div></div><p style="margin:0">Protection from observation or surveillance, including from the air. Woods, underbrush, tall grass, and cultivated vegetation are classic concealment.</p></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">⚠️</span><span class="fact-card-text"><strong>Cover and concealment aren't the same thing.</strong> Something that hides you doesn't always stop a bullet (tall grass), and something that stops a bullet doesn't always hide you (a lone boulder). The best positions have both — but don't assume one buys you the other.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('oa')"><span class="tj-label">&larr; Back</span><span class="tj-title">👁️ O &amp; A</span></button><button class="tab-jump-btn next" onclick="goToTab('wx')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🌦️ Weather</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-wx">
+
+    <h2>Weather — the sixth factor</h2>
+    <p class="lede">Terrain and weather get analyzed together, because weather changes how the terrain behaves. Doctrine lists these military aspects of weather alongside OAKOC.</p>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Factor</th><th>Why it matters</th></tr></thead><tbody>
+    <tr><td>Visibility</td><td>Fog, haze, smoke, and darkness change observation ranges and engagement distances for everyone.</td></tr>
+    <tr><td>Wind</td><td>Affects aircraft, smoke and CBRN hazards, sound carry, and indirect-fire ballistics.</td></tr>
+    <tr><td>Precipitation</td><td>Rain and snow affect mobility, visibility, and equipment.</td></tr>
+    <tr><td>Cloud cover / ceiling</td><td>Drives whether air support and resupply are even possible.</td></tr>
+    <tr><td>Temperature</td><td>Affects personnel endurance, equipment performance, and casualty risk (heat/cold injury).</td></tr>
+    <tr><td>Humidity</td><td>Compounds heat-injury risk and affects some equipment and optics.</td></tr>
+    <tr><td>Atmospheric pressure</td><td>Considered as required — relevant to some aircraft and munitions calculations.</td></tr>
+    </tbody></table></div>
+    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../oakoc/" style="color:inherit"><em>OAKOC Trainer</em></a> walks through labeling each factor on a series of terrain scenarios.</div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('koc')"><span class="tj-label">&larr; Back</span><span class="tj-title">🏔️ K, O &amp; C</span></button><button class="tab-jump-btn next" onclick="goToTab('ex')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧩 Worked Example</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-ex">
+
+    <h2>Worked example — a squad chooses a defensive position</h2>
+    <p class="lede">This is a sample scenario for illustration. Real terrain analysis always uses the actual ground and map in front of you.</p>
+    <div class="analogy">📋 <strong>The scenario:</strong> a squad must set up a hasty defense overlooking a river crossing site, expecting the enemy to approach from the tree line on the far bank.</div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Factor</th><th>What the squad leader notes</th></tr></thead><tbody>
+    <tr><td>Observation &amp; Fields of Fire</td><td>The near-side high ground gives clear sight and engagement range across the entire crossing site.</td></tr>
+    <tr><td>Avenues of Approach</td><td>The tree line on the far bank is the likely enemy AA; the gravel road behind the squad is the friendly AA for resupply or withdrawal.</td></tr>
+    <tr><td>Key Terrain</td><td>The high ground itself — whoever holds it controls the crossing site.</td></tr>
+    <tr><td>Obstacles</td><td>The river is a natural obstacle that canalizes the enemy toward the crossing site — a natural choke point to cover with fire.</td></tr>
+    <tr><td>Cover &amp; Concealment</td><td>A tree line just behind the high ground offers concealment for the squad's positions; a rock outcrop nearby offers cover for the machine gun team.</td></tr>
+    </tbody></table></div>
+    <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>What to notice.</strong> The same river that's an obstacle to the enemy is also the reason the high ground is key terrain — the two factors reinforce each other. That's normal: OAKOC factors are rarely independent of one another.</span></div>
+    <div class="tryit"><strong>▶ Next:</strong> see how terrain feeds into <a href="/planningguide/" style="color:inherit"><em>Planning &amp; Tactics Explained</em></a>, or practice route selection with the <a href="../route-planning/" style="color:inherit"><em>Route Planning Trainer</em></a>.</div>
+    <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> ATP 3-21.8, <em>Infantry Platoon and Squad</em>. TC 3-21.76, <em>Ranger Handbook</em>. Use your class slides and instructor as the authority.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('wx')"><span class="tj-label">&larr; Back</span><span class="tj-title">🌦️ Weather</span></button></div>
+  </div>
+</div>
+
+<div class="card refs" style="max-width:820px;margin:24px auto 0;padding:18px 20px"><h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2><p style="font-size:13px;color:var(--text-secondary);line-height:1.6">The explanations here are written in plain language to summarize Army doctrine. They do not replace the source publications, and publications are revised. Check the current edition of each at the <a href="https://armypubs.army.mil/" style="color:var(--accent)">Army Publishing Directorate</a>, and follow your class slides and instructor where they differ.</p><ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px"><li><b>ATP 3-21.8</b> — Infantry Platoon and Squad. OAKOC and military aspects of terrain and weather.</li><li><b>TC 3-21.76</b> — Ranger Handbook. Terrain analysis applied to patrolling, movement, and defensive positions.</li></ul></div>
+<div style="text-align:center;padding:16px 16px 0"><a href="/classic.html?page=army" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Tactics</a> &nbsp;&nbsp; <a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">Back to E-WIT</a></div>
+<div class="footer">OAKOC Explained · Companion guide to the OAKOC Trainer · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

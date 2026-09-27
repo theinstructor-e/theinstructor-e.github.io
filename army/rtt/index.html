@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranger Tactical Tasks (RTT) — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#bb88ff;--purple-dim:#8a5cd0;--purple-dark:#1a0033;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#6633cc;--purple-dim:#8a5cd0;--purple-dark:#ede0ff;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.intro{max-width:1000px;margin:0 auto;padding:16px 24px 0;font-family:var(--mono);font-size:12.5px;color:var(--text-dim);line-height:1.7}
+.outer-tab-nav{display:flex;border-bottom:2px solid var(--border-bright);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto;margin-top:14px}
+.outer-tab-btn{font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:3px solid transparent;padding:14px 16px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.outer-tab-btn:hover{color:var(--text)}
+.outer-tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.outer-tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.outer-tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.callout.red{border-left-color:var(--red);background:var(--red-dark)}.callout.red .key{color:var(--red)}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.cbtn.active-toggle{background:var(--acc-dark);border-color:var(--acc);color:var(--acc)}
+.cbtn:disabled{opacity:.35;cursor:not-allowed}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.field{margin-bottom:14px}
+.field label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px}
+.num-wrap{display:flex;align-items:center;gap:4px}
+.num-input{font-family:var(--mono);font-size:13px;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--cyan);padding:4px 8px;width:90px;text-align:right;outline:none}
+.num-unit{font-family:var(--mono);font-size:11px;color:var(--text-dim);min-width:30px}
+input[type="range"]{width:100%;accent-color:var(--acc)}
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+.readout{background:var(--canvas-bg);border:1px solid var(--border);padding:10px 12px;text-align:center;transition:background .2s,border-color .2s}
+.readout .label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px}
+.readout .val{font-family:var(--mono);font-size:16px;color:var(--cyan);line-height:1.2}
+.readout.good{border-color:var(--green)}.readout.good .val{color:var(--green)}
+.readout.bad{border-color:var(--red)}.readout.bad .val{color:var(--red)}
+.readout.warn{border-color:var(--amber)}.readout.warn .val{color:var(--amber)}
+canvas{display:block;width:100%;height:auto;background:var(--canvas-bg);border:1px solid var(--border-bright)}
+.status{font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.6}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:10px 0}
+.info-card{background:var(--canvas-bg);border:1px solid var(--border-bright);padding:10px 12px}
+.info-card .k{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--acc);text-transform:uppercase;margin-bottom:3px}
+.info-card .v{font-family:var(--display);font-size:14px;font-weight:600;color:var(--text-bright)}
+.stage{position:relative;background:var(--canvas-bg);border:1px solid var(--border-bright);width:100%;max-width:520px;margin:0 auto;overflow:hidden;touch-action:none}
+.device-body{background:linear-gradient(180deg,#1c2128,#14171c);border:1px solid var(--border-bright);border-radius:10px;padding:16px;max-width:420px;margin:0 auto;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 4px 14px rgba(0,0,0,.4)}
+[data-theme="light"] .device-body{background:linear-gradient(180deg,#3a3f47,#2a2e34)}
+.device-screen{background:#0a1a10;border:2px solid #000;border-radius:4px;padding:10px 12px;margin-bottom:14px;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)}
+.scr-line{font-family:var(--mono);font-size:13px;color:#5dffb0;letter-spacing:1px;line-height:1.6;text-shadow:0 0 4px rgba(93,255,176,.5)}
+.scr-tag{color:#2a9a68;font-size:10px;margin-right:4px}
+.scr-big{font-size:20px;font-weight:700;margin:2px 0}
+.scr-dim{color:#2a9a68;font-size:9px;letter-spacing:1px}
+.device-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.devbtn{flex:1;min-width:70px;font-family:var(--mono);font-size:10px;letter-spacing:1px;background:linear-gradient(180deg,#3a4048,#262a30);border:1px solid #000;border-top:1px solid #4a5058;border-radius:5px;color:var(--text-bright);padding:9px 6px;cursor:pointer;box-shadow:0 2px 0 #000,inset 0 1px 0 rgba(255,255,255,.08)}
+.devbtn:active{box-shadow:0 0px 0 #000;transform:translateY(2px)}
+.devbtn.toggle.on{background:linear-gradient(180deg,var(--acc),var(--acc-dark));color:#fff}
+.device-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.devkey{font-family:var(--mono);font-size:14px;font-weight:700;background:linear-gradient(180deg,#2e343c,#1c2026);border:1px solid #000;border-top:1px solid #454b53;border-radius:5px;color:var(--text-bright);padding:12px 4px;cursor:pointer;box-shadow:0 2px 0 #000,inset 0 1px 0 rgba(255,255,255,.06)}
+.devkey:active{box-shadow:0 0px 0 #000;transform:translateY(2px)}
+.devkey.wide{font-size:11px}
+.devkey.primary-key{background:linear-gradient(180deg,var(--green-dim),#004422);color:#fff}
+.dagr-body{background:linear-gradient(180deg,#2a2f36,#1a1e23);border:1px solid var(--border-bright);border-radius:16px;padding:16px;max-width:280px;margin:0 auto;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 4px 14px rgba(0,0,0,.4)}
+[data-theme="light"] .dagr-body{background:linear-gradient(180deg,#4a5058,#383c42)}
+.dagr-screen{background:#0a140a;border:2px solid #000;border-radius:4px;padding:8px 10px;margin-bottom:14px;box-shadow:inset 0 2px 6px rgba(0,0,0,.6);min-height:90px}
+.dagr-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.dagr-key{font-family:var(--mono);font-size:11px;font-weight:700;background:linear-gradient(180deg,#3a4048,#262a30);border:1px solid #000;border-top:1px solid #4a5058;border-radius:50%;color:var(--text-bright);padding:10px 2px;cursor:pointer;box-shadow:0 2px 0 #000,inset 0 1px 0 rgba(255,255,255,.08);aspect-ratio:1/1}
+.dagr-key:active{box-shadow:0 0px 0 #000;transform:translateY(2px)}
+.dagr-key.center{background:linear-gradient(180deg,var(--acc),var(--acc-dark));color:#fff;border-radius:8px}
+.dagr-fkeys{display:flex;gap:5px;justify-content:center}
+.dagr-fkeys .devbtn{flex:none;min-width:44px;font-size:9px}
+.knot-detail{background:var(--canvas-bg);border:1px solid var(--border-bright);padding:14px;margin:10px 0}
+.knot-steps{counter-reset:ks;margin-top:4px}
+.knot-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-family:var(--mono);font-size:12px;color:var(--text)}
+.knot-step::before{counter-increment:ks;content:counter(ks);background:var(--acc);color:#fff;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .outer-tab-nav{padding:0 8px}
+  .outer-tab-btn{padding:12px 10px;font-size:11px}
+  .outer-tab-content{padding:16px 14px 30px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>Ranger Tactical Tasks <span>// RTT Hub — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; TACTICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine. Never handle a weapon or item as if it were live during training without proper supervision and safety procedures.</div>
+<div class="intro">The Ranger Tactical Tasks (RTT) are the RAP-week proficiency stations. Pick a station and work the simulator — hands-on, no equipment required.</div>
+
+<nav class="outer-tab-nav" id="outerTabNav">
+  <button class="outer-tab-btn active" onclick="switchOuter('m4',this)">M4</button>
+  <button class="outer-tab-btn" onclick="switchOuter('m249',this)">M249</button>
+  <button class="outer-tab-btn" onclick="switchOuter('m240b',this)">M240B</button>
+  <button class="outer-tab-btn" onclick="switchOuter('radio',this)">Radio</button>
+  <button class="outer-tab-btn" onclick="switchOuter('knots',this)">Knots</button>
+  <button class="outer-tab-btn" onclick="switchOuter('dagr',this)">DAGR</button>
+  <button class="outer-tab-btn" onclick="switchOuter('claymore',this)">Claymore</button>
+</nav>
+
+<!-- ============ M4 : SELECTOR + TRIGGER SIMULATOR ============ -->
+<div class="outer-tab-content active" id="outer-m4">
+  <div class="panel">
+    <div class="panel-title">M4 Function Check Simulator</div>
+    <div class="lead">Work the selector and trigger yourself. Confirm the weapon is cleared, then run the check — SAFE, SEMI, and AUTO each behave differently. The current-issue M4A1 replaced the older 3-round burst M4 with full auto.</div>
+    <canvas id="m4Canvas" width="520" height="220" aria-label="M4 selector switch"></canvas>
+    <div class="btn-row">
+      <button class="cbtn" id="m4Clear" onclick="m4SetCleared()">1. Clear the Weapon</button>
+      <button class="cbtn" onclick="m4SetSelector('SAFE')">Selector: SAFE</button>
+      <button class="cbtn" onclick="m4SetSelector('SEMI')">Selector: SEMI</button>
+      <button class="cbtn" onclick="m4SetSelector('AUTO')">Selector: AUTO</button>
+    </div>
+    <div class="btn-row"><button class="cbtn primary" id="m4Pull" onclick="m4PullTrigger()">Pull Trigger</button><button class="cbtn" onclick="m4Release()">Release Trigger</button><button class="cbtn" onclick="m4Charge()">Charge Weapon</button><button class="cbtn" onclick="m4Reset()">&#8635; Reset</button></div>
+    <div class="readout-grid">
+      <div class="readout" id="m4rCleared"><div class="label">Weapon</div><div class="val">NOT CLEARED</div></div>
+      <div class="readout" id="m4rSelector"><div class="label">Selector</div><div class="val">&#8212;</div></div>
+      <div class="readout" id="m4rTrigger"><div class="label">Trigger</div><div class="val">&#8212;</div></div>
+      <div class="readout" id="m4rHammer"><div class="label">Hammer</div><div class="val">&#8212;</div></div>
+    </div>
+    <div class="status" id="m4Status">Start by clearing the weapon — no magazine, empty chamber.</div>
+  </div>
+  <div class="callout amber"><span class="key">SAFETY:</span> a function check is always performed on a cleared weapon, muzzle pointed in a safe direction.</div>
+</div>
+
+<!-- ============ M249 ============ -->
+<div class="outer-tab-content" id="outer-m249">
+  <div class="panel">
+    <div class="panel-title">M249 Clear, Load &amp; Safety Check Simulator</div>
+    <div class="info-grid">
+      <div class="info-card"><div class="k">Fire from</div><div class="v">Open bolt</div></div>
+      <div class="info-card"><div class="k">Sustained</div><div class="v">100 rd/min</div></div>
+      <div class="info-card"><div class="k">Cyclic</div><div class="v">650&ndash;850 rd/min</div></div>
+    </div>
+    <div class="lead">Work the bolt and safety in the correct order. The safety physically cannot engage unless the bolt is locked to the rear — try it and see.</div>
+    <canvas id="m249Canvas" width="520" height="160" aria-label="M249 bolt and safety"></canvas>
+    <div class="btn-row">
+      <button class="cbtn" onclick="mgBoltRear('m249')">Pull Cocking Handle to Rear</button>
+      <button class="cbtn" onclick="mgSafety('m249')">Move Safety</button>
+      <button class="cbtn" onclick="mgBoltForward('m249')">Return Cocking Handle Forward</button>
+      <button class="cbtn" onclick="mgReset('m249')">&#8635; Reset</button>
+    </div>
+    <div class="readout-grid">
+      <div class="readout" id="m249rBolt"><div class="label">Bolt</div><div class="val">FORWARD</div></div>
+      <div class="readout" id="m249rSafety"><div class="label">Safety</div><div class="val">FIRE</div></div>
+    </div>
+    <div class="status" id="m249Status">Bolt is forward. The safety cannot be set to SAFE from here — try it.</div>
+    <div class="lead" style="margin-top:14px">4-point safety check — click each point once the feed cover is open (bolt locked to the rear):</div>
+    <div class="btn-row" id="m249Points"></div>
+    <div class="status" id="m249PointStatus"></div>
+  </div>
+  <div class="callout red"><span class="key">DANGER:</span> when opening the feed cover on a hot gun, keep the weapon on the ground away from your face — never on your shoulder.</div>
+</div>
+
+<!-- ============ M240B ============ -->
+<div class="outer-tab-content" id="outer-m240b">
+  <div class="panel">
+    <div class="panel-title">M240B Clear &amp; Safety Check Simulator</div>
+    <div class="info-grid">
+      <div class="info-card"><div class="k">Feed</div><div class="v">Belt-fed</div></div>
+      <div class="info-card"><div class="k">Fire from</div><div class="v">Open bolt</div></div>
+      <div class="info-card"><div class="k">Mode</div><div class="v">Fully automatic</div></div>
+    </div>
+    <div class="lead">Same open-bolt safety logic as the M249 — work the bolt and safety yourself.</div>
+    <canvas id="m240bCanvas" width="520" height="160" aria-label="M240B bolt and safety"></canvas>
+    <div class="btn-row">
+      <button class="cbtn" onclick="mgBoltRear('m240b')">Pull Cocking Handle to Rear</button>
+      <button class="cbtn" onclick="mgSafety('m240b')">Move Safety</button>
+      <button class="cbtn" onclick="mgBoltForward('m240b')">Return Cocking Handle Forward</button>
+      <button class="cbtn" onclick="mgReset('m240b')">&#8635; Reset</button>
+    </div>
+    <div class="readout-grid">
+      <div class="readout" id="m240brBolt"><div class="label">Bolt</div><div class="val">FORWARD</div></div>
+      <div class="readout" id="m240brSafety"><div class="label">Safety</div><div class="val">FIRE</div></div>
+    </div>
+    <div class="status" id="m240bStatus">Bolt is forward. The safety cannot be set to SAFE from here — try it.</div>
+    <div class="lead" style="margin-top:14px">Safety check points — click each once the cover is open:</div>
+    <div class="btn-row" id="m240bPoints"></div>
+    <div class="status" id="m240bPointStatus"></div>
+  </div>
+  <div class="callout amber"><span class="key">IMMEDIATE ACTION:</span> reducing a failure to fire is done without first seeking the cause — the weapon stays on your shoulder while you work the steps.</div>
+</div>
+
+<!-- ============ RADIO ============ -->
+<div class="outer-tab-content" id="outer-radio">
+  <div class="panel">
+    <div class="panel-title">Load a SINCGARS Frequency — Radio Front Panel</div>
+    <div class="lead">This behaves like the actual radio: set MODE and FCTN, select a channel, punch in the frequency on the keypad, then store it.</div>
+    <div class="device-body" id="radioDevice">
+      <div class="device-screen" id="radioScreen">
+        <div class="scr-line"><span class="scr-tag">MODE</span><span id="scrMode">SC</span><span class="scr-tag" style="margin-left:14px">FCTN</span><span id="scrFctn">LD</span></div>
+        <div class="scr-line"><span class="scr-tag">CHAN</span><span id="scrChan">1</span></div>
+        <div class="scr-line scr-big" id="scrFreq">38.550</div>
+        <div class="scr-line scr-dim" id="scrHint">ENTER FREQ, PRESS STO</div>
+      </div>
+      <div class="device-row">
+        <button class="devbtn toggle" id="btnMode" onclick="radioCycleMode()">MODE</button>
+        <button class="devbtn toggle" id="btnFctn" onclick="radioCycleFctn()">FCTN</button>
+        <button class="devbtn" onclick="radioChanStep(-1)">CHAN &#9664;</button>
+        <button class="devbtn" onclick="radioChanStep(1)">CHAN &#9654;</button>
+      </div>
+      <div class="device-keypad">
+        <button class="devkey" onclick="radioKey('1')">1</button><button class="devkey" onclick="radioKey('2')">2</button><button class="devkey" onclick="radioKey('3')">3</button>
+        <button class="devkey" onclick="radioKey('4')">4</button><button class="devkey" onclick="radioKey('5')">5</button><button class="devkey" onclick="radioKey('6')">6</button>
+        <button class="devkey" onclick="radioKey('7')">7</button><button class="devkey" onclick="radioKey('8')">8</button><button class="devkey" onclick="radioKey('9')">9</button>
+        <button class="devkey wide" onclick="radioClear()">CLR</button><button class="devkey" onclick="radioKey('0')">0</button><button class="devkey wide primary-key" onclick="radioStore()">STO</button>
+      </div>
+    </div>
+    <div class="status" id="radioStatus">Set MODE to SC and FCTN to LD, select a channel, then type a 5-digit frequency (e.g. 38550 = 38.550 MHz) and press STO.</div>
+    <div class="readout-grid">
+      <div class="readout" id="rStoredReadout"><div class="label">Stored on CHAN <span id="rStoredChan">1</span></div><div class="val" id="rStoredVal">&#8212;</div></div>
+    </div>
+    <div class="btn-row"><button class="cbtn" onclick="radioReset()">&#8635; Reset</button></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Radio Check Simulator</div>
+    <div class="lead">Drag the distance slider and watch signal strength and readability change in real time.</div>
+    <div class="field">
+      <label><span>Distance to receiving station</span><span id="rcDistLabel">500 m</span></label>
+      <input type="range" id="rcDist" min="100" max="8000" step="50" value="500" oninput="radioCheckUpdate(this.value)">
+    </div>
+    <canvas id="rcCanvas" width="520" height="70" aria-label="Signal strength bar"></canvas>
+    <div class="readout-grid">
+      <div class="readout" id="rcReadability"><div class="label">Readability</div><div class="val">&#8212;</div></div>
+      <div class="readout"><div class="label">Standard call</div><div class="val" id="rcCallout" style="font-size:12px">&#8212;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KNOTS ============ -->
+<div class="outer-tab-content" id="outer-knots">
+  <div class="panel">
+    <div class="panel-title">Match Each Knot to Its Class</div>
+    <div class="lead">Click a knot to see its picture and tying steps, then click the class it belongs to. TC 3-21.76, Chapter 9.</div>
+    <div class="btn-row" id="knotChips"></div>
+    <div class="knot-detail" id="knotDetail" style="display:none">
+      <div class="stage" id="knotStage" style="max-width:260px;aspect-ratio:4/3;margin:0 0 10px">
+        <svg id="knotSvg" viewBox="0 0 260 195" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div id="knotSteps"></div>
+    </div>
+    <div class="btn-row" id="knotClasses"></div>
+    <div class="status" id="knotStatus">Select a knot to begin.</div>
+    <div class="readout-grid" id="knotScoreGrid"></div>
+  </div>
+</div>
+
+<!-- ============ DAGR ============ -->
+<div class="outer-tab-content" id="outer-dagr">
+  <div class="panel">
+    <div class="panel-title">DAGR Navigate-to-Waypoint Simulator</div>
+    <div class="info-grid">
+      <div class="info-card"><div class="k">Provides</div><div class="v">Position, Velocity, Time</div></div>
+      <div class="info-card"><div class="k">Routes storable</div><div class="v">Up to 15</div></div>
+    </div>
+    <div class="lead">Drag your position (cyan) around the grid to simulate walking. Press WP/ENTER to mark a new waypoint where you're standing, or use the arrow keys to nudge your position. F1 toggles the screen between the map and the real NAV POINTER text page.</div>
+    <div class="dagr-body" id="dagrDevice">
+      <div class="dagr-screen" id="dagrScreenMap">
+        <div class="stage" id="dagrStage" style="aspect-ratio:1/1;max-width:100%;border:none">
+          <svg id="dagrSvg" viewBox="0 0 240 200" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+      </div>
+      <div class="dagr-screen" id="dagrScreenText" style="display:none">
+        <div class="scr-line" style="color:#5dffb0"><span class="scr-tag">NAV POINTER</span></div>
+        <div class="scr-line scr-big" id="dagrTextBearing">&#8212;&deg;</div>
+        <div class="scr-line" id="dagrTextDist">&#8212; m TO WP</div>
+        <div class="scr-line scr-dim" id="dagrTextPvt">PVT: TRACKING</div>
+      </div>
+      <div class="dagr-fkeys">
+        <button class="devbtn" onclick="dagrToggleScreen()">F1 PAGE</button>
+        <button class="devbtn" onclick="dagrMarkWaypoint()">F2 MARK</button>
+      </div>
+      <div class="dagr-keys" style="grid-template-columns:repeat(3,1fr);max-width:170px;margin:10px auto">
+        <div></div><button class="dagr-key" onclick="dagrNudge(0,-1)">&#9650;</button><div></div>
+        <button class="dagr-key" onclick="dagrNudge(-1,0)">&#9664;</button><button class="dagr-key center" onclick="dagrMarkWaypoint()">WP<br>ENT</button><button class="dagr-key" onclick="dagrNudge(1,0)">&#9654;</button>
+        <div></div><button class="dagr-key" onclick="dagrNudge(0,1)">&#9660;</button><div></div>
+      </div>
+    </div>
+    <div class="readout-grid">
+      <div class="readout"><div class="label">Bearing to WP</div><div class="val" id="dagrBearing">&#8212;</div></div>
+      <div class="readout"><div class="label">Distance to WP</div><div class="val" id="dagrDist">&#8212;</div></div>
+      <div class="readout"><div class="label">Battery</div><div class="val" style="color:var(--green)">&#9632;&#9632;&#9632;&#9632;</div></div>
+    </div>
+    <div class="status" id="dagrStatus">Drag the cyan dot, or use the arrow keys, then press WP/ENT to mark a new waypoint.</div>
+  </div>
+  <div class="callout"><span class="key">NOTE:</span> WP/ENTER stores the current position as a waypoint; the NAV Pointer page shows exactly this bearing-and-distance readout while moving.</div>
+</div>
+
+<!-- ============ CLAYMORE ============ -->
+<div class="outer-tab-content" id="outer-claymore">
+  <div class="panel">
+    <div class="panel-title">M18A1 Claymore Aiming Simulator</div>
+    <div class="lead">Drag the mine's facing (amber handle) to aim the fan at the target (red). Drag the target to reposition it. The mine is command-detonated — nothing fires on its own.</div>
+    <div class="stage" id="clayStage" style="aspect-ratio:1/1;max-width:420px">
+      <svg id="claySvg" viewBox="0 0 420 420" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="readout-grid">
+      <div class="readout" id="clayReadout"><div class="label">Target</div><div class="val">&#8212;</div></div>
+    </div>
+  </div>
+  <div class="callout red"><span class="key">SAFETY:</span> confirm orientation and aim with the clacker disconnected. The firing device is connected last, only once the position is set.</div>
+</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').innerHTML=d?'&#9728; LIGHT MODE':'&#9789; DARK MODE';redrawAll();}
+function switchOuter(id,btn){
+  document.querySelectorAll('.outer-tab-content').forEach(function(e){e.classList.remove('active');});
+  document.querySelectorAll('.outer-tab-btn').forEach(function(e){e.classList.remove('active');});
+  document.getElementById('outer-'+id).classList.add('active');
+  btn.classList.add('active');
+  redrawAll();
+}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function redrawAll(){drawM4();drawMG('m249');drawMG('m240b');drawRcBar();drawDagr();drawClaymore();if(knotSelected)showKnotDetail(knotSelected);}
+
+/* ===================== M4 SELECTOR + TRIGGER SIM ===================== */
+let m4State={cleared:false, selector:'SAFE', trigger:'up', hammer:'cocked', lastFireOn:null};
+function m4SetCleared(){m4State.cleared=true; m4State.selector='SAFE'; m4State.trigger='up'; m4State.hammer='cocked'; m4Status('Weapon cleared. Selector defaults to SAFE.'); m4Render();}
+function m4SetSelector(pos){
+  if(!m4State.cleared){m4Status('Clear the weapon first.');return;}
+  m4State.selector=pos;
+  m4Status('Selector set to '+pos+'.');
+  m4Render();
+}
+function m4PullTrigger(){
+  if(!m4State.cleared){m4Status('Clear the weapon first.');return;}
+  if(m4State.selector==='SAFE'){
+    m4Status('Trigger does not move — correct, the weapon is on SAFE.');
+    m4Render();return;
+  }
+  if(m4State.hammer==='fallen'){
+    m4Status('Nothing happens — the hammer already fell. Charge the weapon, then release and pull again.');
+    return;
+  }
+  m4State.trigger='pulled';
+  m4State.hammer='fallen';
+  m4State.lastFireOn=m4State.selector;
+  m4Status('Hammer falls on '+m4State.selector+'. Now charge the weapon while holding the trigger back, then release and pull again to confirm reset.');
+  m4Render();
+}
+function m4Charge(){
+  if(!m4State.cleared)return;
+  m4State.hammer='cocked';
+  m4Status('Weapon charged — hammer re-cocked. Release the trigger, then pull again.');
+  m4Render();
+}
+function m4Release(){
+  if(!m4State.cleared)return;
+  m4State.trigger='up';
+  m4Status('Trigger released. Pull again to test reset.');
+  m4Render();
+}
+function m4Reset(){m4State={cleared:false, selector:'SAFE', trigger:'up', hammer:'cocked', lastFireOn:null}; m4Status('Reset. Start by clearing the weapon.'); m4Render();}
+function m4Status(t){document.getElementById('m4Status').textContent=t;}
+function m4Render(){
+  const rc=document.getElementById('m4rCleared'), rs=document.getElementById('m4rSelector'), rt=document.getElementById('m4rTrigger'), rh=document.getElementById('m4rHammer');
+  rc.querySelector('.val').textContent = m4State.cleared?'CLEARED':'NOT CLEARED';
+  rc.className='readout '+(m4State.cleared?'good':'bad');
+  rs.querySelector('.val').textContent = m4State.cleared? m4State.selector : '\u2014';
+  rs.className='readout';
+  rt.querySelector('.val').textContent = m4State.cleared? (m4State.trigger==='pulled'?'PULLED':'RELEASED') : '\u2014';
+  rh.querySelector('.val').textContent = m4State.cleared? (m4State.hammer==='fallen'?'FALLEN':'COCKED') : '\u2014';
+  rh.className='readout '+(m4State.hammer==='fallen'?'warn':'');
+  drawM4();
+}
+function drawM4(){
+  const c=document.getElementById('m4Canvas'); if(!c)return;
+  const g=c.getContext('2d'),W=c.width,H=c.height;
+  g.clearRect(0,0,W,H); g.fillStyle=css('--canvas-bg'); g.fillRect(0,0,W,H);
+  // selector dial
+  const cx=140,cy=110,r=55;
+  g.strokeStyle=css('--border-bright'); g.lineWidth=3;
+  g.beginPath(); g.arc(cx,cy,r,0,2*Math.PI); g.stroke();
+  const positions={SAFE:-120, SEMI:0, AUTO:120};
+  Object.keys(positions).forEach(function(p){
+    const ang=positions[p]*Math.PI/180 - Math.PI/2;
+    const px=cx+Math.cos(ang)*(r+22), py=cy+Math.sin(ang)*(r+22);
+    g.fillStyle = m4State.cleared&&m4State.selector===p ? css('--acc') : css('--text-dim');
+    g.font='bold 12px '+css('--mono'); g.textAlign='center'; g.textBaseline='middle';
+    g.fillText(p,px,py);
+  });
+  // needle
+  const selDeg = positions.hasOwnProperty(m4State.selector) ? positions[m4State.selector] : -120;
+  const curAng=selDeg*Math.PI/180 - Math.PI/2;
+  g.strokeStyle=css('--amber'); g.lineWidth=4; g.lineCap='round';
+  g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(curAng)*r*0.8, cy+Math.sin(curAng)*r*0.8); g.stroke();
+  g.fillStyle=css('--amber'); g.beginPath(); g.arc(cx,cy,6,0,2*Math.PI); g.fill();
+
+  // hammer indicator (right side)
+  const hx=380,hyBase=170;
+  g.strokeStyle=css('--border-bright'); g.lineWidth=2;
+  g.beginPath(); g.moveTo(hx-30,hyBase); g.lineTo(hx+30,hyBase); g.stroke();
+  g.fillStyle=css('--text-dim'); g.font='11px '+css('--mono'); g.textAlign='center';
+  g.fillText('HAMMER',hx,hyBase+16);
+  const hammerUp = m4State.hammer==='cocked';
+  g.strokeStyle= hammerUp?css('--green'):css('--red'); g.lineWidth=4; g.lineCap='round';
+  const hty = hammerUp? hyBase-40 : hyBase-8;
+  g.beginPath(); g.moveTo(hx,hyBase); g.lineTo(hx,hty); g.stroke();
+  g.fillStyle= hammerUp?css('--green'):css('--red');
+  g.beginPath(); g.arc(hx,hty,7,0,2*Math.PI); g.fill();
+}
+m4Render();
+
+/* ===================== M249 / M240B BOLT+SAFETY SIM ===================== */
+let mgState={
+  m249:{bolt:'forward', safety:'fire', points:{brass:false,pawl:false,tray:false,chamber:false}},
+  m240b:{bolt:'forward', safety:'fire', points:{pawl:false,tray:false,chamber:false,gap:false}}
+};
+const MG_POINT_LABELS={
+  m249:[['brass','Brass/Links/Ammo'],['pawl','Feed Pawl'],['tray','Feed Tray'],['chamber','Chamber']],
+  m240b:[['pawl','Feed Pawl'],['tray','Feed Tray'],['chamber','Chamber'],['gap','Bolt/Op-Rod Gap']]
+};
+function mgBoltRear(w){mgState[w].bolt='rear'; mgStatus(w,'Cocking handle to the rear — bolt locked back. Feed cover can now be raised and safety can be set.'); mgRender(w);}
+function mgBoltForward(w){mgState[w].bolt='forward'; mgStatus(w,'Cocking handle returned forward and locked.'); mgRender(w);}
+function mgSafety(w){
+  const st=mgState[w];
+  if(st.bolt!=='rear'){
+    mgStatus(w,'Safety will not move to SAFE unless the bolt is locked to the rear first.');
+    return;
+  }
+  st.safety = st.safety==='fire' ? 'safe' : 'fire';
+  mgStatus(w,'Safety set to '+(st.safety==='safe'?'SAFE':'FIRE')+'.');
+  mgRender(w);
+}
+function mgReset(w){
+  mgState[w]={bolt:'forward', safety:'fire', points:Object.fromEntries(MG_POINT_LABELS[w].map(function(p){return [p[0],false];}))};
+  mgStatus(w,'Reset. Bolt is forward.');
+  buildMgPoints(w);
+  mgRender(w);
+}
+function mgStatus(w,t){document.getElementById(w+'Status').textContent=t;}
+function mgRender(w){
+  const st=mgState[w];
+  const rb=document.getElementById(w+'rBolt'), rs=document.getElementById(w+'rSafety');
+  rb.querySelector('.val').textContent = st.bolt==='rear'?'LOCKED REAR':'FORWARD';
+  rb.className='readout '+(st.bolt==='rear'?'warn':'');
+  rs.querySelector('.val').textContent = st.safety==='safe'?'SAFE':'FIRE';
+  rs.className='readout '+(st.safety==='safe'?'good':'');
+  drawMG(w);
+}
+function buildMgPoints(w){
+  const wrap=document.getElementById(w+'Points');
+  wrap.innerHTML='';
+  MG_POINT_LABELS[w].forEach(function(pair){
+    const b=document.createElement('button');
+    b.className='cbtn';
+    b.textContent=pair[1];
+    b.onclick=function(){
+      if(mgState[w].bolt!=='rear'){document.getElementById(w+'PointStatus').textContent='Lock the bolt to the rear and raise the feed cover first.';return;}
+      mgState[w].points[pair[0]]=true;
+      b.classList.add('active-toggle');
+      const done=Object.values(mgState[w].points).every(Boolean);
+      document.getElementById(w+'PointStatus').textContent = done ? 'All four points checked — safety check complete.' : 'Checked: '+pair[1];
+    };
+    wrap.appendChild(b);
+  });
+}
+function drawMG(w){
+  const c=document.getElementById(w+'Canvas'); if(!c)return;
+  const g=c.getContext('2d'),W=c.width,H=c.height;
+  const st=mgState[w];
+  g.clearRect(0,0,W,H); g.fillStyle=css('--canvas-bg'); g.fillRect(0,0,W,H);
+  // simple receiver body
+  g.strokeStyle=css('--border-bright'); g.lineWidth=2;
+  g.strokeRect(40,60,W-260,40);
+  g.fillStyle=css('--text-dim'); g.font='11px '+css('--mono'); g.textAlign='left';
+  g.fillText('RECEIVER',44,50);
+  // bolt/cocking handle position
+  const handleX = st.bolt==='rear' ? W-260 : 120;
+  g.fillStyle=css('--cyan');
+  g.beginPath(); g.arc(handleX,80,10,0,2*Math.PI); g.fill();
+  g.fillStyle=css('--text-dim'); g.font='10px '+css('--mono'); g.textAlign='center';
+  g.fillText('BOLT',handleX,105);
+  // safety indicator
+  g.fillStyle = st.safety==='safe' ? css('--green') : css('--amber');
+  g.fillRect(W-190,55,60,22);
+  g.fillStyle=css('--bg'); g.font='bold 11px '+css('--mono'); g.textAlign='center'; g.textBaseline='middle';
+  g.fillText(st.safety==='safe'?'SAFE':'FIRE',W-160,66);
+  g.fillStyle=css('--text-dim'); g.font='10px '+css('--mono'); g.textBaseline='alphabetic';
+  g.fillText('SAFETY',W-160,45);
+}
+buildMgPoints('m249'); buildMgPoints('m240b');
+mgRender('m249'); mgRender('m240b');
+
+/* ===================== RADIO SIM ===================== */
+let radioMode='SC', radioFctn='LD', radioChan=1, radioStored={1:null,2:null,3:null}, radioDigits='';
+function radioCycleMode(){
+  radioMode = radioMode==='SC'?'FH':'SC';
+  document.getElementById('scrMode').textContent=radioMode;
+  document.getElementById('btnMode').classList.toggle('on', radioMode==='FH');
+}
+function radioCycleFctn(){
+  const seq=['LD','SQ ON','CUE']; const i=seq.indexOf(radioFctn);
+  radioFctn=seq[(i+1)%seq.length];
+  document.getElementById('scrFctn').textContent=radioFctn;
+  document.getElementById('btnFctn').classList.toggle('on', radioFctn!=='LD');
+}
+function radioChanStep(d){
+  radioChan = ((radioChan-1+d+3)%3)+1;
+  document.getElementById('scrChan').textContent=radioChan;
+  radioUpdateStoredReadout();
+  radioRenderFreq();
+}
+function radioKey(d){
+  if(radioMode!=='SC'||radioFctn!=='LD'){
+    document.getElementById('radioStatus').textContent='Set MODE to SC and FCTN to LD before entering a frequency.';
+    return;
+  }
+  if(radioDigits.length>=5)return;
+  radioDigits+=d;
+  radioRenderFreq();
+}
+function radioClear(){radioDigits=''; radioRenderFreq(); document.getElementById('radioStatus').textContent='Frequency entry cleared.';}
+function radioRenderFreq(){
+  const padded=radioDigits.padEnd(5,'\u2013');
+  const mhz = padded.slice(0,2), khz = padded.slice(2,5);
+  document.getElementById('scrFreq').textContent = mhz+'.'+khz;
+  document.getElementById('scrHint').textContent = radioDigits.length<5 ? 'ENTER FREQ, PRESS STO' : 'PRESS STO TO SAVE';
+}
+function radioStore(){
+  if(radioMode!=='SC'||radioFctn!=='LD'){
+    document.getElementById('radioStatus').textContent='Set MODE to SC and FCTN to LD before storing a frequency.';
+    return;
+  }
+  if(radioDigits.length<5){
+    document.getElementById('radioStatus').textContent='Enter all 5 digits before pressing STO (e.g. 38550 for 38.550 MHz).';
+    return;
+  }
+  const val=parseInt(radioDigits,10);
+  radioStored[radioChan]=val;
+  document.getElementById('radioStatus').textContent='Frequency '+(val/1000).toFixed(3)+' MHz stored to CHAN '+radioChan+'. Set FCTN to SQ ON to transmit and receive on it.';
+  radioUpdateStoredReadout();
+}
+function radioUpdateStoredReadout(){
+  document.getElementById('rStoredChan').textContent=radioChan;
+  const v=radioStored[radioChan];
+  document.getElementById('rStoredVal').textContent = v ? (v/1000).toFixed(3)+' MHz' : '\u2014';
+}
+function radioReset(){
+  radioMode='SC';radioFctn='LD';radioChan=1;radioStored={1:null,2:null,3:null};radioDigits='';
+  document.getElementById('scrMode').textContent=radioMode;
+  document.getElementById('scrFctn').textContent=radioFctn;
+  document.getElementById('scrChan').textContent=radioChan;
+  document.getElementById('btnMode').classList.remove('on');
+  document.getElementById('btnFctn').classList.remove('on');
+  radioRenderFreq();
+  document.getElementById('radioStatus').textContent='Reset.';
+  radioUpdateStoredReadout();
+}
+radioUpdateStoredReadout();
+radioRenderFreq();
+
+function radioCheckUpdate(distStr){
+  const dist=parseInt(distStr,10);
+  document.getElementById('rcDistLabel').textContent=dist+' m';
+  // readability scale 5 down to 1 as distance increases
+  let level, label, callout;
+  if(dist<=800){level=5;label='5 — Perfectly readable';callout='"ROGER" (loud and clear)';}
+  else if(dist<=2000){level=4;label='4 — Readable (good)';callout='"Read you 4, over."';}
+  else if(dist<=4000){level=3;label='3 — Readable, with difficulty';callout='"Read you 3, over."';}
+  else if(dist<=6500){level=2;label='2 — Readable now and then';callout='"Read you 2, over."';}
+  else{level=1;label='1 — Unreadable';callout='"Read you 1, over." (try a different freq or move)';}
+  const r=document.getElementById('rcReadability');
+  r.querySelector('.val').textContent=label;
+  r.className='readout '+(level>=4?'good':level>=3?'warn':'bad');
+  document.getElementById('rcCallout').textContent=callout;
+  drawRcBar(level);
+}
+function drawRcBar(level){
+  const c=document.getElementById('rcCanvas'); if(!c)return;
+  level = level||5;
+  const g=c.getContext('2d'),W=c.width,H=c.height;
+  g.clearRect(0,0,W,H); g.fillStyle=css('--canvas-bg'); g.fillRect(0,0,W,H);
+  const barW=(W-40)/5;
+  for(let i=0;i<5;i++){
+    const x=20+i*barW;
+    g.fillStyle = i<level ? (level>=4?css('--green'):level>=3?css('--amber'):css('--red')) : css('--border');
+    g.fillRect(x,H-20-(i+1)*10,barW-8,(i+1)*10);
+  }
+}
+radioCheckUpdate(500);
+
+/* ===================== KNOTS MATCH ===================== */
+const KNOTS=[
+  {id:'square',label:'Square Knot',cls:'I'},
+  {id:'clove-end',label:'End-of-Rope Clove Hitch',cls:'II'},
+  {id:'fig8',label:'Figure-8 Loop',cls:'III'},
+  {id:'prusik',label:'Middle-of-Rope Prusik',cls:'III'},
+  {id:'rappelseat',label:'Rappel (Swiss) Seat',cls:'IV'},
+  {id:'dirfig8',label:'Directional Figure 8',cls:'IV'}
+];
+const KNOT_CLASSES=[{id:'I',label:'Class I — End of Rope'},{id:'II',label:'Class II — Anchor'},{id:'III',label:'Class III — Middle of Rope'},{id:'IV',label:'Class IV — Special'}];
+const KNOT_STEPS={
+  square:['Cross the right end over the left, then tuck it under.','Cross that same end (now on the left) over the right, then tuck it under.','Pull both ends to tighten — "right over left, left over right."'],
+  'clove-end':['Wrap the rope around the post or object.','Cross over the standing part and wrap around a second time.','Tuck the working end under the second wrap and pull snug.'],
+  fig8:['Form a loop in the rope.','Wrap the working end around the standing part.','Pass the working end back through the first loop to form a figure-8.','Pull all four strands to tighten.'],
+  prusik:['Wrap the loop of cord around the main rope.','Pass the loop through itself and repeat two more times (three total wraps).','Dress the wraps neatly side by side and pull snug — it grips under load, slides when unweighted.'],
+  rappelseat:['Find the rope\'s middle and place it at your waist.','Wrap both ends around your waist and cross them in front.','Pass each end between your legs and up through the waist wrap on the opposite side.','Secure with a square knot and safety knots, leaving a D-ring loop in front.'],
+  dirfig8:['Tie a standard Figure-8 loop, leaving extra working end.','Follow the original knot back through with the tail to double it.','Dress it so the loop points in the load direction, then pull tight.']
+};
+function knotSvg(id){
+  const rope=css('--amber'), rope2=css('--cyan'), bg=css('--canvas-bg');
+  const base='<rect width="260" height="195" fill="'+bg+'"/>';
+  if(id==='square')return base+
+    '<path d="M 60 100 Q 100 60 130 100 Q 160 140 200 100" stroke="'+rope+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M 60 100 Q 100 140 130 100 Q 160 60 200 100" stroke="'+rope2+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="130" cy="100" r="5" fill="'+bg+'" stroke="'+css('--border-bright')+'"/>';
+  if(id==='clove-end')return base+
+    '<rect x="120" y="20" width="20" height="155" fill="'+css('--border-bright')+'"/>'+
+    '<path d="M 70 60 L 190 100" stroke="'+rope+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M 70 135 L 190 95" stroke="'+rope2+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M 190 95 L 220 80" stroke="'+rope2+'" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  if(id==='fig8')return base+
+    '<path d="M 90 50 C 40 50 40 100 90 100 C 140 100 140 150 90 150 C 60 150 55 130 65 115" stroke="'+rope+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M 200 30 L 90 50" stroke="'+rope2+'" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  if(id==='prusik')return base+
+    '<line x1="30" y1="97" x2="230" y2="97" stroke="'+css('--border-bright')+'" stroke-width="8"/>'+
+    '<ellipse cx="110" cy="97" rx="16" ry="30" stroke="'+rope+'" stroke-width="5" fill="none"/>'+
+    '<ellipse cx="130" cy="97" rx="16" ry="30" stroke="'+rope2+'" stroke-width="5" fill="none"/>'+
+    '<ellipse cx="150" cy="97" rx="16" ry="30" stroke="'+rope+'" stroke-width="5" fill="none"/>';
+  if(id==='rappelseat')return base+
+    '<ellipse cx="130" cy="60" rx="22" ry="26" fill="none" stroke="'+css('--border-bright')+'" stroke-width="3"/>'+
+    '<path d="M 90 95 Q 130 80 170 95 Q 178 150 150 175 Q 130 160 110 175 Q 82 150 90 95 Z" stroke="'+rope+'" stroke-width="5" fill="none"/>'+
+    '<path d="M 100 100 Q 130 115 160 100" stroke="'+rope2+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  if(id==='dirfig8')return base+
+    '<path d="M 90 50 C 40 50 40 100 90 100 C 140 100 140 150 90 150 C 60 150 55 130 65 115" stroke="'+rope+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M 92 52 C 44 54 44 98 92 98" stroke="'+rope2+'" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>'+
+    '<path d="M 200 30 L 90 50" stroke="'+css('--text-dim')+'" stroke-width="6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M 130 175 L 90 150" stroke="'+rope2+'" stroke-width="3" fill="none" stroke-dasharray="4 3"/>'+
+    '<text x="130" y="190" fill="'+css('--text-dim')+'" font-family="Share Tech Mono, monospace" font-size="9" text-anchor="middle">LOAD DIRECTION</text>';
+  return base;
+}
+function showKnotDetail(k){
+  document.getElementById('knotDetail').style.display='block';
+  document.getElementById('knotSvg').innerHTML=knotSvg(k.id);
+  const stepsWrap=document.getElementById('knotSteps');
+  stepsWrap.innerHTML='<div class="knot-steps">'+KNOT_STEPS[k.id].map(function(s){return '<div class="knot-step">'+s+'</div>';}).join('')+'</div>';
+}
+let knotSelected=null, knotScore=0, knotDone={};
+function buildKnots(){
+  const wrap=document.getElementById('knotChips'); wrap.innerHTML='';
+  KNOTS.forEach(function(k){
+    const b=document.createElement('button');
+    b.className='cbtn'; b.id='knotchip-'+k.id; b.textContent=k.label;
+    b.onclick=function(){
+      if(knotDone[k.id])return;
+      knotSelected=k;
+      Array.from(wrap.children).forEach(function(c){c.classList.remove('primary');});
+      b.classList.add('primary');
+      showKnotDetail(k);
+      document.getElementById('knotStatus').textContent='Study the picture and steps, then click the class for "'+k.label+'".';
+    };
+    wrap.appendChild(b);
+  });
+  const cwrap=document.getElementById('knotClasses'); cwrap.innerHTML='';
+  KNOT_CLASSES.forEach(function(c){
+    const b=document.createElement('button');
+    b.className='cbtn'; b.textContent=c.label;
+    b.onclick=function(){
+      if(!knotSelected){document.getElementById('knotStatus').textContent='Pick a knot first.';return;}
+      const correct = knotSelected.cls===c.id;
+      const chip=document.getElementById('knotchip-'+knotSelected.id);
+      chip.classList.remove('primary');
+      if(correct)chip.classList.add('active-toggle');
+      chip.style.borderColor = correct?css('--green'):css('--red');
+      chip.style.color = correct?css('--green'):css('--red');
+      if(correct){knotDone[knotSelected.id]=true; knotScore++;}
+      document.getElementById('knotStatus').textContent = correct ? 'Correct.' : ('Not quite — '+knotSelected.label+' is Class '+knotSelected.cls+'.');
+      knotSelected=null;
+      updateKnotScore();
+    };
+    cwrap.appendChild(b);
+  });
+  updateKnotScore();
+}
+function updateKnotScore(){
+  document.getElementById('knotScoreGrid').innerHTML='<div class="readout"><div class="label">Matched</div><div class="val">'+knotScore+' / '+KNOTS.length+'</div></div>';
+}
+buildKnots();
+
+/* ===================== DAGR NAV SIM ===================== */
+const DAGR_W=240, DAGR_H=200;
+let dagrWP={x:180,y:60};
+let dagrPos={x:60,y:150};
+let dagrDrag=null, dagrShowMap=true;
+function drawDagr(){
+  const svg=document.getElementById('dagrSvg'); if(!svg)return;
+  svg.innerHTML =
+    '<rect width="'+DAGR_W+'" height="'+DAGR_H+'" fill="#0a140a"/>'+
+    gridLines(DAGR_W,DAGR_H,24)+
+    '<circle cx="'+dagrWP.x+'" cy="'+dagrWP.y+'" r="7" fill="#5dffb0"/>'+
+    '<text x="'+dagrWP.x+'" y="'+(dagrWP.y-11)+'" fill="#5dffb0" font-family="Share Tech Mono, monospace" font-size="9" text-anchor="middle">WP</text>'+
+    '<line x1="'+dagrPos.x+'" y1="'+dagrPos.y+'" x2="'+dagrWP.x+'" y2="'+dagrWP.y+'" stroke="#2a9a68" stroke-width="1.5" stroke-dasharray="3 3"/>'+
+    '<circle id="dagrDot" cx="'+dagrPos.x+'" cy="'+dagrPos.y+'" r="8" fill="#00eaff" style="cursor:grab"/>'+
+    '<text x="'+dagrPos.x+'" y="'+(dagrPos.y-13)+'" fill="#00eaff" font-family="Share Tech Mono, monospace" font-size="9" text-anchor="middle">YOU</text>';
+  const dot=document.getElementById('dagrDot');
+  dot.addEventListener('pointerdown',function(e){dagrDrag=true;});
+  updateDagrReadout();
+}
+function gridLines(w,h,step){
+  let s='';
+  const c='rgba(93,255,176,0.12)';
+  for(let x=0;x<=w;x+=step)s+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="'+h+'" stroke="'+c+'" stroke-width="1"/>';
+  for(let y=0;y<=h;y+=step)s+='<line x1="0" y1="'+y+'" x2="'+w+'" y2="'+y+'" stroke="'+c+'" stroke-width="1"/>';
+  return s;
+}
+document.addEventListener('pointermove',function(e){
+  if(!dagrDrag)return;
+  const svg=document.getElementById('dagrSvg'); if(!svg)return;
+  const rect=svg.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width*DAGR_W, y=(e.clientY-rect.top)/rect.height*DAGR_H;
+  dagrPos.x=Math.max(6,Math.min(DAGR_W-6,x));
+  dagrPos.y=Math.max(6,Math.min(DAGR_H-6,y));
+  drawDagr();
+});
+document.addEventListener('pointerup',function(){dagrDrag=false;});
+function dagrNudge(dx,dy){
+  dagrPos.x=Math.max(6,Math.min(DAGR_W-6,dagrPos.x+dx*12));
+  dagrPos.y=Math.max(6,Math.min(DAGR_H-6,dagrPos.y+dy*12));
+  drawDagr();
+  document.getElementById('dagrStatus').textContent='Position nudged.';
+}
+function dagrMarkWaypoint(){
+  dagrWP={x:dagrPos.x,y:dagrPos.y};
+  drawDagr();
+  document.getElementById('dagrStatus').textContent='Waypoint marked at your current position — WP/ENTER stores exactly this.';
+}
+function dagrToggleScreen(){
+  dagrShowMap=!dagrShowMap;
+  document.getElementById('dagrScreenMap').style.display=dagrShowMap?'block':'none';
+  document.getElementById('dagrScreenText').style.display=dagrShowMap?'none':'block';
+  updateDagrReadout();
+}
+function updateDagrReadout(){
+  const dx=dagrWP.x-dagrPos.x, dy=dagrPos.y-dagrWP.y; // invert y for bearing (screen y grows downward)
+  const distPx=Math.hypot(dx,dy);
+  const meters=Math.round(distPx*4); // arbitrary scale: 1px ~ 4m
+  let bearing=Math.atan2(dx, dy)*180/Math.PI; // 0 = north (up)
+  if(bearing<0)bearing+=360;
+  document.getElementById('dagrBearing').textContent=Math.round(bearing)+'\u00b0';
+  document.getElementById('dagrDist').textContent=meters+' m';
+  const tb=document.getElementById('dagrTextBearing'), td=document.getElementById('dagrTextDist');
+  if(tb)tb.textContent=Math.round(bearing)+'\u00b0';
+  if(td)td.textContent=meters+' m TO WP';
+}
+
+/* ===================== CLAYMORE AIM SIM ===================== */
+let clayAngle=0, clayTarget={x:320,y:210}, clayDragMode=null;
+const clayCenter={x:120,y:210};
+function drawClaymore(){
+  const svg=document.getElementById('claySvg'); if(!svg)return;
+  const rad=clayAngle*Math.PI/180;
+  const fanSpread=30*Math.PI/180; // +-30 deg fan, roughly representative
+  const fanLen=220;
+  const a1=rad-fanSpread, a2=rad+fanSpread;
+  const p1x=clayCenter.x+Math.cos(a1)*fanLen, p1y=clayCenter.y+Math.sin(a1)*fanLen;
+  const p2x=clayCenter.x+Math.cos(a2)*fanLen, p2y=clayCenter.y+Math.sin(a2)*fanLen;
+  const handleX=clayCenter.x+Math.cos(rad)*50, handleY=clayCenter.y+Math.sin(rad)*50;
+
+  // determine if target is within fan
+  const toTx=clayTarget.x-clayCenter.x, toTy=clayTarget.y-clayCenter.y;
+  let tAngle=Math.atan2(toTy,toTx);
+  let diff=Math.atan2(Math.sin(tAngle-rad),Math.cos(tAngle-rad));
+  const covered=Math.abs(diff)<=fanSpread;
+
+  svg.innerHTML =
+    '<rect width="420" height="420" fill="'+css('--canvas-bg')+'"/>'+
+    '<path d="M '+clayCenter.x+' '+clayCenter.y+' L '+p1x+' '+p1y+' A '+fanLen+' '+fanLen+' 0 0 1 '+p2x+' '+p2y+' Z" fill="'+css('--amber')+'" opacity="0.18"/>'+
+    '<path d="M '+clayCenter.x+' '+clayCenter.y+' L '+p1x+' '+p1y+' A '+fanLen+' '+fanLen+' 0 0 1 '+p2x+' '+p2y+' Z" fill="none" stroke="'+css('--amber-dim')+'" stroke-width="1.5"/>'+
+    '<rect x="'+(clayCenter.x-14)+'" y="'+(clayCenter.y-8)+'" width="28" height="16" rx="3" fill="'+css('--border-bright')+'"/>'+
+    '<text x="'+clayCenter.x+'" y="'+(clayCenter.y+26)+'" fill="'+css('--text-dim')+'" font-family="Share Tech Mono, monospace" font-size="10" text-anchor="middle">M18A1</text>'+
+    '<line x1="'+clayCenter.x+'" y1="'+clayCenter.y+'" x2="'+handleX+'" y2="'+handleY+'" stroke="'+css('--amber')+'" stroke-width="4" stroke-linecap="round"/>'+
+    '<circle id="clayHandle" cx="'+handleX+'" cy="'+handleY+'" r="11" fill="'+css('--amber')+'" style="cursor:grab"/>'+
+    '<circle id="clayTargetDot" cx="'+clayTarget.x+'" cy="'+clayTarget.y+'" r="10" fill="'+(covered?css('--green'):css('--red'))+'" style="cursor:grab"/>'+
+    '<text x="'+clayTarget.x+'" y="'+(clayTarget.y-16)+'" fill="'+(covered?css('--green'):css('--red'))+'" font-family="Share Tech Mono, monospace" font-size="11" text-anchor="middle">TARGET</text>';
+
+  document.getElementById('clayHandle').addEventListener('pointerdown',function(){clayDragMode='handle';});
+  document.getElementById('clayTargetDot').addEventListener('pointerdown',function(){clayDragMode='target';});
+
+  const ro=document.getElementById('clayReadout');
+  ro.querySelector('.val').textContent = covered ? 'COVERED BY FAN' : 'NOT COVERED — REAIM';
+  ro.className='readout '+(covered?'good':'bad');
+}
+document.addEventListener('pointermove',function(e){
+  if(!clayDragMode)return;
+  const svg=document.getElementById('claySvg'); if(!svg)return;
+  const rect=svg.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width*420, y=(e.clientY-rect.top)/rect.height*420;
+  if(clayDragMode==='handle'){
+    clayAngle=Math.atan2(y-clayCenter.y,x-clayCenter.x)*180/Math.PI;
+  }else if(clayDragMode==='target'){
+    clayTarget.x=Math.max(6,Math.min(414,x));
+    clayTarget.y=Math.max(6,Math.min(414,y));
+  }
+  drawClaymore();
+});
+document.addEventListener('pointerup',function(){clayDragMode=null;});
+
+drawM4(); drawMG('m249'); drawMG('m240b'); drawDagr(); drawClaymore();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

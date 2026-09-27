@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Route Planning Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;--border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#2a2f1f;--hero-eyebrow:#c8d88a;--hero-sub:#dbe6b8;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;--toggle-bg:rgba(255,255,255,0.15);
+  --accent:#7a8a2e;--accent-soft:#f0f4e1;--c1:#1f6fe0;--c1s:#e2edfb;--c2:#c0392b;--c2s:#fbe4e0;--c3:#159c72;--c3s:#dcf3ea;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;--border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#1f2415;--hero-eyebrow:#b8c46f;--hero-sub:#a0b088;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;--toggle-bg:rgba(255,255,255,0.08);
+  --accent:#b8cc4c;--accent-soft:#1f2415;--c1:#5a9bf0;--c1s:#0a2240;--c2:#e0685a;--c2s:#2e0e0a;--c3:#33b98d;--c3s:#0a2e22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:580px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn.prev{text-align:left}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+h4{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:1rem 0 .5rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:1rem 0}
+.card-row .card{margin-bottom:0}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}.fact-card-text strong{color:var(--text-primary)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+table.compare td:first-child{font-weight:700;color:var(--text-primary)}
+.tbl-wrap{overflow-x:auto;margin:1rem 0}
+.tbl-wrap table.compare{margin:0;min-width:520px}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+.steps{counter-reset:s;margin:1rem 0}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:.5rem}
+.step::before{counter-increment:s;content:counter(s);background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step .st{font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-primary)}.step .sd{font-size:12.5px;color:var(--text-secondary)}
+.mnem{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;font-size:13.5px}
+.mnem .k{font-family:'Nunito',sans-serif;font-weight:800;color:var(--accent)}
+@media print{
+  body{background:#fff}
+  .hero{background:#fff!important;color:#000!important;padding:1rem 0 .5rem}
+  .hero h1,.hero h1 span,.hero-eyebrow,.hero-sub{color:#000!important}
+  .theme-toggle,.tab-nav,.tab-jump,#fbNudge{display:none!important}
+  .qc{position:static!important;display:inline-block;color:#000!important;border-color:#999!important;background:none!important;margin-bottom:.5rem}
+  .tab-content{display:block!important;animation:none!important}
+  .tab-content+.tab-content{margin-top:2rem;break-before:page}
+  .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
+  .section-wrap{padding-top:1rem}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>Route <span>Planning</span><br>Picking a path that doesn't pick a fight.</h1>
+  <p class="hero-sub">Legs, control measures, danger areas, and the crossing techniques that keep a patrol moving without getting caught in the open.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('big',this)">📋 The Big Picture</button><button class="tab-btn" onclick="switchTab('da',this)">⚠️ Danger Areas</button><button class="tab-btn" onclick="switchTab('cross',this)">🚧 Crossing Techniques</button><button class="tab-btn" onclick="switchTab('ex',this)">🧩 Worked Example</button>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <div class="tab-content active" id="tab-big">
+
+    <h2>Route planning — the leader's job before anyone moves</h2>
+    <p class="lede">A route is more than a line on a map. It's a plan for exactly how a unit gets from here to there without walking into an ambush, wasting the mission clock, or losing itself along the way.</p>
+    <div class="analogy">🗺️ <strong>Think of it like a road trip with checkpoints:</strong> you don't just point at the destination — you break the drive into legs, mark the rest stops, and already know which intersections need extra caution before you get there.</div>
+    <h3>Break the route into legs</h3>
+    <p>The best way to manage a route is to divide it into segments called <strong>legs</strong>. Breaking the overall route into smaller pieces lets the leader plan pace count, azimuth, and terrain association in manageable chunks instead of trying to hold the whole route in their head at once.</p>
+    <h3>Control measures that keep everyone on the same page</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">📍</span><div><div class="card-title">Checkpoints</div><div class="card-sub">Point features</div></div></div><p style="margin:0">A specific point used for reference or control — also called a waypoint.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">📏</span><div><div class="card-title">Phase Lines</div><div class="card-sub">Linear features</div></div></div><p style="margin:0">A line used to control and coordinate movement, often tied to an identifiable terrain feature.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🚩</span><div><div class="card-title">Rally Points</div><div class="card-sub">Regroup locations</div></div></div><p style="margin:0">Easily identifiable points where a unit can reassemble if it gets separated or makes contact.</p></div>
+    </div>
+    <p>Other measures a leader may put on the route include the <strong>Objective Rally Point (ORP)</strong> — the last stop before the objective — the <strong>Probable Line of Deployment (PLD)</strong>, the <strong>Limit of Advance (LOA)</strong>, and the location of a <strong>patrol base</strong> or <strong>tactical assembly area (TAA)</strong>.</p>
+    <h3>Navigation aid techniques</h3>
+    <p>Three techniques help a leader stay on track between control measures:</p>
+    <div class="mnem"><span class="k">Catching features</span><span>A terrain feature beyond your objective that tells you you've gone too far, so you can stop and reorient before getting lost.</span><span class="k">Handrails</span><span>A linear feature — a road, ridge, or stream — that you navigate alongside without walking directly on it.</span><span class="k">Attack points</span><span>A well-defined feature close to the objective, used as a final "jump-off" point for precise navigation over the last stretch.</span></div>
+    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../route-planning/" style="color:inherit"><em>Route Planning Trainer</em></a> drills danger-area recognition and crossing technique selection. For the terrain analysis behind route selection, see <a href="../oakoc-guide/" style="color:inherit"><em>OAKOC Explained</em></a>.</div>
+
+    <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('da')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⚠️ Danger Areas</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-da">
+
+    <h2>Danger areas — the fatal funnel</h2>
+    <p class="lede">A danger area is any place on the route where the terrain could expose the patrol to enemy observation, fire, or both. The best plan avoids them. When that's not possible, the unit crosses quickly, carefully, and with security in place.</p>
+    <div class="analogy">🎯 <strong>Think of a linear danger area as a fatal funnel:</strong> a long, open lane — a road, trail, or stream — where the enemy can concentrate fire on you the entire time you're crossing.</div>
+    <h3>Three general types</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">➖</span><div><div class="card-title">Linear</div><div class="card-sub">Long axis</div></div></div><p style="margin:0">A road, trail, stream, or similar feature with a long axis running across your route. Cannot usually be bypassed.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🔲</span><div><div class="card-title">Small Open Area</div><div class="card-sub">Can bypass</div></div></div><p style="margin:0">A clearing small enough that going around it costs little time.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">⬛</span><div><div class="card-title">Large Open Area</div><div class="card-sub">May not bypass</div></div></div><p style="margin:0">A field or clearing big enough that bypassing it could blow the mission timeline.</p></div>
+    </div>
+    <p>Whenever the lead element signals "danger area," the whole unit halts. The leader moves forward, <strong>confirms</strong> the danger area, and decides how the unit will treat it based on METT-TC. If it can't be bypassed — as with most linear danger areas — the leader determines the crossing site, near- and far-side rally points, the crossing method, and where near-side security goes.</p>
+    <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Near-side and far-side rally points.</strong> These are designated before the crossing so that if the unit makes contact mid-crossing, everyone already knows where to reassemble — no time wasted deciding under fire.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('big')"><span class="tj-label">&larr; Back</span><span class="tj-title">📋 The Big Picture</span></button><button class="tab-jump-btn next" onclick="goToTab('cross')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🚧 Crossing Techniques</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-cross">
+
+    <h2>Crossing techniques</h2>
+    <p class="lede">Which technique you use depends on the type of danger area and how much time the mission gives you.</p>
+    <h3>Bypass (detour) method — for open areas you can go around</h3>
+    <p>The unit turns 90 degrees around the open area and moves in the direction of travel. Once past the danger area, it completes the box with another 90-degree turn and arrives at the far-side rally point. The pace count of the offset and return legs isn't added to the planned route distance.</p>
+    <h3>Contour method — hugging the edge</h3>
+    <p>The patrol "hugs" the perimeter of the danger area until it resumes its original azimuth. This works well when the terrain has identifiable features to follow, but it's less precise than the bypass method and keeps the unit closer to the danger area longer.</p>
+    <h3>Linear danger area crossing — when you can't go around it</h3>
+    <div class="steps">
+      <div class="step"><div><div class="st">Designate near- and far-side rally points</div></div></div>
+      <div class="step"><div><div class="st">Emplace near-side security</div><div class="sd">Left and right security elements overwatch the crossing site.</div></div></div>
+      <div class="step"><div><div class="st">Clear the far side</div><div class="sd">A team crosses first and confirms it's clear before the rest follows.</div></div></div>
+      <div class="step"><div><div class="st">Continue the unit crossing</div></div></div>
+      <div class="step"><div><div class="st">Retrieve near-side security and complete the crossing</div></div></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>Speed versus security.</strong> A squad moving on its own can also cross a linear danger area using the bounding overwatch movement technique, trading some security for a much faster crossing. Every technique is a trade-off — quick and quiet is the goal either way.</span></div>
+    <h3>Large open area — when you can't bypass it either</h3>
+    <p>If the open area is too large to bypass without blowing the time available, the unit crosses using a <strong>combination of traveling overwatch and bounding overwatch</strong> — traveling overwatch to save time, transitioning to bounding overwatch as the risk increases.</p>
+    <div class="tryit"><strong>▶ Next:</strong> practice choosing the right technique in the <a href="../route-planning/" style="color:inherit"><em>Route Planning Trainer</em></a>, or review movement techniques themselves in <a href="../foom-guide/" style="color:inherit"><em>FOOM Explained</em></a>.</div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('da')"><span class="tj-label">&larr; Back</span><span class="tj-title">⚠️ Danger Areas</span></button><button class="tab-jump-btn next" onclick="goToTab('ex')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧩 Worked Example</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-ex">
+
+    <h2>Worked example — a squad route with two danger areas</h2>
+    <p class="lede">This is a sample scenario for illustration. Real route planning always uses the actual map and terrain in front of you.</p>
+    <div class="analogy">📋 <strong>The route:</strong> a squad patrol moves 1,200 meters from its patrol base to an observation post, crossing a dirt road at the halfway point and a 150-meter-wide field near the objective.</div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Leg</th><th>Feature</th><th>Leader's plan</th></tr></thead><tbody>
+    <tr><td>1</td><td>Patrol base to dirt road (600m)</td><td>Handrail along a tree line paralleling the road for most of the leg.</td></tr>
+    <tr><td>Danger area 1</td><td>Dirt road (linear)</td><td>Cannot bypass — full linear crossing: near/far rally points, near-side security left and right, clear far side, cross, retrieve security.</td></tr>
+    <tr><td>2</td><td>Road to field edge (450m)</td><td>Catching feature: a streambed 500m out tells the squad if it has drifted off azimuth.</td></tr>
+    <tr><td>Danger area 2</td><td>150m field (small/medium open area)</td><td>Bypass method — 90&deg; turn, skirt the tree line around the field, 90&deg; turn back onto azimuth at the far-side rally point.</td></tr>
+    <tr><td>3</td><td>Field to OP (150m)</td><td>Attack point: a lone dead tree 50m from the OP used as the final jump-off point.</td></tr>
+    </tbody></table></div>
+    <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>What to notice.</strong> The squad leader picked a different technique for each danger area based on its type — a full linear crossing for the road, a quicker bypass for the field — and used navigation aids to stay on track between them.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> ATP 3-21.8, <em>Infantry Platoon and Squad</em> (January 2024). TC 3-21.76, <em>Ranger Handbook</em>. Use your class slides and instructor as the authority.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('cross')"><span class="tj-label">&larr; Back</span><span class="tj-title">🚧 Crossing Techniques</span></button></div>
+  </div>
+</div>
+
+<div class="card refs" style="max-width:820px;margin:24px auto 0;padding:18px 20px"><h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2><p style="font-size:13px;color:var(--text-secondary);line-height:1.6">The explanations here are written in plain language to summarize Army doctrine. They do not replace the source publications, and publications are revised. Check the current edition of each at the <a href="https://armypubs.army.mil/" style="color:var(--accent)">Army Publishing Directorate</a>, and follow your class slides and instructor where they differ.</p><ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px"><li><b>ATP 3-21.8</b> — Infantry Platoon and Squad (January 2024). Route selection, navigation aids, and crossing danger areas.</li><li><b>TC 3-21.76</b> — Ranger Handbook. Danger area crossing fundamentals and squad-level techniques.</li></ul></div>
+<div style="text-align:center;padding:16px 16px 0"><a href="/classic.html?page=army" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Tactics</a> &nbsp;&nbsp; <a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">Back to E-WIT</a></div>
+<div class="footer">Route Planning Explained · Companion guide to the Route Planning Trainer · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

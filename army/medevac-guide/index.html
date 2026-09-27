@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9-Line MEDEVAC &amp; TCCC Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;--border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#3d1414;--hero-eyebrow:#e0a0a0;--hero-sub:#e6c0c0;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;--toggle-bg:rgba(255,255,255,0.15);
+  --accent:#b02e2e;--accent-soft:#f6dcdc;--c1:#1f6fe0;--c1s:#e2edfb;--c2:#c0392b;--c2s:#fbe4e0;--c3:#159c72;--c3s:#dcf3ea;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;--border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#2a0d0d;--hero-eyebrow:#d47a7a;--hero-sub:#b08a8a;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;--toggle-bg:rgba(255,255,255,0.08);
+  --accent:#e05050;--accent-soft:#2a0d0d;--c1:#5a9bf0;--c1s:#0a2240;--c2:#e0685a;--c2s:#2e0e0a;--c3:#33b98d;--c3s:#0a2e22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:580px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn.prev{text-align:left}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:1rem 0}
+.card-row .card{margin-bottom:0}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}.fact-card-text strong{color:var(--text-primary)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+table.compare td:first-child{font-weight:700;color:var(--text-primary)}
+.tbl-wrap{overflow-x:auto;margin:1rem 0}
+.tbl-wrap table.compare{margin:0;min-width:520px}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+.steps{counter-reset:s;margin:1rem 0}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:.5rem}
+.step::before{counter-increment:s;content:counter(s);background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step .st{font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-primary)}.step .sd{font-size:12.5px;color:var(--text-secondary)}
+@media print{
+  body{background:#fff}
+  .hero{background:#fff!important;color:#000!important;padding:1rem 0 .5rem}
+  .hero h1,.hero h1 span,.hero-eyebrow,.hero-sub{color:#000!important}
+  .theme-toggle,.tab-nav,.tab-jump,#fbNudge{display:none!important}
+  .qc{position:static!important;display:inline-block;color:#000!important;border-color:#999!important;background:none!important;margin-bottom:.5rem}
+  .tab-content{display:block!important;animation:none!important}
+  .tab-content+.tab-content{margin-top:2rem;break-before:page}
+  .card,.step,.fact-card,table.compare tr{break-inside:avoid}
+  .section-wrap{padding-top:1rem}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>9-Line MEDEVAC <span>&amp; TCCC</span><br>Treat first, then call it in right.</h1>
+  <p class="hero-sub">The MARCH sequence that keeps a casualty alive, and the nine-line format that gets help to them.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('march',this)">🩹 MARCH</button><button class="tab-btn" onclick="switchTab('lines',this)">📻 The Nine Lines</button><button class="tab-btn" onclick="switchTab('tx',this)">📡 Sending It</button>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <div class="tab-content active" id="tab-march">
+
+    <h2>MARCH — treat in this order, every time</h2>
+    <p class="lede">MARCH is the Tactical Combat Casualty Care sequence for what to fix first. It exists because the things that kill fastest aren't always the things that look the worst.</p>
+    <div class="analogy">🩸 <strong>Why bleeding comes before airway:</strong> massive hemorrhage kills faster than almost anything else on a battlefield — faster than most airway problems. MARCH flips the civilian "ABC" order on purpose.</div>
+    <div class="steps">
+      <div class="step"><div><div class="st">M — Massive Hemorrhage</div><div class="sd">Stop life-threatening bleeding first — tourniquet or pressure dressing before anything else.</div></div></div>
+      <div class="step"><div><div class="st">A — Airway</div><div class="sd">Open and protect the airway. A conscious, speaking casualty already has a patent airway.</div></div></div>
+      <div class="step"><div><div class="st">R — Respiration</div><div class="sd">Check for and seal a chest wound; watch for tension pneumothorax.</div></div></div>
+      <div class="step"><div><div class="st">C — Circulation</div><div class="sd">Reassess bleeding control, watch for shock, support circulation.</div></div></div>
+      <div class="step"><div><div class="st">H — Hypothermia / Head Injury</div><div class="sd">Keep the casualty warm; hypothermia worsens bleeding and secondary brain injury.</div></div></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">📋</span><span class="fact-card-text"><strong>MARCH-PAWS.</strong> Some units extend the sequence for prolonged field care: Pain management, Antibiotics, Wounds (dressing non-life-threatening injuries), and Splints — always after the core MARCH steps.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('lines')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📻 The Nine Lines</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-lines">
+
+    <h2>The nine lines</h2>
+    <p class="lede">Once the casualty is stable enough to move, the 9-line MEDEVAC request gets an aircraft moving. Most of the information for it comes straight off the TCCC card.</p>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Line</th><th>What it says</th><th>Codes</th></tr></thead><tbody>
+    <tr><td>1</td><td>Location of pickup site</td><td>Grid coordinates (MGRS)</td></tr>
+    <tr><td>2</td><td>Radio frequency and callsign</td><td>&mdash;</td></tr>
+    <tr><td>3</td><td>Patients by precedence</td><td>A-Urgent, B-Urgent Surgical, C-Priority, D-Routine, E-Convenience</td></tr>
+    <tr><td>4</td><td>Special equipment required</td><td>A-None, B-Hoist, C-Extraction equipment, D-Ventilator</td></tr>
+    <tr><td>5</td><td>Patients by type</td><td>L-Litter, A-Ambulatory</td></tr>
+    <tr><td>6</td><td>Security at pickup site (wartime)</td><td>N-No enemy, P-Possible enemy, E-Enemy in area, X-Armed escort required</td></tr>
+    <tr><td>7</td><td>Method of marking pickup site</td><td>A-Panels, B-Pyrotechnic, C-Smoke, D-None, E-Other</td></tr>
+    <tr><td>8</td><td>Patient nationality and status</td><td>A-US Military, B-US Civilian, C-Non-US Military, D-Non-US Civilian, E-EPW</td></tr>
+    <tr><td>9</td><td>NBC contamination (wartime)</td><td>N-Nuclear, B-Biological, C-Chemical</td></tr>
+    </tbody></table></div>
+    <div class="fact-card"><span class="fact-card-emoji">🔀</span><span class="fact-card-text"><strong>Lines 6 and 9 change in peacetime.</strong> Line 6 becomes the number and type of wounds, injuries, or illnesses; Line 9 becomes a terrain description of the pickup site.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">⏱️</span><span class="fact-card-text"><strong>Precedence sets the clock.</strong> Urgent and Urgent Surgical both mean evacuation within 2 hours; Priority means within 4; Routine means within 24.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('march')"><span class="tj-label">&larr; Back</span><span class="tj-title">🩹 MARCH</span></button><button class="tab-jump-btn next" onclick="goToTab('tx')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📡 Sending It</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-tx">
+
+    <h2>Sending the request</h2>
+    <p class="lede">The 9-line isn't just information — it's a specific transmission format, split across two radio frequencies.</p>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">1️⃣</span><div><div class="card-title">Lines 1–5 first</div><div class="card-sub">MEDEVAC frequency</div></div></div><p style="margin:0">Sent immediately — this is what the aircraft needs to launch. Target: within 25 seconds of initial contact.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">2️⃣</span><div><div class="card-title">Lines 6–9 after</div><div class="card-sub">Operational frequency</div></div></div><p style="margin:0">Sent once you've switched frequencies — can go out while the aircraft is already inbound.</p></div>
+    </div>
+    <p>Say "<strong>BREAK</strong>" between categories within a line (for example, between the urgent count and the priority count on Line 3), and "<strong>OVER</strong>" at the end of each transmission. In training, 100% accuracy is the standard — a wrong brevity code is treated as a failed attempt.</p>
+    <div class="fact-card"><span class="fact-card-emoji">🗣️</span><span class="fact-card-text"><strong>Example, Line 3:</strong> "Line 3: Two Alpha, BREAK, one Charlie, over" means two Urgent patients and one Priority patient.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">📝</span><span class="fact-card-text"><strong>MIST comes after, not instead of.</strong> The MIST report (Mechanism, Injuries, Signs/symptoms, Treatment given) is sent after the 9-line, not in place of it — never delay the MEDEVAC request waiting to gather MIST details.</span></div>
+    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../medevac/" style="color:inherit"><em>9-Line MEDEVAC Simulator</em></a> puts you through real casualty scenarios — you make the MARCH call, then build the actual report yourself.</div>
+    <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> ATP 4-02.2, <em>Medical Evacuation</em>. TC 3-21.76, <em>Ranger Handbook</em>, Appendix B/J. TCCC Guidelines. Use your class slides and instructor as the authority.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('lines')"><span class="tj-label">&larr; Back</span><span class="tj-title">📻 The Nine Lines</span></button></div>
+  </div>
+</div>
+
+<div class="card refs" style="max-width:820px;margin:24px auto 0;padding:18px 20px"><h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2><p style="font-size:13px;color:var(--text-secondary);line-height:1.6">The explanations here are written in plain language to summarize Army doctrine. They do not replace the source publications, and publications are revised. Check the current edition of each at the <a href="https://armypubs.army.mil/" style="color:var(--accent)">Army Publishing Directorate</a>, and follow your class slides and instructor where they differ. This is training reference material, not medical guidance for real casualty care.</p><ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px"><li><b>ATP 4-02.2</b> — Medical Evacuation. The 9-line MEDEVAC request format.</li><li><b>TC 3-21.76</b> — Ranger Handbook, Appendix B/J. 9-line request and MIST report.</li><li><b>TCCC Guidelines</b> — Tactical Combat Casualty Care, the MARCH algorithm.</li></ul></div>
+<div style="text-align:center;padding:16px 16px 0"><a href="/classic.html?page=army" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Tactics</a> &nbsp;&nbsp; <a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">Back to E-WIT</a></div>
+<div class="footer">9-Line MEDEVAC &amp; TCCC Explained · Companion guide to the 9-Line MEDEVAC Simulator · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

@@ -432,6 +432,83 @@ const ARMY=[
   "kw": "FOOM trainer formation movement technique decision aid scenarios bounding overwatch alternate successive traveling wedge column line squad"
  },
  {
+  "nm": "OAKOC Explained",
+  "ds": "The five military aspects of terrain, plus weather, with a worked defensive-position example",
+  "file": "army/oakoc-guide/",
+  "kind": "guide",
+  "kw": "OAKOC OCOKA terrain analysis observation fields of fire avenues of approach key terrain obstacles cover concealment weather military aspects"
+ },
+ {
+  "nm": "OAKOC Trainer",
+  "ds": "Drag labels onto a terrain sketch to identify each OAKOC factor, plus an 18-item classify drill",
+  "file": "army/oakoc/",
+  "kind": "tool",
+  "kw": "OAKOC OCOKA terrain analysis drag map drill quiz observation fields of fire avenues of approach key terrain obstacles cover concealment weather"
+ },
+ {
+  "nm": "Route Planning Explained",
+  "ds": "Legs, control measures, navigation aids, danger area types, and the crossing techniques for each",
+  "file": "army/route-planning-guide/",
+  "kind": "guide",
+  "kw": "route planning legs checkpoints phase lines rally points ORP PLD LOA TAA catching features handrails attack points danger areas linear open area bypass contour"
+ },
+ {
+  "nm": "Route Planning Trainer",
+  "ds": "Drag rally points and security onto a linear danger area crossing, plus a 15-scenario technique drill",
+  "file": "army/route-planning/",
+  "kind": "tool",
+  "kw": "route planning danger area drag crossing diagram bypass contour linear crossing bounding overwatch traveling overwatch quiz"
+ },
+ {
+  "nm": "Battle Drills Explained",
+  "ds": "React to Contact, Break Contact, near versus far ambush, and React to Indirect Fire",
+  "file": "army/battle-drills-guide/",
+  "kind": "guide",
+  "kw": "battle drills react to contact break contact ambush near far peel indirect fire cue immediate action"
+ },
+ {
+  "nm": "Battle Drill Trainer",
+  "ds": "Step through an animated near-versus-far ambush reaction, plus a 15-item drill-identification quiz",
+  "file": "army/battle-drills/",
+  "kind": "tool",
+  "kw": "battle drill animation simulation react to contact break contact ambush near far indirect fire immediate action quiz"
+ },
+ {
+  "nm": "Patrol Base Explained",
+  "ds": "Site selection, occupation, and priorities of work for halting a patrol for an extended period",
+  "file": "army/patrol-base-guide/",
+  "kind": "guide",
+  "kw": "patrol base security perimeter site selection occupation priorities of work withdrawal plan cigar triangle ORP"
+ },
+ {
+  "nm": "Patrol Base Trainer",
+  "ds": "Judge patrol base site selection and sequence the priorities of work, two-part drill",
+  "file": "army/patrol-base/",
+  "kind": "tool",
+  "kw": "patrol base drill quiz site selection good bad priorities of work sequence drag order"
+ },
+ {
+  "nm": "Ranger Tactical Tasks (RTT)",
+  "ds": "Hands-on simulators: M4/M249/M240B function checks, SINCGARS radio, knot matching, DAGR nav, claymore aiming",
+  "file": "army/rtt/",
+  "kind": "tool",
+  "kw": "RTT ranger tactical tasks RAP week M4 M249 M240B function check simulator clear load radio SINCGARS frequency slider radio check knots square knot clove hitch bowline prusik DAGR GPS waypoint drag claymore M18A1 aim fan"
+ },
+ {
+  "nm": "9-Line MEDEVAC & TCCC Explained",
+  "ds": "The MARCH sequence and the nine-line format, including how and when to transmit it",
+  "file": "army/medevac-guide/",
+  "kind": "guide",
+  "kw": "9 line medevac TCCC MARCH massive hemorrhage airway respiration circulation hypothermia precedence urgent priority routine MIST report"
+ },
+ {
+  "nm": "9-Line MEDEVAC Simulator",
+  "ds": "Casualty diagram with live vitals board, MARCH treatment, and build the 9-line yourself across 3 scenarios",
+  "file": "army/medevac/",
+  "kind": "tool",
+  "kw": "9 line medevac simulator scenario TCCC MARCH casualty diagram vitals precedence urgent priority routine grid frequency callsign transcript"
+ },
+ {
   "nm": "Army Values",
   "ds": "The seven values behind LDRSHIP, with their official definitions. · 8 flashcards",
   "file": "army/values/",
@@ -681,7 +758,13 @@ function renderArmy(){
     {label:'Land Navigation', files:['army/land-nav-guide/','army/land-nav/']},
     {label:'Troop Leading Procedures', files:['army/tlp-guide/','army/tlp-planner/']},
     {label:'MDMP', files:['army/mdmp-guide/','army/mdmp/']},
-    {label:'FOOM', files:['army/foom-guide/','army/foom/']}
+    {label:'FOOM', files:['army/foom-guide/','army/foom/']},
+    {label:'OAKOC', files:['army/oakoc-guide/','army/oakoc/']},
+    {label:'Route Planning', files:['army/route-planning-guide/','army/route-planning/']},
+    {label:'Battle Drills', files:['army/battle-drills-guide/','army/battle-drills/']},
+    {label:'Patrol Base', files:['army/patrol-base-guide/','army/patrol-base/']},
+    {label:'Ranger Tactical Tasks (RTT)', files:['army/rtt/']},
+    {label:'9-Line MEDEVAC', files:['army/medevac-guide/','army/medevac/']}
   ];
   const cardHtml=a=>{
     const isG=a.kind==='guide',isT=a.kind==='tool';

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrol Base Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;--border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#1f2a2a;--hero-eyebrow:#8ad8c8;--hero-sub:#b8e6dd;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;--toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1e8a7a;--accent-soft:#e1f4f0;--c1:#1f6fe0;--c1s:#e2edfb;--c2:#c0392b;--c2s:#fbe4e0;--c3:#159c72;--c3s:#dcf3ea;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;--border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0f1f1c;--hero-eyebrow:#6fc4b0;--hero-sub:#88b0a5;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;--toggle-bg:rgba(255,255,255,0.08);
+  --accent:#4cd9b8;--accent-soft:#0f1f1c;--c1:#5a9bf0;--c1s:#0a2240;--c2:#e0685a;--c2s:#2e0e0a;--c3:#33b98d;--c3s:#0a2e22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:3rem 2rem 2rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.75rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1.05rem;color:var(--hero-sub);max-width:580px;margin:0 auto 1.5rem;line-height:1.6}
+.theme-toggle{position:absolute;top:1.25rem;right:1.25rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+.tab-nav{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:rgba(255,255,255,.16)}.tab-btn.active{background:#fff;color:var(--hero-bg);border-color:#fff}
+.tab-jump{display:flex;justify-content:space-between;gap:12px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.tab-jump-btn{flex:1;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;
+  cursor:pointer;text-align:left;color:var(--text-primary);transition:border-color .2s;font-family:'Nunito Sans',sans-serif}
+.tab-jump-btn:hover{border-color:var(--accent)}
+.tab-jump-btn.next{text-align:right;margin-left:auto}
+.tab-jump-btn.prev{text-align:left}
+.tab-jump-btn .tj-label{display:block;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.tab-jump-btn .tj-title{display:block;font-size:14px;font-weight:700;color:var(--accent)}
+.section-wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.tab-content{display:none;animation:fade .3s}.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin:2rem 0 .5rem;color:var(--text-primary)}h2:first-child{margin-top:0}
+.lede{font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem}
+h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;margin:1.75rem 0 .6rem}
+h4{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:1rem 0 .5rem}
+p{color:var(--text-secondary);margin-bottom:.9rem}p strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:.6rem}.card-emoji{font-size:26px;flex-shrink:0}
+.card-title{font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;color:var(--text-primary)}.card-sub{font-size:12px;color:var(--text-muted);font-weight:600}
+.card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:1rem 0}
+.card-row .card{margin-bottom:0}
+.analogy{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;font-size:.98rem;color:var(--text-primary)}.analogy strong{color:var(--accent)}
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.9rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.6rem}
+.fact-card-emoji{font-size:18px;flex-shrink:0;margin-top:1px}.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.55}.fact-card-text strong{color:var(--text-primary)}
+table.compare{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;background:var(--bg-card);border-radius:12px;overflow:hidden;border:1.5px solid var(--border)}
+table.compare th{background:var(--table-head-bg);font-family:'Nunito',sans-serif;font-weight:700;text-align:left;padding:.7rem .9rem;color:var(--text-primary);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+table.compare td{padding:.7rem .9rem;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.compare tr:hover td{background:var(--table-row-hover)}
+table.compare td:first-child{font-weight:700;color:var(--text-primary)}
+.tbl-wrap{overflow-x:auto;margin:1rem 0}
+.tbl-wrap table.compare{margin:0;min-width:520px}
+.tryit{background:linear-gradient(135deg,var(--accent-soft),transparent);border:1.5px dashed var(--accent);border-radius:12px;padding:1rem 1.2rem;margin:1.5rem 0;font-size:.95rem}.tryit strong{color:var(--accent);font-family:'Nunito',sans-serif}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+.steps{counter-reset:s;margin:1rem 0}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:.5rem}
+.step::before{counter-increment:s;content:counter(s);background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step .st{font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-primary)}.step .sd{font-size:12.5px;color:var(--text-secondary)}
+.mnem{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;font-size:13.5px}
+.mnem .k{font-family:'Nunito',sans-serif;font-weight:800;color:var(--accent)}
+@media print{
+  body{background:#fff}
+  .hero{background:#fff!important;color:#000!important;padding:1rem 0 .5rem}
+  .hero h1,.hero h1 span,.hero-eyebrow,.hero-sub{color:#000!important}
+  .theme-toggle,.tab-nav,.tab-jump,#fbNudge{display:none!important}
+  .qc{position:static!important;display:inline-block;color:#000!important;border-color:#999!important;background:none!important;margin-bottom:.5rem}
+  .tab-content{display:block!important;animation:none!important}
+  .tab-content+.tab-content{margin-top:2rem;break-before:page}
+  .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
+  .section-wrap{padding-top:1rem}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>Patrol <span>Base</span><br>Stopping without standing still.</h1>
+  <p class="hero-sub">How a patrol halts for an extended period without becoming an easy, predictable target.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('big',this)">📋 The Big Picture</button><button class="tab-btn" onclick="switchTab('occ',this)">🚶 Occupation</button><button class="tab-btn" onclick="switchTab('pow',this)">🛠️ Priorities of Work</button><button class="tab-btn" onclick="switchTab('ex',this)">🧩 Worked Example</button>
+  </div>
+</header>
+
+<div class="section-wrap">
+  <div class="tab-content active" id="tab-big">
+
+    <h2>Patrol base — a security perimeter, not a campsite</h2>
+    <p class="lede">A patrol base is a security perimeter a squad or platoon sets up when it halts for an extended period during a patrol. It is not a place to relax — it's a temporary defensive position built the same way every time, so the unit stays hidden and ready.</p>
+    <div class="analogy">🏕️ <strong>Think of it like a rest stop you build yourself:</strong> you don't just pull over — you pick a spot nobody would look for you, cover your tracks getting there, and post watch before anyone closes their eyes.</div>
+    <h3>The two rules that never change</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">⏱️</span><div><div class="card-title">24-hour limit</div><div class="card-sub">Except in an emergency</div></div></div><p style="margin:0">A patrol base should not be occupied for more than 24 hours. The longer you sit still, the more likely you are to be found.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🚫</span><div><div class="card-title">Never reuse one</div><div class="card-sub">No exceptions</div></div></div><p style="margin:0">A patrol never uses the same patrol base twice. If the enemy finds an old one, they'll watch it — or worse, prep it as an ambush.</p></div>
+    </div>
+    <h3>What a patrol base is used for</h3>
+    <p>Avoiding detection by eliminating movement, hiding during a long or detailed reconnaissance, performing maintenance on weapons and equipment, eating and resting, planning and issuing orders, reorganizing after infiltrating enemy territory, or serving as a base for several consecutive or concurrent operations.</p>
+    <div class="fact-card"><span class="fact-card-emoji">🔗</span><span class="fact-card-text"><strong>Same family as the ORP.</strong> A patrol base is reconnoitered and occupied the same way as an Objective Rally Point — with one difference: the patrol typically plans to enter at a 90-degree turn off its original line of march, to throw off anyone trying to backtrack the unit's trail.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('occ')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🚶 Occupation</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-occ">
+
+    <h2>Site selection and occupation</h2>
+    <p class="lede">Where you put a patrol base matters as much as how you defend it. The site should work against the enemy before a single fighting position is dug.</p>
+    <h3>What makes a good site</h3>
+    <div class="steps">
+      <div class="step"><div><div class="st">Terrain the enemy would consider of little value</div><div class="sd">Nobody defends — or looks for you in — ground they don't care about.</div></div></div>
+      <div class="step"><div><div class="st">Away from main lines of drift</div><div class="sd">Avoid trails, roads, and other paths people naturally walk.</div></div></div>
+      <div class="step"><div><div class="st">Away from built-up areas and known enemy positions</div></div></div>
+      <div class="step"><div><div class="st">Terrain that offers cover and concealment</div><div class="sd">Same OAKOC thinking used for any other position.</div></div></div>
+    </div>
+    <h3>Perimeter shapes</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">🥬</span><div><div class="card-title">Squad-sized patrol</div><div class="card-sub">Cigar-shaped perimeter</div></div></div><p style="margin:0">A smaller element typically forms an elongated, cigar-shaped security perimeter.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🔺</span><div><div class="card-title">Platoon-sized patrol</div><div class="card-sub">Triangle-shaped perimeter</div></div></div><p style="margin:0">A platoon typically forms a triangle, giving each squad a side to secure.</p></div>
+    </div>
+    <p>The leader conducts a leader's reconnaissance before the unit occupies the site, then brings the rest of the element in — entering with that 90-degree turn — and inspects and adjusts the perimeter as needed once everyone is in place.</p>
+    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../patrol-base/" style="color:inherit"><em>Patrol Base Trainer</em></a> drills site-selection judgment and priorities-of-work sequencing.</div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('big')"><span class="tj-label">&larr; Back</span><span class="tj-title">📋 The Big Picture</span></button><button class="tab-jump-btn next" onclick="goToTab('pow')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🛠️ Priorities of Work</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-pow">
+
+    <h2>Priorities of work</h2>
+    <p class="lede">Priorities of work are not just a checklist. Doctrine is specific: each one is a task, a given time, and a measurable performance standard — set according to METT-TC, not run the same way on autopilot every time.</p>
+    <h3>Security comes first — always</h3>
+    <p>The absolute first priority upon occupying a patrol base is establishing security. That typically means posting a listening post / observation post (LP/OP) forward of the perimeter along likely avenues of approach, so the unit has early warning before it commits to anything else — cooking, cleaning weapons, or resting.</p>
+    <h3>Common priorities of work</h3>
+    <div class="card-row">
+      <div class="card"><div class="card-head"><span class="card-emoji">🛡️</span><div><div class="card-title">Continuous security</div></div></div><p style="margin:0">Passive and active security measures cover the perimeter at all times — this never stops for the other priorities.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">🚪</span><div><div class="card-title">Withdrawal plan</div></div></div><p style="margin:0">The leader designates the signal for withdrawal, the order units withdraw in, and the rendezvous point or alternate patrol base.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">📻</span><div><div class="card-title">Communications</div></div></div><p style="margin:0">Radio watch and maintenance continue throughout the halt.</p></div>
+      <div class="card"><div class="card-head"><span class="card-emoji">📋</span><div><div class="card-title">Mission preparation and planning</div></div></div><p style="margin:0">The patrol base is often where the leader plans and issues orders for what comes next.</p></div>
+    </div>
+    <div class="fact-card"><span class="fact-card-emoji">🕳️</span><span class="fact-card-text"><strong>Fighting positions.</strong> When time allows, hasty fighting positions are prepared at least 18 inches deep at the front, sloping gently front to rear, with a grenade sump if possible.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🧼</span><span class="fact-card-text"><strong>Personal tasks happen with a buddy on watch.</strong> Hygiene, eating, and equipment maintenance are done individually while a Soldier's buddy maintains security — the perimeter is never fully unmanned for these tasks.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('occ')"><span class="tj-label">&larr; Back</span><span class="tj-title">🚶 Occupation</span></button><button class="tab-jump-btn next" onclick="goToTab('ex')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧩 Worked Example</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-ex">
+
+    <h2>Worked example — a squad occupies a patrol base</h2>
+    <p class="lede">This is a sample scenario for illustration. Real occupation always follows unit SOP and the leader's actual reconnaissance.</p>
+    <div class="analogy">📋 <strong>The scenario:</strong> a squad needs to halt for the night after a long movement, with a resupply and follow-on mission planned for the next day.</div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Step</th><th>What the squad leader does</th></tr></thead><tbody>
+    <tr><td>Site selection</td><td>Picks a tentative site off the map — thick vegetation well away from the trail the squad has been following, terrain the enemy has no reason to care about.</td></tr>
+    <tr><td>Approach</td><td>Leads the squad past the site, then executes a 90-degree turn back into it to break the trail.</td></tr>
+    <tr><td>Occupation</td><td>Leader's recon confirms the site; squad forms a cigar-shaped perimeter and posts an LP/OP forward before anyone does anything else.</td></tr>
+    <tr><td>Priorities of work</td><td>Continuous security first, then the withdrawal plan is briefed, then radio watch is set, then the squad eats and performs weapons maintenance in shifts with buddies on watch.</td></tr>
+    <tr><td>Before first light</td><td>100% security during stand-to, then the squad breaks down the site completely before departing — leaving nothing behind that shows they were ever there.</td></tr>
+    </tbody></table></div>
+    <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>What to notice.</strong> Security is established before anything else happens, and it never actually stops — every other task is layered on top of it, not instead of it.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> ATP 3-21.8, <em>Infantry Platoon and Squad</em>. TC 3-21.76, <em>Ranger Handbook</em>. Use your class slides and instructor as the authority.</span></div>
+
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('pow')"><span class="tj-label">&larr; Back</span><span class="tj-title">🛠️ Priorities of Work</span></button></div>
+  </div>
+</div>
+
+<div class="card refs" style="max-width:820px;margin:24px auto 0;padding:18px 20px"><h2 style="margin-top:0;font-size:15px">References &amp; Further Reading</h2><p style="font-size:13px;color:var(--text-secondary);line-height:1.6">The explanations here are written in plain language to summarize Army doctrine. They do not replace the source publications, and publications are revised. Check the current edition of each at the <a href="https://armypubs.army.mil/" style="color:var(--accent)">Army Publishing Directorate</a>, and follow your class slides and instructor where they differ.</p><ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:20px"><li><b>ATP 3-21.8</b> — Infantry Platoon and Squad. Patrol base site selection, occupation, and priorities of work.</li><li><b>TC 3-21.76</b> — Ranger Handbook. Patrol base operations at squad and platoon level.</li></ul></div>
+<div style="text-align:center;padding:16px 16px 0"><a href="/classic.html?page=army" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Tactics</a> &nbsp;&nbsp; <a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">Back to E-WIT</a></div>
+<div class="footer">Patrol Base Explained · Companion guide to the Patrol Base Trainer · UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'🌙':'☀️';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function goToTab(id){
+  const btn = document.querySelector('.tab-btn[onclick*="\'' + id + '\'"]');
+  if (btn) switchTab(id, btn);
+  document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

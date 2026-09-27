@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Drill Trainer — 17E</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dim:#00c866;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;--red-dim:#cc2222;--red-dark:#1a0000;
+  --purple:#d9824c;--purple-dim:#b3663a;--purple-dark:#24140a;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;--canvas-bg:#070b10;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
+  --acc:var(--purple);--acc-dark:var(--purple-dark);
+}
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dim:#005533;--green-dark:#d0ffe8;--amber:#b36b00;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;--red-dim:#aa1111;--red-dark:#ffe0e0;
+  --purple:#b0521e;--purple-dim:#943f14;--purple-dark:#f6e0cf;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;--canvas-bg:#eef3f7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{border-bottom:1px solid var(--border-bright);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--panel);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mil-badge{font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);white-space:nowrap}
+header h1{font-family:var(--display);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:2px;text-transform:uppercase}
+header h1 span{color:var(--text-dim);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.theme-btn,.hdr-link{font-family:var(--mono);font-size:10px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 10px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.theme-btn:hover,.hdr-link:hover{border-color:var(--amber);color:var(--amber)}
+.status-bar{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;text-align:right;line-height:1.6}
+.qc-banner{font-family:var(--mono);font-size:10px;color:var(--amber);background:var(--amber-dark);border-bottom:1px solid var(--amber-dim);padding:7px 28px;letter-spacing:.5px;text-align:center}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--panel);padding:0 24px;gap:2px;overflow-x:auto}
+.tab-btn{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-content{display:none;max-width:1000px;margin:0 auto;padding:24px 24px 40px}
+.tab-content.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;margin-bottom:16px}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'\25B6';color:var(--acc);font-size:8px}
+.lead{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.callout{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--cyan-dark);padding:11px 14px;font-size:13px;color:var(--text);line-height:1.6;margin-top:14px}
+.callout .key{color:var(--cyan);font-weight:700}
+.callout.amber{border-left-color:var(--amber);background:var(--amber-dark)}.callout.amber .key{color:var(--amber)}
+.cbtn{font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--canvas-bg);border:1px solid var(--border);color:var(--text-dim);padding:10px 14px;cursor:pointer;transition:all .14s;text-transform:uppercase;min-height:40px}
+.cbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-dark)}
+.cbtn.primary{border-color:var(--acc);color:var(--acc)}
+.cbtn.active-toggle{background:var(--acc-dark);border-color:var(--acc);color:var(--acc)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.score{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;margin:6px 0}
+.score b{color:var(--acc);font-weight:400}
+@media (max-width:680px){
+  header{position:static;padding:12px 16px}
+  .qc-banner{padding:7px 14px}
+  .tab-nav{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:11px}
+  .tab-content{padding:16px 14px 30px}
+}
+.stepstrip{display:flex;gap:4px;margin:10px 0 14px}
+.stepstrip i{flex:1;height:10px;border:1px solid var(--acc);display:block}
+.stepstrip i.done{background:var(--acc)}.stepstrip i.cur{background:var(--amber);border-color:var(--amber)}
+.wk-card{font-family:var(--display);font-size:18px;font-weight:600;color:var(--text-bright);line-height:1.4;padding:16px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-bottom:12px}
+.wk-card small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--acc);font-weight:400;text-transform:uppercase;margin-bottom:6px}
+.wk-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.wk-opts button{font-family:var(--display);font-size:14px;font-weight:600;text-align:center;background:var(--canvas-bg);border:1px solid var(--border-bright);color:var(--text);padding:12px 10px;cursor:pointer;min-height:48px;line-height:1.25}
+.wk-opts button .sub{display:block;font-family:var(--mono);font-size:9.5px;color:var(--text-dim);font-weight:400;margin-top:2px}
+.wk-opts button:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.wk-opts button.right{border-color:var(--green);background:var(--green-dark);color:var(--green)}
+.wk-opts button.miss{border-color:var(--red);background:var(--red-dark);color:var(--red)}
+.wk-opts button:disabled{cursor:default}
+.explain{font-family:var(--mono);font-size:12.5px;color:var(--text);line-height:1.6;padding:12px 14px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin-top:12px;display:none}
+.explain.show{display:block}
+.explain b{color:var(--acc)}
+canvas{display:block;width:100%;height:auto;background:var(--canvas-bg);border:1px solid var(--border-bright)}
+.status{font-family:var(--mono);font-size:12.5px;padding:10px 12px;border:1px solid var(--border-bright);background:var(--canvas-bg);margin:12px 0;min-height:42px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left"><div class="mil-badge">MIL-SPEC</div><h1>Battle Drill Trainer <span>// Ambush Reaction Sim — 17E</span></h1></div>
+  <div class="hdr-right"><a class="hdr-link" href="../">&#8592; TACTICS</a><button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
+    <div class="status-bar">UNCLASSIFIED</div></div>
+</header>
+<div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
+<nav class="tab-nav" id="tabnav">
+  <button class="tab-btn active" onclick="switchTab('sim',this)">React to the Ambush</button>
+  <button class="tab-btn" onclick="switchTab('drill',this)">Identify the Drill</button>
+</nav>
+
+<div id="tab-sim" class="tab-content active">
+  <div class="panel">
+    <div class="panel-title">Watch the squad react — near versus far ambush</div>
+    <div class="lead">Pick a scenario, then step through the correct reaction. Notice how the squad's response completely changes based on distance to the enemy.</div>
+    <div class="btn-row">
+      <button class="cbtn active-toggle" id="btnRTC" onclick="setScenario('rtc')">React to Contact</button>
+      <button class="cbtn" id="btnBRK" onclick="setScenario('brk')">Break Contact</button>
+      <button class="cbtn" id="btnNear" onclick="setScenario('near')">Near Ambush</button>
+      <button class="cbtn" id="btnFar" onclick="setScenario('far')">Far Ambush</button>
+      <button class="cbtn" id="btnIDF" onclick="setScenario('idf')">Indirect Fire</button>
+    </div>
+    <canvas id="ambushCanvas" width="700" height="320" aria-label="Squad reacting to contact, shown step by step"></canvas>
+    <div class="btn-row"><button class="cbtn primary" onclick="stepAmbush(1)">Next step &#8594;</button><button class="cbtn" onclick="stepAmbush(-1)">&#8592; Back</button><button class="cbtn" onclick="resetAmbush()">&#8635; Reset</button></div>
+    <div class="status" id="ambushStatus"></div>
+  </div>
+  <div class="callout amber"><span class="key">NEAR (&#8804;~35m, hand-grenade range):</span> return fire and assault through the kill zone. <span class="key">FAR (&gt;~35m):</span> return fire, seek cover, suppress, then break contact or maneuver — do not assault across open distance.</div>
+</div>
+
+<div id="tab-drill" class="tab-content">
+  <div class="panel">
+    <div class="panel-title">Which battle drill applies, and what's the immediate action?</div>
+    <div class="lead">Read the contact scenario, then pick the drill that applies. 15 scenarios, three per drill.</div>
+    <div class="stepstrip" id="strip"></div>
+    <div class="wk-card"><small id="wk-round">Round 1 / 15</small><span id="wk-text"></span></div>
+    <div class="wk-opts" id="wk-opts"></div>
+    <div class="explain" id="wk-explain"></div>
+    <div class="score">Score: <b id="wk-score">0</b> / <b id="wk-total">0</b></div>
+    <div class="btn-row"><button class="cbtn" id="wk-next" disabled>Next &#8594;</button><button class="cbtn" id="wk-restart">Restart &amp; Reshuffle</button></div>
+  </div>
+  <div class="callout amber"><span class="key">TIP:</span> for ambush scenarios, the distance to the enemy is the whole ballgame — inside hand-grenade range means assault, outside it means suppress and break contact or maneuver.</div>
+</div>
+
+<div class="src-strip" style="max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:'Share Tech Mono',monospace;font-size:11.5px;line-height:1.7;color:var(--text-dim)"><b style="color:var(--text-bright);letter-spacing:1.5px">SOURCE</b> ATP 3-21.8, Infantry Platoon and Squad &middot; TC 3-21.76, Ranger Handbook &middot; <a href="../battle-drills-guide/" style="color:var(--amber)">Battle Drills Explained (guide)</a> &middot; Training aid — confirm with instructor.</div>
+
+<script>
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').innerHTML=d?'&#9728; LIGHT MODE':'&#9789; DARK MODE';drawAmbush();}
+function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');if(id==='sim')drawAmbush();}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+/* ===================== BATTLE DRILL REACTION CANVAS SIM ===================== */
+let ambushMode='rtc', ambushStep=0;
+const SCEN_STEPS={
+  rtc:[
+    'Squad moving in a wedge formation. No contact yet.',
+    'Enemy initiates fire from a fixed position ~80m out. Soldiers return fire immediately and move to covered positions.',
+    'The squad locates the enemy and places well-aimed suppressive fire to gain fire superiority.',
+    'Leader decides the next action — here, continue to suppress and report while assessing options.'
+  ],
+  brk:[
+    'Squad is in contact and suppressing the enemy from covered positions.',
+    'Leader orders "break contact." The rear-most Soldier (S5) keeps firing while S1&#8211;S4 begin moving back.',
+    'S5 now moves back past the others to the new rear position — the "peel" — while the others cover.',
+    'The squad has displaced as a whole, moving away from the enemy along a covered route.'
+  ],
+  near:[
+    'Squad on the move along the trail. Ambush not yet initiated.',
+    'Enemy initiates fire from 15m. Soldiers in the kill zone return fire immediately.',
+    'Kill zone element assaults through — staying in the kill zone means staying in the enemy\'s most effective fire.',
+    'Squad consolidates on the far side, reorganizes, and the leader reports the contact.'
+  ],
+  far:[
+    'Squad on the move along the trail. Ambush not yet initiated.',
+    'Enemy initiates fire from 200m. Soldiers in the kill zone return fire and seek cover.',
+    'Squad places well-aimed suppressive fire on the enemy position to gain fire superiority.',
+    'Squad breaks contact along a covered route, moving away from the enemy rather than assaulting.'
+  ],
+  idf:[
+    'Squad moving normally. No indirect fire yet.',
+    '"INCOMING!" Mortar rounds begin impacting near the squad\'s position.',
+    'Soldiers move rapidly out of the impact area — there is no enemy position to return fire on.',
+    'Squad regroups clear of the impact area; the leader accounts for personnel and reports.'
+  ]
+};
+const SCEN_HAS_ENEMY={rtc:true, brk:true, near:true, far:true, idf:false};
+const SCEN_LABEL={rtc:'RTC', brk:'BRK', near:'NEAR', far:'FAR', idf:'IDF'};
+
+function setScenario(mode){
+  ambushMode=mode;
+  ambushStep=0;
+  ['rtc','brk','near','far','idf'].forEach(function(m){
+    const btn=document.getElementById('btn'+SCEN_LABEL[m]);
+    if(btn)btn.classList.toggle('active-toggle',m===mode);
+  });
+  drawAmbush();
+}
+function stepAmbush(d){
+  const steps=SCEN_STEPS[ambushMode];
+  ambushStep=Math.min(steps.length-1,Math.max(0,ambushStep+d));
+  drawAmbush();
+}
+function resetAmbush(){ambushStep=0;drawAmbush();}
+
+function drawAmbush(){
+  const c=document.getElementById('ambushCanvas');
+  if(!c)return;
+  const g=c.getContext('2d'),W=c.width,H=c.height;
+  g.clearRect(0,0,W,H);
+  g.fillStyle=css('--canvas-bg');g.fillRect(0,0,W,H);
+
+  const trailY=H/2+40;
+  g.strokeStyle=css('--border-bright');g.lineWidth=8;g.setLineDash([2,10]);
+  g.beginPath();g.moveTo(40,trailY);g.lineTo(W-40,trailY);g.stroke();g.setLineDash([]);
+  g.fillStyle=css('--text-dim');g.font='12px '+css('--mono');g.textAlign='left';g.textBaseline='top';
+  g.fillText('TRAIL',40,trailY+14);
+
+  const baseX=[140,190,240,290,340];
+  let positions=baseX.map(x=>({x:x,y:trailY}));
+  let firingIdx=[0,1,2,3,4];
+
+  if(SCEN_HAS_ENEMY[ambushMode]){
+    const enemyX = ambushMode==='near' ? 420 : (ambushMode==='far' ? 560 : 480);
+    const enemyY = ambushMode==='near' ? trailY-55 : (ambushMode==='far' ? trailY-170 : trailY-95);
+    g.fillStyle=css('--red');
+    g.beginPath();g.arc(enemyX,enemyY,10,0,2*Math.PI);g.fill();
+    g.font='bold 11px '+css('--mono');g.textAlign='center';g.fillText('ENEMY',enemyX,enemyY-22);
+
+    if(ambushMode==='near'||ambushMode==='far'){
+      if(ambushStep>=1){
+        g.strokeStyle=css('--red');g.lineWidth=1;g.setLineDash([4,4]);
+        g.beginPath();g.arc(enemyX,enemyY,ambushMode==='near'?70:190,0,2*Math.PI);g.stroke();g.setLineDash([]);
+      }
+      if(ambushMode==='near'){
+        if(ambushStep===2)positions=positions.map((p,i)=>({x:enemyX+30+i*14,y:enemyY+10+i*4}));
+        else if(ambushStep===3)positions=positions.map((p,i)=>({x:enemyX+120+i*16,y:trailY-10}));
+      }else{
+        if(ambushStep>=1&&ambushStep<3)positions=positions.map((p,i)=>({x:p.x+i*4,y:trailY+16+((i%2)*10)}));
+        else if(ambushStep===3)positions=positions.map((p,i)=>({x:60+i*18,y:trailY+20}));
+      }
+    }else if(ambushMode==='rtc'){
+      if(ambushStep>=1)positions=positions.map((p,i)=>({x:p.x-10,y:trailY+18+((i%2)*8)}));
+      // steps 1-3 all show suppressing-in-place posture
+    }else if(ambushMode==='brk'){
+      if(ambushStep===1){
+        // S1-S4 move back, S5 stays and fires
+        positions=positions.map((p,i)=> i<4 ? {x:p.x-70,y:trailY+14} : p);
+        firingIdx=[4];
+      }else if(ambushStep===2){
+        // S5 peels back past the others to new rear
+        positions=[
+          {x:baseX[0]-70,y:trailY+14},{x:baseX[1]-70,y:trailY+14},
+          {x:baseX[2]-70,y:trailY+14},{x:baseX[3]-70,y:trailY+14},
+          {x:baseX[0]-110,y:trailY+14}
+        ];
+        firingIdx=[0,1,2,3];
+      }else if(ambushStep===3){
+        positions=positions.map((p,i)=>({x:60+i*22,y:trailY+14}));
+        firingIdx=[];
+      }
+    }
+    if(ambushStep===1 || (ambushMode==='far'&&ambushStep===2) || (ambushMode==='rtc'&&ambushStep>=2) || (ambushMode==='brk'&&ambushStep===2)){
+      g.strokeStyle=css('--amber');g.lineWidth=1.5;g.setLineDash([3,4]);
+      firingIdx.forEach(function(i){
+        const p=positions[i];
+        g.beginPath();g.moveTo(p.x,p.y);g.lineTo(enemyX,enemyY);g.stroke();
+      });
+      g.setLineDash([]);
+    }
+  }else{
+    // indirect fire: no enemy marker, show impact bursts instead
+    if(ambushStep>=1 && ambushStep<3){
+      const impacts=[{x:220,y:trailY-30},{x:280,y:trailY+50},{x:250,y:trailY+10}];
+      impacts.forEach(function(pt){
+        g.strokeStyle=css('--red');g.lineWidth=2;
+        g.beginPath();g.moveTo(pt.x-10,pt.y-10);g.lineTo(pt.x+10,pt.y+10);g.stroke();
+        g.beginPath();g.moveTo(pt.x+10,pt.y-10);g.lineTo(pt.x-10,pt.y+10);g.stroke();
+      });
+      g.fillStyle=css('--red');g.font='bold 12px '+css('--mono');g.textAlign='center';
+      g.fillText('INCOMING',250,trailY-60);
+    }
+    if(ambushStep===2){
+      positions=positions.map((p,i)=>({x:p.x+220+((i%2)*30),y:trailY+ (i%2===0?-60:60)}));
+    }else if(ambushStep===3){
+      positions=positions.map((p,i)=>({x:520+i*16,y:trailY+40}));
+    }
+  }
+
+  positions.forEach((p,i)=>{
+    const moving = (ambushMode==='near'&&ambushStep===2) || (ambushMode==='far'&&ambushStep===3) ||
+                   (ambushMode==='idf'&&(ambushStep===2||ambushStep===3)) ||
+                   (ambushMode==='brk'&&ambushStep>=1) || (ambushMode==='rtc'&&ambushStep===1);
+    g.fillStyle= moving ? css('--amber') : css('--cyan');
+    g.beginPath();g.arc(p.x,p.y,11,0,2*Math.PI);g.fill();
+    g.fillStyle=css('--bg');g.font='bold 10px '+css('--mono');g.textAlign='center';g.textBaseline='middle';
+    g.fillText('S'+(i+1),p.x,p.y+1);
+  });
+
+  g.fillStyle=css('--text-dim');g.font='12px '+css('--mono');g.textAlign='right';g.textBaseline='top';
+  const distLabel={rtc:'~80m contact',brk:'break contact underway',near:'~15m — inside hand-grenade range',far:'~200m — beyond hand-grenade range',idf:'no enemy position — indirect fire'};
+  g.fillText(distLabel[ambushMode],W-14,14);
+
+  const steps=SCEN_STEPS[ambushMode];
+  document.getElementById('ambushStatus').textContent='Step '+(ambushStep+1)+' / '+steps.length+': '+steps[ambushStep];
+}
+setScenario('rtc');
+
+/* ===================== IDENTIFY THE DRILL QUIZ ===================== */
+const DRILLS = [
+  {id:'RTC', label:'React to Contact', sub:'Return fire, suppress'},
+  {id:'BRK', label:'Break Contact', sub:'Disengage, displace'},
+  {id:'NEAR', label:'React to Ambush (Near)', sub:'Assault through'},
+  {id:'FAR', label:'React to Ambush (Far)', sub:'Suppress, break contact'},
+  {id:'IDF', label:'React to Indirect Fire', sub:'Move, don\'t stay put'}
+];
+const BANK = [
+  {f:'RTC', t:'Your team takes sudden automatic weapons fire from a fixed enemy position 150 meters away while moving in a wedge formation.', e:'Direct fire contact with no ambush characteristics (no near-total surprise on a moving element from concealment at close range) — this is React to Contact: return fire, seek cover, locate and suppress the enemy.'},
+  {f:'RTC', t:'The lead element spots enemy movement and receives scattered small-arms fire from an unclear direction.', e:'Direct fire contact of uncertain origin still triggers React to Contact — return fire, seek cover, and locate the enemy before doing anything else.'},
+  {f:'RTC', t:'An IED detonates near your element, followed immediately by small-arms fire from a nearby building.', e:'React to Contact explicitly covers visual, IED, and direct fire contact together — the response is the same: return fire, seek cover, suppress, then the leader decides the next action.'},
+  {f:'BRK', t:'After exchanging fire for several minutes, your squad leader determines your element is outmatched and orders the team to disengage.', e:'A deliberate leader decision to stop the fight and move away is Break Contact, not a reflexive drill — it starts with the order.'},
+  {f:'BRK', t:'The platoon leader decides continuing this fight isn\'t worth it and gives the order to move away from the enemy using a covered route.', e:'This is the definition of Break Contact: return fire, then displace along a covered and concealed route.'},
+  {f:'BRK', t:'Your team leader says "peel" and the rear-most Soldier begins firing while the others move back in sequence.', e:'The peel technique is a standard method for executing Break Contact with a small element — one Soldier fires while the others displace, repeating down the line.'},
+  {f:'NEAR', t:'Your patrol takes sudden fire from a concealed position only 15 meters to the flank.', e:'15 meters is well within hand-grenade range — this is a near ambush. Return fire immediately and assault through the kill zone; staying in place means staying in the enemy\'s most effective fire.'},
+  {f:'NEAR', t:'The enemy initiates an ambush from a tree line just 25 meters away as your squad moves along a trail.', e:'Inside hand-grenade range means near ambush. The kill zone element returns fire and assaults through immediately.'},
+  {f:'NEAR', t:'A grenade could easily reach your position as the enemy opens fire from extremely close range.', e:'If the range is close enough that a grenade could reach you, treat it as a near ambush: assault through the kill zone rather than remaining in it.'},
+  {f:'FAR', t:'Your element takes ambush fire from a ridgeline roughly 250 meters away.', e:'250 meters is well beyond hand-grenade range — this is a far ambush. Return fire and seek cover, suppress the enemy, then break contact or maneuver rather than assaulting across open distance.'},
+  {f:'FAR', t:'The enemy initiates an ambush from a fortified position across an open field, well beyond grenade range.', e:'Too far to close quickly and safely — a far ambush calls for suppression followed by breaking contact or maneuvering with support, not an assault.'},
+  {f:'FAR', t:'Sudden fire hits your patrol from a position on the far side of a wide river, too distant to reach quickly.', e:'Distance and an obstacle both argue against assaulting — this is a far ambush: suppress, then break contact or maneuver.'},
+  {f:'IDF', t:'Mortar rounds begin impacting near your position with no visible enemy firing directly at you.', e:'No visible shooter to return fire against, and rounds falling from above — this is indirect fire. The response is to move out of the impact area, not return fire.'},
+  {f:'IDF', t:'Someone shouts "incoming" as artillery rounds start landing around the patrol base.', e:'"Incoming" is the standard alert for indirect fire. Move rapidly out of the impact area per unit SOP, then account for personnel.'},
+  {f:'IDF', t:'Explosions from an unseen source begin landing progressively closer to your position, with no muzzle flashes visible anywhere.', e:'Walking explosions with no visible firer are a classic indirect fire signature — get out of the impact area rather than taking cover in place.'}
+];
+let order=[], idx=0, score=0, answered=false;
+function buildStrip(){
+  const strip=document.getElementById('strip');
+  strip.innerHTML='';
+  for(let i=0;i<BANK.length;i++){
+    const s=document.createElement('i');
+    if(i<idx)s.className='done';else if(i===idx)s.className='cur';
+    strip.appendChild(s);
+  }
+}
+function renderRound(){
+  answered=false;
+  const item=BANK[order[idx]];
+  document.getElementById('wk-round').textContent='Round '+(idx+1)+' / '+BANK.length;
+  document.getElementById('wk-text').innerHTML=item.t;
+  document.getElementById('wk-explain').classList.remove('show');
+  document.getElementById('wk-next').disabled=true;
+  const opts=document.getElementById('wk-opts');
+  opts.innerHTML='';
+  const shuffledDrills=shuffle(DRILLS);
+  shuffledDrills.forEach(function(f){
+    const b=document.createElement('button');
+    b.innerHTML=f.label+'<span class="sub">'+f.sub+'</span>';
+    b.onclick=function(){pick(f.id,item,b,opts);};
+    opts.appendChild(b);
+  });
+  buildStrip();
+  document.getElementById('wk-total').textContent=BANK.length;
+}
+function pick(chosenId,item,btn,opts){
+  if(answered)return;
+  answered=true;
+  const correct=chosenId===item.f;
+  if(correct)score++;
+  Array.from(opts.children).forEach(function(b){b.disabled=true;});
+  btn.classList.add(correct?'right':'miss');
+  if(!correct){
+    const correctLabel=DRILLS.find(function(f){return f.id===item.f;}).label;
+    Array.from(opts.children).forEach(function(b){
+      if(b.innerHTML.indexOf(correctLabel)>-1)b.classList.add('right');
+    });
+  }
+  const ex=document.getElementById('wk-explain');
+  ex.innerHTML=(correct?'<b>Correct.</b> ':'<b>Not quite.</b> ')+item.e;
+  ex.classList.add('show');
+  document.getElementById('wk-score').textContent=score;
+  document.getElementById('wk-next').disabled=false;
+  buildStrip();
+}
+document.getElementById('wk-next').onclick=function(){
+  idx++;
+  if(idx>=BANK.length){
+    document.getElementById('wk-text').innerHTML='Round complete. Final score: '+score+' / '+BANK.length+'.';
+    document.getElementById('wk-opts').innerHTML='';
+    document.getElementById('wk-round').textContent='Complete';
+    document.getElementById('wk-next').disabled=true;
+    document.getElementById('wk-explain').classList.remove('show');
+    buildStrip();
+    return;
+  }
+  renderRound();
+};
+document.getElementById('wk-restart').onclick=function(){
+  order=shuffle(BANK.map(function(_,i){return i;}));
+  idx=0;score=0;
+  document.getElementById('wk-score').textContent='0';
+  renderRound();
+};
+order=shuffle(BANK.map(function(_,i){return i;}));
+renderRound();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:sans-serif"><a href="/feedback/" style="color:#7fa8b8;text-decoration:none;border-bottom:1px dotted #7fa8b8;padding-bottom:2px;font-size:11px;letter-spacing:.03em">&#128172; Report an issue or leave feedback</a></div>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = null;
+  try{ last = localStorage.getItem('fb_nudge_last'); }catch(e){}
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      try{ localStorage.setItem('fb_nudge_last', String(Date.now())); }catch(e){}
+    }
+  }, 3 * 60 * 1000);
+})();
+</script>
+</body>
+</html>
