@@ -101,6 +101,7 @@ header h1 span{color:var(--text-dim);font-weight:400}
 <div class="qc-banner">&#9888; TRAINING AID &#8212; CONTENT UNDERGOING QC/QA. Refer to your official lesson slides and instructor in class for authoritative doctrine.</div>
 <nav class="tab-nav" id="tabnav">
   <button class="tab-btn active" onclick="switchTab('layout',this)">Build the Layout</button>
+  <button class="tab-btn" onclick="switchTab('mission',this)">Practice Mission</button>
   <button class="tab-btn" onclick="switchTab('site',this)">Good Site or Bad Site?</button>
 </nav>
 
@@ -116,6 +117,34 @@ header h1 span{color:var(--text-dim);font-weight:400}
     <div class="explain" id="hsExplain"></div>
   </div>
   <div class="callout amber"><span class="key">WHY SEPARATE THEM:</span> if the observation position gets compromised, the rest of the team and its gear at the hide position aren't automatically exposed too.</div>
+</div>
+
+<div id="tab-mission" class="tab-content">
+  <div class="panel" id="missionIntroPanel">
+    <div class="panel-title">Mission Brief</div>
+    <div class="lead" id="missionBriefText">Your recon team must move into position and set up on the road junction (NAI) without being spotted. Walk your team to a covered hide position first, then to a separate OP with a clean sightline on the NAI — using BUES to judge every spot. Wrong spot, wrong order, and you'll have to reposition.</div>
+    <div class="readout-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0">
+      <div class="readout" style="background:var(--canvas-bg);border:1px solid var(--border-bright);padding:10px 12px;text-align:center"><div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase">Reps Completed</div><div style="font-family:var(--display);font-size:20px;font-weight:700;color:var(--acc)" id="repsCount">0</div></div>
+      <div class="readout" style="background:var(--canvas-bg);border:1px solid var(--border-bright);padding:10px 12px;text-align:center"><div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase">Best Attempts</div><div style="font-family:var(--display);font-size:20px;font-weight:700;color:var(--acc)" id="bestAttempts">&#8212;</div></div>
+    </div>
+    <div class="btn-row"><button class="cbtn primary" id="missionStartBtn">Enter &#8594;</button></div>
+  </div>
+  <div class="panel" id="missionPlayPanel" style="display:none">
+    <div class="panel-title" id="missionObjectiveTitle">Objective</div>
+    <div class="lead" id="missionObjectiveText"></div>
+    <div class="hs-stage" id="missionStage">
+      <svg id="missionSvg" viewBox="0 0 760 475" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="lead" style="font-size:12px;color:var(--text-dim)">Click anywhere on the map to move your team there. Click a marked spot, then confirm.</div>
+    <div class="btn-row"><button class="cbtn primary" id="missionConfirmBtn" disabled>Confirm This Spot</button><button class="cbtn" id="missionRestartBtn">&#8635; Restart Mission</button></div>
+    <div class="explain" id="missionExplain"></div>
+  </div>
+  <div class="panel" id="missionCompletePanel" style="display:none">
+    <div class="panel-title">Mission Complete</div>
+    <div class="lead" id="missionSummary"></div>
+    <div class="btn-row"><button class="cbtn primary" id="missionRunAgainBtn">Run It Again (New Layout) &#8594;</button></div>
+  </div>
+  <div class="callout amber"><span class="key">TIP:</span> the terrain shuffles every run — the same spot won't always be the right answer, so you can't just memorize a screen position.</div>
 </div>
 
 <div id="tab-site" class="tab-content">
@@ -135,7 +164,7 @@ header h1 span{color:var(--text-dim);font-weight:400}
 <div class="src-strip" style="max-width:1000px;margin:0 auto;padding:0 24px 24px;font-family:'Share Tech Mono',monospace;font-size:11.5px;line-height:1.7;color:var(--text-dim)"><b style="color:var(--text-bright);letter-spacing:1.5px">SOURCE</b> ATP 3-20.98, Scout Platoon &middot; FM 7-93, Appendix E &middot; <a href="../hide-site-guide/" style="color:var(--amber)">Hide Site Explained (guide)</a> &middot; Training aid — confirm with instructor.</div>
 
 <script>
-function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').innerHTML=d?'&#9728; LIGHT MODE':'&#9789; DARK MODE';drawHideSite();}
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('theme-btn').innerHTML=d?'&#9728; LIGHT MODE':'&#9789; DARK MODE';drawHideSite();if(typeof drawMission==='function'&&missionSpots.length)drawMission();}
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
 function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function cssv(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
@@ -370,7 +399,171 @@ document.getElementById('wk-restart').onclick=function(){
 };
 order=shuffle(BANK.map(function(_,i){return i;}));
 renderRound();
+
+/* ===================== PRACTICE MISSION (walk-around scenario) ===================== */
+const MISSION_SLOTS=[
+  {x:150,y:330},{x:520,y:330},{x:150,y:130},{x:610,y:230},{x:330,y:390},{x:420,y:110}
+];
+const MISSION_SPOTS_POOL=[
+  {kind:'good-hide', label:'Shaded tree-line depression', reason:'Blends in and sits back from the NAI — concealed and set back, exactly what a hide position needs.'},
+  {kind:'good-op', label:'Reverse-slope position', reason:'Clear sightline on the NAI while the hillside itself blocks the skyline behind you — solid OP ground.'},
+  {kind:'bad-silhouette', label:'The hilltop', reason:'Highest point around and skylined against open sky — the first place anyone scanning the terrain would check. Fails avoid-Silhouetting.'},
+  {kind:'bad-expected', label:'Right beside the trail', reason:'Sits on the main line of drift — anyone else moving through the area walks right past it. Fails Unexpected.'},
+  {kind:'bad-blend', label:'The one bush clump in an open field', reason:'The only cover for a hundred meters draws the eye instead of blending in. Fails Blend in.'},
+  {kind:'bad-close', label:'Right on top of the junction', reason:'No standoff from the NAI at all — if anyone approaches the junction, they walk right into your position.'}
+];
+const NAI_POS={x:600,y:70};
+let missionSpots=[], missionObjective='hide', missionConfirmedHide=null, missionAttempts=0, missionWrongPicks=0;
+let missionPlayer={x:60,y:440}, missionSelectedSpot=null, missionAnim=null;
+
+function loadMissionStats(){
+  let reps=0, best=null;
+  try{
+    reps=parseInt(localStorage.getItem('hs_mission_reps')||'0',10);
+    const b=localStorage.getItem('hs_mission_best');
+    best=b?parseInt(b,10):null;
+  }catch(e){}
+  document.getElementById('repsCount').textContent=reps;
+  document.getElementById('bestAttempts').textContent=best!==null?best:'\u2014';
+}
+function saveMissionRep(attempts){
+  try{
+    const reps=parseInt(localStorage.getItem('hs_mission_reps')||'0',10)+1;
+    localStorage.setItem('hs_mission_reps', String(reps));
+    const bestStr=localStorage.getItem('hs_mission_best');
+    const best=bestStr?parseInt(bestStr,10):null;
+    if(best===null||attempts<best)localStorage.setItem('hs_mission_best', String(attempts));
+  }catch(e){}
+  loadMissionStats();
+}
+loadMissionStats();
+
+function shuffleMissionSpots(){
+  const slots=shuffle(MISSION_SLOTS);
+  missionSpots=MISSION_SPOTS_POOL.map(function(s,i){
+    return Object.assign({},s,{x:slots[i].x,y:slots[i].y,id:'spot'+i});
+  });
+}
+
+function drawMission(){
+  const svg=document.getElementById('missionSvg');
+  if(!svg)return;
+  const dim=cssv('--text-dim'), red=cssv('--red'), acc=cssv('--acc');
+  let html='<rect x="0" y="0" width="760" height="475" fill="'+cssv('--canvas-bg')+'"/>';
+  html+=treeSvg(90,60)+treeSvg(700,420)+treeSvg(60,420)+treeSvg(690,90);
+  html+='<rect x="'+(NAI_POS.x-45)+'" y="'+(NAI_POS.y-12)+'" width="90" height="24" fill="none" stroke="'+red+'" stroke-width="2"/>';
+  html+='<circle cx="'+NAI_POS.x+'" cy="'+NAI_POS.y+'" r="5" fill="'+red+'"/>';
+  html+='<text x="'+NAI_POS.x+'" y="'+(NAI_POS.y-20)+'" fill="'+red+'" font-family="Share Tech Mono, monospace" font-size="12" text-anchor="middle">NAI</text>';
+  missionSpots.forEach(function(s){
+    const isHideConfirmed = missionConfirmedHide && missionConfirmedHide.id===s.id;
+    const ringColor = isHideConfirmed ? cssv('--green') : dim;
+    html+='<circle cx="'+s.x+'" cy="'+s.y+'" r="16" fill="none" stroke="'+ringColor+'" stroke-width="2" stroke-dasharray="4 4" opacity="0.7"/>';
+    if(isHideConfirmed)html+='<text x="'+s.x+'" y="'+(s.y+30)+'" fill="'+cssv('--green')+'" font-family="Share Tech Mono, monospace" font-size="9" text-anchor="middle">HIDE</text>';
+  });
+  html+='<circle cx="'+missionPlayer.x+'" cy="'+missionPlayer.y+'" r="11" fill="'+acc+'"/>';
+  html+='<text x="'+missionPlayer.x+'" y="'+(missionPlayer.y-16)+'" fill="'+acc+'" font-family="Share Tech Mono, monospace" font-size="10" text-anchor="middle">TEAM</text>';
+  svg.innerHTML=html;
+}
+
+function missionMoveTo(tx,ty){
+  if(missionAnim)cancelAnimationFrame(missionAnim);
+  const startX=missionPlayer.x, startY=missionPlayer.y;
+  const dist=Math.hypot(tx-startX,ty-startY);
+  const duration=Math.max(150,Math.min(700,dist*2));
+  const startTime=performance.now();
+  function step(now){
+    const t=Math.min(1,(now-startTime)/duration);
+    missionPlayer.x=startX+(tx-startX)*t;
+    missionPlayer.y=startY+(ty-startY)*t;
+    drawMission();
+    checkMissionProximity();
+    if(t<1)missionAnim=requestAnimationFrame(step);
+  }
+  missionAnim=requestAnimationFrame(step);
+}
+function checkMissionProximity(){
+  let nearest=null,bd=Infinity;
+  missionSpots.forEach(function(s){
+    const d=Math.hypot(missionPlayer.x-s.x,missionPlayer.y-s.y);
+    if(d<bd){bd=d;nearest=s;}
+  });
+  missionSelectedSpot = bd<=26 ? nearest : null;
+  document.getElementById('missionConfirmBtn').disabled = !missionSelectedSpot;
+}
+document.getElementById('missionStage').addEventListener('click',function(e){
+  const rect=this.getBoundingClientRect();
+  const vx=(e.clientX-rect.left)/rect.width*760, vy=(e.clientY-rect.top)/rect.height*475;
+  missionMoveTo(Math.max(10,Math.min(750,vx)),Math.max(10,Math.min(465,vy)));
+});
+
+function missionObjectivePrompt(){
+  if(missionObjective==='hide'){
+    document.getElementById('missionObjectiveTitle').textContent='Objective 1 of 2 — Hide Position';
+    document.getElementById('missionObjectiveText').textContent='Move your team to a spot that works as a concealed HIDE position — set back, blended in, not silhouetted.';
+  }else{
+    document.getElementById('missionObjectiveTitle').textContent='Objective 2 of 2 — OP / Surveillance Position';
+    document.getElementById('missionObjectiveText').textContent='Now move to a SEPARATE spot with a clean sightline on the NAI for your observation position.';
+  }
+}
+function startMission(){
+  missionObjective='hide';
+  missionConfirmedHide=null;
+  missionAttempts=0;
+  missionWrongPicks=0;
+  missionPlayer={x:60,y:440};
+  shuffleMissionSpots();
+  document.getElementById('missionIntroPanel').style.display='none';
+  document.getElementById('missionCompletePanel').style.display='none';
+  document.getElementById('missionPlayPanel').style.display='block';
+  document.getElementById('missionExplain').classList.remove('show');
+  missionObjectivePrompt();
+  drawMission();
+  checkMissionProximity();
+}
+document.getElementById('missionStartBtn').onclick=startMission;
+document.getElementById('missionRestartBtn').onclick=startMission;
+document.getElementById('missionRunAgainBtn').onclick=startMission;
+
+document.getElementById('missionConfirmBtn').onclick=function(){
+  if(!missionSelectedSpot)return;
+  missionAttempts++;
+  const s=missionSelectedSpot;
+  const ex=document.getElementById('missionExplain');
+  if(missionObjective==='hide'){
+    if(s.kind==='good-hide'){
+      missionConfirmedHide=s;
+      missionObjective='op';
+      ex.innerHTML='<b>Hide position confirmed.</b> '+s.reason;
+      ex.classList.add('show');
+      missionObjectivePrompt();
+      drawMission();
+    }else{
+      missionWrongPicks++;
+      ex.innerHTML='<b>Not this spot.</b> '+s.reason+' Reposition and try another.';
+      ex.classList.add('show');
+    }
+  }else{
+    if(s.id===missionConfirmedHide.id){
+      ex.innerHTML='<b>That\'s your hide position.</b> The OP has to be a separate spot.';
+      ex.classList.add('show');
+      return;
+    }
+    if(s.kind==='good-op'){
+      ex.classList.remove('show');
+      document.getElementById('missionPlayPanel').style.display='none';
+      document.getElementById('missionCompletePanel').style.display='block';
+      const wrongText = missionWrongPicks===0 ? 'Clean run — every spot you confirmed was correct on the first try.' : ('You confirmed '+missionWrongPicks+' wrong spot'+(missionWrongPicks===1?'':'s')+' before getting it right.');
+      document.getElementById('missionSummary').innerHTML='Hide position and OP both set correctly, kept separate, and judged against BUES. Total confirms this run: <b>'+missionAttempts+'</b>. '+wrongText;
+      saveMissionRep(missionAttempts);
+    }else{
+      missionWrongPicks++;
+      ex.innerHTML='<b>Not this spot.</b> '+s.reason+' Reposition and try another.';
+      ex.classList.add('show');
+    }
+  }
+};
 </script>
+
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
