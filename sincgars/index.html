@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RT-1523E ASIP — SINCGARS Radio Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --olive:#4b4f3f; --olive-dark:#33362b; --olive-light:#5d6250;
+  --panel:#2a2c24; --panel-dark:#1c1e18;
+  --metal:#7a7f6e; --metal-dark:#3a3d32;
+  --lcd-bg:#0d1a0f; --lcd-text:#5dffb0; --lcd-dim:#1f6b45;
+  --key-bg:#1a1a18; --key-text:#e8e6dc; --key-border:#3a3830;
+  --stencil:#c8c4a8;
+  --warn:#ff9500; --red:#e04030;
+  --mono:'Share Tech Mono',monospace; --disp:'Rajdhani',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; background:#14140f;
+  background-image:radial-gradient(ellipse at 50% 0%, #1e1e17 0%, #0d0d09 70%);
+  display:flex; align-items:center; justify-content:center; padding:24px 12px;
+  font-family:var(--disp); color:var(--stencil);
+}
+.wrap{max-width:640px; width:100%}
+.hdr{text-align:center; margin-bottom:14px; color:#6b6b5e; font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase}
+.hdr b{color:#9a9a86}
+
+/* ===== Chassis ===== */
+.chassis{
+  background:linear-gradient(160deg, var(--olive-light) 0%, var(--olive) 45%, var(--olive-dark) 100%);
+  border-radius:10px;
+  padding:18px 18px 22px;
+  box-shadow:0 12px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -3px 10px rgba(0,0,0,.35);
+  position:relative;
+  border:1px solid #2a2c22;
+}
+.rivet{position:absolute; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #9a9c86, #4a4c3e 70%); box-shadow:inset 0 0 2px rgba(0,0,0,.6)}
+.rivet.tl{top:10px; left:10px} .rivet.tr{top:10px; right:10px} .rivet.bl{bottom:10px; left:10px} .rivet.br{bottom:10px; right:10px}
+
+.nameplate{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:4px 10px; margin-bottom:12px;
+  background:var(--panel-dark); border-radius:3px; border:1px solid #000;
+}
+.nameplate .nm-l{font-family:var(--mono); font-size:12px; letter-spacing:1.5px; color:var(--stencil)}
+.nameplate .nm-r{font-family:var(--mono); font-size:9px; letter-spacing:1px; color:#8a8a76}
+
+/* ===== Display ===== */
+.display-bay{
+  background:var(--panel-dark); border-radius:5px; padding:10px;
+  border:2px solid #14150f; box-shadow:inset 0 3px 10px rgba(0,0,0,.6);
+  margin-bottom:14px;
+}
+.lcd{
+  background:var(--lcd-bg); border-radius:2px; padding:12px 14px;
+  border:1px solid #000;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.7);
+  font-family:var(--mono); color:var(--lcd-text);
+  min-height:92px;
+  position:relative;
+  overflow:hidden;
+}
+.lcd::before{
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.15) 0px, rgba(0,0,0,.15) 1px, transparent 1px, transparent 3px);
+  pointer-events:none;
+}
+.lcd-row{display:flex; justify-content:space-between; align-items:baseline; font-size:11px; letter-spacing:1px; opacity:.85; margin-bottom:4px}
+.lcd-freq{font-size:30px; font-weight:700; letter-spacing:4px; text-align:center; margin:6px 0; text-shadow:0 0 8px rgba(93,255,176,.5)}
+.lcd-status{font-size:12px; text-align:center; letter-spacing:2px; color:var(--lcd-dim); min-height:16px}
+.lcd.off{color:#0a1a10}
+.lcd.off .lcd-freq, .lcd.off .lcd-row, .lcd.off .lcd-status{opacity:0}
+.lcd-blink{animation:blink 1s step-start infinite}
+@keyframes blink{50%{opacity:.15}}
+
+/* ===== Controls row ===== */
+.controls-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:14px}
+.ctrl-block{text-align:center}
+.ctrl-label{font-family:var(--mono); font-size:9px; letter-spacing:1.5px; color:#a8a894; margin-bottom:6px; text-transform:uppercase}
+
+/* rotary dial */
+.dial-wrap{position:relative; width:150px; height:150px; margin:0 auto}
+.dial-face{
+  width:76px; height:76px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, var(--metal), var(--metal-dark) 75%);
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  box-shadow:0 3px 8px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.25);
+  cursor:pointer;
+}
+.dial-pointer{
+  position:absolute; top:50%; left:50%; width:4px; height:32px;
+  background:linear-gradient(#e8e6dc, #b8b6a0);
+  transform-origin:top center; border-radius:2px;
+  box-shadow:0 0 3px rgba(0,0,0,.4);
+}
+.dial-pointer::after{content:''; position:absolute; bottom:-3px; left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:#d8d6c0}
+.dial-tick{position:absolute; font-family:var(--mono); font-size:9px; color:#c8c6b0; white-space:nowrap; cursor:pointer; padding:2px 4px; border-radius:3px; transition:background .15s,color .15s}
+.dial-tick:hover{background:rgba(0,0,0,.25)}
+.dial-tick.active{color:#fff; font-weight:700; background:rgba(93,255,176,.18)}
+
+/* toggle switch (2-position) */
+.toggle-sw{display:flex; flex-direction:column; align-items:center; gap:4px}
+.toggle-track{
+  width:44px; height:78px; border-radius:8px; background:var(--metal-dark);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.6); position:relative; cursor:pointer;
+  border:1px solid #222;
+}
+.toggle-lever{
+  position:absolute; left:6px; width:32px; height:32px; border-radius:5px;
+  background:linear-gradient(160deg, var(--metal), var(--metal-dark));
+  box-shadow:0 2px 5px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.3);
+  transition:top .18s;
+}
+.toggle-lbl{font-family:var(--mono); font-size:9px; color:#c8c6b0; letter-spacing:1px}
+.toggle-lbl.on{color:#5dffb0}
+
+/* keypad */
+.keypad-bay{background:var(--panel-dark); border-radius:5px; padding:12px; border:2px solid #14150f; box-shadow:inset 0 3px 8px rgba(0,0,0,.5)}
+.keypad-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; max-width:220px; margin:0 auto 8px}
+.key{
+  font-family:var(--mono); font-size:16px; font-weight:700; color:var(--key-text);
+  background:linear-gradient(160deg, #26251f, var(--key-bg));
+  border:1px solid var(--key-border); border-top:1px solid #4a4840;
+  border-radius:5px; padding:12px 0; cursor:pointer; user-select:none;
+  box-shadow:0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.06);
+}
+.key:active{box-shadow:0 0 0 #000; transform:translateY(2px)}
+.fn-row{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; max-width:100%}
+.fn-key{
+  font-family:var(--mono); font-size:10.5px; font-weight:700; letter-spacing:.5px; color:#f0c060;
+  background:linear-gradient(160deg, #2c2820, #1a1712);
+  border:1px solid #4a3d20; border-top:1px solid #6a5830;
+  border-radius:5px; padding:10px 2px; cursor:pointer; user-select:none;
+  box-shadow:0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.05);
+}
+.fn-key:active{box-shadow:0 0 0 #000; transform:translateY(2px)}
+.fn-key.util{color:#8ec8e8}
+
+.hint{font-family:var(--mono); font-size:11px; color:#8a8a76; text-align:center; margin-top:12px; line-height:1.6; padding:0 8px}
+.hint b{color:#c8c6b0}
+
+.src-strip{max-width:640px; margin:16px auto 0; font-family:var(--mono); font-size:10.5px; line-height:1.7; color:#6b6b5e; text-align:center; padding:0 8px}
+.src-strip b{color:#9a9a86; letter-spacing:1px}
+.back-link{text-align:center; margin-top:10px; padding-bottom:4px}
+.back-link a{color:#7fa8b8; text-decoration:none; font-family:sans-serif; font-size:11px; letter-spacing:.03em}
+.back-link a:hover{text-decoration:underline}
+
+@media (max-width:480px){
+  .dial-wrap{width:130px;height:130px}
+  .dial-face{width:64px;height:64px}
+  .lcd-freq{font-size:24px;letter-spacing:2px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">Training Simulator &middot; Not for Operational Use &middot; <b>RT-1523E(C)/U ASIP</b> &middot; AN/PRC-119F Family</div>
+  <div class="chassis">
+    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+    <div class="nameplate">
+      <div class="nm-l">RT-1523E(C)/U</div>
+      <div class="nm-r">SINCGARS &middot; 30&ndash;87.975 MHz</div>
+    </div>
+
+    <div class="display-bay">
+      <div class="lcd" id="lcd">
+        <div class="lcd-row"><span id="lcdMode">SC</span><span id="lcdChan">CH: MAN</span></div>
+        <div class="lcd-freq" id="lcdFreq">-----</div>
+        <div class="lcd-status" id="lcdStatus">SET FCTN TO LD</div>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="ctrl-block">
+        <div class="ctrl-label">Fctn</div>
+        <div class="dial-wrap" id="fctnDial">
+          <div class="dial-face"></div>
+          <div class="dial-pointer" id="fctnPointer"></div>
+        </div>
+      </div>
+      <div class="ctrl-block">
+        <div class="ctrl-label">Chan</div>
+        <div class="dial-wrap" id="chanDial">
+          <div class="dial-face"></div>
+          <div class="dial-pointer" id="chanPointer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="keypad-bay">
+      <div class="keypad-grid" id="numGrid"></div>
+      <div class="fn-row">
+        <div class="fn-key util" id="keyFreq">FREQ</div>
+        <div class="fn-key util" id="keyClr">CLR</div>
+        <div class="fn-key util" id="keySto">STO</div>
+        <div class="fn-key util" id="keyEnt">ENT</div>
+        <div class="fn-key" id="keyLoad">LOAD</div>
+        <div class="fn-key" id="keyBatt">BATT</div>
+        <div class="fn-key" id="keyTime">TIME</div>
+        <div class="fn-key" id="keyMenu">MENU</div>
+      </div>
+    </div>
+
+    <div class="hint" id="hintText">Set <b>FCTN</b> to <b>LD</b>, pick a channel, press <b>FREQ</b>, then <b>CLR</b>, type 5 digits, and press <b>STO</b>.</div>
+  </div>
+
+  <div class="src-strip">
+    <b>SOURCE</b> TM 11-5820-890-10-1, SINCGARS Operator's Manual &middot; TM 11-5820-890-10-6 / -10-7, ICOM Pocket Guides &middot; Training aid &mdash; confirm with instructor.
+  </div>
+  <div class="back-link"><a href="/">&#8592; Back to E-WIT</a></div>
+
+<script>
+/* ===================== STATE ===================== */
+const FCTN_POS=['OFF','STBY','TST','Z','LD','SQ ON','SQ OFF','REM','RXMT'];
+const CHAN_POS=['MAN','CUE','1','2','3','4','5','6'];
+let fctn='OFF', chan='MAN', mode='SC', comsec='PT';
+let channelFreq={MAN:null,CUE:null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null};
+let editBuffer=null; // string of entered digits while editing, or null if not editing
+let blankTimer=null;
+let menuScreen=null; // null | 'MODE' | 'CMSC'
+const MODE_VALS=['SC','FH','FHM'];
+const CMSC_VALS=['PT','CT'];
+
+/* ===================== BUILD DIALS ===================== */
+function buildDial(containerId, positions, angleStart, angleStep, radius){
+  const wrap=document.getElementById(containerId);
+  positions.forEach(function(p,i){
+    const ang=(angleStart+i*angleStep)*Math.PI/180;
+    const x=75+Math.cos(ang)*radius, y=75+Math.sin(ang)*radius;
+    const t=document.createElement('div');
+    t.className='dial-tick';
+    t.textContent=p;
+    t.style.left=x+'px'; t.style.top=y+'px'; t.style.transform='translate(-50%,-50%)';
+    t.dataset.val=p;
+    t.onclick=function(){ containerId==='fctnDial' ? setFctn(p) : setChan(p); };
+    wrap.appendChild(t);
+  });
+}
+buildDial('fctnDial', FCTN_POS, -110, 27.5, 64);
+buildDial('chanDial', CHAN_POS, -100, 28.5, 64);
+
+function updatePointer(pointerId, positions, val, angleStart, angleStep){
+  const i=positions.indexOf(val);
+  const ang=angleStart+i*angleStep;
+  document.getElementById(pointerId).style.transform='rotate('+(ang+90)+'deg)';
+}
+function refreshDialActive(containerId, val){
+  Array.from(document.getElementById(containerId).querySelectorAll('.dial-tick')).forEach(function(t){
+    t.classList.toggle('active', t.dataset.val===val);
+  });
+}
+
+/* ===================== FCTN / CHAN / MODE / COMSEC ===================== */
+function setFctn(v){
+  fctn=v;
+  updatePointer('fctnPointer', FCTN_POS, v, -110, 27.5);
+  refreshDialActive('fctnDial', v);
+  editBuffer=null;
+  menuScreen=null;
+  clearTimeout(blankTimer);
+  render();
+}
+function setChan(v){
+  chan=v;
+  updatePointer('chanPointer', CHAN_POS, v, -100, 28.5);
+  refreshDialActive('chanDial', v);
+  editBuffer=null;
+  render();
+}
+document.getElementById('keyMenu').onclick=function(){
+  if(fctn==='OFF'){flashStatus('TURN RADIO ON FIRST');return;}
+  editBuffer=null;
+  menuScreen = menuScreen===null ? 'MODE' : (menuScreen==='MODE' ? 'CMSC' : null);
+  render();
+};
+
+/* ===================== NUMERIC KEYPAD ===================== */
+const numGrid=document.getElementById('numGrid');
+['1','2','3','4','5','6','7','8','9'].forEach(addNumKey);
+const zeroKey=document.createElement('div'); // placeholder to keep 0 centered bottom row
+addNumKey('0');
+function addNumKey(n){
+  const k=document.createElement('div');
+  k.className='key'; k.textContent=n;
+  k.onclick=function(){ pressDigit(n); };
+  numGrid.appendChild(k);
+}
+function pressDigit(n){
+  if(menuScreen==='MODE'&&n==='7'){
+    mode=MODE_VALS[(MODE_VALS.indexOf(mode)+1)%MODE_VALS.length];
+    render();
+    return;
+  }
+  if(menuScreen==='CMSC'&&n==='7'){
+    comsec=CMSC_VALS[(CMSC_VALS.indexOf(comsec)+1)%CMSC_VALS.length];
+    render();
+    return;
+  }
+  if(menuScreen!==null)return;
+  if(fctn!=='LD'||editBuffer===null)return;
+  if(editBuffer.length>=5)return;
+  editBuffer+=n;
+  resetBlankTimer();
+  render();
+}
+
+/* ===================== FUNCTION KEYS ===================== */
+document.getElementById('keyFreq').onclick=function(){
+  if(fctn!=='LD'){flashStatus('SET FCTN TO LD');return;}
+  const stored=channelFreq[chan];
+  editBuffer = stored ? stored : '00000';
+  resetBlankTimer();
+  render();
+};
+document.getElementById('keyClr').onclick=function(){
+  if(fctn==='Z'){ flashStatus('COMSEC ZEROIZED'); return; }
+  if(fctn!=='LD'||editBuffer===null){flashStatus('SET FCTN TO LD, THEN FREQ');return;}
+  editBuffer='';
+  resetBlankTimer();
+  render();
+};
+document.getElementById('keySto').onclick=function(){
+  if(fctn!=='LD'||editBuffer===null){flashStatus('NOTHING TO STORE');return;}
+  if(editBuffer.length!==5){flashStatus('ENTER 5 DIGITS FIRST');return;}
+  channelFreq[chan]=editBuffer;
+  clearTimeout(blankTimer);
+  editBuffer=null;
+  flashStatus('STORED TO CHAN '+chan);
+  render();
+};
+document.getElementById('keyEnt').onclick=function(){ flashStatus('ENT'); };
+document.getElementById('keyLoad').onclick=function(){
+  if(fctn!=='LD'){flashStatus('SET FCTN TO LD');return;}
+  flashStatus('LOAD: CONNECT FILL DEVICE');
+};
+document.getElementById('keyBatt').onclick=function(){ flashStatus('BATT: 26.4V  GOOD'); };
+document.getElementById('keyTime').onclick=function(){ flashStatus('JULIAN '+julianDate()+'  ZULU'); };
+
+let statusFlashTimer=null;
+function flashStatus(msg){
+  clearTimeout(statusFlashTimer);
+  const el=document.getElementById('lcdStatus');
+  el.textContent=msg;
+  statusFlashTimer=setTimeout(render,1800);
+}
+function resetBlankTimer(){
+  clearTimeout(blankTimer);
+  blankTimer=setTimeout(function(){
+    editBuffer=null;
+    render();
+    flashStatus('DISPLAY TIMED OUT - PRESS FREQ');
+  },7000);
+}
+function julianDate(){
+  const now=new Date();
+  const start=new Date(now.getFullYear(),0,0);
+  const diff=now-start;
+  const day=Math.floor(diff/86400000);
+  return String(now.getFullYear()).slice(2)+String(day).padStart(3,'0');
+}
+
+/* ===================== RENDER ===================== */
+function render(){
+  const lcd=document.getElementById('lcd');
+  const lcdMode=document.getElementById('lcdMode');
+  const lcdChan=document.getElementById('lcdChan');
+  const lcdFreq=document.getElementById('lcdFreq');
+  const lcdStatus=document.getElementById('lcdStatus');
+
+  if(fctn==='OFF'){
+    lcd.classList.add('off');
+    lcdStatus.textContent='';
+    updateHint('Turn <b>FCTN</b> off <b>OFF</b> to power on the radio.');
+    return;
+  }
+  lcd.classList.remove('off');
+  lcdMode.textContent=mode;
+  lcdChan.textContent='CH: '+chan;
+
+  if(menuScreen==='MODE'){
+    lcdFreq.textContent='MODE '+mode;
+    lcdStatus.textContent='PRESS 7 TO CHANGE';
+    updateHint('On the <b>MODE</b> screen: press <b>7</b> to cycle SC &#8594; FH &#8594; FHM. Press <b>MENU</b> again for COMSEC.');
+    return;
+  }
+  if(menuScreen==='CMSC'){
+    lcdFreq.textContent='CMSC '+comsec;
+    lcdStatus.textContent='PRESS 7 TO CHANGE';
+    updateHint('On the <b>CMSC</b> screen: press <b>7</b> to cycle PT &#8594; CT. Press <b>MENU</b> again to exit.');
+    return;
+  }
+
+  if(fctn==='LD'){
+    if(editBuffer!==null){
+      const padded=editBuffer.padEnd(5,'-');
+      lcdFreq.innerHTML='<span'+(editBuffer.length<5?' class="lcd-blink"':'')+'>'+padded.split('').join(' ')+'</span>';
+      lcdStatus.textContent = editBuffer.length===5 ? 'PRESS STO TO SAVE' : 'ENTER '+(5-editBuffer.length)+' MORE DIGIT'+(5-editBuffer.length===1?'':'S');
+    }else{
+      lcdFreq.textContent = channelFreq[chan] ? channelFreq[chan].split('').join(' ') : '-- -- -- -- --';
+      lcdStatus.textContent='PRESS FREQ TO EDIT';
+    }
+    updateHint('Press <b>FREQ</b>, then <b>CLR</b>, type 5 digits, then <b>STO</b> within 7 seconds.');
+    return;
+  }
+
+  if(fctn==='Z'){
+    lcdFreq.textContent='GOOD';
+    lcdStatus.textContent='COMSEC ZEROIZED';
+    updateHint('<b>Z</b> erases loaded COMSEC keys. Confirmed by the GOOD indication.');
+    return;
+  }
+  if(fctn==='TST'){
+    lcdFreq.textContent='GO';
+    lcdStatus.textContent='SELF TEST';
+    updateHint('<b>TST</b> runs the built-in self test and reports GO / NO-GO.');
+    return;
+  }
+  if(fctn==='STBY'){
+    lcdFreq.textContent='STBY';
+    lcdStatus.textContent='STANDBY - LOW POWER';
+    updateHint('<b>STBY</b> keeps the set warm on low power between transmissions.');
+    return;
+  }
+  if(fctn==='SQ ON'||fctn==='SQ OFF'){
+    const f=channelFreq[chan];
+    lcdFreq.textContent = f ? f.split('').join(' ') : '-- -- -- -- --';
+    lcdStatus.textContent = fctn==='SQ ON' ? 'SQUELCH ON - NORMAL OPS' : 'SQUELCH OFF';
+    updateHint('<b>'+fctn+'</b> is the normal operating position for CHAN '+chan+'.');
+    return;
+  }
+  if(fctn==='REM'){
+    lcdFreq.textContent='REM';
+    lcdStatus.textContent='REMOTE CONTROL ACTIVE';
+    updateHint('<b>REM</b> lets an RCU control this set remotely.');
+    return;
+  }
+  if(fctn==='RXMT'){
+    lcdFreq.textContent='RXMT';
+    lcdStatus.textContent='RETRANSMIT LINKED';
+    updateHint('<b>RXMT</b> links two RTs to relay traffic between nets.');
+    return;
+  }
+}
+function updateHint(html){ document.getElementById('hintText').innerHTML=html; }
+
+/* ===================== INIT ===================== */
+setFctn('OFF');
+setChan('MAN');
+render();
+</script>
+</body>
+</html>
