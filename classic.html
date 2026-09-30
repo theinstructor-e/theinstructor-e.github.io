@@ -440,10 +440,10 @@ const ARMY=[
  },
  {
   "nm": "OAKOC Trainer",
-  "ds": "Drag labels onto a terrain sketch to identify each OAKOC factor, plus an 18-item classify drill",
+  "ds": "Scored Practice Mission (find key terrain, cover/concealment, avenue of approach), drag-and-drop terrain map, and an 18-item classify drill",
   "file": "army/oakoc/",
   "kind": "tool",
-  "kw": "OAKOC OCOKA terrain analysis drag map drill quiz observation fields of fire avenues of approach key terrain obstacles cover concealment weather"
+  "kw": "OAKOC OCOKA terrain analysis drag map drill quiz observation fields of fire avenues of approach key terrain obstacles cover concealment weather practice mission walk game score reps"
  },
  {
   "nm": "Route Planning Explained",
@@ -454,10 +454,10 @@ const ARMY=[
  },
  {
   "nm": "Route Planning Trainer",
-  "ds": "Drag rally points and security onto a linear danger area crossing, plus a 15-scenario technique drill",
+  "ds": "Scored Practice Mission (pick the crossing site, far-side rally point, and clearing bypass), drag-and-drop crossing diagram, and a 15-scenario technique drill",
   "file": "army/route-planning/",
   "kind": "tool",
-  "kw": "route planning danger area drag crossing diagram bypass contour linear crossing bounding overwatch traveling overwatch quiz"
+  "kw": "route planning danger area drag crossing diagram bypass contour linear crossing bounding overwatch traveling overwatch quiz practice mission walk game score reps"
  },
  {
   "nm": "Battle Drills Explained",
@@ -468,10 +468,10 @@ const ARMY=[
  },
  {
   "nm": "Battle Drill Trainer",
-  "ds": "Step through an animated near-versus-far ambush reaction, plus a 15-item drill-identification quiz",
+  "ds": "Scored Practice Mission (seek cover, react to the range, consolidate), the animated near/far ambush reaction, and a 15-item drill quiz",
   "file": "army/battle-drills/",
   "kind": "tool",
-  "kw": "battle drill animation simulation react to contact break contact ambush near far indirect fire immediate action quiz"
+  "kw": "battle drill animation simulation react to contact break contact ambush near far indirect fire immediate action quiz practice mission walk game score reps"
  },
  {
   "nm": "Patrol Base Explained",
@@ -482,17 +482,24 @@ const ARMY=[
  },
  {
   "nm": "Patrol Base Trainer",
-  "ds": "Judge patrol base site selection and sequence the priorities of work, two-part drill",
+  "ds": "Scored Practice Mission (pick the site, enter it, post the LP/OP), drag-and-drop perimeter builder, site drill, and work sequencing",
   "file": "army/patrol-base/",
   "kind": "tool",
-  "kw": "patrol base drill quiz site selection good bad priorities of work sequence drag order"
+  "kw": "patrol base drill quiz site selection good bad priorities of work sequence drag order practice mission walk game score reps"
  },
  {
   "nm": "Ranger Tactical Tasks (RTT)",
-  "ds": "Hands-on simulators: M4/M249/M240B function checks, SINCGARS radio, knot matching, DAGR nav, claymore aiming",
+  "ds": "Scored Training Lane (walk to each station and perform the real action: clear the weapon, load the radio, aim the claymore), plus hands-on simulators for all 7 stations",
   "file": "army/rtt/",
   "kind": "tool",
-  "kw": "RTT ranger tactical tasks RAP week M4 M249 M240B function check simulator clear load radio SINCGARS frequency slider radio check knots square knot clove hitch bowline prusik DAGR GPS waypoint drag claymore M18A1 aim fan"
+  "kw": "RTT ranger tactical tasks RAP week M4 M249 M240B function check simulator clear load radio SINCGARS frequency slider radio check knots square knot clove hitch bowline prusik DAGR GPS waypoint drag claymore M18A1 aim fan practice mission training lane walk game score reps"
+ },
+ {
+  "nm": "SINCGARS Radio Simulator",
+  "ds": "A fully modeled RT-1523E(C)/U ASIP front panel — FCTN and CHAN dials, the real MENU+7 mode/COMSEC procedure, and the actual frequency load sequence (FREQ, CLR, digits, STO)",
+  "file": "army/sincgars/",
+  "kind": "tool",
+  "kw": "SINCGARS ASIP RT-1523E radio simulator FCTN CHAN dial MENU mode COMSEC PT CT SC FH load frequency FREQ CLR STO zeroize self test squelch PRC-119"
  },
  {
   "nm": "9-Line MEDEVAC & TCCC Explained",
@@ -778,6 +785,7 @@ function renderArmy(){
     {label:'Battle Drills', files:['army/battle-drills-guide/','army/battle-drills/']},
     {label:'Patrol Base', files:['army/patrol-base-guide/','army/patrol-base/']},
     {label:'Ranger Tactical Tasks (RTT)', files:['army/rtt/']},
+    {label:'SINCGARS Radio Simulator', files:['army/sincgars/']},
     {label:'9-Line MEDEVAC', files:['army/medevac-guide/','army/medevac/']},
     {label:'Hide Site', files:['army/hide-site-guide/','army/hide-site/']}
   ];
