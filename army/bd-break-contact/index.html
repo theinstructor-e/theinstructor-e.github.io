@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WTBD — Break Contact (Squad) | E-WIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b12;--bg2:#0b121c;--panel:#0f1824;--panel2:#142133;--line:#1e3048;
+  --text:#d3e2f2;--dim:#7d92a9;
+  --green:#00ff88;--green-dim:#00ff8855;--green-dark:#00331c;
+  --amber:#ffb300;--amber-dim:#ffb30055;--amber-dark:#332400;
+  --cyan:#00d4ff;--cyan-dim:#00d4ff55;--cyan-dark:#00303a;
+  --red:#ff4444;--red-dim:#ff444455;--red-dark:#330f0f;
+  --purple:#bb88ff;
+  --map-bg:#0a1019;--map-grid:#13202f;--map-tree:#0f3a26;--map-trail:#1b2a3d;--map-low:#14263a;
+}
+:root[data-theme="light"]{
+  --bg:#eef2f6;--bg2:#e3e9f0;--panel:#ffffff;--panel2:#f1f5f9;--line:#b9c6d4;
+  --text:#14212f;--dim:#51657a;
+  --green:#007a45;--green-dim:#007a4566;--green-dark:#d6f2e4;
+  --amber:#a86a00;--amber-dim:#a86a0066;--amber-dark:#fbefd2;
+  --cyan:#006f94;--cyan-dim:#006f9466;--cyan-dark:#d4eef7;
+  --red:#c42323;--red-dim:#c4232366;--red-dark:#fbdede;
+  --purple:#6b3fb5;
+  --map-bg:#dfe7ee;--map-grid:#cdd8e2;--map-tree:#b7d8c4;--map-trail:#c3cfdb;--map-low:#c9d9e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.45;min-height:100vh}
+.mono{font-family:'Share Tech Mono',monospace}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px;white-space:nowrap}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:180px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer;letter-spacing:.08em}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);border-bottom:1px solid var(--green-dim);padding:3px}
+main{max-width:1100px;margin:0 auto;padding:14px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.hero{margin:12px 0 14px}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase}
+.hero h2{font-size:34px;line-height:1.05;text-transform:uppercase;letter-spacing:.04em;margin:4px 0 8px}
+.hero h2 span{color:var(--amber)}
+.hero p{color:var(--dim);max-width:700px}
+.draft{display:inline-block;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber-dim);padding:3px 8px}
+
+/* player */
+.player{background:var(--panel);border:1px solid var(--line)}
+.player-grid{display:grid;grid-template-columns:1fr;gap:0}
+.stage{position:relative;background:var(--map-bg);border-bottom:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:auto;aspect-ratio:480/640}
+.cap{position:absolute;left:8px;top:8px;max-width:44%;background:rgba(7,11,18,.82);border:1px solid var(--amber);padding:5px 9px;pointer-events:none}
+:root[data-theme="light"] .cap{background:rgba(255,255,255,.9)}
+.cap .k{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--amber)}
+.cap .v{font-weight:700;font-size:15px;line-height:1.1;letter-spacing:.06em;text-transform:uppercase}
+.legend{position:absolute;left:8px;bottom:6px;display:flex;gap:12px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.08em;flex-wrap:wrap;pointer-events:none}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:baseline}
+.card{padding:14px}
+.phase-k{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--amber)}
+.card h3{font-size:27px;text-transform:uppercase;letter-spacing:.04em;line-height:1.08;margin:3px 0 8px}
+.card .body{font-size:18px;color:var(--text)}
+.lead{margin-top:12px;border:1px solid var(--amber-dim);border-left:3px solid var(--amber);background:var(--amber-dark);padding:9px 12px}
+.lead .k,.roles .k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--amber);display:block;margin-bottom:2px}
+.roles{margin-top:10px;display:grid;gap:6px}
+.role{display:flex;gap:8px;font-size:16px;line-height:1.3}
+.role b{font-family:'Share Tech Mono',monospace;font-size:12px;min-width:68px;padding-top:2px;letter-spacing:.06em}
+.role.sl b{color:var(--amber)}.role.a b{color:var(--cyan)}.role.b b{color:var(--green)}
+.controls{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cbtn{font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--text);border:1px solid var(--line);padding:9px 14px;cursor:pointer;min-height:40px}
+.cbtn:hover{border-color:var(--amber);color:var(--amber)}
+.cbtn.primary{background:var(--amber);color:#1a1200;border-color:var(--amber);font-weight:700}
+:root[data-theme="light"] .cbtn.primary{color:#fff}
+.cbtn.next{border-color:var(--amber);color:var(--amber)}
+.cbtn:disabled{opacity:.35;cursor:default}
+.progress{display:flex;gap:4px;padding:0 14px 12px;align-items:center}
+.progress button{flex:1;height:14px;border:0;background:var(--line);cursor:pointer;padding:0}
+.progress button.done{background:var(--amber-dim)}
+.progress button.on{background:var(--amber)}
+.spacer{flex:1}
+
+/* sections */
+section.block{margin-top:26px}
+.sec-k{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--amber)}
+section.block h2{font-size:28px;text-transform:uppercase;letter-spacing:.05em;margin:2px 0 12px}
+.tcs{display:grid;gap:10px}
+.tcs .box{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--amber);padding:12px 14px}
+.tcs .box h4{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--amber);margin-bottom:4px;font-weight:400}
+.tcs ul{padding-left:18px}
+.seq{display:grid;gap:8px}
+.step{display:flex;background:var(--panel);border:1px solid var(--line)}
+.step .n{min-width:48px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:var(--amber);background:var(--panel2);border-right:1px solid var(--line)}
+.step .t{padding:10px 12px}
+.step h4{font-size:19px;text-transform:uppercase;letter-spacing:.04em}
+.step p{font-size:16px;color:var(--text);margin:2px 0 6px}
+.watch{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--amber);background:none;border:0;cursor:pointer;padding:2px 0}
+.watch:hover{text-decoration:underline}
+
+.refs{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:14px;color:var(--dim)}
+.refs b{color:var(--text)}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--dim);padding:18px 10px 30px}
+
+@media(min-width:900px){
+  .player-grid{grid-template-columns:minmax(0,480px) 1fr}
+  .stage{border-bottom:0;border-right:1px solid var(--line)}
+  .tcs{grid-template-columns:repeat(3,1fr)}
+}
+/* fullscreen */
+.player:fullscreen,.player.fs{background:var(--bg);overflow:auto;position:fixed;inset:0;z-index:50;width:100%;height:100%}
+.player:fullscreen .stage canvas,.player.fs .stage canvas{max-height:56vh;width:auto;margin:0 auto}
+.player:fullscreen .player-grid,.player.fs .player-grid{grid-template-columns:1fr}
+@media(min-width:900px){
+  .player:fullscreen .player-grid,.player.fs .player-grid{grid-template-columns:minmax(0,1fr) 420px}
+  .player:fullscreen .stage canvas,.player.fs .stage canvas{max-height:84vh}
+}
+
+/* ===== v2 restyle: E-WIT green/cyan identity, tabbed card, chip timeline ===== */
+.eyebrow,.phase-k,.sec-k{color:var(--cyan)}
+.hero h2{font-size:30px;letter-spacing:.06em;color:var(--text);border-left:4px solid var(--green);padding-left:12px}
+.hero h2 span{color:var(--text)}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.hero-tags span{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--cyan);border:1px solid var(--cyan-dim);padding:2px 8px}
+.draft{color:var(--amber)}
+.player{border-color:var(--line);border-top:2px solid var(--green)}
+.cap{left:10px;top:10px;max-width:40%;border:1px solid var(--cyan);display:flex;gap:8px;align-items:center;padding:4px 10px 4px 4px}
+.cap .num{width:28px;height:28px;border-radius:50%;background:var(--cyan);color:#001a22;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none}
+.cap .k{color:var(--cyan)}
+.cap .v{font-size:13px;line-height:1.1}
+.stepline{display:flex;gap:12px;align-items:center}
+.stepnum{width:46px;height:46px;border:2px solid var(--green);color:var(--green);font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;clip-path:polygon(25% 0,100% 0,100% 75%,75% 100%,0 100%,0 25%);background:var(--green-dark)}
+.stepof{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.card h3{font-size:24px;margin:0}
+.tabs{display:flex;margin:12px 0 10px;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.06em;background:none;border:0;border-bottom:2px solid transparent;color:var(--dim);padding:9px 4px;cursor:pointer;text-transform:uppercase}
+.tabs button.on{color:var(--green);border-bottom-color:var(--green)}
+.keybox{border:1px solid var(--green-dim);background:var(--green-dark);padding:12px 14px;font-size:18px}
+.keybox .k{display:block;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--green);margin-bottom:3px}
+.controls{gap:6px;padding:10px 12px;background:var(--panel2)}
+.cbtn{padding:8px 12px;font-size:12px;border-radius:0}
+.cbtn.primary{background:var(--green);border-color:var(--green);color:#00180d;min-width:92px}
+:root[data-theme="light"] .cbtn.primary{color:#fff}
+.cbtn:hover{border-color:var(--green);color:var(--green)}
+.cbtn.primary:hover{color:#00180d}
+.cbtn.next{border-color:var(--line);color:var(--text)}
+.cbtn.ico{min-width:38px;padding:8px 0;font-size:15px}
+.controls{flex-wrap:nowrap}.cbtn.primary{min-width:84px;padding:8px 6px}#speedBtn{padding:8px 8px}.spacer{flex:1;min-width:0}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-top:1px solid var(--line);scrollbar-width:thin}
+.chips button{flex:none;display:flex;align-items:center;gap:6px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:.03em;text-transform:uppercase;background:transparent;color:var(--dim);border:1px solid var(--line);padding:4px 10px 4px 4px;cursor:pointer;white-space:nowrap}
+.chips button b{font-family:'Share Tech Mono',monospace;font-weight:400;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--panel2);font-size:12px}
+.chips button.done{color:var(--text)}
+.chips button.done b{background:var(--green-dark);color:var(--green)}
+.chips button.on{border-color:var(--green);color:var(--green)}
+.chips button.on b{background:var(--green);color:#00180d}
+section.block h2{font-size:24px;border-left:4px solid var(--cyan);padding-left:10px}
+.seg{display:flex;border:1px solid var(--line);margin-bottom:0}
+.seg button{flex:1;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;padding:10px 4px;background:var(--panel);color:var(--dim);border:0;border-right:1px solid var(--line);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--cyan-dark);color:var(--cyan)}
+.tcspane{background:var(--panel);border:1px solid var(--line);border-top:0;padding:14px;font-size:18px}
+.tcspane ul{padding-left:20px}
+details.row{background:var(--panel);border:1px solid var(--line);margin-bottom:6px}
+details.row summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 12px}
+details.row summary::-webkit-details-marker{display:none}
+details.row summary .n{font-family:'Share Tech Mono',monospace;color:var(--green);border:1px solid var(--green-dim);width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex:none}
+details.row summary h4{font-size:18px;text-transform:uppercase;letter-spacing:.04em;flex:1}
+details.row summary:after{content:'+';font-family:'Share Tech Mono',monospace;color:var(--dim);font-size:18px}
+details.row[open] summary:after{content:'\2212'}
+details.row .in{padding:0 12px 12px 54px}
+details.row .in p{font-size:16px;margin-bottom:6px}
+.watch{color:var(--cyan);border:1px solid var(--cyan-dim);padding:5px 10px;font-size:11px}
+.watch:hover{background:var(--cyan-dark);text-decoration:none}
+
+@media print{.controls,.progress,.theme-btn{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <span class="mil-badge">E-WIT</span>
+  <h1>Warrior Tasks &amp; Battle Drills</h1>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">LIGHT</button>
+</header>
+<div class="statusbar">UNCLASSIFIED</div>
+
+<main>
+  <a class="back" href="../wtbd/">&#9664; WTBD &amp; FOOM</a>
+  <div class="hero">
+    <div class="eyebrow">WTBD &middot; Squad Level</div>
+    <h2>Break Contact</h2>
+    <div class="hero-tags"><span>10 STEPS</span><span>ANIMATED MAP</span></div>
+    <p>Run the drill from above, one step at a time or on autoplay. Chevrons show which way each Soldier faces. Cyan is A Team, green is B Team, amber is the Squad Leader, red is the enemy.</p>
+    <span class="draft mono">DRAFT &mdash; INSTRUCTOR REVIEW PENDING &middot; VERIFY AGAINST CURRENT PUBS</span>
+  </div>
+
+  <div class="player" id="player">
+    <div class="player-grid">
+      <div class="stage">
+        <canvas id="map" width="960" height="1280"></canvas>
+        <div class="cap"><div class="num" id="capN">1</div><div><div class="k" id="capK">STEP 1 OF 10</div><div class="v" id="capV">Contact</div></div></div>
+        <div class="legend"><span><i style="background:var(--amber)"></i>SL</span><span><i style="background:var(--cyan)"></i>A TEAM</span><span><i style="background:var(--green)"></i>B TEAM</span><span><i style="background:var(--red)"></i>ENEMY</span></div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="stepline"><div class="stepnum" id="stepNum">1</div><div><div class="stepof" id="stepOf">STEP 1 OF 10</div><h3 id="stepTitle"></h3></div></div>
+          <div class="tabs" id="cardTabs"><button data-k="what" class="on" onclick="setTab('what')">What happens</button><button data-k="who" onclick="setTab('who')">Who does what</button><button data-k="key" onclick="setTab('key')">Key point</button></div>
+          <div id="cardPane"></div>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="cbtn ico" id="prevBtn" onclick="step(-1)" aria-label="Previous step">&#9664;</button>
+      <button class="cbtn primary" id="playBtn" onclick="togglePlay()">&#9654; Play</button>
+      <button class="cbtn ico" id="nextBtn" onclick="step(1)" aria-label="Next step">&#9654;</button>
+      <button class="cbtn" id="speedBtn" onclick="cycleSpeed()">1&times;</button>
+      <span class="spacer"></span>
+      <button class="cbtn ico" onclick="resetAnim()" aria-label="Reset">&#8634;</button>
+      <button class="cbtn ico" onclick="toggleFS()" aria-label="Fullscreen">&#9974;</button>
+    </div>
+    <div class="chips" id="progress"></div>
+  </div>
+
+  <section class="block">
+    <div class="sec-k">DRILL STANDARD</div>
+    <h2>Task, Conditions, Standards</h2>
+    <div class="seg" id="tcsSeg"><button class="on" onclick="setTCS(0)">TASK</button><button onclick="setTCS(1)">CONDITIONS</button><button onclick="setTCS(2)">STANDARDS</button></div>
+    <div class="tcspane" id="tcsPane"></div>
+  </section>
+
+  <section class="block">
+    <div class="sec-k">STEP BY STEP</div>
+    <h2>All 10 Steps</h2>
+    <div class="seq" id="seq"></div>
+  </section>
+
+    <div class="refs">
+    <b>References:</b> ATP 3-21.8, <i>Infantry Platoon and Squad</i>; TC 3-21.76, <i>Ranger Handbook</i>. Phase wording is original and summarizes the drill sequence; confirm details (positions, signals, standards) against the current publication before use in the classroom.
+  </div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* ============ DATA ============ */
+const W=480,H=640;
+const ENEMY=[[205,80],[235,72],[262,76],[292,86]], ECTR=[248,78], PL=[240,630], RP=[240,545];
+const START={SL:[240,315],ATL:[240,250],AAR:[218,266],AGL:[262,266],ARM:[240,282],
+             BTL:[240,355],BAR:[218,371],BGL:[262,371],BRM:[240,387]};
+const UIDS=Object.keys(START);
+const TEAM={SL:'sl',ATL:'a',AAR:'a',AGL:'a',ARM:'a',BTL:'b',BAR:'b',BGL:'b',BRM:'b'};
+const AU=['ATL','AAR','AGL','ARM'], BU=['BTL','BAR','BGL','BRM'];
+const SMOKE=[[190,208],[240,196],[296,210],[232,226],[272,228],[212,190]];
+
+const P=[
+ {t:'Contact!',s:'Contact',cap:'Contact front!',
+  body:'The enemy opens fire from the treeline to the front. This time it is more than one weapon, and the volume is heavy. The Soldiers react the way they always do: shout the contact and direction, drop behind the nearest cover, and return fire.',
+  lead:'The first reaction is the same for every contact. The decision to assault or break contact comes after it.',
+  roles:[['A TEAM','a','Shout CONTACT and direction. Take cover. Return fire.'],['B TEAM','b','Take cover where you are. Look for better ground.'],['SL','sl','Take cover. Find the enemy. Start sizing up the fight.']],
+  pos:{},move:0},
+ {t:'Return Fire & Take Cover',s:'Return fire',cap:'Cover and fire',
+  body:'A Team, closest to the enemy, gets on line behind the best cover it can find and returns aimed fire. B Team moves into covered low ground on the flank so it is not caught in the open. The SL moves up to see the fight for himself.',
+  lead:'Cover first, then volume of fire. Do not stay bunched up in the open.',
+  roles:[['A TEAM','a','Get on line. Aimed fire at the enemy.'],['B TEAM','b','Move to covered ground on the flank.'],['SL','sl','Moves up to see the fight and control both teams.']],
+  pos:{AAR:[195,290],ATL:[228,290],AGL:[261,290],ARM:[294,290],BAR:[85,360],BTL:[110,360],BGL:[135,360],BRM:[160,360],SL:[232,333]},move:2.2},
+ {t:'Assess & SALT Report',s:'SALT',cap:'SALT report to PL',
+  body:'The SL sizes up the fight. The enemy has several weapons, more Soldiers may be moving up, and the squad has little cover where it stands. He sends a SALT report to the platoon leader: Size, Activity, Location, Time.',
+  lead:'Know the signs you cannot win here: a stronger enemy, poor cover, no covered flank, low ammo, or a mission that says do not engage.',
+  roles:[['SL','sl','Assess enemy, terrain, and mission. Send SALT to the PL.'],['A TEAM','a','Keep firing. Report any enemy changes.'],['B TEAM','b','Stay in cover. Watch the flank.']],
+  pos:{SL:[220,335]},move:0.8},
+ {t:'Decide & Order: Break Contact',s:'Decide',cap:'Decision: break contact',
+  body:'The SL decides to break contact instead of assaulting. He gives a short order to both team leaders: A Team keeps firing as the base of fire, B Team bounds back first to the next covered position toward the rally point, and smoke goes out to screen the movement. He can also ask the PL for supporting fires.',
+  lead:'Breaking contact is not running away. It is a controlled, covered movement, and it is decided on enemy strength, terrain, ammo, and mission.',
+  roles:[['SL','sl','Chooses to break contact. Gives the order. Names the rally point.'],['A TEAM','a','Base of fire. Keep suppressing.'],['B TEAM','b','Leader gets the order. Prepares to bound first.']],
+  pos:{SL:[198,345]},move:1.6},
+ {t:'Suppress & Pop Smoke',s:'Smoke',cap:'Smoke out',
+  body:'A Team keeps the enemy\'s head down while smoke goes out between the squad and the enemy. The smoke blocks the enemy\'s view, so the squad can move and the enemy can only fire blind.',
+  lead:'Smoke only helps if it lands between you and the enemy. Check the wind so it screens you instead of drifting off.',
+  roles:[['A TEAM','a','Keep firing. A Soldier throws smoke toward the enemy.'],['B TEAM','b','Ready to move on the SL\'s word.'],['SL','sl','Confirms the smoke is in place before the first bound.']],
+  pos:{},move:0},
+ {t:'First Bound: B Team Moves Back',s:'1st bound',cap:'B Team bounds back',
+  body:'B Team bounds back to the next covered position while A Team keeps firing. B Team moves fast, turns, gets on line, and starts covering. Nobody moves unless someone else is firing.',
+  lead:'One team always fires while the other moves. If the base of fire stops, the bound stops.',
+  roles:[['B TEAM','b','Bound back to the next cover. Turn and get on line.'],['A TEAM','a','Base of fire. Suppress until B Team is set.'],['SL','sl','Moves with B Team and controls the timing.']],
+  pos:{BAR:[85,455],BTL:[110,455],BGL:[135,455],BRM:[160,455],SL:[175,405]},move:3.0,route:true,routeU:'BTL'},
+ {t:'Second Bound: A Team Moves Back',s:'2nd bound',cap:'A Team bounds back',
+  body:'B Team now covers while A Team bounds back, passing B Team\'s position to the next covered position. Smoke still screens the movement, and the SL controls the interval.',
+  lead:'Bound back past the covering team, not just up to it. The covering team stays useful and the squad keeps gaining distance.',
+  roles:[['A TEAM','a','Bound back past B Team. Turn and get on line.'],['B TEAM','b','Base of fire. Suppress until A Team is set.'],['SL','sl','Moves back with the squad. Keeps the interval.']],
+  pos:{AAR:[195,545],ATL:[228,545],AGL:[261,545],ARM:[294,545],SL:[175,495]},move:3.6,route:true,routeU:'ATL'},
+ {t:'Third Bound: Contact Broken',s:'3rd bound',cap:'B Team bounds again',
+  body:'B Team bounds again, this time past A Team. Distance and smoke steadily cut down the enemy\'s ability to see and hit the squad. When the enemy stops engaging effectively, contact is broken.',
+  lead:'Keep bounding until you are out of the enemy\'s effective fire and sight. Do not stop at the first bit of cover.',
+  roles:[['B TEAM','b','Bound back past A Team. Get on line.'],['A TEAM','a','Base of fire. Cover B Team.'],['SL','sl','Judges when the enemy has stopped engaging.']],
+  pos:{BAR:[85,598],BTL:[110,598],BGL:[135,598],BRM:[160,598],SL:[175,560]},move:3.0,route:true,routeU:'BTL'},
+ {t:'Move to Rally Point & Security',s:'Rally point',cap:'Rally point security',
+  body:'Once clear, the squad moves to the rally point and sets all-around security. Teams face outward and watch for an enemy that pursues or moves to cut the squad off.',
+  lead:'Contact is not broken until the enemy stops engaging. Watch for pursuit and for a flanking enemy.',
+  roles:[['ALL','a','Move to the rally point. Face outward. Cover your sector.'],['SL','sl','Positions the teams. Checks the enemy\'s activity.']],
+  pos:(function(){const c=RP,r=50,o={SL:c.slice()};
+    const ord=['ATL','AGL','ARM','BRM','BTL','BGL','BAR','AAR'];
+    ord.forEach((u,i)=>{const a=(-90+i*45)*Math.PI/180;o[u]=[c[0]+r*Math.cos(a),c[1]+r*Math.sin(a)];});return o;})(),
+  move:3.2},
+ {t:'Report & Reorganize',s:'Report',cap:'Report and reorganize',
+  body:'The SL reports to the PL that contact is broken, with the enemy\'s last known location and the squad\'s status. Leaders check ammo, casualties, and equipment (ACE), redistribute ammo, treat and evacuate casualties, and the squad continues the mission as the PL directs.',
+  lead:'Report quickly and accurately. The PL needs the enemy\'s location and your status to adjust his plan.',
+  roles:[['SL','sl','Reports to the PL. Takes the ACE from the TLs.'],['TLs','a','Check ammo, casualties, equipment. Cross-level as needed.'],['ALL','b','Keep all-around security until the work is done.']],
+  pos:{},move:0,radio:true}
+];
+const N=P.length;
+
+/* build final positions + polyline paths */
+const FINAL=[],PATH=[];
+(function(){
+  let prev=JSON.parse(JSON.stringify(START));
+  P.forEach((ph,i)=>{
+    const fin=JSON.parse(JSON.stringify(prev));
+    Object.keys(ph.pos).forEach(u=>fin[u]=ph.pos[u]);
+    const paths={};
+    UIDS.forEach(u=>{
+      const pts=[prev[u]];
+      if(ph.via&&ph.via.units.includes(u)) pts.push([fin[u][0]+ph.via.dx,ph.via.y]);
+      pts.push(fin[u]);
+      paths[u]=pts;
+    });
+    FINAL.push(fin);PATH.push(paths);
+    ph.settle=Math.max(ph.move,2.0);
+    ph.hold=2.4;
+    prev=fin;
+  });
+})();
+
+/* ============ STATE ============ */
+let cur=0,t=0,playing=false,speed=1,clock=0,lastTs=0;
+const SPEEDS=[0.5,1,1.5,2];
+const cv=document.getElementById('map'),ctx=cv.getContext('2d');
+let C={};
+function readColors(){
+  const s=getComputedStyle(document.documentElement);
+  const g=n=>s.getPropertyValue(n).trim();
+  C={bg:g('--map-bg'),grid:g('--map-grid'),tree:g('--map-tree'),trail:g('--map-trail'),low:g('--map-low'),
+     text:g('--text'),dim:g('--dim'),amber:g('--amber'),cyan:g('--cyan'),green:g('--green'),red:g('--red'),
+     line:g('--line'),light:document.documentElement.getAttribute('data-theme')==='light'};
+}
+
+/* ============ GEOMETRY HELPERS ============ */
+const ease=x=>x<=0?0:x>=1?1:x*x*(3-2*x);
+function along(pts,f){
+  let L=0;const seg=[];
+  for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg.push(d);L+=d;}
+  if(L===0)return {p:pts[pts.length-1].slice(),dir:null};
+  let d=f*L;
+  for(let i=0;i<seg.length;i++){
+    if(d<=seg[i]||i===seg.length-1){
+      const k=seg[i]?Math.min(1,d/seg[i]):1;
+      const a=pts[i],b=pts[i+1];
+      return {p:[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k],dir:Math.atan2(b[1]-a[1],b[0]-a[0])};
+    }
+    d-=seg[i];
+  }
+}
+function unitState(u,ph,tt){
+  const m=P[ph].move;
+  const f=m>0?ease(tt/m):1;
+  const r=along(PATH[ph][u],f);
+  const moving=m>0&&f>0&&f<1&&r.dir!==null;
+  return {p:r.p,dir:r.dir,moving};
+}
+/* ============ DRAW ============ */
+function drawTerrain(){
+  ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=C.grid;
+  for(let x=0;x<=W;x+=24)for(let y=0;y<=H;y+=24){ctx.fillRect(x-1,y-1,2,2);}
+  ctx.strokeStyle=C.grid;ctx.lineWidth=1;
+  [300,360,420].forEach(c=>{ctx.beginPath();ctx.moveTo(300,c-60);ctx.bezierCurveTo(360,c-90,430,c-20,W,c-70);ctx.stroke();});
+  // low ground
+  ctx.fillStyle=C.low;ctx.beginPath();
+  ctx.moveTo(40,330);ctx.quadraticCurveTo(110,320,185,345);ctx.lineTo(190,440);ctx.quadraticCurveTo(110,470,35,440);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=C.dim;ctx.setLineDash([3,5]);ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=C.dim;ctx.font='10px "Share Tech Mono"';ctx.textAlign='left';ctx.fillText('LOW GROUND',48,432);
+  // trail
+  ctx.strokeStyle=C.trail;ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(240,H);ctx.lineTo(240,150);ctx.stroke();
+  ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.setLineDash([10,12]);ctx.beginPath();ctx.moveTo(240,H);ctx.lineTo(240,150);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=C.dim;ctx.textAlign='left';ctx.fillText('TRAIL',250,470);
+  // treeline
+  for(let i=0;i<70;i++){
+    const x=((i*53)%W), y=18+((i*29)%58);
+    ctx.fillStyle=C.tree;ctx.beginPath();ctx.arc(x+(i%3)*4,y,9+(i%4)*2,0,7);ctx.fill();
+  }
+  ctx.fillStyle=C.dim;ctx.textAlign='right';ctx.fillText('TREELINE',W-8,100);
+  [[390,300],[430,380],[70,250],[50,170],[410,190],[330,260]].forEach((b,i)=>{
+    ctx.fillStyle=C.tree;ctx.globalAlpha=.7;ctx.beginPath();ctx.arc(b[0],b[1],11+i%3*3,0,7);ctx.fill();ctx.globalAlpha=1;});
+  // enemy position
+  ctx.strokeStyle=C.red;ctx.globalAlpha=.5;ctx.setLineDash([5,6]);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.arc(248,80,66,0,7);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  // north arrow
+  ctx.strokeStyle=C.dim;ctx.fillStyle=C.dim;ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(W-22,52);ctx.lineTo(W-22,24);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W-22,18);ctx.lineTo(W-27,28);ctx.lineTo(W-17,28);ctx.closePath();ctx.fill();
+  ctx.textAlign='center';ctx.fillText('N',W-22,66);
+}
+function arrowHead(x,y,a,col,sz){
+  ctx.fillStyle=col;ctx.beginPath();
+  ctx.moveTo(x,y);ctx.lineTo(x-sz*Math.cos(a-0.45),y-sz*Math.sin(a-0.45));ctx.lineTo(x-sz*Math.cos(a+0.45),y-sz*Math.sin(a+0.45));ctx.closePath();ctx.fill();
+}
+function tracer(a,b,col,inten,dashBase){
+  ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.globalAlpha=.35+.5*inten;
+  ctx.setLineDash([4,dashBase/inten]);ctx.lineDashOffset=-clock*170;
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  ctx.setLineDash([]);ctx.lineDashOffset=0;ctx.globalAlpha=1;
+  if(Math.sin(clock*40+a[0])>0.2){ctx.fillStyle=col;ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(a[0],a[1],3.2,0,7);ctx.fill();ctx.globalAlpha=1;}
+}
+function enemyFiring(ph,tt){return ph<=7||(ph===8&&tt<1.0);}
+function smokeLevel(ph,tt){
+  if(ph<4)return 0;
+  if(ph===4)return Math.min(1,tt/1.6);
+  if(ph<8)return 1;
+  if(ph===8)return 1-0.6*Math.min(1,tt/3);
+  return 0.4*Math.max(0,1-tt/4);
+}
+function lbl(txt,x,y,col){ctx.fillStyle=col;ctx.font='10px "Share Tech Mono"';ctx.textAlign='center';ctx.fillText(txt,x,y);}
+function draw(){
+  drawTerrain();
+  const st={};UIDS.forEach(u=>st[u]=unitState(u,cur,t));
+  const sm=smokeLevel(cur,t);
+  const eFire=enemyFiring(cur,t);
+
+  // rally point marker
+  if(cur>=3){
+    ctx.strokeStyle=C.amber;ctx.globalAlpha=.7;ctx.setLineDash([4,4]);ctx.lineWidth=1.2;
+    ctx.strokeRect(RP[0]-10,RP[1]-10,20,20);ctx.setLineDash([]);ctx.globalAlpha=1;
+    ctx.fillStyle=C.amber;ctx.font='10px "Share Tech Mono"';ctx.textAlign='left';ctx.fillText('RALLY POINT',RP[0]+90,RP[1]+3);
+  }
+  // route preview
+  if(P[cur].route){
+    const pts=PATH[cur][P[cur].routeU],col=TEAM[P[cur].routeU]==='a'?C.cyan:C.green;
+    ctx.strokeStyle=col;ctx.globalAlpha=.55;ctx.lineWidth=1.5;ctx.setLineDash([6,6]);
+    ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+    const e=pts[pts.length-1],q=pts[pts.length-2];arrowHead(e[0],e[1],Math.atan2(e[1]-q[1],e[0]-q[0]),col,9);
+  }
+  // enemy fire
+  if(eFire){
+    ENEMY.forEach((e,i)=>{
+      const tgt=cur<4?st[AU[i]].p:SMOKE[(i*2)%SMOKE.length];
+      tracer(e,tgt,C.red,cur<4?.8:.45,10);
+    });
+  }
+  // friendly fire
+  const inten=cur<3?0.55:1;
+  const aFire=cur===0?t>0.9:((cur>=1&&cur<=5)||cur===7);
+  if(aFire){AU.forEach((u,i)=>{if(cur<3&&i===3)return;tracer(st[u].p,ENEMY[i%4],C.cyan,inten,12);});}
+  if(cur===6){BU.forEach((u,i)=>tracer(st[u].p,ENEMY[i%4],C.green,.9,12));}
+  // smoke grenade arc
+  if(cur===4&&t<1.0){
+    const a=st.AGL.p,b=SMOKE[1],m=[(a[0]+b[0])/2+20,(a[1]+b[1])/2-40],k=t/1.0;
+    ctx.strokeStyle=C.amber;ctx.lineWidth=1.2;ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.quadraticCurveTo(m[0],m[1],b[0],b[1]);ctx.stroke();ctx.setLineDash([]);
+    const x=(1-k)*(1-k)*a[0]+2*(1-k)*k*m[0]+k*k*b[0],y=(1-k)*(1-k)*a[1]+2*(1-k)*k*m[1]+k*k*b[1];
+    ctx.fillStyle=C.amber;ctx.beginPath();ctx.arc(x,y,3.5,0,7);ctx.fill();
+  }
+  // smoke
+  if(sm>0){
+    SMOKE.forEach((c,i)=>{
+      const r=6+36*sm,dx=Math.sin(clock*.5+i)*4,dy=Math.cos(clock*.4+i*2)*3;
+      ctx.fillStyle=C.light?'rgba(90,100,115,1)':'rgba(170,185,200,1)';ctx.globalAlpha=.22*sm;
+      ctx.beginPath();ctx.arc(c[0]+dx,c[1]+dy,r,0,7);ctx.fill();ctx.globalAlpha=1;
+    });
+    if(sm>.5){lbl('SMOKE',240,170,C.dim);}
+  }
+  // radio
+  const rad=(cur===2)||(P[cur].radio&&t>1.0);
+  if(rad){
+    const a=st.SL.p;ctx.strokeStyle=C.amber;ctx.lineWidth=1.2;ctx.globalAlpha=.7;ctx.setLineDash([2,4]);ctx.lineDashOffset=-clock*60;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(PL[0],PL[1]);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
+    for(let i=0;i<3;i++){const r=((clock*30+i*14)%42);ctx.globalAlpha=1-r/42;ctx.beginPath();ctx.arc(a[0],a[1],8+r,0,7);ctx.stroke();}
+    ctx.globalAlpha=1;lbl(cur===2?'SALT > PL':'REPORT > PL',PL[0]+60,PL[1]-4,C.amber);
+  }
+  // order lines
+  if(cur===3&&t>0.3){
+    ctx.strokeStyle=C.amber;ctx.lineWidth=1.4;ctx.setLineDash([4,4]);ctx.lineDashOffset=-clock*50;
+    [st.ATL.p,st.BTL.p].forEach(p=>{ctx.beginPath();ctx.moveTo(st.SL.p[0],st.SL.p[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();});
+    ctx.setLineDash([]);ctx.lineDashOffset=0;
+    lbl('BREAK CONTACT',st.SL.p[0]+40,st.SL.p[1]+26,C.amber);
+  }
+  // enemy
+  function hex(r){ctx.beginPath();for(let k=0;k<6;k++){const a=k*Math.PI/3;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();}
+  ENEMY.forEach((e,i)=>{
+    ctx.save();ctx.translate(e[0],e[1]);
+    hex(9);ctx.fillStyle=C.red;ctx.fill();
+    if(i===1){ctx.fillStyle=C.light?'#fff':'#1a0505';ctx.font='bold 8px "Share Tech Mono"';ctx.textAlign='center';ctx.fillText('MG',0,3);}
+    if(eFire){ctx.strokeStyle=C.red;ctx.globalAlpha=.6*(.5+.5*Math.sin(clock*9+i));hex(15);ctx.stroke();ctx.globalAlpha=1;}
+    else{ctx.strokeStyle=C.dim;ctx.setLineDash([3,3]);hex(15);ctx.stroke();ctx.setLineDash([]);}
+    ctx.restore();
+  });
+  lbl(eFire?'EN FORCE (4+)':'EN: NO LONGER ENGAGING',300,ENEMY[0][1]-26,eFire?C.red:C.dim);
+
+  // units
+  const RC=RP;
+  UIDS.forEach(u=>{
+    const s=st[u],tm=TEAM[u];
+    const col=tm==='sl'?C.amber:tm==='a'?C.cyan:C.green;
+    let ang;
+    if((cur===8&&t>2.2||cur===9)&&u!=='SL'){ang=Math.atan2(s.p[1]-RC[1],s.p[0]-RC[0]);}
+    else if(s.moving)ang=s.dir;
+    else ang=Math.atan2(ECTR[1]-s.p[1],ECTR[0]-s.p[0]);
+    const sc=u==='SL'?1.15:1;
+    ctx.save();ctx.translate(s.p[0],s.p[1]);ctx.rotate(ang);ctx.scale(sc,sc);
+    ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-7.5);ctx.lineTo(-3,0);ctx.lineTo(-7,7.5);ctx.closePath();
+    ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=C.light?'#fff':'#000';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();
+    if(u==='SL'||u==='ATL'||u==='BTL'){
+      lbl(u==='SL'?'SL':u==='ATL'?'A-TL':'B-TL',s.p[0],s.p[1]-12,col);
+    }
+  });
+  // team role labels
+  const aL=[null,'BASE OF FIRE','BASE OF FIRE','BASE OF FIRE','BASE OF FIRE','BASE OF FIRE','BOUND','BASE OF FIRE'][cur];
+  const bL=[null,null,null,null,null,'BOUND','BASE OF FIRE','BOUND'][cur];
+  if(aL)lbl('A TEAM: '+aL,st.ATL.p[0]+16,st.ATL.p[1]+24,C.cyan);
+  if(bL)lbl('B TEAM: '+bL,st.BTL.p[0],st.BTL.p[1]+(st.BTL.p[1]>560?-26:24),C.green);
+  if(cur===0&&t<2.6){
+    ctx.fillStyle=C.red;ctx.font='bold 22px Rajdhani';ctx.textAlign='center';ctx.globalAlpha=.4+.6*Math.abs(Math.sin(clock*8));
+    ctx.fillText('CONTACT FRONT!',240,170);ctx.globalAlpha=1;
+  }
+}
+
+/* ============ UI ============ */
+let cardTab='what';
+function setTab(k){cardTab=k;renderCard();}
+function renderCard(){
+  const p=P[cur];
+  document.getElementById('capK').textContent='STEP '+(cur+1)+' OF '+N;
+  document.getElementById('capN').textContent=cur+1;
+  document.getElementById('capV').textContent=p.cap;
+  document.getElementById('stepNum').textContent=cur+1;
+  document.getElementById('stepOf').textContent='STEP '+(cur+1)+' OF '+N;
+  document.getElementById('stepTitle').textContent=p.t;
+  document.querySelectorAll('#cardTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===cardTab));
+  const pane=document.getElementById('cardPane');
+  if(cardTab==='what')pane.innerHTML='<div class="body">'+p.body+'</div>';
+  else if(cardTab==='who')pane.innerHTML='<div class="roles">'+p.roles.map(r=>'<div class="role '+r[1]+'"><b>'+r[0]+'</b><span>'+r[2]+'</span></div>').join('')+'</div>';
+  else pane.innerHTML='<div class="keybox"><span class="k">KEY POINT</span>'+p.lead+'</div>';
+  const chips=document.querySelectorAll('#progress button');
+  chips.forEach((b,i)=>b.className=i<cur?'done':i===cur?'on':'');
+  const c=chips[cur],box=document.getElementById('progress');
+  if(c&&box)box.scrollLeft=c.offsetLeft-box.clientWidth/2+c.clientWidth/2;
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===N-1;
+}
+const TCS=[
+ '<p>Break contact with an enemy force while moving as a squad: return fire, take cover, and disengage by bounding back under covering fire and smoke, without becoming decisively engaged.</p>',
+ '<p>Squad moving tactically in a formation. An enemy of unknown or superior strength engages with effective direct fire. The SL decides to break contact. The squad has smoke available and can communicate with the platoon leader. Day or night.</p>',
+ '<ul><li>Soldiers in contact take cover and return fire immediately.</li><li>SL sends a SALT report to the PL.</li><li>SL gives a clear order naming the base of fire, the first bounding team, and the rally point.</li><li>One team always covers while the other moves.</li><li>Smoke is used to screen movement.</li><li>Squad moves out of the enemy\'s effective fire, sets security, reorganizes, and reports.</li></ul>'];
+function setTCS(i){
+  document.getElementById('tcsPane').innerHTML=TCS[i];
+  document.querySelectorAll('#tcsSeg button').forEach((b,j)=>b.classList.toggle('on',i===j));
+}
+function setPhase(i,instant){
+  cur=Math.max(0,Math.min(N-1,i));
+  t=instant?P[cur].settle:0;
+  renderCard();
+}
+function step(d){setPhase(cur+d,d<0);}
+function togglePlay(){
+  if(!playing&&cur===N-1&&t>=P[cur].settle+P[cur].hold-0.05){setPhase(0,false);}
+  playing=!playing;updatePlay();
+}
+function updatePlay(){document.getElementById('playBtn').innerHTML=playing?'&#10074;&#10074; Pause':'&#9654; Play';}
+function cycleSpeed(){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];document.getElementById('speedBtn').innerHTML=speed+'&times;';}
+function resetAnim(){playing=false;updatePlay();cur=0;t=0;renderCard();}
+function toggleFS(){
+  const el=document.getElementById('player');
+  if(document.fullscreenElement){document.exitFullscreen();return;}
+  if(el.classList.contains('fs')){el.classList.remove('fs');return;}
+  if(el.requestFullscreen){el.requestFullscreen().catch(()=>el.classList.add('fs'));}
+  else el.classList.add('fs');
+}
+function toggleTheme(){
+  const r=document.documentElement,l=r.getAttribute('data-theme')==='light';
+  if(l)r.removeAttribute('data-theme');else r.setAttribute('data-theme','light');
+  document.getElementById('themeBtn').textContent=l?'LIGHT':'DARK';
+  readColors();
+}
+function build(){
+  document.getElementById('progress').innerHTML=P.map((p,i)=>'<button onclick="setPhase('+i+',false)"><b>'+(i+1)+'</b>'+p.s+'</button>').join('');
+  document.getElementById('seq').innerHTML=P.map((p,i)=>
+    '<details class="row"><summary><span class="n">'+(i+1)+'</span><h4>'+p.t+'</h4></summary><div class="in"><p>'+p.body+'</p><button class="watch" onclick="watchStep('+i+')">REPLAY ON MAP</button></div></details>').join('');
+  setTCS(0);
+}
+function watchStep(i){
+  playing=false;updatePlay();setPhase(i,false);
+  document.getElementById('player').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ============ LOOP ============ */
+function fit(){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,3);
+  const w=Math.max(1,Math.round(r.width*dpr)),h=Math.round(w*H/W);
+  if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;}
+  ctx.setTransform(cv.width/W,0,0,cv.width/W,0,0);
+}
+function frame(ts){
+  const dt=Math.min(0.05,(ts-lastTs)/1000||0);lastTs=ts;
+  const d=dt*speed;clock+=d;
+  const p=P[cur];
+  if(playing||t<p.settle)t+=d;
+  if(playing&&t>=p.settle+p.hold){
+    if(cur<N-1)setPhase(cur+1,false);else{playing=false;updatePlay();}
+  }
+  fit();draw();
+  requestAnimationFrame(frame);
+}
+readColors();build();renderCard();
+window.addEventListener('resize',fit);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

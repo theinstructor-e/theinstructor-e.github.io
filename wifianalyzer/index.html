@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wi-Fi Passive Analyzer | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;
+ --green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f;--purple:#bb88ff}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;
+ --green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede;--purple:#6b3fb5}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:180px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:760px;margin:0 auto;padding:12px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:28px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:4px 0 6px}
+.hero p{color:var(--dim);max-width:640px}
+.sim{display:inline-block;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px}
+.choices{display:grid;gap:10px;margin-top:14px}
+.choice{font-family:'Rajdhani',sans-serif;text-align:left;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--green);padding:12px 14px;cursor:pointer;color:var(--text)}
+.choice.alt{border-left-color:var(--cyan)}
+.choice b{display:block;font-size:20px;letter-spacing:.04em;text-transform:uppercase}.choice span{font-size:15px;color:var(--dim)}
+.hud{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px;display:none}
+.hud-top{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.hud-step{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.hud-obj{font-size:19px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px}
+.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pill{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.08em;padding:2px 7px;border:1px solid var(--line);color:var(--dim)}
+.pill.ok{background:var(--green);border-color:var(--green);color:#00180d}
+.msg{min-height:19px;font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4}
+.msg.err{color:var(--red)}.msg.good{color:var(--green)}
+.panel{background:var(--panel);border:1px solid var(--line);padding:8px 10px;margin-bottom:8px}
+.arow{display:flex;align-items:center;gap:6px;margin:4px 0;flex-wrap:wrap}
+.arow>span{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--dim);min-width:52px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.04em;background:transparent;color:var(--text);border:1px solid var(--line);padding:6px 9px;cursor:pointer;min-height:32px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.warn.on{background:var(--amber-dark);color:var(--amber);border-color:var(--amber)}
+.chip[disabled]{opacity:.35;cursor:default}
+.chipscroll{display:flex;gap:4px;overflow-x:auto;max-width:100%;padding-bottom:2px}
+.stat{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);margin-top:6px;letter-spacing:.04em}
+.stat b{color:var(--green);font-weight:400}.stat i{color:var(--red);font-style:normal}
+.tabs{display:flex;border:1px solid var(--line);margin-bottom:8px}
+.tabs button{flex:1;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;padding:10px 4px;background:var(--panel);color:var(--dim);border:0;border-right:1px solid var(--line);cursor:pointer}
+.tabs button:last-child{border-right:0}.tabs button.on{background:var(--cyan-dark);color:var(--cyan)}
+.tab{display:none}.tab.on{display:block}
+table.t{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px}
+table.t th{text-align:left;color:var(--dim);font-weight:400;font-size:10px;letter-spacing:.1em;padding:4px 4px;border-bottom:1px solid var(--line)}
+table.t td{padding:7px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t tr.row{cursor:pointer}table.t tr.sel{background:var(--cyan-dark)}
+table.t tr.stale{opacity:.45}
+.sec-open,.sec-wep{color:var(--red)}.sec-wpa2{color:var(--amber)}.sec-ent,.sec-wpa3{color:var(--green)}
+.sig{display:inline-block;height:6px;background:var(--green);vertical-align:middle;margin-right:5px}
+.detail{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--cyan);padding:8px 10px;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.7}
+.detail .h{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:.03em}
+.detail .r{display:flex;justify-content:space-between;gap:10px}.detail .r span:first-child{color:var(--dim)}
+.detail .r span:last-child{text-align:right;word-break:break-all}
+.flag{color:var(--amber)}.bad{color:var(--red)}.good{color:var(--green)}
+canvas.cv{display:block;width:100%;height:auto;background:#000;border:1px solid var(--line)}
+.frames{max-height:260px;overflow-y:auto;border:1px solid var(--line);background:var(--panel)}
+.frow{display:grid;grid-template-columns:44px 74px 1fr 40px;gap:4px;padding:5px 6px;border-bottom:1px solid var(--line);font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;align-items:center}
+.frow.sel{background:var(--cyan-dark)}
+.ft{padding:0 4px;border:1px solid var(--line);font-size:10px;letter-spacing:.04em;text-align:center}
+.ft.deauth{color:var(--red);border-color:var(--red)}.ft.beacon{color:var(--dim)}.ft.probe{color:var(--purple);border-color:var(--purple)}.ft.assoc{color:var(--cyan);border-color:var(--cyan)}.ft.data{color:var(--green);border-color:var(--green)}.ft.tx{color:var(--amber);border-color:var(--amber)}
+.mapbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.mb{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.06em;background:var(--panel);color:var(--text);border:1px solid var(--line);padding:12px 4px;cursor:pointer;touch-action:none}
+.mb.down{background:var(--green-dark);border-color:var(--green)}
+.mb.go{border-color:var(--green);color:var(--green)}
+.meter{margin-top:6px;border:1px solid var(--line);background:var(--panel);padding:6px 8px;font-family:'Share Tech Mono',monospace;font-size:12px}
+.mbar{height:10px;background:var(--panel2);margin-top:4px;position:relative}
+.mbar i{position:absolute;left:0;top:0;bottom:0;background:var(--green)}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:12px 14px;cursor:pointer;margin-top:10px}
+.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.red{background:var(--red);color:#fff}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:40;padding:14px}
+.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}
+.sheet p,.sheet li{color:var(--text);font-size:16.5px;line-height:1.35}
+.sheet ol{padding-left:20px;margin-top:6px}
+.card{background:#e6dfbd;color:#1d1c12;padding:10px 12px;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.7;border:1px solid #a49c7a}
+.card h3{font-size:11px;letter-spacing:.14em;font-weight:400;border-bottom:1px solid #8a8466;margin-bottom:3px}
+.card .r{display:flex;justify-content:space-between;gap:8px}.card .r b{text-align:right}
+table.aar{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px;margin:8px 0}
+table.aar td{padding:5px 4px;border-bottom:1px solid var(--line)}table.aar td:last-child{text-align:right}
+.why{border:1px solid var(--cyan);border-left:4px solid var(--cyan);background:var(--cyan-dark);padding:8px 10px;margin-top:8px;font-size:16px}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>Wi-Fi Passive Analyzer</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+
+<section id="start">
+  <div class="hero"><div class="eyebrow">ELECTROMAGNETIC WARFARE SUPPORT &middot; HANDS-ON</div><h2>Wi-Fi Passive Analyzer</h2>
+  <p>Work a wireless adapter the way an ES operator would: listen without transmitting, find the networks around you, spot the one that does not belong, and walk it down. Everything here is a simulated RF environment.</p>
+  <span class="sim">SIMULATED ENVIRONMENT &middot; TRAINING ONLY &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+  <div class="choices">
+    <button class="choice" onclick="startMission()"><b>FOB Wi-Fi Survey</b><span>A scenario with a survey card: six tasks, hints, and a review at the end. About 10 minutes.</span></button>
+    <button class="choice alt" onclick="startSandbox()"><b>Sandbox</b><span>The same radio environment with no tasks. Try modes, channels, and antennas. A reveal switch shows where every emitter really is.</span></button>
+  </div>
+</section>
+
+<div class="hud" id="hud">
+  <div class="hud-top"><div><div class="hud-step" id="hudStep">TASK 1 OF 6</div><div class="hud-obj" id="hudObj"></div></div>
+    <div style="white-space:nowrap"><button class="hbtn" onclick="giveHint()">HINT</button><button class="hbtn c" onclick="openOv('ovCard')">CARD</button></div></div>
+  <div class="pills" id="pills"></div><div class="msg" id="msg"></div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="panel">
+    <div class="arow"><span>MODE</span><div class="chips"><button class="chip" id="mManaged" onclick="setMode('managed')">MANAGED</button><button class="chip" id="mMonitor" onclick="setMode('monitor')">MONITOR</button></div></div>
+    <div class="arow"><span>BAND</span><div class="chips"><button class="chip" id="b24" onclick="setBand('2.4')">2.4 GHz</button><button class="chip" id="b5" onclick="setBand('5')">5 GHz</button></div></div>
+    <div class="arow"><span>CHANNEL</span><div class="chipscroll" id="chChips"></div></div>
+    <div class="arow"><span>SCAN</span><div class="chips"><button class="chip" id="sPass" onclick="setScan('passive')">PASSIVE</button><button class="chip warn" id="sAct" onclick="setScan('active')">ACTIVE</button>
+      <button class="chip" id="capBtn" onclick="toggleCap()" style="margin-left:6px">&#9679; START CAPTURE</button></div></div>
+    <div class="arow"><span>SPEED</span><div class="chips"><button class="chip on" id="sp1" onclick="setSpeed(1)">1&times;</button><button class="chip" id="sp3" onclick="setSpeed(3)">3&times;</button></div></div>
+    <div class="stat" id="stat"></div>
+  </div>
+  <div class="tabs" id="tabs"><button class="on" data-t="list">LIST</button><button data-t="spec">SPECTRUM</button><button data-t="frames">FRAMES</button><button data-t="map">MAP</button></div>
+
+  <div class="tab on" id="tab-list">
+    <div class="arow" style="margin-top:0"><div class="chips"><button class="chip on" id="lAp" onclick="setList('ap')">ACCESS POINTS</button><button class="chip" id="lCl" onclick="setList('cl')">CLIENTS</button></div></div>
+    <div id="listBox"></div><div id="detail"></div>
+  </div>
+  <div class="tab" id="tab-spec">
+    <div class="arow" style="margin-top:0"><div class="chips"><button class="chip on" id="vB24" onclick="setView('2.4')">2.4 GHz</button><button class="chip" id="vB5" onclick="setView('5')">5 GHz</button></div></div>
+    <canvas class="cv" id="spec" width="480" height="260"></canvas>
+    <div class="detail" id="specNote" style="border-left-color:var(--green)">Each hump is one access point. Its width is the 22 MHz it occupies. Humps that overlap interfere.</div>
+    <div id="recBox"></div>
+  </div>
+  <div class="tab" id="tab-frames">
+    <div class="arow" style="margin-top:0"><div class="chipscroll" id="fChips"></div></div>
+    <div class="frames" id="frames"></div><div id="fdetail"></div>
+  </div>
+  <div class="tab" id="tab-map">
+    <canvas class="cv" id="map" width="480" height="480"></canvas>
+    <div class="meter" id="meter"></div>
+    <div class="mapbtns">
+      <button class="mb" id="mAimL">&#8634; AIM</button><button class="mb" id="mUp">&#9650; N</button><button class="mb" id="mAimR">AIM &#8635;</button>
+      <button class="mb" id="mLeft">&#9664; W</button><button class="mb" id="mDown">&#9660; S</button><button class="mb" id="mRight">E &#9654;</button>
+      <button class="mb" id="mYagi">ANTENNA: OMNI</button><button class="mb go" id="mMark">MARK EMITTER</button><button class="mb" id="mReveal" style="display:none">REVEAL: OFF</button>
+    </div>
+  </div>
+</div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<div class="ov" id="ovCard"><div class="sheet"><div class="k">SURVEY CARD</div><h2>FOB perimeter survey</h2>
+  <div class="card"><h3>EXTRACT &middot; ES TASKING</h3>
+   <div class="r"><span>MODE</span><b>PASSIVE ONLY</b></div>
+   <div class="r"><span>TOC-SECURE</span><b>B4:2E:9C:11:7A:40</b></div>
+   <div class="r"><span>&nbsp;</span><b>CH 6 &middot; WPA2-ENT</b></div>
+   <div class="r"><span>APPROVED</span><b>TOC-5G, SUPPLY-LAN,</b></div>
+   <div class="r"><span>&nbsp;</span><b>MWR-WIFI, MAINT-01 (HIDDEN)</b></div>
+   <div class="r"><span>TASKS</span><b>FIND HIDDEN NAME,</b></div>
+   <div class="r"><span>&nbsp;</span><b>FIND ROGUE, DEAUTH,</b></div>
+   <div class="r"><span>&nbsp;</span><b>LOCATE, PICK CHANNEL</b></div>
+  </div>
+  <button class="btn" onclick="closeOv('ovCard')">GOT IT</button></div></div>
+<div class="ov" id="ovWhy"><div class="sheet"><div class="k" id="whyK">TASK COMPLETE</div><h2 id="whyH"></h2><p id="whyP"></p><button class="btn" onclick="closeOv('ovWhy')">CONTINUE</button></div></div>
+<div class="ov" id="ovAar"><div class="sheet"><div class="k">AFTER ACTION REVIEW</div><h2>Survey complete</h2>
+  <table class="aar"><tr><td>Time</td><td id="aT"></td></tr><tr><td>Wrong calls</td><td id="aE"></td></tr><tr><td>Hints used</td><td id="aH"></td></tr></table>
+  <div class="k">WHAT YOU DID</div>
+  <ol><li>Monitor mode, passive scan: listen without transmitting.</li><li>Locked the channel to catch the hidden name in an association frame.</li><li>Matched BSSIDs to the card to find the evil twin.</li><li>Recognized forged deauthentication frames.</li><li>Used a directional antenna and signal strength to find the emitter.</li><li>Chose channel 1, 6, or 11 from the spectrum view.</li></ol>
+  <button class="btn" onclick="closeOv('ovAar');startMission()">RUN IT AGAIN</button><button class="btn alt" onclick="closeOv('ovAar');startSandbox()">SANDBOX</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* =============================================================
+   WORLD (illustrative; fictional vendors and addresses)
+============================================================= */
+const OUI={'B4:2E:9C':'Arvex Networks (enterprise)','D8:5D:4C':'Tellon Home (consumer)','F0:9F:C2':'Kobalt Mobile'};
+const BLD=[{n:'TOC',x:40,y:58,w:60,h:42},{n:'SUPPLY',x:105,y:105,w:46,h:36},{n:'SHED',x:34,y:38,w:28,h:18}];
+const FENCE={x:15,y:22,w:132,h:122};
+const APS=[
+ {id:'toc',ssid:'TOC-SECURE',bssid:'B4:2E:9C:11:7A:40',ch:6,sec:'WPA2-ENT',x:70,y:78,p:20,auth:true,w:1.0},
+ {id:'toc5',ssid:'TOC-5G',bssid:'B4:2E:9C:11:7A:44',ch:149,sec:'WPA2-ENT',x:74,y:82,p:20,auth:true,w:0},
+ {id:'mwr',ssid:'MWR-WIFI',bssid:'D8:5D:4C:00:A1:08',ch:6,sec:'WPA2-PSK',x:125,y:118,p:18,auth:true,w:0.8},
+ {id:'sup',ssid:'SUPPLY-LAN',bssid:'B4:2E:9C:11:80:1C',ch:11,sec:'WPA2-PSK',x:140,y:128,p:20,auth:true,w:0.6},
+ {id:'maint',ssid:'',real:'MAINT-01',bssid:'B4:2E:9C:11:55:D2',ch:1,sec:'WPA2-PSK',x:48,y:46,p:17,auth:true,hidden:true,w:0.5},
+ {id:'hot',ssid:'SGT-HOTSPOT',bssid:'F0:9F:C2:41:0B:6E',ch:11,sec:'WPA2-PSK',x:60,y:128,p:12,auth:false,w:0.3},
+ {id:'cafe',ssid:'CAFE-GUEST',bssid:'D8:5D:4C:92:30:C4',ch:1,sec:'OPEN',x:152,y:16,p:20,auth:false,w:0.4},
+ {id:'rogue',ssid:'TOC-SECURE',bssid:'D8:5D:4C:6B:23:F1',ch:3,sec:'OPEN',x:118,y:12,p:20,auth:false,rogue:true,w:0.9}
+];
+const STAS=[
+ {id:'s1',mac:'F0:9F:C2:3A:11:90',name:'Laptop',x:66,y:80,assoc:'toc',probes:[]},
+ {id:'s2',mac:'9A:41:7C:E2:05:B3',name:'Phone',x:32,y:140,assoc:null,probes:['HomeWifi','Starbucks'],rand:true},
+ {id:'s3',mac:'B4:2E:9C:20:6D:11',name:'Maint laptop',x:52,y:50,assoc:'maint',probes:[]},
+ {id:'s4',mac:'F0:9F:C2:77:90:0A',name:'Phone',x:75,y:70,assoc:'toc',probes:[]}
+];
+const CH24=[1,2,3,4,5,6,7,8,9,10,11],CH5=[36,40,44,48,149,153,157,161,165];
+const freq=c=>c<=14?2412+5*(c-1):5000+5*c;
+const apById=id=>APS.find(a=>a.id===id);
+function vendor(mac){if(parseInt(mac.slice(0,2),16)&2)return 'randomized (locally administered)';return OUI[mac.slice(0,8)]||'unknown';}
+
+/* =============================================================
+   STATE
+============================================================= */
+let S,mode='start',t0=0,errors=0,hintsUsed=0,hintLevel=0,speed=1,clock=0,lastT=0,acc=0,tickN=0;
+const TASKS=['MONITOR','HIDDEN','ROGUE','DEAUTH','LOCATE','CHANNEL'];
+let done={};
+function reset(){
+  S={mode:'managed',band:'2.4',ch:'HOP',scan:'passive',cap:false,hopI:0,hopT:0,seen:{},clients:{},frames:[],nFr:0,sel:null,selCl:null,list:'ap',
+     filter:'ALL',view:'2.4',selF:null,P:{x:80,y:150,aim:0,yagi:false},reveal:false,markers:[],monT:0,txWarned:false,lastScan:-9,
+     hiddenName:false,deauthN:0,flagged:null,tab:'list',frozen:false};
+  done={};
+}
+reset();
+const $=id=>document.getElementById(id);
+function openOv(id){$(id).classList.add('on');}function closeOv(id){$(id).classList.remove('on');}
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';l?r.removeAttribute('data-theme'):r.setAttribute('data-theme','light');$('tb').textContent=l?'LIGHT':'DARK';}
+function setMsg(t,c){const m=$('msg');m.textContent=t||'';m.className='msg '+(c||'');}
+function bad(t){if(mode==='mission')errors++;setMsg(t,'err');}
+
+function startMission(){mode='mission';reset();errors=0;hintsUsed=0;hintLevel=0;t0=Date.now();begin();$('hud').style.display='block';$('mReveal').style.display='none';
+  $('pills').innerHTML=TASKS.map(k=>'<span class="pill" data-k="'+k+'">'+k+'</span>').join('');updateObj();setMsg('');openOv('ovCard');}
+function startSandbox(){mode='sandbox';reset();begin();$('hud').style.display='none';$('mReveal').style.display='block';}
+function begin(){$('start').style.display='none';$('app').style.display='block';buildChips();syncUI();setTab('list');renderAll();}
+
+/* =============================================================
+   SIGNAL MODEL
+============================================================= */
+function segHitsRect(x0,y0,x1,y1,r){for(let i=0;i<=14;i++){const x=x0+(x1-x0)*i/14,y=y0+(y1-y0)*i/14;if(x>r.x&&x<r.x+r.w&&y>r.y&&y<r.y+r.h)return true;}return false;}
+function gainAt(P,tx,ty){
+  if(!P.yagi)return 2;
+  const brg=Math.atan2(tx-P.x,P.y-ty)*180/Math.PI;let d=Math.abs(((brg-P.aim)+540)%360-180);
+  return Math.max(-12,9-24*(1-Math.cos(d*Math.PI/180)));
+}
+function rssi(src,P,band,tNoise){
+  const d=Math.max(1,Math.hypot(src.x-P.x,src.y-P.y));
+  let pl=40+27*Math.log10(d)+(band==='5'?6:0);
+  BLD.forEach(r=>{if(segHitsRect(src.x,src.y,P.x,P.y,r))pl+=9;});
+  const fade=1.6*Math.sin(tNoise*1.3+src.x)+0.8*Math.sin(tNoise*3.1+src.y);
+  return Math.round(src.p-pl+gainAt(P,src.x,src.y)+fade);
+}
+const bandOf=ch=>ch<=14?'2.4':'5';
+const SENS=-90;
+
+/* =============================================================
+   ADAPTER
+============================================================= */
+function chList(){return S.band==='2.4'?CH24:CH5;}
+function curCh(){if(S.mode!=='monitor')return null;if(S.ch==='HOP')return chList()[S.hopI%chList().length];return Number(S.ch);}
+function buildChips(){
+  const box=$('chChips');box.innerHTML='<button class="chip" data-c="HOP" onclick="setCh(\'HOP\')">HOP</button>'+chList().map(c=>'<button class="chip" data-c="'+c+'" onclick="setCh(\''+c+'\')">'+c+'</button>').join('');
+}
+function syncUI(){
+  $('mManaged').classList.toggle('on',S.mode==='managed');$('mMonitor').classList.toggle('on',S.mode==='monitor');
+  $('b24').classList.toggle('on',S.band==='2.4');$('b5').classList.toggle('on',S.band==='5');
+  $('sPass').classList.toggle('on',S.scan==='passive');$('sAct').classList.toggle('on',S.scan==='active');
+  const mon=S.mode==='monitor';
+  ['b24','b5','sPass','sAct','capBtn'].forEach(id=>$(id).disabled=!mon&&id!=='b24'&&id!=='b5'?true:false);
+  document.querySelectorAll('#chChips .chip').forEach(b=>{b.disabled=!mon;b.classList.toggle('on',b.dataset.c===String(S.ch));});
+  $('capBtn').textContent=S.cap?'\u25a0 STOP CAPTURE':'\u25cf START CAPTURE';$('capBtn').classList.toggle('on',S.cap);
+  $('mYagi').textContent='ANTENNA: '+(S.P.yagi?'DIRECTIONAL':'OMNI');
+  $('mReveal').textContent='REVEAL: '+(S.reveal?'ON':'OFF');
+}
+function setMode(m){S.mode=m;if(m==='managed'){S.cap=false;S.lastScan=-9;}S.monT=0;syncUI();renderAll();checkTasks();if(S.tab==='frames')renderFrames(true);}
+function setBand(b){S.band=b;S.hopI=0;if(S.ch!=='HOP')S.ch='HOP';buildChips();syncUI();}
+function setCh(c){if(S.mode!=='monitor')return;S.ch=c;syncUI();}
+function setScan(s){S.scan=s;syncUI();}
+function toggleCap(){if(S.mode!=='monitor'){bad('Capture needs monitor mode.');return;}S.cap=!S.cap;syncUI();checkTasks();}
+function setSpeed(v){speed=v;$('sp1').classList.toggle('on',v===1);$('sp3').classList.toggle('on',v===3);}
+
+/* =============================================================
+   FRAMES AND CAPTURE
+============================================================= */
+function noteSeen(a,r,ssidKnown){
+  let e=S.seen[a.bssid];
+  if(!e)e=S.seen[a.bssid]={ap:a,first:S.t,beacons:0,max:-200};
+  e.last=S.t;e.rssi=r;e.max=Math.max(e.max,r);e.ch=a.ch;
+  return e;
+}
+function pushFrame(f){f.t=S.t;f.n=++S.nFr;S.frames.push(f);if(S.frames.length>300)S.frames.shift();frDirty=true;}
+function listening(ch){return S.mode==='monitor'&&S.cap&&curCh()===ch;}
+function heard(src,ch){if(!listening(ch))return null;const r=rssi(src,S.P,bandOf(ch),clock);return r>=SENS?r:null;}
+function sta(id){return STAS.find(s=>s.id===id);}
+function emit(src,ch,f){const r=heard(src,ch);if(r===null)return;f.rssi=r;f.ch=ch;pushFrame(f);return r;}
+function clientNote(s,bssid,probe){let c=S.clients[s.mac];if(!c)c=S.clients[s.mac]={s:s,bssid:null,probes:{},last:0};c.last=S.t;if(bssid)c.bssid=bssid;if(probe)c.probes[probe]=1;}
+
+function tickSim(){
+  tickN++;const t=tickN/10;S.t=t;
+  // adapter hopping
+  if(S.mode==='monitor'&&S.ch==='HOP'){S.hopT+=0.1;if(S.hopT>=0.4){S.hopT=0;S.hopI++;}}
+  if(S.mode==='monitor')S.monT+=S.scan==='passive'?0.1:0;else S.monT=0;
+  // managed-mode OS scan: names and signal only
+  if(S.mode==='managed'&&t-S.lastScan>=4){S.lastScan=t;
+    APS.forEach(a=>{const r=rssi(a,S.P,bandOf(a.ch),clock);if(r>=SENS){const e=noteSeen(a,r);}});}
+  if(S.mode==='monitor'&&S.cap){
+    const c=curCh();
+    // beacons (interval ~100 ms)
+    APS.forEach(a=>{if(a.ch!==c)return;const r=rssi(a,S.P,bandOf(c),clock);if(r<SENS)return;
+      const e=noteSeen(a,r);e.beacons++;
+      if(tickN%5===0)pushFrame({ch:c,type:'BEACON',cls:'beacon',sub:'Beacon',sa:a.bssid,da:'FF:FF:FF:FF:FF:FF',bssid:a.bssid,ssid:a.ssid,hid:!!a.hidden,sec:a.sec,rssi:r,src:a});});
+    // active scan makes YOU transmit
+    if(S.scan==='active'&&tickN%10===0){pushFrame({ch:c,type:'PROBE REQ',cls:'tx',sub:'Probe Request (YOU)',sa:'02:AA:BB:CC:00:01',da:'FF:FF:FF:FF:FF:FF',bssid:'FF:FF:FF:FF:FF:FF',ssid:'',rssi:0,you:true});
+      if(!S.txWarned){S.txWarned=true;bad('ACTIVE scan transmits probe requests. Anyone listening can see you. Passive is listen-only.');}}
+    // phone probes (every 6 s on 1, 6, 11)
+    const ph=sta('s2');if(Math.abs((t%6)-0)<0.05||Math.abs((t%6)-0.1)<0.05||Math.abs((t%6)-0.2)<0.05){
+      const k=Math.round((t%6)*10);const ch=[1,6,11][k%3];const wild=(Math.floor(t/6)%2===0);
+      const r=emit(ph,ch,{type:'PROBE REQ',cls:'probe',sub:'Probe Request',sa:ph.mac,da:'FF:FF:FF:FF:FF:FF',bssid:'FF:FF:FF:FF:FF:FF',ssid:wild?'':ph.probes[Math.floor(t/12)%2],wild:wild,src:ph});
+      if(r!==null)clientNote(ph,null,wild?null:ph.probes[Math.floor(t/12)%2]);}
+    // associated data (1/s)
+    if(tickN%10===0){[['s1','toc'],['s4','toc'],['s3','maint']].forEach(p=>{const s=sta(p[0]),a=apById(p[1]);const r=emit(s,a.ch,{type:'DATA',cls:'data',sub:'QoS Data (encrypted)',sa:s.mac,da:a.bssid,bssid:a.bssid,ssid:'',src:s});if(r!==null)clientNote(s,a.bssid);});}
+    // maintenance laptop joins the hidden AP (cycle 25 s)
+    const m=t%25;const seq=[[3.0,'PROBE REQ','probe','Probe Request','req'],[3.1,'PROBE RESP','assoc','Probe Response','resp'],[3.3,'AUTH','assoc','Authentication','auth'],[3.5,'ASSOC REQ','assoc','Association Request','areq'],[3.6,'ASSOC RESP','assoc','Association Response','aresp'],[3.9,'EAPOL','data','EAPOL (4-way handshake)','eapol']];
+    seq.forEach(q=>{if(Math.abs(m-q[0])<0.05){const s=sta('s3'),a=apById('maint');const fromAp=q[4]==='resp'||q[4]==='aresp'||q[4]==='eapol';
+      const src=fromAp?a:s;const r=emit(src,1,{type:q[1],cls:q[2],sub:q[3],sa:fromAp?a.bssid:s.mac,da:fromAp?s.mac:a.bssid,bssid:a.bssid,ssid:(q[4]==='req'||q[4]==='resp'||q[4]==='areq'||q[4]==='aresp')?a.real:'',revealsSsid:(q[4]!=='auth'&&q[4]!=='eapol'),src:src});
+      if(r!==null&&q[4]!=='auth'&&q[4]!=='eapol'){S.hiddenName=true;clientNote(s,a.bssid);}}});
+    // deauth flood from the rogue, spoofing TOC-SECURE on channel 6 (cycle 70 s, active 45-65 s)
+    const dm=t%70;if(dm>=45&&dm<65){const ro=apById('rogue'),v=sta('s4'),real=apById('toc');
+      const r=emit(ro,6,{type:'DEAUTH',cls:'deauth',sub:'Deauthentication',sa:real.bssid,da:v.mac,bssid:real.bssid,ssid:'',reason:7,spoof:true,src:ro});if(r!==null)S.deauthN++;}
+  }
+  if(S.tab==='list'&&tickN%3===0)renderList();if(S.tab==='frames'&&frDirty&&tickN%10===0)renderFrames();
+  updateStat();checkTasks();
+}
+
+/* =============================================================
+   RENDER: STATUS, LIST, DETAIL
+============================================================= */
+function updateStat(){
+  const c=curCh();let s='';
+  if(S.mode==='managed')s='wlan0 <b>MANAGED</b> &middot; the OS scans for you. Names and signal only.';
+  else s='wlan0mon <b>MONITOR</b> &middot; '+(S.scan==='passive'?'<b>PASSIVE</b> (not transmitting)':'<i>ACTIVE (transmitting!)</i>')+' &middot; ch <b>'+c+'</b> ('+freq(c)+' MHz) &middot; '+(S.cap?'capturing, '+S.nFr+' frames':'not capturing');
+  $('stat').innerHTML=s;
+}
+const secCls=s=>s==='OPEN'?'sec-open':s==='WEP'?'sec-wep':s.indexOf('ENT')>0?'sec-ent':s.indexOf('WPA3')===0?'sec-wpa3':'sec-wpa2';
+function seenList(){return Object.values(S.seen).filter(e=>e.ap);}
+function apName(e){const a=e.ap;if(a.hidden){return (S.hiddenName&&S.mode==='monitor')?a.real+' *':(S.mode==='monitor'?'<hidden>':'');}return a.ssid;}
+let listKey='',detKey='';
+function renderList(){
+  const isAp=S.list==='ap';
+  const rows=isAp?seenList():(S.mode==='monitor'?Object.values(S.clients):[]);
+  const key=S.list+'|'+S.mode+'|'+rows.map(e=>isAp?e.ap.id:e.s.mac).join(',');
+  if(key!==listKey){listKey=key;buildList(rows,isAp);}
+  updateList(rows,isAp);updateDetail();
+}
+function buildList(rows,isAp){
+  let h;
+  if(isAp){h='<table class="t"><tr><th>SSID</th><th>CH</th><th>dBm</th><th>SEC</th></tr>';
+    rows.forEach(e=>{h+='<tr class="row" id="r_'+e.ap.id+'" onclick="selAp(\''+e.ap.id+'\')"><td class="cN"></td><td class="cC"></td><td class="cS"></td><td class="cE '+secCls(e.ap.sec)+'">'+e.ap.sec+'</td></tr>';});
+    if(!rows.length)h+='<tr><td colspan="4" style="color:var(--dim);white-space:normal">'+(S.mode==='managed'?'Scanning...':'Start a capture. Nothing is heard until the adapter is on a channel and capturing.')+'</td></tr>';
+    h+='</table>';
+  }else{
+    if(S.mode!=='monitor'){$('listBox').innerHTML='<div class="detail">Client devices are only visible in monitor mode. In managed mode the OS shows you networks and nothing else.</div>';return;}
+    h='<table class="t"><tr><th>MAC</th><th>ASSOCIATED</th><th>PROBES</th></tr>';
+    rows.forEach(c=>{h+='<tr class="row" id="c_'+c.s.id+'" onclick="selCl(\''+c.s.mac+'\')"><td>'+c.s.mac+'</td><td class="cA"></td><td class="cP"></td></tr>';});
+    if(!rows.length)h+='<tr><td colspan="3" style="color:var(--dim);white-space:normal">No clients heard yet. Phones announce themselves with probe requests. Associated devices send data frames.</td></tr>';
+    h+='</table>';
+  }
+  $('listBox').innerHTML=h;
+}
+function setTxt(el,v){if(el&&el.dataset.v!==v){el.dataset.v=v;el.innerHTML=v;}}
+function updateList(rows,isAp){
+  if(isAp)rows.forEach(e=>{const tr=$('r_'+e.ap.id);if(!tr)return;
+    const stale=(S.t-e.last)>10,w=Math.max(2,Math.min(40,(e.rssi+95)*.7));
+    tr.classList.toggle('sel',S.sel===e.ap.id);tr.classList.toggle('stale',stale);
+    setTxt(tr.querySelector('.cN'),apName(e)||'<i style="color:var(--dim)">(hidden)</i>');
+    setTxt(tr.querySelector('.cC'),String(e.ch));
+    setTxt(tr.querySelector('.cS'),'<span class="sig" style="width:'+w+'px"></span>'+e.rssi);});
+  else rows.forEach(c=>{const tr=$('c_'+c.s.id);if(!tr)return;tr.classList.toggle('sel',S.selCl===c.s.mac);
+    setTxt(tr.querySelector('.cA'),c.bssid?(S.seen[c.bssid]?(apName(S.seen[c.bssid])||'(hidden)'):c.bssid):'-');
+    setTxt(tr.querySelector('.cP'),Object.keys(c.probes).join(', '));});
+}
+function selAp(id){S.sel=id;detKey='';renderList();if(S.tab==='map')renderMeter();}
+function selCl(m){S.selCl=m;detKey='';renderList();}
+function updateDetail(){
+  if(S.list==='ap'){
+    const e=S.sel?seenList().find(x=>x.ap.id===S.sel):null;
+    const key='ap|'+(e?e.ap.id:'')+'|'+S.hiddenName+'|'+S.mode+'|'+S.reveal;
+    if(key!==detKey){detKey=key;buildDetail(e);}
+    if(e){setTxt($('dSig'),e.rssi+' dBm (best '+e.max+')');setTxt($('dBeac'),String(e.beacons));setTxt($('dLast'),e.first.toFixed(0)+'s / '+e.last.toFixed(0)+'s');}
+  }else{
+    const c=S.selCl?S.clients[S.selCl]:null;
+    const key='cl|'+(c?c.s.mac+'|'+Object.keys(c.probes).length+'|'+c.bssid:'');
+    if(key!==detKey){detKey=key;buildClDetail(c);}
+  }
+}
+function buildDetail(e){
+  if(!e){$('detail').innerHTML='<div class="detail">Tap an access point for its details.</div>';return;}
+  const a=e.ap,nm=apName(e);
+  const hid=a.hidden?(S.hiddenName?'<span class="good">name revealed: '+a.real+'</span>':'<span class="flag">SSID hidden (zero-length)</span>'):'no';
+  let h='<div class="detail"><div class="h">'+(nm||'(hidden)')+'</div>'+
+   r('BSSID',a.bssid)+r('Vendor (OUI)',vendor(a.bssid))+r('Channel',a.ch+' ('+freq(a.ch)+' MHz)')+r('Security','<span class="'+secCls(a.sec)+'">'+a.sec+'</span>')+
+   r('Signal','<span id="dSig"></span>')+r('Beacons heard','<span id="dBeac"></span>')+r('Hidden SSID',hid)+r('First / last','<span id="dLast"></span>');
+  if(a.sec==='OPEN')h+='<div class="bad">Open: no encryption.</div>';
+  if(mode==='mission')h+='<button class="btn red" onclick="flagRogue(\''+a.id+'\')">FLAG AS ROGUE</button>';
+  $('detail').innerHTML=h+'</div>';
+}
+function r(k,v){return '<div class="r"><span>'+k+'</span><span>'+v+'</span></div>';}
+function buildClDetail(c){
+  if(!c){$('detail').innerHTML='<div class="detail">Tap a client for its details.</div>';return;}
+  const hm=c.s.rand;$('detail').innerHTML='<div class="detail"><div class="h">'+c.s.mac+'</div>'+r('Vendor (OUI)',vendor(c.s.mac))+
+   r('MAC type',hm?'<span class="good">randomized</span>':'<span class="flag">real hardware address</span>')+r('Associated to',c.bssid?(S.seen[c.bssid]?(apName(S.seen[c.bssid])||c.bssid):c.bssid):'none heard')+
+   r('Probing for',Object.keys(c.probes).join(', ')||'wildcard only')+
+   '<div style="color:var(--dim);font-family:Rajdhani,sans-serif;font-size:15px;margin-top:4px">A directed probe request names a network the device has used before. That tells a listener where its owner has been.</div></div>';
+}
+
+/* =============================================================
+   RENDER: SPECTRUM
+============================================================= */
+const COL=['#00ff88','#00d4ff','#ffb300','#bb88ff','#ff6688','#88ddff','#ddff55','#ff9955'];
+function drawSpec(){
+  const cv=$('spec'),c=cv.getContext('2d'),W=480,H=260;c.clearRect(0,0,W,H);c.fillStyle='#050a10';c.fillRect(0,0,W,H);
+  const rows=seenList().filter(e=>bandOf(e.ch)===S.view&&(S.t-e.last)<20);
+  c.strokeStyle='#18293b';c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='center';
+  for(let d=-30;d>=-100;d-=10){const y=H-30-(d+100)/70*(H-50);c.beginPath();c.moveTo(34,y);c.lineTo(W-6,y);c.stroke();c.textAlign='right';c.fillText(d,30,y+3);}
+  const base=H-30;
+  if(S.view==='2.4'){
+    const x0=34,x1=W-10,fx=f=>x0+(f-2400)/(2490-2400)*(x1-x0);
+    CH24.forEach(ch=>{const x=fx(freq(ch));c.fillStyle='#7d92a9';c.textAlign='center';c.fillText(ch,x,H-14);});
+    rows.forEach((e,i)=>{const fc=freq(e.ch),h=(Math.max(-100,e.rssi)+100)/70*(H-50),col=COL[APS.indexOf(e.ap)%COL.length];
+      c.beginPath();c.moveTo(fx(fc-11),base);const n=24;for(let k=0;k<=n;k++){const f=fc-11+22*k/n,y=base-h*Math.pow(Math.sin(Math.PI*k/n),.7);c.lineTo(fx(f),y);}c.lineTo(fx(fc+11),base);c.closePath();
+      c.globalAlpha=S.sel===e.ap.id?.55:.22;c.fillStyle=col;c.fill();c.globalAlpha=1;c.strokeStyle=col;c.lineWidth=S.sel===e.ap.id?2.5:1.3;c.stroke();
+      c.fillStyle=col;c.textAlign='center';c.font='10px "Share Tech Mono"';c.fillText(apName(e)||'(hidden)',fx(fc),base-h-4-(i%2)*10);});
+    c.fillStyle='#7d92a9';c.textAlign='center';c.fillText('CHANNEL (20 MHz each, 5 MHz apart)',W/2,H-2);
+  }else{
+    const n=CH5.length,fx=i=>50+i*(W-80)/(n-1);
+    CH5.forEach((ch,i)=>{c.fillStyle='#7d92a9';c.textAlign='center';c.fillText(ch,fx(i),H-14);});
+    rows.forEach(e=>{const i=CH5.indexOf(e.ch);if(i<0)return;const h=(Math.max(-100,e.rssi)+100)/70*(H-50),col=COL[APS.indexOf(e.ap)%COL.length];
+      c.fillStyle=col;c.globalAlpha=.35;c.fillRect(fx(i)-18,base-h,36,h);c.globalAlpha=1;c.strokeStyle=col;c.strokeRect(fx(i)-18,base-h,36,h);c.fillStyle=col;c.fillText(apName(e)||'(hidden)',fx(i),base-h-4);});
+    c.fillStyle='#7d92a9';c.fillText('CHANNEL (20 MHz each, none overlap)',W/2,H-2);
+  }
+  c.fillStyle='#7d92a9';c.textAlign='left';c.save();c.translate(10,H/2);c.rotate(-Math.PI/2);c.fillText('dBm',0,0);c.restore();
+  if(!rows.length){c.fillStyle='#7d92a9';c.textAlign='center';c.font='13px "Share Tech Mono"';c.fillText(S.mode==='managed'?'SCANNING...':'START A CAPTURE TO FILL THE SPECTRUM',W/2,H/2);}
+}
+$('spec').addEventListener('click',e=>{const r=e.target.getBoundingClientRect(),x=(e.clientX-r.left)*480/r.width;
+  const rows=seenList().filter(en=>bandOf(en.ch)===S.view);let best=null,bd=40;
+  rows.forEach(en=>{let px;if(S.view==='2.4')px=34+(freq(en.ch)-2400)/90*(480-44);else px=50+CH5.indexOf(en.ch)*(480-80)/(CH5.length-1);const d=Math.abs(px-x);if(d<bd){bd=d;best=en;}});
+  if(best){S.sel=best.ap.id;}});
+function setView(v){S.view=v;$('vB24').classList.toggle('on',v==='2.4');$('vB5').classList.toggle('on',v==='5');}
+function renderRec(){
+  if(mode!=='mission'){$('recBox').innerHTML='';return;}
+  $('recBox').innerHTML='<div class="detail" style="border-left-color:var(--amber)"><div class="h">Install a new AP</div>Pick the least congested non-overlapping 2.4 GHz channel for a new access point where you are standing.<div class="chips" style="margin-top:6px">'+[1,6,11].map(c=>'<button class="chip" onclick="recChan('+c+')">CH '+c+'</button>').join('')+'</div></div>';
+}
+function seen24(){return seenList().filter(e=>e.ch<=14);}
+function score(c){let sum=0;seen24().forEach(e=>{sum+=Math.pow(10,e.max/10)*Math.max(0,1-Math.abs(e.ch-c)/5);});return sum;}
+function bestChan(){return [1,6,11].reduce((a,b)=>score(b)<score(a)?b:a);}
+function recChan(c){
+  if(done.CHANNEL)return;
+  if(seen24().length<5){bad('Survey first. You have only seen '+seen24().length+' networks in 2.4 GHz.');return;}
+  const best=bestChan();
+  if(score(c)<=score(best)*1.15){complete('CHANNEL');}
+  else bad('Channel '+c+' sits under stronger overlapping signals than the best choice. Compare the humps near each of 1, 6, and 11.');
+}
+
+/* =============================================================
+   RENDER: FRAMES
+============================================================= */
+const FILTERS=['ALL','BEACON','PROBE','ASSOC','DEAUTH','DATA'];
+let frFreezeUntil=0,frDirty=false;
+function buildFilters(){$('fChips').innerHTML=FILTERS.map(f=>'<button class="chip'+(S.filter===f?' on':'')+'" onclick="setFilter(\''+f+'\')">'+f+'</button>').join('')+'<button class="chip warn'+(S.frozen?' on':'')+'" onclick="toggleFreeze()">'+(S.frozen?'HELD - TAP TO RESUME':'LIVE')+'</button>';}
+function toggleFreeze(){S.frozen=!S.frozen;buildFilters();renderFrames(true);}
+function setFilter(f){S.filter=f;buildFilters();renderFrames(true);}
+function match(f){if(S.filter==='ALL')return true;if(S.filter==='BEACON')return f.cls==='beacon';if(S.filter==='PROBE')return f.cls==='probe'||f.cls==='tx';if(S.filter==='ASSOC')return f.cls==='assoc';if(S.filter==='DEAUTH')return f.cls==='deauth';return f.cls==='data';}
+function renderFrames(force){
+  if(!force&&(S.frozen||performance.now()<frFreezeUntil)){frDirty=true;return;}
+  frDirty=false;
+  if(S.mode!=='monitor'){$('frames').innerHTML='<div class="detail" style="margin:6px">Raw frames need <b>monitor mode</b>. A managed adapter only hands the OS the traffic addressed to it.</div>';$('fdetail').innerHTML='';return;}
+  const fs=S.frames.filter(match).slice(-60).reverse();
+  $('frames').innerHTML=fs.map(f=>'<div class="frow'+(S.selF===f.n?' sel':'')+'" data-n="'+f.n+'" onclick="selFrame('+f.n+')"><span>'+f.t.toFixed(1)+'s</span><span class="ft '+f.cls+'">'+f.type+'</span><span>'+(f.ssid||(f.hid?'&lt;hidden&gt;':short(f.sa)))+' &rarr; '+short(f.da)+'</span><span>'+(f.you?'TX':f.rssi)+'</span></div>').join('')||'<div class="detail" style="margin:6px">No frames yet. Start a capture and wait for the adapter to land on a busy channel.</div>';
+}
+const short=m=>m==='FF:FF:FF:FF:FF:FF'?'BCAST':m.slice(9);
+function selFrame(n){S.selF=n;S.frozen=true;buildFilters();document.querySelectorAll('#frames .frow').forEach(x=>x.classList.toggle('sel',Number(x.dataset.n)===n));renderFDetail();}
+function renderFDetail(){
+  const f=S.frames.find(x=>x.n===S.selF);if(!f){$('fdetail').innerHTML='';return;}
+  let h='<div class="detail"><div class="h">'+f.sub+'</div>'+r('Time / channel',f.t.toFixed(1)+'s / ch '+f.ch)+r('Type / subtype','Management / '+f.sub)+r('Transmitter',f.sa)+r('Receiver',f.da)+r('BSSID',f.bssid)+
+    (f.cls==='beacon'?r('SSID',f.hid?'<span class="flag">(zero length, hidden)</span>':f.ssid)+r('Security (RSN)',f.sec)+r('Beacon interval','100 TU (~102 ms)'):'')+
+    (f.revealsSsid?r('SSID field','<span class="good">'+f.ssid+'</span> (the hidden name, in the clear)'):'')+
+    (f.cls==='probe'?r('SSID field',f.wild?'wildcard (empty)':f.ssid+' (a saved network)'):'')+
+    (f.cls==='deauth'?r('Reason code','7 (class 3 frame from nonassociated station)')+r('Spoofed?','<span class="bad">source BSSID matches the real AP</span>')+'<div class="flag" style="font-family:Rajdhani,sans-serif;font-size:15px">Compare this RSSI with the real AP\'s beacons. A forger is usually at a different place.</div>':'')+
+    (f.cls==='data'?r('Payload','encrypted, cannot be read'):'')+(f.you?'<div class="bad">You sent this. An active scan is not passive.</div>':r('RSSI',f.rssi+' dBm'));
+  if(f.cls==='deauth'&&mode==='mission')h+='<button class="btn red" onclick="reportDeauth()">REPORT FORGED DEAUTH</button>';
+  $('fdetail').innerHTML=h+'</div>';
+}
+$('frames').addEventListener('pointerdown',()=>{frFreezeUntil=performance.now()+2500;});
+
+/* =============================================================
+   RENDER: MAP / DF
+============================================================= */
+const mapC=$('map'),mx=mapC.getContext('2d'),SC=3;
+function drawMap(){
+  const c=mx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#0a1410';c.fillRect(0,0,480,480);
+  c.strokeStyle='#14241c';c.lineWidth=1;for(let i=0;i<=160;i+=20){c.beginPath();c.moveTo(i*SC,0);c.lineTo(i*SC,480);c.moveTo(0,i*SC);c.lineTo(480,i*SC);c.stroke();}
+  c.fillStyle='#2a2f26';c.fillRect(0,0,480,16*SC*.7);c.fillStyle='#8a8a76';c.font='10px "Share Tech Mono"';c.textAlign='left';c.fillText('ROAD',6,12);
+  c.setLineDash([6,5]);c.strokeStyle='#ffb300';c.lineWidth=1.5;c.strokeRect(FENCE.x*SC,FENCE.y*SC,FENCE.w*SC,FENCE.h*SC);c.setLineDash([]);c.fillStyle='#ffb300';c.fillText('FOB FENCE',FENCE.x*SC+4,FENCE.y*SC+12);
+  BLD.forEach(b=>{c.fillStyle='#1e2d3e';c.fillRect(b.x*SC,b.y*SC,b.w*SC,b.h*SC);c.strokeStyle='#3a5a7a';c.lineWidth=2;c.strokeRect(b.x*SC,b.y*SC,b.w*SC,b.h*SC);c.fillStyle='#7d92a9';c.fillText(b.n,b.x*SC+4,b.y*SC+13);});
+  // reveal
+  if(S.reveal||done.LOCATE){APS.forEach(a=>{if(!S.reveal&&!(a.rogue&&done.LOCATE))return;c.fillStyle=a.rogue?'#ff4444':'#00d4ff';c.beginPath();c.arc(a.x*SC,a.y*SC,6,0,7);c.fill();c.fillStyle='#fff';c.fillText(a.rogue?'ROGUE':(a.real||a.ssid),a.x*SC+9,a.y*SC+4);});
+    if(S.reveal)STAS.forEach(s=>{c.fillStyle='#bb88ff';c.fillRect(s.x*SC-3,s.y*SC-3,6,6);});}
+  S.markers.forEach(m=>{c.strokeStyle='#ffb300';c.lineWidth=2;c.beginPath();c.arc(m.x*SC,m.y*SC,9,0,7);c.stroke();c.beginPath();c.moveTo(m.x*SC-12,m.y*SC);c.lineTo(m.x*SC+12,m.y*SC);c.moveTo(m.x*SC,m.y*SC-12);c.lineTo(m.x*SC,m.y*SC+12);c.stroke();});
+  // player
+  const P=S.P,px=P.x*SC,py=P.y*SC,a=P.aim*Math.PI/180;
+  if(P.yagi){c.fillStyle='rgba(0,255,136,.16)';c.beginPath();c.moveTo(px,py);c.arc(px,py,110,a-Math.PI/2-.5,a-Math.PI/2+.5);c.closePath();c.fill();c.strokeStyle='#00ff88';c.lineWidth=1;c.stroke();}
+  else{c.strokeStyle='rgba(0,255,136,.25)';c.lineWidth=1;c.beginPath();c.arc(px,py,30,0,7);c.stroke();}
+  c.save();c.translate(px,py);c.rotate(a);c.fillStyle='#00ff88';c.beginPath();c.moveTo(0,-11);c.lineTo(8,8);c.lineTo(0,4);c.lineTo(-8,8);c.closePath();c.fill();c.restore();
+  c.fillStyle='#00ff88';c.font='10px "Share Tech Mono"';c.fillText('YOU',px+12,py+4);
+}
+function renderMeter(){
+  const e=S.sel?seenList().find(x=>x.ap.id===S.sel):null;
+  if(!e){$('meter').innerHTML='Select an access point in the LIST tab, then walk and aim to find where its signal is strongest.';return;}
+  const r=rssi(e.ap,S.P,bandOf(e.ap.ch),clock),w=Math.max(0,Math.min(100,(r+95)*1.6)),live=S.mode==='monitor'&&S.cap&&curCh()===e.ap.ch;
+  $('meter').innerHTML='TRACKING <b>'+(apName(e)||'(hidden)')+'</b> &middot; '+e.ap.bssid.slice(9)+(live?'':' <span class="flag">(adapter not on ch '+e.ap.ch+', reading is stale)</span>')+'<div style="font-size:18px;margin-top:3px;color:'+(r>-60?'var(--green)':r>-75?'var(--amber)':'var(--red)')+'">'+(live?r:e.rssi)+' dBm</div><div class="mbar"><i style="width:'+(live?w:Math.max(0,Math.min(100,(e.rssi+95)*1.6)))+'%"></i></div>';
+}
+function holdBtn(id,fn){const el=$(id);let iv=null;const go=()=>{fn();};
+  el.addEventListener('pointerdown',e=>{e.preventDefault();el.classList.add('down');go();iv=setInterval(go,90);});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>el.addEventListener(ev,()=>{el.classList.remove('down');clearInterval(iv);}));}
+const clampP=()=>{S.P.x=Math.max(2,Math.min(158,S.P.x));S.P.y=Math.max(2,Math.min(158,S.P.y));};
+holdBtn('mUp',()=>{S.P.y-=1.2;clampP();});holdBtn('mDown',()=>{S.P.y+=1.2;clampP();});holdBtn('mLeft',()=>{S.P.x-=1.2;clampP();});holdBtn('mRight',()=>{S.P.x+=1.2;clampP();});
+holdBtn('mAimL',()=>{S.P.aim=(S.P.aim+354)%360;});holdBtn('mAimR',()=>{S.P.aim=(S.P.aim+6)%360;});
+$('mYagi').onclick=()=>{S.P.yagi=!S.P.yagi;syncUI();};
+$('mReveal').onclick=()=>{S.reveal=!S.reveal;syncUI();};
+$('mMark').onclick=()=>{
+  const e=S.sel?seenList().find(x=>x.ap.id===S.sel):null;if(!e){bad('Select a target first.');return;}
+  S.markers=[{x:S.P.x,y:S.P.y}];const d=Math.hypot(e.ap.x-S.P.x,e.ap.y-S.P.y);
+  if(mode!=='mission'){setMsg('');return;}
+  if(!e.ap.rogue){bad('That is not the emitter you were sent to find.');return;}
+  if(d<=12)complete('LOCATE');else bad('Not close enough. Marked about '+Math.round(d)+' m off. Keep following the strongest signal.');
+};
+
+/* =============================================================
+   TABS
+============================================================= */
+function setTab(t){S.tab=t;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='tab-'+t));
+  if(t==='frames'){buildFilters();renderFrames(true);}if(t==='list'){listKey='';detKey='';renderList();}if(t==='spec'){renderRec();}if(t==='map')renderMeter();}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.t));
+function setList(l){S.list=l;detKey='';listKey='';$('lAp').classList.toggle('on',l==='ap');$('lCl').classList.toggle('on',l==='cl');renderList();}
+function renderAll(){listKey='';detKey='';renderList();updateStat();}
+
+/* =============================================================
+   MISSION
+============================================================= */
+const OBJ={MONITOR:'Put the adapter in monitor mode, passive, and start a capture.',HIDDEN:'Find the name of the hidden network.',ROGUE:'Find the access point that does not belong and flag it.',DEAUTH:'Catch forged deauthentication frames and report them.',LOCATE:'Walk the rogue down and mark where it is.',CHANNEL:'Pick a channel for a new access point at your location.'};
+const WHY={
+ MONITOR:['Monitor and passive','Monitor mode lets the adapter hear every 802.11 frame on a channel, not just frames addressed to it. Passive means you only listen. Nothing you do can be detected by the emitters you are studying.'],
+ HIDDEN:['Hidden is not secret','A hidden SSID only leaves the name out of the beacon. The name still appears in probe responses and association frames the moment a device joins. It hides the name from a casual list, nothing more.'],
+ ROGUE:['Evil twin','A rogue access point copies a real SSID. Same name does not mean same network. Check the BSSID against the known list, then look at the vendor, the channel, and the security. Here the BSSID, vendor, and encryption all differed from the card.'],
+ DEAUTH:['Forged management frames','Deauthentication frames are management frames. In older WPA2 networks they are not protected, so anyone can forge them. Protected Management Frames (802.11w) fix this, and WPA3 requires them. Attackers use floods like this to push clients toward an evil twin.'],
+ LOCATE:['Signal strength and direction','Signal falls off with distance and is blocked by walls. A directional antenna hears best when pointed at the emitter. Walk toward the strongest reading, aim for the peak, and you are doing basic direction finding.'],
+ CHANNEL:['Channels 1, 6, 11','In 2.4 GHz each 20 MHz channel is 5 MHz from the next, so only channels 1, 6, and 11 do not overlap. Choose the one with the weakest signals on it and on its overlapping neighbors, where the new AP will sit.']
+};
+function taskIdx(){return TASKS.findIndex(k=>!done[k]);}
+function updateObj(){const i=taskIdx();if(i<0)return;$('hudStep').textContent='TASK '+(i+1)+' OF 6';$('hudObj').textContent=OBJ[TASKS[i]];}
+function complete(k){
+  if(done[k])return;done[k]=true;const p=document.querySelector('.pill[data-k="'+k+'"]');if(p)p.classList.add('ok');hintLevel=0;
+  $('whyK').textContent='TASK COMPLETE';$('whyH').textContent=WHY[k][0];$('whyP').textContent=WHY[k][1];openOv('ovWhy');
+  setMsg(k+' complete.','good');updateObj();
+  if(TASKS.every(x=>done[x]))setTimeout(finish,600);
+}
+function checkTasks(){
+  if(mode!=='mission')return;
+  if(!done.MONITOR&&S.mode==='monitor'&&S.scan==='passive'&&S.cap&&S.monT>=3)complete('MONITOR');
+  if(!done.HIDDEN&&S.hiddenName)complete('HIDDEN');
+}
+function flagRogue(id){
+  if(mode!=='mission')return;
+  if(done.ROGUE)return;
+  const a=apById(id);
+  if(!S.seen[apById('rogue').bssid]){bad('You have not seen that network yet.');return;}
+  if(a.rogue){S.flagged=id;complete('ROGUE');return;}
+  const why={toc:'That is the real TOC-SECURE: its BSSID matches the card.',cafe:'Open, but a different SSID and far outside the fence. Open is not the same as an evil twin.',hot:'A phone hotspot is a policy issue but it is not copying an approved SSID.',mwr:'MWR-WIFI is on the approved list.',sup:'SUPPLY-LAN is on the approved list.',toc5:'TOC-5G is on the approved list.',maint:'MAINT-01 is on the approved list.'}[id]||'Not the one.';
+  bad(why);
+}
+function reportDeauth(){
+  if(mode!=='mission'||done.DEAUTH)return;
+  const f=S.frames.find(x=>x.n===S.selF);if(!f||f.cls!=='deauth')return;
+  if(S.deauthN<5){bad('Capture more before you call it. One stray deauth is normal.');return;}
+  complete('DEAUTH');
+}
+function giveHint(){
+  if(mode!=='mission')return;hintsUsed++;hintLevel=Math.min(3,hintLevel+1);const i=taskIdx();if(i<0)return;const k=TASKS[i];
+  const H={
+   MONITOR:['A managed adapter shows you a list. An analyzer needs more.','Switch the adapter mode, keep the scan passive, and start capturing. Wait a few seconds.','MODE: MONITOR, SCAN: PASSIVE, then START CAPTURE.'],
+   HIDDEN:['One network shows no name. The name appears somewhere other than the beacon.','A device joining the network sends frames that contain the name. Which channel does that network use? Check the LIST tab.','The hidden network is on channel 1. Lock the channel to 1 and watch the ASSOC filter in FRAMES. It repeats about every 25 seconds.'],
+   ROGUE:['Two networks use the same name. Compare them with the card.','Open the details for each TOC-SECURE. Check BSSID, channel, vendor, and security.','The one with BSSID D8:5D:4C:6B:23:F1 is open and on channel 3. Tap it and FLAG AS ROGUE.'],
+   DEAUTH:['The attack is a burst of one kind of frame. Which filter would show it?','Use the DEAUTH filter in FRAMES. The burst starts about 45 seconds into each 70 second cycle on channel 6.','Lock to channel 6 and wait. Tap a deauth frame, then REPORT FORGED DEAUTH.'],
+   LOCATE:['Select the rogue in the LIST, then open the MAP.','Turn on the directional antenna. Aim until the signal peaks, then walk that way. It is outside the fence.','Head north along the east side, outside the fence. Lock channel 3 so the reading stays live. Mark within 12 m.'],
+   CHANNEL:['Look at the 2.4 GHz spectrum. Where is the humpless gap?','Only 1, 6, and 11 do not overlap. Weigh the strong humps near each, not just the count.','Pick the one of 1, 6, 11 with the weakest overlapping signals around it, as seen from where you stand.']}[k];
+  setMsg('HINT: '+H[hintLevel-1],'');
+}
+function finish(){
+  const s=Math.round((Date.now()-t0)/1000);$('aT').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');$('aE').textContent=errors;$('aH').textContent=hintsUsed;
+  closeOv('ovWhy');setTimeout(()=>openOv('ovAar'),200);
+}
+
+/* =============================================================
+   LOOP
+============================================================= */
+function frame(ts){
+  const dt=Math.min(.1,(ts-lastT)/1000||0);lastT=ts;
+  if(mode!=='start'){acc+=dt*speed;clock+=dt*speed;while(acc>=0.1){acc-=0.1;tickSim();}
+    if(S.tab==='spec')drawSpec();if(S.tab==='map'){drawMap();renderMeter();}}
+  requestAnimationFrame(frame);
+}
+reset();requestAnimationFrame(frame);
+(function(){const p=new URLSearchParams(location.search).get('mode');if(p==='sandbox')startSandbox();if(p==='mission')startMission();})();
+</script>
+</body>
+</html>

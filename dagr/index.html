@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AN/PSN-13 DAGR — GPS Receiver Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stencil:#c8c4a8; --good:#5dffb0; --amber:#f0c060; --red:#e04030;
+  --mono:'Share Tech Mono',monospace; --disp:'Rajdhani',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;background:#14140f;background-image:radial-gradient(ellipse at 50% 0%,#1e1e17 0%,#0d0d09 70%);color:var(--stencil);font-family:var(--disp);padding:10px 8px 24px;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.app{max-width:480px;margin:0 auto}
+.hdr{text-align:center;margin-bottom:8px;color:#6b6b5e;font-family:var(--mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase}
+.hdr b{color:#9a9a86}
+.hud{background:#101109;border:1px solid #2a2c22;border-radius:6px;padding:8px 10px;margin-bottom:8px;display:none}
+.hud-top{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.hud-step{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#8a8a76}
+.hud-obj{font-size:19px;font-weight:700;letter-spacing:.4px;color:#e8e6dc;line-height:1.15;margin-top:2px}
+.hud-btn{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:#f0c060;background:#1d1a12;border:1px solid #6a5830;border-radius:4px;padding:7px 10px;cursor:pointer;white-space:nowrap}
+.hud-btn.sm{color:#8ec8e8;border-color:#35586a}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 7px;border-radius:10px;border:1px solid #3a3d32;color:#6b6b5e}
+.pill.ok{color:#071a10;background:var(--good);border-color:var(--good)}
+.msg{min-height:20px;font-family:var(--mono);font-size:11.5px;color:#c8c6b0;margin-top:6px;line-height:1.4}
+.msg.err{color:#ff9d8a}.msg.good{color:var(--good)}
+.scene{display:none}.scene.on{display:block}
+canvas.cv{display:block;width:100%;height:auto;aspect-ratio:3/4;border-radius:8px;border:1px solid #2a2c22;background:#000;touch-action:none}
+.cvwrap{position:relative}
+.bigbtn{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font-family:var(--mono);font-size:14px;letter-spacing:2px;color:#0b1a10;background:var(--good);border:0;border-radius:6px;padding:15px 24px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);touch-action:none;white-space:nowrap}
+.bigbtn.walk{background:#e8e6dc;color:#14140f}
+.bigbtn[hidden]{display:none}
+.say{position:absolute;left:10px;right:10px;top:10px;background:rgba(10,10,6,.78);border:1px solid #3a3d32;border-radius:6px;padding:8px 10px;font-size:16px;line-height:1.25;color:#e8e6dc}
+.say b{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#f0c060;display:block;margin-bottom:2px;font-weight:400}
+.start{background:#101109;border:1px solid #2a2c22;border-radius:8px;padding:18px 16px;text-align:center}
+.start h1{font-size:26px;letter-spacing:1px;margin:2px 0 6px;color:#e8e6dc}
+.start p{color:#a8a894;font-size:16.5px;line-height:1.35;margin:6px 0}
+.start .row{display:grid;gap:10px;margin-top:14px}
+.choice{font-family:var(--disp);text-align:left;background:#181a12;border:1px solid #3a3d32;border-left:4px solid var(--good);border-radius:6px;padding:12px 14px;cursor:pointer;color:#e8e6dc}
+.choice.free{border-left-color:#8ec8e8}
+.choice b{display:block;font-size:19px;letter-spacing:.5px}.choice span{font-size:15px;color:#a8a894}
+
+/* first-person strip */
+.fp{width:100%;height:auto;aspect-ratio:480/170;display:block;border-radius:8px;border:1px solid #2a2c22;background:#000;margin-bottom:8px}
+
+/* DAGR body */
+.dagr{max-width:340px;margin:0 auto;background:linear-gradient(170deg,#3a3f34 0%,#2a2e26 55%,#1d201b 100%);border-radius:22px 22px 28px 28px;padding:14px 14px 16px;border:1px solid #11130f;box-shadow:0 12px 40px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08)}
+.dagr .brand{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:#8a8a76;padding:0 4px 6px}
+.bezel{background:#0c0d0a;border-radius:8px;padding:8px;border:2px solid #050605;box-shadow:inset 0 3px 10px rgba(0,0,0,.7)}
+canvas.lcd{display:block;width:100%;height:auto;aspect-ratio:240/300;border-radius:3px;background:#cfd6c6}
+.krow{display:grid;gap:7px;margin-top:10px}
+.k2{grid-template-columns:repeat(4,1fr)}
+.dk{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;color:#e4e2d4;background:linear-gradient(160deg,#2c2e28,#171814);border:1px solid #0b0c09;border-top:1px solid #4a4c42;border-radius:8px;padding:11px 2px 9px;cursor:pointer;text-align:center;line-height:1.15;box-shadow:0 2px 0 #000;touch-action:none}
+.dk small{display:block;font-size:8px;font-weight:400;color:#f0c060;margin-top:2px;letter-spacing:.3px}
+.dk:active,.dk.down{box-shadow:none;transform:translateY(2px)}
+.dk.pad{padding:13px 2px;font-size:15px}
+.cur{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,44px);gap:5px;justify-content:center;margin-top:10px}
+.num{grid-template-columns:repeat(3,1fr)}
+.num .dk{font-size:14px;padding:9px 2px 7px;color:#b8b6a6}
+.walkrow{display:flex;gap:8px;max-width:340px;margin:12px auto 0}
+.wk{flex:1;font-family:var(--mono);font-size:12px;letter-spacing:1.5px;color:#e8e6dc;background:#1a1c14;border:1px solid #3d4030;border-radius:8px;padding:14px 4px;cursor:pointer;touch-action:none}
+.wk.go{flex:1.4;background:#26301f;border-color:#4a6a3a;color:#c8f0b0}
+.wk.down{background:#3a4a2c}
+.hint{font-family:var(--mono);font-size:11px;color:#8a8a76;text-align:center;margin-top:10px;line-height:1.55;padding:0 6px;min-height:34px}
+.hint b{color:#c8c6b0}
+.cardbtn{display:block;margin:12px auto 0;width:100%;max-width:340px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:#14140f;background:#d9d2b0;border:1px solid #8a8466;border-radius:4px;padding:9px;cursor:pointer}
+.srcstrip{margin:14px auto 0;font-family:var(--mono);font-size:10px;line-height:1.7;color:#6b6b5e;text-align:center;padding:0 8px}
+.srcstrip b{color:#9a9a86;letter-spacing:1px}
+.backlink{text-align:center;margin-top:8px}
+.backlink a{color:#7fa8b8;text-decoration:none;font-family:sans-serif;font-size:11px;letter-spacing:.03em}
+
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:40;padding:14px}
+.ov.on{display:flex}
+.sheet{background:#17180f;border:1px solid #4a4d3a;border-radius:10px;max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px 14px 16px}
+.sheet h2{margin:0 0 6px;font-size:22px;letter-spacing:.8px;color:#e8e6dc}
+.sheet .k{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#f0c060}
+.card{background:#e6dfbd;color:#1d1c12;border-radius:4px;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.8;box-shadow:0 4px 0 #8a8466;border:1px solid #a49c7a}
+.card h3{margin:0 0 4px;font-size:12px;letter-spacing:1.5px;border-bottom:1px solid #8a8466;padding-bottom:4px;font-weight:400}
+.card .r{display:flex;justify-content:space-between;gap:10px}.card .r b{font-size:14px;text-align:right}
+.btn{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;color:#0b1a10;background:var(--good);border:0;border-radius:5px;padding:12px 14px;cursor:pointer;margin-top:12px}
+.btn.alt{background:#2a2c22;color:#c8c6b0;border:1px solid #4a4d3a}
+.digs{display:flex;gap:10px;align-items:center;margin:10px 0}
+.digs input{width:84px;font-family:var(--mono);font-size:22px;letter-spacing:4px;text-align:center;background:#0e0f09;color:#e8e6dc;border:1px solid #4a4d3a;border-radius:5px;padding:8px 4px;-webkit-user-select:text;user-select:text}
+table.aar{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0}
+table.aar td{padding:5px 6px;border-bottom:1px solid #2a2c22}table.aar td:last-child{text-align:right;color:#e8e6dc}
+ol.seq{margin:8px 0 0;padding-left:20px;font-size:15.5px;line-height:1.35;color:#c8c6b0}
+.note{font-size:14.5px;color:#a8a894;margin-top:8px;line-height:1.3}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">Training Simulator &middot; Not for Operational Use &middot; <b>AN/PSN-13A DAGR</b> &middot; Defense Advanced GPS Receiver</div>
+
+  <div class="start" id="start">
+    <div class="hdr" style="margin:0">DAGR &middot; Navigation</div>
+    <h1>Get the DAGR running</h1>
+    <p>You are at a start point with a DAGR and four loose batteries. Power it up, set it to the card, mark your position, and walk to the next checkpoint using the pointer. No receiver in your hands needed.</p>
+    <div class="row">
+      <button class="choice" onclick="startLane()"><b>NAV LANE</b><span>First-person scenario with a nav card and a grid report at the checkpoint. About 6 minutes.</span></button>
+      <button class="choice free" onclick="startFree()"><b>FREE PRACTICE</b><span>Skip the walk-up. Work the DAGR keys and menus on your own, with a hint for each screen.</span></button>
+    </div>
+  </div>
+
+  <div class="hud" id="hud">
+    <div class="hud-top">
+      <div><div class="hud-step" id="hudStep">STEP 1 OF 5</div><div class="hud-obj" id="hudObj">Walk up to the start point.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px"><button class="hud-btn" onclick="giveHint()">HINT</button><button class="hud-btn sm" onclick="openCard()">CARD</button></div>
+    </div>
+    <div class="pills" id="pills"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="scene" id="s1"><div class="cvwrap">
+    <canvas class="cv" id="cv1" width="480" height="640"></canvas>
+    <div class="say"><b>SQUAD LEADER</b>"Your DAGR and batteries are on the poncho. Nav card's there too. Get it up, mark this spot, and take it to CP 2."</div>
+    <button class="bigbtn walk" id="walkBtn">HOLD TO WALK &#9650;</button>
+    <button class="bigbtn" id="kneelBtn" hidden>KNEEL DOWN</button>
+  </div></div>
+
+  <div class="scene" id="s2"><div class="cvwrap">
+    <canvas class="cv" id="cv2" width="480" height="640"></canvas>
+    <button class="bigbtn" id="closeBtn" hidden>HOLD TO CLOSE COVER</button>
+    <button class="bigbtn" id="pickBtn" hidden>PICK UP THE DAGR</button>
+  </div></div>
+
+  <div class="scene" id="s3">
+    <canvas class="fp" id="fp" width="480" height="170"></canvas>
+    <div class="dagr">
+      <div class="brand"><span>AN/PSN-13A</span><span>DAGR</span></div>
+      <div class="bezel"><canvas class="lcd" id="lcd" width="480" height="600"></canvas></div>
+      <div class="krow k2" style="grid-template-columns:repeat(4,1fr)">
+        <button class="dk" id="kPwr">PWR<small>QUIT</small></button>
+        <button class="dk" id="kPos">POS<small>PAGE</small></button>
+        <button class="dk" id="kMenu">MENU<small>BRIGHT</small></button>
+        <button class="dk" id="kEnt">WP<small>ENTER</small></button>
+      </div>
+      <div class="cur">
+        <div></div><button class="dk pad" id="kUp">&#9650;</button><div></div>
+        <button class="dk pad" id="kLeft">&#9664;</button><div></div><button class="dk pad" id="kRight">&#9654;</button>
+        <div></div><button class="dk pad" id="kDown">&#9660;</button><div></div>
+      </div>
+      <div class="krow num" id="numPad"></div>
+    </div>
+    <div class="walkrow">
+      <button class="wk" id="wL">&#9664; TURN</button>
+      <button class="wk go" id="wGo">WALK &#9650;</button>
+      <button class="wk" id="wR">TURN &#9654;</button>
+    </div>
+    <button class="cardbtn" id="cardBtn2" onclick="openCard()">NAV CARD</button>
+    <div class="hint" id="hintText"></div>
+  </div>
+
+  <div class="srcstrip"><b>SOURCE</b> GTA 07-06-003, AN/PSN-13 DAGR quick reference &middot; TO 31R4-2PSN13-8-1 (TB 11-5820-1172-10), DAGR Operator&rsquo;s Pocket Guide &middot; Training aid &mdash; confirm with instructor.</div>
+  <div class="backlink"><a href="/">&#8592; Back to E-WIT</a></div>
+</div>
+
+<div class="ov" id="ovCard"><div class="sheet">
+  <div class="k">NAV CARD</div><h2>Start point Alpha</h2>
+  <div class="card"><h3>EXTRACT &middot; PATROL ORDER</h3>
+    <div class="r"><span>DATUM</span><b>WGS 84</b></div>
+    <div class="r"><span>COORDINATES</span><b>MGRS</b></div>
+    <div class="r"><span>GRID</span><b>6-DIGIT (100 M)</b></div>
+    <div class="r"><span>AT START</span><b>MARK YOUR POSITION</b></div>
+    <div class="r"><span>MOVE TO</span><b>CP 2</b></div>
+    <div class="r"><span>AT CP 2</span><b>REPORT 6-DIGIT GRID</b></div>
+  </div>
+  <button class="btn" onclick="closeOv('ovCard')">GOT IT</button>
+</div></div>
+
+<div class="ov" id="ovRep"><div class="sheet">
+  <div class="k">AT CP 2</div><h2>Report your grid</h2>
+  <div class="note">Read the 6-digit grid from the Present Position page and enter it here. Easting first, then northing.</div>
+  <div class="digs"><input id="repE" inputmode="numeric" maxlength="3" placeholder="EEE"><span>&nbsp;</span><input id="repN" inputmode="numeric" maxlength="3" placeholder="NNN"></div>
+  <div class="msg" id="repMsg"></div>
+  <button class="btn" onclick="submitReport()">SEND REPORT</button>
+  <button class="btn alt" onclick="closeOv('ovRep')">BACK TO DAGR</button>
+</div></div>
+
+<div class="ov" id="ovAar"><div class="sheet">
+  <div class="k">AFTER ACTION REVIEW</div><h2>Checkpoint reached</h2>
+  <table class="aar"><tr><td>Time</td><td id="aarTime"></td></tr><tr><td>Wrong keypresses and reports</td><td id="aarErr"></td></tr><tr><td>Hints used</td><td id="aarHint"></td></tr></table>
+  <div class="k" style="margin-top:6px">THE SEQUENCE</div>
+  <ol class="seq">
+    <li>Insert four AA batteries and close the cover.</li>
+    <li>PWR/QUIT to turn on. Wait for the satellites. The DAGR shows Present Position when it has a fix.</li>
+    <li>Hold POS/PAGE for Present Position, then MENU: Select Datum (WGS 84), Select Coordinate/Grid System (MGRS), and Select Grid Resolution (100 m).</li>
+    <li>Hold WP/ENTER, Mark a WP, WP/ENTER to store it. Do this before you move.</li>
+    <li>Hold WP/ENTER, GOTO a WP, choose CP 2, WP/ENTER. Walk the way the NAV Pointer arrow points.</li>
+    <li>Read the grid on Present Position. In a 6-digit grid, take the first three digits of the easting and northing. Do not round.</li>
+  </ol>
+  <button class="btn" onclick="closeOv('ovAar');startLane()">RUN IT AGAIN</button>
+  <button class="btn alt" onclick="closeOv('ovAar');startFree()">FREE PRACTICE</button>
+</div></div>
+
+<script>
+/* =============================================================
+   TERRAIN AND COORDINATES (illustrative, UTM zone 17S)
+============================================================= */
+const BASE={E:412345,N:3696789,zone:17,band:'S'};
+const DATUMS={'WGS 84':[0,0],'NAD 27 CONUS':[37,-92],'NAD 83 CONUS':[1,-1],'ED 50':[-90,110],'TOKYO':[410,-620]}; // display offsets are illustrative, not geodetic
+const COORDS=['MGRS','UTM',"LAT/LON DD\u00b0MM.MMM'","LAT/LON DD\u00b0MM'SS.S\""];
+const RES=['1 m','10 m','100 m','1000 m'], RESDIG=[5,4,3,2];
+function utmToLL(E,N){
+  const a=6378137,f=1/298.257223563,k0=0.9996,n=f/(2-f),A=a/(1+n)*(1+n*n/4+Math.pow(n,4)/64);
+  const xi=N/(k0*A),eta=(E-500000)/(k0*A);
+  const b1=n/2-2*n*n/3+37*Math.pow(n,3)/96,b2=n*n/48+Math.pow(n,3)/15,b3=17*Math.pow(n,3)/480;
+  let xi2=xi,eta2=eta;
+  [[b1,2],[b2,4],[b3,6]].forEach(c=>{xi2-=c[0]*Math.sin(c[1]*xi)*Math.cosh(c[1]*eta);eta2-=c[0]*Math.cos(c[1]*xi)*Math.sinh(c[1]*eta);});
+  const chi=Math.asin(Math.sin(xi2)/Math.cosh(eta2));
+  const d1=2*n-2*n*n/3-2*Math.pow(n,3),d2=7*n*n/3-8*Math.pow(n,3)/5,d3=56*Math.pow(n,3)/15;
+  const lat=chi+d1*Math.sin(2*chi)+d2*Math.sin(4*chi)+d3*Math.sin(6*chi);
+  const lon=(BASE.zone*6-183)*Math.PI/180+Math.atan2(Math.sinh(eta2),Math.cos(xi2));
+  return [lat*180/Math.PI,lon*180/Math.PI];
+}
+function mgrsParts(E,N){
+  const cols=['ABCDEFGH','JKLMNPQR','STUVWXYZ'][(BASE.zone-1)%3],rows='ABCDEFGHJKLMNPQRSTUV';
+  return {col:cols[Math.floor(E/100000)-1],row:rows[(Math.floor(N/100000)+(BASE.zone%2===0?5:0))%20],e:Math.floor(E%100000),n:Math.floor(N%100000)};
+}
+const pad5=v=>String(v).padStart(5,'0');
+function dispEN(dE,dN){const s=DATUMS[D.datum];return [BASE.E+dE+s[0],BASE.N+dN+s[1]];}
+function fmtPos(dE,dN,lines){
+  const en=dispEN(dE,dN),E=en[0],N=en[1],c=D.coord;
+  if(c==='MGRS'){const m=mgrsParts(E,N),d=RESDIG[D.res];
+    const e=pad5(m.e).slice(0,d),n=pad5(m.n).slice(0,d);
+    return lines?[BASE.zone+BASE.band+' '+m.col+m.row,e+'  '+n]:[BASE.zone+BASE.band+' '+m.col+m.row+' '+e+' '+n];}
+  if(c==='UTM'){const a=BASE.zone+BASE.band+' '+Math.floor(E)+'E',b=Math.floor(N)+'N';return lines?[a,b]:[a+' '+b];}
+  const ll=utmToLL(E,N),la=Math.abs(ll[0]),lo=Math.abs(ll[1]),h1=ll[0]>=0?'N':'S',h2=ll[1]>=0?'E':'W';
+  if(c.indexOf("MM.MMM")>0){
+    const f=(v,w)=>{const d=Math.floor(v),m=(v-d)*60;return String(d).padStart(w,'0')+'\u00b0'+m.toFixed(3).padStart(6,'0')+"'";};
+    const a=h1+' '+f(la,2),b=h2+' '+f(lo,3);return lines?[a,b]:[a+' '+b];}
+  const g=(v,w)=>{const d=Math.floor(v),mm=(v-d)*60,m=Math.floor(mm),s=(mm-m)*60;return String(d).padStart(w,'0')+'\u00b0'+String(m).padStart(2,'0')+"'"+s.toFixed(1).padStart(4,'0')+'"';};
+  const a=h1+' '+g(la,2),b=h2+' '+g(lo,3);return lines?[a,b]:[a+' '+b];
+}
+function grid6(dE,dN){const en=dispEN(dE,dN),m=mgrsParts(en[0],en[1]);return [pad5(m.e).slice(0,3),pad5(m.n).slice(0,3)];}
+const bearing=(dx,dy)=>((Math.atan2(dx,dy)*180/Math.PI)+360)%360;
+
+/* =============================================================
+   STATE
+============================================================= */
+let mode='start',step='start',errors=0,hintsUsed=0,hintLevel=0,t0=0,dist=100,walking=false,bob=0,lastT=0;
+let D,P,clock=0;
+const WPS0=()=>[{n:1,name:'CP 1',dE:-100,dN:70},{n:2,name:'CP 2',dE:140,dN:110},{n:3,name:'RP',dE:30,dN:-90}];
+function resetDagr(){
+  D={on:false,booted:0,page:'SV',datum:'NAD 27 CONUS',coord:COORDS[2],res:0,fix:false,svT:0,popup:null,menu:null,screen:null,
+     wps:WPS0(),dest:null,posScroll:0,autoPos:false,msg:null,msgT:0,batt:false,heldKey:null,arrived:false};
+  P={dE:0,dN:0,h:20,v:0};
+}
+resetDagr();
+function show(id){['s1','s2','s3'].forEach(x=>document.getElementById(x).classList.toggle('on',x===id));}
+function hud(on){document.getElementById('hud').style.display=on?'block':'none';}
+function setObj(a,b){document.getElementById('hudStep').textContent=a;document.getElementById('hudObj').textContent=b;}
+function setMsg(t,c){const m=document.getElementById('msg');m.textContent=t||'';m.className='msg '+(c||'');}
+function closeOv(id){document.getElementById(id).classList.remove('on');}
+function openCard(){document.getElementById('ovCard').classList.add('on');}
+function bad(t){errors++;setMsg(t,'err');}
+
+function startLane(){
+  mode='lane';resetDagr();errors=0;hintsUsed=0;hintLevel=0;t0=Date.now();dist=100;
+  batt={n:0,locked:false,cover:0};bpos=BP0();
+  document.getElementById('start').style.display='none';
+  document.getElementById('cardBtn2').style.display='block';
+  hud(true);document.getElementById('pills').style.display='none';
+  step='approach';setObj('STEP 1 OF 5','Walk up to the start point.');setMsg('');show('s1');
+  document.getElementById('kneelBtn').hidden=true;document.getElementById('walkBtn').hidden=false;
+  document.getElementById('closeBtn').hidden=true;document.getElementById('pickBtn').hidden=true;
+  updateHint();
+}
+function startFree(){
+  mode='free';resetDagr();step='free';D.batt=true;
+  document.getElementById('start').style.display='none';
+  document.getElementById('cardBtn2').style.display='none';
+  hud(false);show('s3');updateHint();
+}
+
+/* =============================================================
+   SCENE 1 - walk up
+============================================================= */
+const cv1=document.getElementById('cv1'),c1=cv1.getContext('2d');
+const walkBtn=document.getElementById('walkBtn');
+walkBtn.addEventListener('pointerdown',e=>{walking=true;e.preventDefault();});
+['pointerup','pointerleave','pointercancel'].forEach(e=>walkBtn.addEventListener(e,()=>{walking=false;}));
+document.getElementById('kneelBtn').onclick=function(){
+  step='batteries';show('s2');this.hidden=true;
+  setObj('STEP 2 OF 5','Put the batteries in the DAGR.');setMsg('Drag each battery into the open compartment on the back.');
+};
+const TREES=(function(){const o=[];let r=5;const rnd=()=>{r=(r*9301+49297)%233280;return r/233280;};for(let i=0;i<34;i++)o.push([rnd()*520-20,14+rnd()*36,18+rnd()*22]);return o;})();
+function drawS1(dt){
+  const W=480,H=640,hz=262;
+  if(walking&&dist>0){dist=Math.max(0,dist-dt*24);bob+=dt*9;}
+  const s=14/(14+dist);
+  let g=c1.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#121a26');g.addColorStop(.6,'#34443f');g.addColorStop(1,'#6a7660');c1.fillStyle=g;c1.fillRect(0,0,W,hz);
+  c1.fillStyle='#0e1510';TREES.forEach(t=>{const x=t[0],h=t[2]+10;c1.beginPath();c1.moveTo(x-t[2]*.5,hz);c1.lineTo(x,hz-h-6);c1.lineTo(x+t[2]*.5,hz);c1.closePath();c1.fill();});
+  c1.fillRect(0,hz-10,W,12);
+  g=c1.createLinearGradient(0,hz,0,H);g.addColorStop(0,'#2d3822');g.addColorStop(1,'#14180e');c1.fillStyle=g;c1.fillRect(0,hz,W,H-hz);
+  c1.fillStyle='#3a3626';c1.beginPath();c1.moveTo(W/2-10,hz);c1.lineTo(W/2+10,hz);c1.lineTo(W/2+170,H);c1.lineTo(W/2-170,H);c1.closePath();c1.fill();
+  c1.strokeStyle='rgba(255,255,255,.07)';c1.lineWidth=2;const ph=((100-dist)/100*10)%1;
+  for(let k=0;k<14;k++){const z=(k+ph)/14,y=hz+(H-hz)*Math.pow(z,2.2),hw=14+z*160;c1.beginPath();c1.moveTo(W/2-hw,y);c1.lineTo(W/2+hw,y);c1.stroke();}
+  const yb=hz+(H*0.92-hz)*s,pw=450*s,ph2=140*s;
+  c1.fillStyle='#202a1a';c1.beginPath();c1.moveTo(W/2-pw*.42,yb-ph2);c1.lineTo(W/2+pw*.42,yb-ph2);c1.lineTo(W/2+pw*.5,yb);c1.lineTo(W/2-pw*.5,yb);c1.closePath();c1.fill();
+  c1.strokeStyle='#33402a';c1.lineWidth=Math.max(1,2*s);c1.stroke();
+  // start point marker (stake with flag)
+  c1.strokeStyle='#d8d2b0';c1.lineWidth=Math.max(1.5,3*s);c1.beginPath();c1.moveTo(W/2+pw*.4,yb-ph2*.2);c1.lineTo(W/2+pw*.4,yb-ph2*1.5);c1.stroke();
+  c1.fillStyle='#e04030';c1.fillRect(W/2+pw*.4,yb-ph2*1.5,40*s,22*s);
+  // DAGR
+  const dw=70*s,dh=118*s,dx=W/2-dw/2-18*s,dy=yb-ph2*.95-dh*.1;
+  c1.fillStyle='#2b2f2a';c1.fillRect(dx,dy,dw,dh);c1.fillStyle='#cfd6c6';c1.fillRect(dx+dw*.12,dy+dh*.1,dw*.76,dh*.44);
+  c1.fillStyle='#14140f';for(let i=0;i<3;i++)for(let j=0;j<4;j++)c1.fillRect(dx+dw*(.1+j*.22),dy+dh*(.6+i*.1),dw*.17,dh*.07);
+  // batteries
+  c1.fillStyle='#c9a21d';for(let i=0;i<4;i++){c1.fillRect(W/2+pw*(.02+i*.07),yb-ph2*.5,14*s,38*s);c1.fillStyle=i%2?'#c9a21d':'#8a8f9a';}
+  c1.fillStyle='#e6dfbd';c1.fillRect(W/2-pw*.34,yb-ph2*.9,46*s,32*s);
+  const b=Math.sin(bob)*8;c1.fillStyle='#0a0a07';
+  c1.beginPath();c1.ellipse(150,H-6+Math.max(0,b),54,24,0,0,7);c1.fill();c1.beginPath();c1.ellipse(330,H-6+Math.max(0,-b),54,24,0,0,7);c1.fill();
+  const v=c1.createRadialGradient(W/2,H*.45,H*.25,W/2,H*.5,H*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.55)');c1.fillStyle=v;c1.fillRect(0,0,W,H);
+  if(dist<=0&&step==='approach'){document.getElementById('walkBtn').hidden=true;document.getElementById('kneelBtn').hidden=false;setObj('STEP 1 OF 5','You are at the start point.');}
+}
+
+/* =============================================================
+   SCENE 2 - batteries
+============================================================= */
+const cv2=document.getElementById('cv2'),c2=cv2.getContext('2d');
+let batt={n:0,locked:false,cover:0},bpos,bdrag=null,bOff=[0,0],bhold=false;
+const SLOTS=[[190,190],[290,190],[190,330],[290,330]];
+const BP0=()=>[[80,520,0],[170,540,0],[260,520,0],[350,540,0]].map(a=>({x:a[0],y:a[1],in:-1}));
+function lp(e){const r=cv2.getBoundingClientRect();return [(e.clientX-r.left)*480/r.width,(e.clientY-r.top)*640/r.height];}
+cv2.addEventListener('pointerdown',e=>{
+  if(step!=='batteries')return;e.preventDefault();cv2.setPointerCapture(e.pointerId);
+  const p=lp(e);
+  for(let i=0;i<bpos.length;i++){const b=bpos[i];if(b.in<0&&Math.abs(p[0]-b.x)<26&&Math.abs(p[1]-b.y)<52){bdrag=i;bOff=[b.x-p[0],b.y-p[1]];return;}}
+});
+cv2.addEventListener('pointermove',e=>{if(bdrag===null)return;const p=lp(e);bpos[bdrag].x=p[0]+bOff[0];bpos[bdrag].y=p[1]+bOff[1];});
+['pointerup','pointercancel'].forEach(ev=>cv2.addEventListener(ev,()=>{
+  if(bdrag===null)return;const b=bpos[bdrag];bdrag=null;
+  const si=SLOTS.findIndex((s,i)=>!bpos.some(o=>o.in===i)&&Math.hypot(b.x-s[0],b.y-s[1])<60);
+  if(si<0){const i=bpos.indexOf(b);b.x=[80,170,260,350][i];b.y=[520,540,520,540][i];setMsg('Put it in one of the four slots.','');return;}
+  b.in=si;b.x=SLOTS[si][0];b.y=SLOTS[si][1];batt.n=bpos.filter(o=>o.in>=0).length;
+  setMsg(batt.n+' of 4 batteries in.','good');
+  if(batt.n===4){document.getElementById('closeBtn').hidden=false;setMsg('All four in. Close the cover.','good');}
+}));
+const closeBtn=document.getElementById('closeBtn');
+closeBtn.addEventListener('pointerdown',e=>{bhold=true;e.preventDefault();});
+['pointerup','pointerleave','pointercancel'].forEach(e=>closeBtn.addEventListener(e,()=>{bhold=false;}));
+document.getElementById('pickBtn').onclick=function(){
+  this.hidden=true;step='configure';D.batt=true;show('s3');
+  setObj('STEP 3 OF 5','Power on and set up the DAGR per the card.');setMsg('');hintLevel=0;
+  document.getElementById('pills').style.display='flex';buildPills();updateHint();checkProgress();
+};
+function drawS2(dt){
+  c2.fillStyle='#1a2216';c2.fillRect(0,0,480,640);
+  c2.strokeStyle='rgba(255,255,255,.04)';c2.lineWidth=2;for(let i=0;i<9;i++){c2.beginPath();c2.moveTo(0,60+i*70);c2.bezierCurveTo(140,40+i*70,340,90+i*70,480,50+i*70);c2.stroke();}
+  // DAGR back
+  c2.fillStyle='#2b2f2a';rr(c2,100,80,280,420,26);c2.fill();c2.strokeStyle='#0d0f0c';c2.lineWidth=4;c2.stroke();
+  c2.fillStyle='#1b1d1a';rr(c2,140,130,200,260,10);c2.fill();
+  c2.fillStyle='#8a8a76';c2.font='13px "Share Tech Mono"';c2.textAlign='center';c2.fillText('BATTERY COMPARTMENT',240,118);c2.fillText('4 x AA',240,412);
+  SLOTS.forEach((s,i)=>{c2.strokeStyle='#4a4d3a';c2.setLineDash([5,4]);c2.lineWidth=2;rr(c2,s[0]-30,s[1]-56,60,112,8);c2.stroke();c2.setLineDash([]);
+    c2.fillStyle='#8a8a76';c2.fillText('+',s[0],s[1]-62+0);c2.fillText('-',s[0],s[1]+72);});
+  if(bhold&&batt.n===4&&!batt.locked){batt.cover=Math.min(1,batt.cover+dt/0.9);if(batt.cover>=1){batt.locked=true;document.getElementById('closeBtn').hidden=true;document.getElementById('pickBtn').hidden=false;setMsg('Cover latched.','good');}}
+  else if(!bhold&&!batt.locked&&batt.cover>0)batt.cover=Math.max(0,batt.cover-dt*1.5);
+  // batteries
+  bpos.forEach((b,i)=>{
+    c2.save();c2.translate(b.x,b.y);
+    c2.fillStyle='#c9a21d';rr(c2,-22,-48,44,96,6);c2.fill();c2.fillStyle='#1a1a14';c2.fillRect(-22,-18,44,36);
+    c2.fillStyle='#c9a21d';c2.fillRect(-8,-56,16,9);c2.fillStyle='#14140f';c2.font='bold 12px "Share Tech Mono"';c2.textAlign='center';c2.fillText('AA',0,5);c2.fillStyle='#14140f';c2.fillText('+',0,-30);
+    c2.restore();
+  });
+  // cover
+  if(batt.cover>0){c2.fillStyle='rgba(43,47,42,'+(0.35+0.65*batt.cover)+')';rr(c2,132,122,216,276,10);c2.fill();
+    c2.fillStyle='#e4e2d4';c2.font='13px "Share Tech Mono"';c2.textAlign='center';c2.fillText(batt.locked?'COVER LATCHED':'CLOSING...',240,264);
+    c2.strokeStyle='#f0c060';c2.lineWidth=5;c2.beginPath();c2.arc(240,300,26,-Math.PI/2,-Math.PI/2+Math.PI*2*batt.cover);c2.stroke();}
+  // card
+  c2.save();c2.translate(410,560);c2.rotate(-.12);c2.fillStyle='#e6dfbd';c2.fillRect(-46,-30,92,60);c2.fillStyle='#8a8466';c2.font='9px "Share Tech Mono"';c2.textAlign='center';c2.fillText('NAV CARD',0,-6);c2.fillText('(CARD button)',0,10);c2.restore();
+}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+
+/* =============================================================
+   DAGR LOGIC
+============================================================= */
+const PAGES=['POS','SA','NAV','IMG','SV'];
+const PAGE_NAME={POS:'PRESENT POSITION',SA:'SITUATIONAL AWARENESS',NAV:'NAV POINTER',IMG:'IMAGE VIEWER',SV:'SV SKY VIEW'};
+const SVS=[[20,60],[75,35],[130,70],[185,25],[240,55],[290,80],[330,40],[45,15]];
+function lbl(s){return s;}
+function wpName(w){return String(w.n).padStart(3,'0')+(w.name?' '+w.name:'');}
+function nextWpNum(){let n=1;while(D.wps.some(w=>w.n===n))n++;return n;}
+
+function powerOn(){
+  D.on=true;D.booted=0;D.svT=0;D.fix=false;D.autoPos=false;D.page='SV';D.menu=null;D.screen=null;D.msg=null;
+  D.popup={title:'POWER ON STATUS',lines:['SELF-TEST PASSED','DOES NOT NEED','INITIALIZATION'],t:2};
+  checkProgress();
+}
+function powerOff(){D.on=false;D.menu=null;D.screen=null;D.popup=null;D.fix=false;D.dest=D.dest;checkProgress();}
+function flashMsg(t){D.msg=t;D.msgT=2;}
+function keyErr(t){if(mode==='lane')errors++;flashMsg(t);}
+
+/* ---- menus ---- */
+function openMenu(title,items,onEnter,parent){D.menu={title,items,sel:0,onEnter,parent:parent||null};}
+function posMenu(){openMenu('POSITION',['Select Datum','Select Coord/Grid System','Select Grid Resolution'],i=>{
+  if(i===0)selectDatum();else if(i===1)selectCoord();else selectRes();},null);}
+function navMenu(){openMenu('NAV POINTER',['GOTO a WP','Stop Navigation'],i=>{if(i===0)gotoMenu();else{D.dest=null;D.menu=null;flashMsg('NAVIGATION STOPPED');}},null);}
+function mainMenu(){openMenu('MAIN MENU',['Pages','WP/Route/Alerts','Setup'],i=>{
+  if(i===0)openMenu('PAGES',PAGES.map(p=>PAGE_NAME[p]),j=>{D.page=PAGES[j];D.menu=null;},'main');
+  else if(i===1)wpFuncMenu('WP/ROUTE/ALERTS','main');
+  else openMenu('SETUP',['Select Datum','Select Coord/Grid System','Select Grid Resolution'],j=>{if(j===0)selectDatum();else if(j===1)selectCoord();else selectRes();},'main');
+},null);}
+function wpFuncMenu(title,parent){openMenu(title||'WP FUNCTIONS',['Mark a WP','GOTO a WP','Edit WP'],i=>{
+  if(i===0){D.menu=null;D.screen={type:'MARK',num:nextWpNum()};}
+  else if(i===1)gotoMenu();
+  else{D.menu=null;flashMsg('NOT USED IN THIS EXERCISE');}
+},parent||null);}
+function selectDatum(){const k=Object.keys(DATUMS);openMenu('SELECT DATUM',k,i=>{D.datum=k[i];D.menu=null;D.page='POS';checkProgress();},'back');D.menu.sel=Math.max(0,k.indexOf(D.datum));}
+function selectCoord(){openMenu('COORD / GRID SYSTEM',COORDS,i=>{D.coord=COORDS[i];D.menu=null;D.page='POS';checkProgress();},'back');D.menu.sel=Math.max(0,COORDS.indexOf(D.coord));}
+function selectRes(){openMenu('GRID RESOLUTION',RES,i=>{D.res=i;D.menu=null;D.page='POS';checkProgress();},'back');D.menu.sel=D.res;}
+function gotoMenu(){
+  const items=D.wps.map(wpName);
+  openMenu('GOTO WP',items,i=>{D.dest=D.wps[i].n;D.menu=null;D.page='NAV';D.arrived=false;checkProgress();},'back');
+}
+
+/* ---- keys ---- */
+function offGuard(){if(!D.on){keyErr('DAGR IS OFF');return true;}return false;}
+const KEYS={
+ pwrTap(){if(!D.on){if(!D.batt){flashMsg('NO BATTERIES');return;}powerOn();return;}
+   if(D.popup){D.popup=null;return;}
+   if(D.screen){D.screen=null;return;}
+   if(D.menu){D.menu=D.menu.parent?menuBack(D.menu.parent):null;return;}
+   const i=PAGES.indexOf(D.page);D.page=PAGES[(i+PAGES.length-1)%PAGES.length]; },
+ pwrHold(){if(D.on){powerOff();}},
+ posTap(){if(offGuard())return;if(D.popup||D.menu||D.screen)return;
+   if(D.page==='SV'&&!D.fix){D.page='POS';return;}
+   const i=PAGES.indexOf(D.page);D.page=PAGES[(i+1)%PAGES.length];},
+ posHold(){if(offGuard())return;if(D.popup)return;D.menu=null;D.screen=null;D.page='POS';},
+ menuTap(){if(offGuard())return;if(D.popup)return;if(D.screen)return;
+   if(D.menu){mainMenu();return;}
+   if(D.page==='POS')posMenu();else if(D.page==='NAV')navMenu();else mainMenu();},
+ entTap(){if(offGuard())return;
+   if(D.popup){D.popup=null;return;}
+   if(D.screen&&D.screen.type==='MARK'){
+     const w={n:D.screen.num,name:'',dE:P.dE,dN:P.dN};D.wps.push(w);D.screen=null;flashMsg('WP '+String(w.n).padStart(3,'0')+' STORED');checkProgress();return;}
+   if(D.menu){const m=D.menu;m.onEnter(m.sel);return;}
+   flashMsg('NO ACTION');},
+ entHold(){if(offGuard())return;if(D.popup||D.screen)return;wpFuncMenu('WP FUNCTIONS',null);},
+ up(){if(offGuard())return;if(D.menu)D.menu.sel=(D.menu.sel+D.menu.items.length-1)%D.menu.items.length;else if(D.page==='POS')D.posScroll=Math.max(0,D.posScroll-1);},
+ down(){if(offGuard())return;if(D.menu)D.menu.sel=(D.menu.sel+1)%D.menu.items.length;else if(D.page==='POS')D.posScroll=Math.min(3,D.posScroll+1);},
+ side(){if(offGuard())return;}
+};
+function menuBack(par){if(par==='main'){mainMenu();return null;}return null;}
+// hold-aware buttons
+function bindKey(id,tap,hold,ms){
+  const el=document.getElementById(id);let tm=null,fired=false;
+  el.addEventListener('pointerdown',e=>{e.preventDefault();el.classList.add('down');fired=false;
+    if(hold)tm=setTimeout(()=>{fired=true;hold();render();checkProgress();},ms||600);});
+  const up=()=>{el.classList.remove('down');clearTimeout(tm);};
+  el.addEventListener('pointerup',()=>{const wasFired=fired;up();if(!wasFired){tap();render();checkProgress();}});
+  ['pointerleave','pointercancel'].forEach(ev=>el.addEventListener(ev,up));
+}
+bindKey('kPwr',KEYS.pwrTap,KEYS.pwrHold,1800);
+bindKey('kPos',KEYS.posTap,KEYS.posHold,600);
+bindKey('kMenu',KEYS.menuTap,null);
+bindKey('kEnt',KEYS.entTap,KEYS.entHold,600);
+bindKey('kUp',KEYS.up,null);bindKey('kDown',KEYS.down,null);bindKey('kLeft',KEYS.side,null);bindKey('kRight',KEYS.side,null);
+const np=document.getElementById('numPad');
+['1','2','3','4','5','6','7','8','9','.','0','-'].forEach(n=>{const b=document.createElement('button');b.className='dk';b.textContent=n;
+  b.addEventListener('pointerup',()=>{if(offGuard())return;flashMsg('KEYPAD USED FOR DATA ENTRY');});np.appendChild(b);});
+
+/* ---- walking ---- */
+let turnL=false,turnR=false,go=false;
+function hold(id,set){const el=document.getElementById(id);
+  el.addEventListener('pointerdown',e=>{set(true);el.classList.add('down');e.preventDefault();});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>el.addEventListener(ev,()=>{set(false);el.classList.remove('down');}));}
+hold('wL',v=>turnL=v);hold('wR',v=>turnR=v);hold('wGo',v=>go=v);
+
+/* =============================================================
+   RENDER - DAGR LCD
+============================================================= */
+const lcd=document.getElementById('lcd'),lx=lcd.getContext('2d');
+const BG='#cfd6c6',FG='#12170f',DIM='#6b7260';
+function T(txt,x,y,sz,al,col,bold){lx.fillStyle=col||FG;lx.font=(bold?'bold ':'')+sz+'px "Share Tech Mono",monospace';lx.textAlign=al||'left';lx.fillText(txt,x,y);}
+function bar(title){lx.fillStyle=FG;lx.fillRect(0,0,240,22);T(title,120,16,13,'center',BG,true);}
+function drawLcd(){
+  lx.setTransform(lcd.width/240,0,0,lcd.width/240,0,0);
+  lx.fillStyle=BG;lx.fillRect(0,0,240,300);
+  if(!D.on){lx.fillStyle='#b8bfae';lx.fillRect(0,0,240,300);return;}
+  const rng=D.dest?Math.hypot(D.wps.find(w=>w.n===D.dest).dE-P.dE,D.wps.find(w=>w.n===D.dest).dN-P.dN):null;
+  if(D.screen&&D.screen.type==='MARK'){
+    bar('MARK PRESENT POSITION');
+    T('WP NUMBER',10,46,12,'left',DIM);T(String(D.screen.num).padStart(3,'0'),10,66,18,'left',FG,true);
+    T('NAME',10,92,12,'left',DIM);T('________',10,110,16);
+    T('POSITION',10,138,12,'left',DIM);const f=fmtPos(P.dE,P.dN,true);T(f[0],10,158,15);T(f[1],10,178,15);
+    T('DATUM  '+D.datum,10,206,12);
+    lx.fillStyle=FG;lx.fillRect(0,264,240,36);T('ENTER: STORE   QUIT: CANCEL',120,287,12,'center',BG,true);
+  }else if(D.page==='SV'){
+    bar('SV SKY VIEW');
+    const cx=120,cy=130;lx.strokeStyle=FG;lx.lineWidth=1.5;lx.beginPath();lx.arc(cx,cy,78,0,7);lx.stroke();lx.beginPath();lx.arc(cx,cy,42,0,7);lx.stroke();
+    lx.beginPath();lx.moveTo(cx-78,cy);lx.lineTo(cx+78,cy);lx.moveTo(cx,cy-78);lx.lineTo(cx,cy+78);lx.stroke();T('N',cx,cy-82,11,'center');
+    const shown=Math.min(SVS.length,Math.floor(D.svT*1.6));
+    for(let i=0;i<shown;i++){const a=SVS[i][0]*Math.PI/180,r=78*(1-SVS[i][1]/90);const x=cx+Math.sin(a)*r,y=cy-Math.cos(a)*r;
+      const tracked=D.svT>3.2;lx.fillStyle=tracked?FG:DIM;lx.beginPath();lx.arc(x,y,5,0,7);lx.fill();if(!tracked){lx.strokeStyle=FG;lx.beginPath();lx.arc(x,y,8,0,7);lx.stroke();}}
+    const st=D.fix?'NAVIGATING':D.svT>3.2?'TRACKING SVs':'ACQUIRING SVs';
+    T(st,120,236,15,'center',FG,true);T('SVs: '+(D.fix?SVS.length:shown),120,258,13,'center',DIM);
+  }else if(D.page==='POS'){
+    bar('PRESENT POSITION');
+    const blink=!D.fix&&Math.floor(clock*2)%2===0;const col=blink?'#8d9484':FG;
+    if(D.coord==='MGRS'||D.coord==='UTM'){const f=fmtPos(P.dE,P.dN,true);T(D.coord==='MGRS'?'MGRS':'UTM',8,40,11,'left',DIM);T(f[0],8,62,18,'left',col,true);T(f[1],8,86,18,'left',col,true);}
+    else{const f=fmtPos(P.dE,P.dN,true);T('LAT / LON',8,40,11,'left',DIM);T(f[0],8,62,16,'left',col,true);T(f[1],8,86,16,'left',col,true);}
+    const rows=[['COORD',D.coord==='MGRS'?'MGRS '+RES[D.res]:D.coord],['DATUM',D.datum],['MODE','CONTINUOUS'],['EHE','4 M  FOM 1'],['ELEV','186 M MSL'],['SPEED',(P.v).toFixed(1)+' M/S'],['TRACK',String(Math.round(P.h)).padStart(3,'0')+' DEG'],['TIME','14:05:30Z']];
+    for(let i=0;i<5;i++){const r=rows[i+D.posScroll];if(!r)continue;T(r[0],8,116+i*26,11,'left',DIM);T(r[1],8,130+i*26,14,'left',FG,true);}
+    lx.fillStyle=FG;lx.fillRect(0,282,240,18);T(D.fix?'FIX':'NO FIX',8,295,11,'left',BG);T('\u25bc scroll',232,295,11,'right',BG);
+  }else if(D.page==='SA'){
+    bar('SITUATIONAL AWARENESS');
+    const cx=120,cy=150,sc=0.55;lx.strokeStyle=DIM;lx.lineWidth=1;[40,80,120].forEach(r=>{lx.beginPath();lx.arc(cx,cy,r*0.9,0,7);lx.stroke();});
+    D.wps.forEach(w=>{const x=cx+(w.dE-P.dE)*sc,y=cy-(w.dN-P.dN)*sc;if(Math.hypot(x-cx,y-cy)>118)return;
+      lx.fillStyle=FG;lx.fillRect(x-3,y-3,7,7);T(String(w.n).padStart(3,'0'),x+6,y+4,10);if(D.dest===w.n){lx.strokeStyle=FG;lx.beginPath();lx.arc(x,y,9,0,7);lx.stroke();}});
+    lx.fillStyle=FG;lx.save();lx.translate(cx,cy);lx.rotate(P.h*Math.PI/180);lx.beginPath();lx.moveTo(0,-9);lx.lineTo(6,7);lx.lineTo(0,3);lx.lineTo(-6,7);lx.closePath();lx.fill();lx.restore();
+    T('SCALE: RINGS 73 M',120,288,11,'center',DIM);
+  }else if(D.page==='NAV'){
+    bar('NAV POINTER');
+    if(!D.dest){T('NO DESTINATION',120,130,15,'center',FG,true);T('MENU: GOTO a WP',120,156,13,'center',DIM);}
+    else{const w=D.wps.find(x=>x.n===D.dest),brg=bearing(w.dE-P.dE,w.dN-P.dN),rel=((brg-P.h)+360)%360;
+      T('DIRECT TO',8,38,11,'left',DIM);T(wpName(w),8,58,16,'left',FG,true);
+      const cx=120,cy=150;lx.strokeStyle=FG;lx.lineWidth=2;lx.beginPath();lx.arc(cx,cy,66,0,7);lx.stroke();
+      lx.save();lx.translate(cx,cy);lx.rotate(rel*Math.PI/180);lx.fillStyle=FG;lx.beginPath();lx.moveTo(0,-56);lx.lineTo(18,10);lx.lineTo(0,0);lx.lineTo(-18,10);lx.closePath();lx.fill();lx.restore();
+      T('AZ  '+String(Math.round(brg)).padStart(3,'0')+' DEG',8,248,15,'left',FG,true);
+      T('RNG '+Math.round(rng)+' M',8,270,15,'left',FG,true);
+      if(rng<10)T('AT WAYPOINT',232,270,13,'right',FG,true);
+      else T('TRK '+String(Math.round(P.h)).padStart(3,'0'),232,248,12,'right',DIM);}
+  }else if(D.page==='IMG'){bar('IMAGE VIEWER');T('NO IMAGES LOADED',120,140,14,'center',DIM);}
+  // menus
+  if(D.menu){
+    const m=D.menu,n=Math.min(m.items.length,7),top=Math.max(0,Math.min(m.sel-3,m.items.length-n));
+    lx.fillStyle=BG;lx.fillRect(8,30,224,34+n*26+8);lx.strokeStyle=FG;lx.lineWidth=2;lx.strokeRect(8,30,224,34+n*26+8);
+    lx.fillStyle=FG;lx.fillRect(8,30,224,22);T(m.title,120,46,12,'center',BG,true);
+    for(let i=0;i<n;i++){const idx=top+i,y=56+i*26;
+      if(idx===m.sel){lx.fillStyle=FG;lx.fillRect(10,y,220,24);T(m.items[idx],16,y+17,13,'left',BG,true);}
+      else T(m.items[idx],16,y+17,13,'left',FG);}
+  }
+  if(D.popup){lx.fillStyle=BG;lx.fillRect(14,90,212,110);lx.strokeStyle=FG;lx.lineWidth=3;lx.strokeRect(14,90,212,110);
+    T(D.popup.title,120,112,13,'center',FG,true);D.popup.lines.forEach((l,i)=>T(l,120,140+i*18,12,'center'));}
+  if(D.msg){lx.fillStyle=FG;lx.fillRect(10,26,220,28);T(D.msg,120,45,12,'center',BG,true);}
+}
+
+/* =============================================================
+   FIRST-PERSON STRIP
+============================================================= */
+const fp=document.getElementById('fp'),fx=fp.getContext('2d');
+function drawFp(){
+  const W=480,H=170,hz=96;fx.setTransform(1,0,0,1,0,0);
+  let g=fx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#101a28');g.addColorStop(1,'#5a6a5c');fx.fillStyle=g;fx.fillRect(0,0,W,hz);
+  g=fx.createLinearGradient(0,hz,0,H);g.addColorStop(0,'#2d3822');g.addColorStop(1,'#12170d');fx.fillStyle=g;fx.fillRect(0,hz,W,H-hz);
+  const ppd=7; // pixels per degree
+  // treeline repeating every 360 degrees
+  fx.fillStyle='#0e1510';
+  for(let i=0;i<60;i++){const ang=i*6+(i%3)*2,rel=((ang-P.h+540)%360)-180,x=W/2+rel*ppd;if(x<-30||x>W+30)continue;
+    const h=18+(i*37%22);fx.beginPath();fx.moveTo(x-14,hz);fx.lineTo(x,hz-h-8);fx.lineTo(x+14,hz);fx.closePath();fx.fill();}
+  fx.fillRect(0,hz-3,W,5);
+  // waypoint stakes
+  D.wps.forEach(w=>{const dx=w.dE-P.dE,dy=w.dN-P.dN,d=Math.hypot(dx,dy),b=bearing(dx,dy),rel=((b-P.h+540)%360)-180,x=W/2+rel*ppd;
+    if(Math.abs(rel)>34||d<2)return;const s=Math.max(.35,Math.min(2.4,40/d)),h=46*s;
+    const isDest=D.dest===w.n;fx.strokeStyle='#d8d2b0';fx.lineWidth=Math.max(1.5,3*s);fx.beginPath();fx.moveTo(x,hz+4);fx.lineTo(x,hz+4-h);fx.stroke();
+    fx.fillStyle=isDest?'#e04030':'#8ec8e8';fx.fillRect(x,hz+4-h,24*s,13*s);
+    fx.fillStyle='#e8e6dc';fx.font=Math.max(9,11*s)+'px "Share Tech Mono"';fx.textAlign='center';fx.fillText(w.name||String(w.n),x+10*s,hz+4-h-4);});
+  // compass tape
+  fx.fillStyle='rgba(8,9,6,.75)';fx.fillRect(0,0,W,22);fx.fillStyle='#c8c4a8';fx.font='11px "Share Tech Mono"';fx.textAlign='center';
+  for(let a=0;a<360;a+=15){const rel=((a-P.h+540)%360)-180,x=W/2+rel*ppd;if(x<0||x>W)continue;
+    const card={0:'N',90:'E',180:'S',270:'W'}[a];fx.fillRect(x,16,1,card?6:3);if(card||a%45===0)fx.fillText(card||a,x,12);}
+  fx.fillStyle='#f0c060';fx.fillRect(W/2-1,0,2,22);
+  fx.fillStyle='#e8e6dc';fx.textAlign='left';fx.font='11px "Share Tech Mono"';fx.fillText('HDG '+String(Math.round(P.h)).padStart(3,'0'),8,H-8);
+}
+
+/* =============================================================
+   HINTS, CARD, PROGRESS
+============================================================= */
+const nearStart=()=>D.wps.some(w=>w.n>3&&Math.hypot(w.dE,w.dN)<15);
+const REQ=[
+ ['DATUM',()=>D.datum==='WGS 84'],
+ ['COORD',()=>D.coord==='MGRS'],
+ ['GRID',()=>D.res===2],
+ ['MARK',()=>nearStart()],
+ ['GOTO',()=>D.dest===2],
+ ['ARRIVE',()=>{const w=D.wps.find(x=>x.n===2);return D.dest===2&&Math.hypot(w.dE-P.dE,w.dN-P.dN)<10;}]
+];
+function buildPills(){document.getElementById('pills').innerHTML=REQ.map(r=>'<span class="pill" data-k="'+r[0]+'">'+r[0]+'</span>').join('');}
+function checkProgress(){
+  if(mode!=='lane'||(step!=='configure'&&step!=='report'))return;
+  REQ.forEach(r=>{const el=document.querySelector('.pill[data-k="'+r[0]+'"]');if(el)el.classList.toggle('ok',r[1]());});
+  if(step==='configure'&&REQ[0][1]()&&REQ[1][1]()&&REQ[2][1]()&&!window.__setupDone){window.__setupDone=true;setObj('STEP 4 OF 5','Mark your position, then go to CP 2.');setMsg('Setup matches the card.','good');hintLevel=0;}
+  if(step==='configure'&&REQ[5][1]()){step='report';setObj('STEP 5 OF 5','Report your 6-digit grid.');setMsg('You are at CP 2.','good');setTimeout(()=>document.getElementById('ovRep').classList.add('on'),500);}
+}
+function giveHint(){
+  if(mode!=='lane')return;hintsUsed++;hintLevel=Math.min(3,hintLevel+1);let L;
+  if(step==='approach')L=['Hold the walk button.','Keep holding until you reach the poncho.','Hold the walk button, then tap KNEEL DOWN.'];
+  else if(step==='batteries')L=batt.n<4?['The batteries are loose on the ground.','Drag each one into the open compartment on the back of the DAGR.','Drag all four AA batteries into the four slots, then hold to close the cover.']:['The cover is still open.','Hold the close button.','Hold HOLD TO CLOSE COVER until the ring fills.'];
+  else if(step==='configure'||step==='report'){
+    const n=REQ.find(r=>!r[1]());
+    if(!D.on)L=['The DAGR is off.','The power key is on the keypad.','Push PWR/QUIT.'];
+    else if(!D.fix)L=['Give the DAGR a moment.','It needs satellites before it has a position.','Wait on SV Sky View until it shows NAVIGATING.'];
+    else if(!n)L=['All set.','Keep going.','You are at CP 2.'];
+    else L={
+      DATUM:['Compare the datum on the card with the DAGR.','Datum is set from the Present Position page. Press MENU there.','Hold POS/PAGE, MENU, Select Datum, choose WGS 84, WP/ENTER.'],
+      COORD:['How is the position shown? The card wants a different system.','It is the next item in the Present Position menu.','MENU, Select Coord/Grid System, choose MGRS, WP/ENTER.'],
+      GRID:['A 6-digit grid is 100 m resolution. Check what the DAGR is set to.','The resolution is also set from the Present Position menu.','MENU, Select Grid Resolution, choose 100 m, WP/ENTER.'],
+      MARK:['The card says to mark your position at the start. Do you still have a start waypoint?','Waypoint functions come up when you hold a certain key.','Hold WP/ENTER, Mark a WP, then push WP/ENTER to store it. Do it before you move.'],
+      GOTO:['You need a destination.','Hold the same key you used to mark, then pick GOTO.','Hold WP/ENTER, GOTO a WP, highlight CP 2, WP/ENTER.'],
+      ARRIVE:['Look at the NAV Pointer.','Turn until the arrow points straight up, then walk. Keep checking the range.','Turn until the arrow is up. Hold WALK until the range is under 10 m.']}[n[0]];
+  }else L=['','',''];
+  setMsg('HINT: '+L[hintLevel-1],'');
+}
+function updateHint(){
+  const el=document.getElementById('hintText');if(mode==='lane'){el.innerHTML='';return;}
+  if(!D.on)el.innerHTML='Push <b>PWR/QUIT</b> to turn on. Hold it 2 seconds to turn off.';
+  else if(D.menu)el.innerHTML='<b>&#9650; &#9660;</b> to highlight, <b>WP/ENTER</b> to select, <b>PWR/QUIT</b> to back out.';
+  else if(D.screen)el.innerHTML='<b>WP/ENTER</b> stores the waypoint. <b>PWR/QUIT</b> cancels.';
+  else if(D.page==='SV')el.innerHTML='Satellite status. The DAGR goes to <b>Present Position</b> by itself once it has a fix.';
+  else if(D.page==='POS')el.innerHTML='<b>MENU</b>: datum, coordinate system, grid resolution. <b>Hold WP/ENTER</b>: mark or go to a waypoint.';
+  else if(D.page==='NAV')el.innerHTML='Move the way the arrow points. <b>MENU</b>: pick a destination.';
+  else if(D.page==='SA')el.innerHTML='Map of waypoints around you. <b>POS/PAGE</b> steps through the pages.';
+  else el.innerHTML='<b>POS/PAGE</b> steps through the pages. Hold it for Present Position.';
+}
+
+/* report */
+function submitReport(){
+  const w=D.wps.find(x=>x.n===2),g=grid6(w.dE,w.dN),e=document.getElementById('repE').value.trim(),n=document.getElementById('repN').value.trim();
+  const m=document.getElementById('repMsg');
+  const here=grid6(P.dE,P.dN);
+  if(e===here[0]&&n===here[1]&&REQ[0][1]()&&REQ[1][1]()&&REQ[2][1]()){
+    closeOv('ovRep');finish();return;}
+  errors++;
+  if(!REQ[0][1]())m.textContent='That does not match. Check your datum against the card.';
+  else if(!REQ[1][1]()||!REQ[2][1]())m.textContent='Read it from MGRS at 100 m (6-digit).';
+  else if(e.length!==3||n.length!==3)m.textContent='A 6-digit grid is 3 digits easting and 3 digits northing.';
+  else m.textContent='Not quite. Take the first three digits of each. Do not round.';
+}
+function finish(){
+  step='done';const s=Math.round((Date.now()-t0)/1000);
+  document.getElementById('aarTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  document.getElementById('aarErr').textContent=errors;document.getElementById('aarHint').textContent=hintsUsed;
+  setObj('COMPLETE','Checkpoint reached.');setTimeout(()=>document.getElementById('ovAar').classList.add('on'),400);
+}
+
+/* =============================================================
+   LOOP
+============================================================= */
+function frame(ts){
+  const dt=Math.min(.05,(ts-lastT)/1000||0);lastT=ts;clock+=dt;
+  if(step==='approach')drawS1(dt);
+  if(step==='batteries')drawS2(dt);
+  if(step==='configure'||step==='report'||step==='free'||step==='done'){
+    // time
+    if(D.on){D.svT+=dt;
+      if(D.popup){D.popup.t-=dt;if(D.popup.t<=0)D.popup=null;}
+      if(!D.fix&&!D.popup&&D.svT>6.2){D.fix=true;if(!D.autoPos){D.autoPos=true;if(D.page==='SV')D.page='POS';}checkProgress();}
+    }
+    if(D.msg){D.msgT-=dt;if(D.msgT<=0)D.msg=null;}
+    // movement
+    if(turnL)P.h=(P.h+360-70*dt)%360;if(turnR)P.h=(P.h+70*dt)%360;
+    P.v=go?14:0;
+    if(go){P.dE+=Math.sin(P.h*Math.PI/180)*14*dt;P.dN+=Math.cos(P.h*Math.PI/180)*14*dt;checkProgress();}
+    drawLcd();drawFp();updateHint();
+  }
+  requestAnimationFrame(frame);
+}
+function render(){}
+(function(){
+  const p=new URLSearchParams(location.search).get('mode');
+  requestAnimationFrame(frame);
+  if(p==='free')startFree();if(p==='lane')startLane();
+})();
+</script>
+</body>
+</html>

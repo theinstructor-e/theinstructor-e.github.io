@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WTBD — React to Ambush (Squad) | E-WIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b12;--bg2:#0b121c;--panel:#0f1824;--panel2:#142133;--line:#1e3048;
+  --text:#d3e2f2;--dim:#7d92a9;
+  --green:#00ff88;--green-dim:#00ff8855;--green-dark:#00331c;
+  --amber:#ffb300;--amber-dim:#ffb30055;--amber-dark:#332400;
+  --cyan:#00d4ff;--cyan-dim:#00d4ff55;--cyan-dark:#00303a;
+  --red:#ff4444;--red-dim:#ff444455;--red-dark:#330f0f;
+  --purple:#bb88ff;
+  --map-bg:#0a1019;--map-grid:#13202f;--map-tree:#0f3a26;--map-trail:#1b2a3d;--map-low:#14263a;
+}
+:root[data-theme="light"]{
+  --bg:#eef2f6;--bg2:#e3e9f0;--panel:#ffffff;--panel2:#f1f5f9;--line:#b9c6d4;
+  --text:#14212f;--dim:#51657a;
+  --green:#007a45;--green-dim:#007a4566;--green-dark:#d6f2e4;
+  --amber:#a86a00;--amber-dim:#a86a0066;--amber-dark:#fbefd2;
+  --cyan:#006f94;--cyan-dim:#006f9466;--cyan-dark:#d4eef7;
+  --red:#c42323;--red-dim:#c4232366;--red-dark:#fbdede;
+  --purple:#6b3fb5;
+  --map-bg:#dfe7ee;--map-grid:#cdd8e2;--map-tree:#b7d8c4;--map-trail:#c3cfdb;--map-low:#c9d9e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.45;min-height:100vh}
+.mono{font-family:'Share Tech Mono',monospace}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px;white-space:nowrap}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:180px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer;letter-spacing:.08em}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);border-bottom:1px solid var(--green-dim);padding:3px}
+main{max-width:1100px;margin:0 auto;padding:14px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.hero{margin:12px 0 14px}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase}
+.hero h2{font-size:34px;line-height:1.05;text-transform:uppercase;letter-spacing:.04em;margin:4px 0 8px}
+.hero h2 span{color:var(--amber)}
+.hero p{color:var(--dim);max-width:700px}
+.draft{display:inline-block;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber-dim);padding:3px 8px}
+
+/* player */
+.player{background:var(--panel);border:1px solid var(--line)}
+.player-grid{display:grid;grid-template-columns:1fr;gap:0}
+.stage{position:relative;background:var(--map-bg);border-bottom:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:auto;aspect-ratio:480/640}
+.cap{position:absolute;left:8px;top:8px;max-width:44%;background:rgba(7,11,18,.82);border:1px solid var(--amber);padding:5px 9px;pointer-events:none}
+:root[data-theme="light"] .cap{background:rgba(255,255,255,.9)}
+.cap .k{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--amber)}
+.cap .v{font-weight:700;font-size:15px;line-height:1.1;letter-spacing:.06em;text-transform:uppercase}
+.legend{position:absolute;left:8px;bottom:6px;display:flex;gap:12px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.08em;flex-wrap:wrap;pointer-events:none}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:baseline}
+.card{padding:14px}
+.phase-k{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--amber)}
+.card h3{font-size:27px;text-transform:uppercase;letter-spacing:.04em;line-height:1.08;margin:3px 0 8px}
+.card .body{font-size:18px;color:var(--text)}
+.lead{margin-top:12px;border:1px solid var(--amber-dim);border-left:3px solid var(--amber);background:var(--amber-dark);padding:9px 12px}
+.lead .k,.roles .k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--amber);display:block;margin-bottom:2px}
+.roles{margin-top:10px;display:grid;gap:6px}
+.role{display:flex;gap:8px;font-size:16px;line-height:1.3}
+.role b{font-family:'Share Tech Mono',monospace;font-size:12px;min-width:68px;padding-top:2px;letter-spacing:.06em}
+.role.sl b{color:var(--amber)}.role.a b{color:var(--cyan)}.role.b b{color:var(--green)}
+.controls{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cbtn{font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--text);border:1px solid var(--line);padding:9px 14px;cursor:pointer;min-height:40px}
+.cbtn:hover{border-color:var(--amber);color:var(--amber)}
+.cbtn.primary{background:var(--amber);color:#1a1200;border-color:var(--amber);font-weight:700}
+:root[data-theme="light"] .cbtn.primary{color:#fff}
+.cbtn.next{border-color:var(--amber);color:var(--amber)}
+.cbtn:disabled{opacity:.35;cursor:default}
+.progress{display:flex;gap:4px;padding:0 14px 12px;align-items:center}
+.progress button{flex:1;height:14px;border:0;background:var(--line);cursor:pointer;padding:0}
+.progress button.done{background:var(--amber-dim)}
+.progress button.on{background:var(--amber)}
+.spacer{flex:1}
+
+/* sections */
+section.block{margin-top:26px}
+.sec-k{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--amber)}
+section.block h2{font-size:28px;text-transform:uppercase;letter-spacing:.05em;margin:2px 0 12px}
+.tcs{display:grid;gap:10px}
+.tcs .box{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--amber);padding:12px 14px}
+.tcs .box h4{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--amber);margin-bottom:4px;font-weight:400}
+.tcs ul{padding-left:18px}
+.seq{display:grid;gap:8px}
+.step{display:flex;background:var(--panel);border:1px solid var(--line)}
+.step .n{min-width:48px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:var(--amber);background:var(--panel2);border-right:1px solid var(--line)}
+.step .t{padding:10px 12px}
+.step h4{font-size:19px;text-transform:uppercase;letter-spacing:.04em}
+.step p{font-size:16px;color:var(--text);margin:2px 0 6px}
+.watch{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--amber);background:none;border:0;cursor:pointer;padding:2px 0}
+.watch:hover{text-decoration:underline}
+
+.refs{margin-top:26px;border-top:1px solid var(--line);padding-top:12px;font-size:14px;color:var(--dim)}
+.refs b{color:var(--text)}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--dim);padding:18px 10px 30px}
+
+@media(min-width:900px){
+  .player-grid{grid-template-columns:minmax(0,480px) 1fr}
+  .stage{border-bottom:0;border-right:1px solid var(--line)}
+  .tcs{grid-template-columns:repeat(3,1fr)}
+}
+/* fullscreen */
+.player:fullscreen,.player.fs{background:var(--bg);overflow:auto;position:fixed;inset:0;z-index:50;width:100%;height:100%}
+.player:fullscreen .stage canvas,.player.fs .stage canvas{max-height:56vh;width:auto;margin:0 auto}
+.player:fullscreen .player-grid,.player.fs .player-grid{grid-template-columns:1fr}
+@media(min-width:900px){
+  .player:fullscreen .player-grid,.player.fs .player-grid{grid-template-columns:minmax(0,1fr) 420px}
+  .player:fullscreen .stage canvas,.player.fs .stage canvas{max-height:84vh}
+}
+
+/* ===== v2 restyle: E-WIT green/cyan identity, tabbed card, chip timeline ===== */
+.eyebrow,.phase-k,.sec-k{color:var(--cyan)}
+.hero h2{font-size:30px;letter-spacing:.06em;color:var(--text);border-left:4px solid var(--green);padding-left:12px}
+.hero h2 span{color:var(--text)}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.hero-tags span{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--cyan);border:1px solid var(--cyan-dim);padding:2px 8px}
+.draft{color:var(--amber)}
+.player{border-color:var(--line);border-top:2px solid var(--green)}
+.cap{left:10px;top:10px;max-width:60%;border:1px solid var(--cyan);display:flex;gap:8px;align-items:center;padding:4px 10px 4px 4px}
+.cap .num{width:28px;height:28px;border-radius:50%;background:var(--cyan);color:#001a22;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none}
+.cap .k{color:var(--cyan)}
+.cap .v{font-size:14px}
+.stepline{display:flex;gap:12px;align-items:center}
+.stepnum{width:46px;height:46px;border:2px solid var(--green);color:var(--green);font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;clip-path:polygon(25% 0,100% 0,100% 75%,75% 100%,0 100%,0 25%);background:var(--green-dark)}
+.stepof{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.card h3{font-size:24px;margin:0}
+.tabs{display:flex;margin:12px 0 10px;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.06em;background:none;border:0;border-bottom:2px solid transparent;color:var(--dim);padding:9px 4px;cursor:pointer;text-transform:uppercase}
+.tabs button.on{color:var(--green);border-bottom-color:var(--green)}
+.keybox{border:1px solid var(--green-dim);background:var(--green-dark);padding:12px 14px;font-size:18px}
+.keybox .k{display:block;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--green);margin-bottom:3px}
+.controls{gap:6px;padding:10px 12px;background:var(--panel2)}
+.cbtn{padding:8px 12px;font-size:12px;border-radius:0}
+.cbtn.primary{background:var(--green);border-color:var(--green);color:#00180d;min-width:92px}
+:root[data-theme="light"] .cbtn.primary{color:#fff}
+.cbtn:hover{border-color:var(--green);color:var(--green)}
+.cbtn.primary:hover{color:#00180d}
+.cbtn.next{border-color:var(--line);color:var(--text)}
+.cbtn.ico{min-width:38px;padding:8px 0;font-size:15px}
+.controls{flex-wrap:nowrap}.cbtn.primary{min-width:84px;padding:8px 6px}#speedBtn{padding:8px 8px}.spacer{flex:1;min-width:0}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-top:1px solid var(--line);scrollbar-width:thin}
+.chips button{flex:none;display:flex;align-items:center;gap:6px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:.03em;text-transform:uppercase;background:transparent;color:var(--dim);border:1px solid var(--line);padding:4px 10px 4px 4px;cursor:pointer;white-space:nowrap}
+.chips button b{font-family:'Share Tech Mono',monospace;font-weight:400;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--panel2);font-size:12px}
+.chips button.done{color:var(--text)}
+.chips button.done b{background:var(--green-dark);color:var(--green)}
+.chips button.on{border-color:var(--green);color:var(--green)}
+.chips button.on b{background:var(--green);color:#00180d}
+section.block h2{font-size:24px;border-left:4px solid var(--cyan);padding-left:10px}
+.seg{display:flex;border:1px solid var(--line);margin-bottom:0}
+.seg button{flex:1;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;padding:10px 4px;background:var(--panel);color:var(--dim);border:0;border-right:1px solid var(--line);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--cyan-dark);color:var(--cyan)}
+.tcspane{background:var(--panel);border:1px solid var(--line);border-top:0;padding:14px;font-size:18px}
+.tcspane ul{padding-left:20px}
+details.row{background:var(--panel);border:1px solid var(--line);margin-bottom:6px}
+details.row summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 12px}
+details.row summary::-webkit-details-marker{display:none}
+details.row summary .n{font-family:'Share Tech Mono',monospace;color:var(--green);border:1px solid var(--green-dim);width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex:none}
+details.row summary h4{font-size:18px;text-transform:uppercase;letter-spacing:.04em;flex:1}
+details.row summary:after{content:'+';font-family:'Share Tech Mono',monospace;color:var(--dim);font-size:18px}
+details.row[open] summary:after{content:'\2212'}
+details.row .in{padding:0 12px 12px 54px}
+details.row .in p{font-size:16px;margin-bottom:6px}
+.watch{color:var(--cyan);border:1px solid var(--cyan-dim);padding:5px 10px;font-size:11px}
+.watch:hover{background:var(--cyan-dark);text-decoration:none}
+
+@media print{.controls,.progress,.theme-btn{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <span class="mil-badge">E-WIT</span>
+  <h1>Warrior Tasks &amp; Battle Drills</h1>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">LIGHT</button>
+</header>
+<div class="statusbar">UNCLASSIFIED</div>
+
+<main>
+  <a class="back" href="../wtbd/">&#9664; WTBD &amp; FOOM</a>
+  <div class="hero">
+    <div class="eyebrow">WTBD &middot; Battle Drill 4 &middot; Squad Level</div>
+    <h2>React to Ambush</h2>
+    <div class="hero-tags"><span>NEAR &amp; FAR AMBUSH</span><span>ANIMATED MAP</span><span>KILL ZONE</span></div>
+    <p>An ambush is decided by distance. A near ambush is inside hand-grenade range (about 35 m, shown as the dashed ring). A far ambush is outside it. Pick one, then run it step by step. A Team and the SL are inside the kill zone, B Team is outside it. Cyan is A Team, green is B Team, amber is the Squad Leader, red is the enemy.</p>
+    <span class="draft mono">DRAFT &mdash; INSTRUCTOR REVIEW PENDING &middot; VERIFY AGAINST CURRENT PUBS</span>
+  </div>
+
+  <div class="seg" id="modeSeg" style="margin-bottom:10px"><button class="on" onclick="setMode('near')">NEAR AMBUSH</button><button onclick="setMode('far')">FAR AMBUSH</button></div>
+
+  <div class="player" id="player">
+    <div class="player-grid">
+      <div class="stage">
+        <canvas id="map" width="960" height="1280"></canvas>
+        <div class="cap"><div class="num" id="capN">1</div><div><div class="k" id="capK">STEP 1 OF 8</div><div class="v" id="capV">Contact</div></div></div>
+        <div class="legend"><span><i style="background:var(--amber)"></i>SL</span><span><i style="background:var(--cyan)"></i>A TEAM (IN KZ)</span><span><i style="background:var(--green)"></i>B TEAM</span><span><i style="background:var(--red)"></i>ENEMY</span></div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="stepline"><div class="stepnum" id="stepNum">1</div><div><div class="stepof" id="stepOf">STEP 1 OF 8</div><h3 id="stepTitle"></h3></div></div>
+          <div class="tabs" id="cardTabs"><button data-k="what" class="on" onclick="setTab('what')">What happens</button><button data-k="who" onclick="setTab('who')">Who does what</button><button data-k="key" onclick="setTab('key')">Key point</button></div>
+          <div id="cardPane"></div>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="cbtn ico" id="prevBtn" onclick="step(-1)" aria-label="Previous step">&#9664;</button>
+      <button class="cbtn primary" id="playBtn" onclick="togglePlay()">&#9654; Play</button>
+      <button class="cbtn ico" id="nextBtn" onclick="step(1)" aria-label="Next step">&#9654;</button>
+      <button class="cbtn" id="speedBtn" onclick="cycleSpeed()">1&times;</button>
+      <span class="spacer"></span>
+      <button class="cbtn ico" onclick="resetAnim()" aria-label="Reset">&#8634;</button>
+      <button class="cbtn ico" onclick="toggleFS()" aria-label="Fullscreen">&#9974;</button>
+    </div>
+    <div class="chips" id="progress"></div>
+  </div>
+
+  <section class="block">
+    <div class="sec-k">DRILL STANDARD</div>
+    <h2>Task, Conditions, Standards</h2>
+    <div class="seg" id="tcsSeg"><button class="on" onclick="setTCS(0)">TASK</button><button onclick="setTCS(1)">CONDITIONS</button><button onclick="setTCS(2)">STANDARDS</button></div>
+    <div class="tcspane" id="tcsPane"></div>
+  </section>
+
+  <section class="block">
+    <div class="sec-k">STEP BY STEP</div>
+    <h2 id="seqTitle">All 8 Steps</h2>
+    <div class="seq" id="seq"></div>
+  </section>
+
+    <div class="refs">
+    <b>References:</b> ATP 3-21.8, <i>Infantry Platoon and Squad</i>; TC 3-21.76, <i>Ranger Handbook</i>. Phase wording is original and summarizes Battle Drill 4 (React to Ambush, near and far variants). Distances are drawn at a schematic scale, with hand-grenade range taken as about 35 m. Confirm the actions for Soldiers with and without cover, the signals, and the standards against the current publication before classroom use.
+  </div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* ============ DATA ============ */
+const W=480,H=640,PL=[170,630];
+const START={ATL:[170,320],AAR:[155,335],ARM:[185,335],AGL:[200,350],SL:[170,385],BTL:[170,430],BAR:[185,445],BRM:[155,445],BGL:[140,460]};
+const UIDS=Object.keys(START);
+const TEAM={SL:'sl',ATL:'a',AAR:'a',ARM:'a',AGL:'a',BTL:'b',BAR:'b',BRM:'b',BGL:'b'};
+const AU=['ATL','AAR','AGL','ARM'],BU=['BTL','BAR','BGL','BRM'];
+function ring(c,r){const o={SL:c.slice()};['ATL','AGL','ARM','BRM','BTL','BGL','BAR','AAR'].forEach((u,i)=>{const a=(-90+i*45)*Math.PI/180;o[u]=[c[0]+r*Math.cos(a),c[1]+r*Math.sin(a)];});return o;}
+const LINE_A={AAR:[165,298],ATL:[165,320],AGL:[165,342],ARM:[165,364]};
+
+const SC={
+ near:{key:'near',E:[[275,285],[282,318],[274,350],[280,382]],ECTR:[278,333],SHIFT:[352,394],
+  tcs:[
+   '<p>React to an ambush when the enemy opens fire within hand-grenade range: fight through the kill zone and destroy the ambush, or break contact.</p>',
+   '<p>Squad moving tactically. The enemy initiates an ambush within hand-grenade range with a high volume of direct fire, and may use a casualty-producing device. Part of the squad is in the kill zone and part is outside it. Day or night.</p>',
+   '<ul><li>Soldiers in the kill zone return fire immediately.</li><li>With no cover, they act at once, without an order or signal.</li><li>Soldiers in the kill zone assault through the ambush using fire and movement.</li><li>Soldiers outside the kill zone locate the enemy, suppress, and shift fire as the assault begins.</li><li>The squad destroys the enemy or breaks contact, then consolidates, reorganizes, and reports.</li></ul>'],
+  P:[
+   {t:'Ambush!',s:'Ambush',cap:'Ambush right!',
+    body:'The enemy opens fire from very close range, inside hand-grenade range, with a high volume of fire. A Team and the SL are inside the kill zone. B Team has not entered it. The first Soldiers hit shout the direction of the ambush.',
+    lead:'A near ambush is beaten by immediate aggression. Staying in the kill zone is the worst choice.',
+    roles:[['A TEAM','a','In the kill zone. Shout the direction. Return fire at once.'],['SL','sl','In the kill zone. Finds the enemy and takes control.'],['B TEAM','b','Outside the kill zone. Take cover and find the enemy.']],
+    pos:{},move:0,fx:{eF:'on'}},
+   {t:'Return Fire & Grenades',s:'Return fire',cap:'Fire and grenades',
+    body:'Soldiers in the kill zone return fire at once, and how they do it depends on the terrain. With cover, they fire from it. With none, they act immediately without an order or signal: get low, throw grenades onto the enemy position together, and the moment the grenades burst, return fire and move.',
+    lead:'Throw together. The burst is what you move behind, so do not start moving until it goes off.',
+    roles:[['A TEAM','a','Return fire. Throw grenades at the enemy position together.'],['SL','sl','Directs fire and watches the enemy line.'],['B TEAM','b','Stay in cover. Locate the enemy.']],
+    pos:{...LINE_A,SL:[148,388]},move:1.6,fx:{eF:'onThenSup',aF:'enemy',gren:true,aLab:'A TEAM: IN KILL ZONE'}},
+   {t:'Support Team Gets Set',s:'Base of fire',cap:'Base of fire set',
+    body:'Soldiers outside the kill zone find the enemy and put well-aimed suppressive fire on the ambush position. B Team gets on line outside the kill zone and becomes the base of fire for the assault.',
+    lead:'Find the enemy first, then fire. Keep your fire off your own Soldiers who are in the kill zone.',
+    roles:[['B TEAM','b','Locate the enemy. Get on line outside the kill zone. Suppress.'],['A TEAM','a','Keep firing. Prepare to assault.'],['SL','sl','Directs B Team onto the enemy position.']],
+    pos:{BAR:[160,442],BTL:[185,436],BGL:[210,430],BRM:[235,424]},move:2.2,fx:{eF:'sup',aF:'enemy',bF:'enemy',bT:2.0,aLab:'A TEAM: IN KILL ZONE',bLab:'B TEAM: BASE OF FIRE'}},
+   {t:'Assault Begins',s:'Assault',cap:'Assault begins',
+    body:'A Team assaults the ambush position using fire and movement: short rushes, with the Soldiers not moving covering the ones who are. B Team keeps the enemy suppressed.',
+    lead:'The assault is a rush to close the distance. Move in short rushes and keep your fire on the enemy as you go.',
+    roles:[['A TEAM','a','Fire and movement toward the enemy position.'],['B TEAM','b','Base of fire. Keep the enemy suppressed.'],['SL','sl','Moves with A Team and controls the assault.']],
+    pos:{AAR:[232,298],ATL:[232,320],AGL:[232,342],ARM:[232,364],SL:[205,345]},move:2.4,fx:{eF:'sup',aF:'enemy',bF:'enemy',aLab:'A TEAM: ASSAULT',bLab:'B TEAM: BASE OF FIRE'}},
+   {t:'Shift Fire',s:'Shift fire',cap:'Shift fire',
+    body:'As A Team nears the enemy position, B Team shifts its fire away from the assault, to the far side or beyond the enemy position, so it never fires toward its own Soldiers.',
+    lead:'Shift on a signal everyone knows or when you see the assault reach the enemy. Do not stop firing, move it.',
+    roles:[['B TEAM','b','Shift fire away from the assault, past the enemy position.'],['A TEAM','a','Close with the enemy. Keep firing.']],
+    pos:{},move:0,fx:{eF:'sup',aF:'enemy',bF:'shift',shiftArrow:true,aLab:'A TEAM: ASSAULT',bLab:'B TEAM: SHIFTING FIRE'}},
+   {t:'Assault Through the Ambush',s:'Through',cap:'Assault through',
+    body:'A Team fights through the ambush position, destroys the enemy, and keeps going until it is clear of the kill zone and contact is broken.',
+    lead:'Do not stop on the enemy position. Assault through it.',
+    roles:[['A TEAM','a','Fight through. Destroy the enemy. Continue past the position.'],['B TEAM','b','Keep the shifted fire going until the enemy is destroyed.'],['SL','sl','Moves with the assault.']],
+    pos:{AAR:[315,296],ATL:[315,318],AGL:[315,342],ARM:[315,366],SL:[290,340]},move:3.0,fx:{eF:'sup',kill:0.55,aF:'enemy',bF:'shift',aLab:'A TEAM: ASSAULT',bLab:'B TEAM: SHIFTED FIRE'}},
+   {t:'Consolidate',s:'Consolidate',cap:'Consolidate',
+    body:'The squad pulls together on the far side into a perimeter with all-around security. B Team moves up to join A Team. Enemy dead and equipment are searched and secured, and casualties are checked.',
+    lead:'Get out of the kill zone and set security first. A second ambush or a follow-up attack is possible.',
+    roles:[['ALL','a','Move into the perimeter. Face outward. Cover your sector.'],['SL','sl','Positions the teams. Has the enemy searched. Checks for casualties.']],
+    pos:ring([300,340],46),move:3.0,fx:{dead:true,ring:true}},
+   {t:'Reorganize & Report',s:'Report',cap:'Report and reorganize',
+    body:'The SL checks ammo, casualties, and equipment (ACE), redistributes ammo, treats and evacuates casualties, and reports to the PL. The squad then continues the mission as directed.',
+    lead:'Check ACE, do not assume it. Report quickly and keep security up the whole time.',
+    roles:[['SL','sl','Reports to the PL. Takes the ACE from the TLs.'],['TLs','a','Check ammo, casualties, equipment. Cross-level as needed.'],['ALL','b','All-around security until the work is done.']],
+    pos:{},move:0,fx:{dead:true,ring:true,radio:'REPORT > PL',radioT:1.0}}
+  ]},
+ far:{key:'far',E:[[322,275],[335,305],[325,335],[338,365]],ECTR:[330,320],SHIFT:[335,225],
+  tcs:[
+   '<p>React to an ambush when the enemy opens fire from beyond hand-grenade range: pin the enemy with the element in the kill zone and assault his flank with the element outside it.</p>',
+   '<p>Squad moving tactically. The enemy initiates an ambush from beyond hand-grenade range with direct fire, and may use indirect fire. Part of the squad is in the kill zone and part is outside it. Day or night.</p>',
+   '<ul><li>Soldiers in the kill zone return fire and take cover.</li><li>Soldiers not in the kill zone move by a covered and concealed route to a vulnerable flank.</li><li>The flank element assaults using fire and movement.</li><li>Soldiers in the kill zone continue suppressive fire and shift it as the assault fights through.</li><li>The SL reports, the squad reorganizes, and continues the mission.</li></ul>'],
+  P:[
+   {t:'Ambush!',s:'Ambush',cap:'Ambush right!',
+    body:'The enemy opens fire from a distance, outside hand-grenade range. A Team and the SL are in the kill zone and under heavy fire. B Team is outside the kill zone and has not been hit.',
+    lead:'At this range you cannot assault out of the kill zone. The first job is to stop the enemy from killing everyone in it.',
+    roles:[['A TEAM','a','In the kill zone. Shout the direction. Return fire.'],['SL','sl','In the kill zone. Finds the enemy.'],['B TEAM','b','Outside the kill zone. Take cover. Watch the flank.']],
+    pos:{},move:0,fx:{eF:'on'}},
+   {t:'Return Fire & Take Cover',s:'Return fire',cap:'Cover and fire',
+    body:'Soldiers in the kill zone return fire and take cover. At this range grenades will not reach the enemy, so A Team uses direct fire to pin him while the squad works out where he is.',
+    lead:'Cover first, then fire. You are pinning the enemy now, not assaulting.',
+    roles:[['A TEAM','a','Get on line behind cover. Return aimed fire.'],['SL','sl','Moves to see the enemy position.'],['B TEAM','b','Stay in cover outside the kill zone.']],
+    pos:{...LINE_A,SL:[148,388]},move:1.6,fx:{eF:'on',aF:'enemy',aLab:'A TEAM: IN KILL ZONE'}},
+   {t:'Assess & SALT Report',s:'SALT',cap:'SALT report to PL',
+    body:'The SL finds the enemy position, decides how to defeat the ambush, and sends a SALT report to the platoon leader: Size, Activity, Location, Time. His choices are to assault the enemy flank or to break contact.',
+    lead:'Know your options before you choose. If the enemy is too strong or there is no covered flank, break contact instead.',
+    roles:[['SL','sl','Assess the enemy and terrain. Send SALT. Choose flank assault or break contact.'],['A TEAM','a','Keep pinning the enemy.'],['B TEAM','b','Ready to maneuver.']],
+    pos:{SL:[150,380]},move:0.8,fx:{eF:'on',aF:'enemy',radio:'SALT > PL',radioT:0,aLab:'A TEAM: IN KILL ZONE'}},
+   {t:'Gain Fire Superiority',s:'Fire superiority',cap:'Fire superiority',
+    body:'A Team raises its rate of fire, and the grenadier adds 40mm onto the enemy position. Fire superiority has to be gained before the flank team moves.',
+    lead:'No flank maneuver until the enemy has stopped returning effective fire.',
+    roles:[['A TEAM','a','Sustained, aimed fire. GRN fires 40mm on the position.'],['SL','sl','Watches the enemy. Decides when fire superiority is gained.'],['B TEAM','b','Waits for the SL\'s order.']],
+    pos:{},move:0,fx:{eF:'onThenSup',aF:'enemy',gl:true,aLab:'A TEAM: BASE OF FIRE'}},
+   {t:'Maneuver by Covered Route',s:'Maneuver',cap:'Flank maneuver',
+    body:'B Team, which is not receiving fire, moves by a covered and concealed route to a vulnerable flank of the enemy position. It stays out of the enemy\'s sight and out of A Team\'s lines of fire.',
+    lead:'A good flank route trades speed for concealment. If the enemy can see B Team moving, the route is not covered enough.',
+    roles:[['B TEAM','b','Move by the covered route to the enemy\'s flank.'],['A TEAM','a','Base of fire. Keep the enemy suppressed.'],['SL','sl','Stays with the base of fire and controls it.']],
+    pos:{BAR:[412,285],BTL:[412,307],BGL:[412,329],BRM:[412,351]},via:{units:['BAR','BTL','BGL','BRM'],pts:[[240,498],[410,494]],ref:'BTL'},move:5.0,route:true,fx:{eF:'sup',aF:'enemy',route:true,aLab:'A TEAM: BASE OF FIRE',bLab:'B TEAM: MANEUVER'}},
+   {t:'Set In & Signal',s:'Set in',cap:'Ready: signal',
+    body:'B Team gets on line at the assault position on the enemy\'s flank and signals that it is ready. The A Team leader, who controls the base of fire, prepares to shift fire.',
+    lead:'Confirm the signal and the shift point before B Team moves. Nobody moves on a guess.',
+    roles:[['B TEAM','b','On line at the assault position. Signals ready.'],['A TEAM','a','Acknowledges. Prepares to shift fire.']],
+    pos:{},move:0,fx:{eF:'sup',aF:'enemy',ready:true,aLab:'A TEAM: BASE OF FIRE',bLab:'B TEAM: READY'}},
+   {t:'Shift Fire',s:'Shift fire',cap:'Shift fire',
+    body:'On the signal, A Team shifts its fire away from the flank assault, to the opposite end or beyond the enemy position, so B Team can close without being engaged by its own side.',
+    lead:'Shift away from the assaulters and keep firing. The enemy must stay pinned until B Team is on him.',
+    roles:[['A TEAM','a','Shift fire to the far end of the enemy position.'],['B TEAM','b','Begin the assault on the signal.']],
+    pos:{},move:0,fx:{eF:'sup',aF:'shift',bF:'enemy',shiftArrow:true,aLab:'A TEAM: SHIFTING FIRE',bLab:'B TEAM: READY'}},
+   {t:'Assault the Flank',s:'Assault',cap:'Flank assault',
+    body:'B Team assaults the ambush from the flank using fire and movement, fights through the position, and destroys the enemy, while A Team keeps suppressing and keeps its fire shifted away from B Team.',
+    lead:'Fight through the enemy position, not just up to it.',
+    roles:[['B TEAM','b','Fire and movement on line. Destroy the enemy.'],['A TEAM','a','Keep the shifted fire going until the enemy is destroyed.'],['SL','sl','Controls the base of fire.']],
+    pos:{BAR:[285,285],BTL:[285,307],BGL:[285,329],BRM:[285,351]},move:3.4,fx:{eF:'sup',kill:0.6,aF:'shift',bF:'enemy',aLab:'A TEAM: SHIFTED FIRE',bLab:'B TEAM: ASSAULT'}},
+   {t:'Consolidate, Reorganize & Report',s:'Consolidate',cap:'Consolidate and report',
+    body:'The squad consolidates into all-around security on the objective. A Team moves up from the kill zone. The SL checks ACE, treats casualties, and reports to the PL before continuing the mission.',
+    lead:'Get out of the kill zone and set security first. Report quickly and keep security up the whole time.',
+    roles:[['ALL','a','Move into the perimeter. Face outward.'],['SL','sl','Checks ACE. Reports to the PL. Directs treatment of casualties.']],
+    pos:ring([310,320],48),move:3.6,fx:{dead:true,ring:true,radio:'REPORT > PL',radioT:3.2}}
+  ]}
+};
+
+let S,P,N,FINAL,PATH;
+function loadScenario(key){
+  S=SC[key];P=S.P;N=P.length;FINAL=[];PATH=[];
+  let prev=JSON.parse(JSON.stringify(START));
+  P.forEach(ph=>{
+    const fin=JSON.parse(JSON.stringify(prev));
+    Object.keys(ph.pos).forEach(u=>fin[u]=ph.pos[u]);
+    const paths={};
+    UIDS.forEach(u=>{
+      const pts=[prev[u]];
+      if(ph.via&&ph.via.units.includes(u)){const ro=[fin[u][0]-fin[ph.via.ref][0],fin[u][1]-fin[ph.via.ref][1]];ph.via.pts.forEach(p=>pts.push([p[0]+ro[0],p[1]+ro[1]]));}
+      pts.push(fin[u]);paths[u]=pts;
+    });
+    FINAL.push(fin);PATH.push(paths);
+    ph.settle=Math.max(ph.move,2.0);ph.hold=2.4;prev=fin;
+  });
+}
+
+/* ============ STATE ============ */
+let cur=0,t=0,playing=false,speed=1,clock=0,lastTs=0;
+const SPEEDS=[0.5,1,1.5,2];
+const cv=document.getElementById('map'),ctx=cv.getContext('2d');
+let C={};
+function readColors(){
+  const s=getComputedStyle(document.documentElement),g=n=>s.getPropertyValue(n).trim();
+  C={bg:g('--map-bg'),grid:g('--map-grid'),tree:g('--map-tree'),trail:g('--map-trail'),low:g('--map-low'),text:g('--text'),dim:g('--dim'),amber:g('--amber'),cyan:g('--cyan'),green:g('--green'),red:g('--red'),line:g('--line'),light:document.documentElement.getAttribute('data-theme')==='light'};
+}
+const ease=x=>x<=0?0:x>=1?1:x*x*(3-2*x);
+function along(pts,f){
+  let L=0;const seg=[];
+  for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg.push(d);L+=d;}
+  if(L===0)return {p:pts[pts.length-1].slice(),dir:null};
+  let d=f*L;
+  for(let i=0;i<seg.length;i++){
+    if(d<=seg[i]||i===seg.length-1){const k=seg[i]?Math.min(1,d/seg[i]):1,a=pts[i],b=pts[i+1];
+      return {p:[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k],dir:Math.atan2(b[1]-a[1],b[0]-a[0])};}
+    d-=seg[i];
+  }
+}
+function unitState(u,ph,tt){
+  const m=P[ph].move,f=m>0?ease(tt/m):1,r=along(PATH[ph][u],f);
+  return {p:r.p,dir:r.dir,moving:m>0&&f>0&&f<1&&r.dir!==null};
+}
+function enemyState(ph,tt){
+  const fx=P[ph].fx;
+  if(fx.dead)return 'dead';
+  if(fx.kill!=null&&tt>P[ph].move*fx.kill)return 'dead';
+  if(fx.eF==='on')return 'active';
+  if(fx.eF==='onThenSup')return tt>1.8?'sup':'active';
+  return 'sup';
+}
+
+/* ============ DRAW ============ */
+function drawTerrain(){
+  ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=C.grid;
+  for(let x=0;x<=W;x+=24)for(let y=0;y<=H;y+=24)ctx.fillRect(x-1,y-1,2,2);
+  // covered route (far only)
+  if(S.key==='far'){
+    ctx.fillStyle=C.low;ctx.beginPath();ctx.moveTo(200,462);ctx.quadraticCurveTo(320,450,462,470);ctx.lineTo(462,528);ctx.quadraticCurveTo(320,548,205,525);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=C.dim;ctx.setLineDash([3,5]);ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=C.dim;ctx.font='10px "Share Tech Mono"';ctx.textAlign='left';ctx.fillText('LOW GROUND (COVERED ROUTE)',232,545);
+  }
+  // trail
+  ctx.strokeStyle=C.trail;ctx.lineWidth=20;ctx.beginPath();ctx.moveTo(170,H);ctx.lineTo(170,60);ctx.stroke();
+  ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.setLineDash([10,12]);ctx.beginPath();ctx.moveTo(170,H);ctx.lineTo(170,60);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=C.dim;ctx.font='10px "Share Tech Mono"';ctx.textAlign='left';ctx.fillText('TRAIL',181,500);
+  // trees on the enemy side and elsewhere
+  [[300,230,14],[360,250,13],[420,240,15],[440,300,13],[395,285,12],[300,262,10],[430,345,14],[370,400,13],[300,410,12],[250,240,11],[70,200,13],[55,300,14],[80,420,13],[60,520,12],[110,120,13],[240,120,14],[330,140,13],[410,150,14],[300,80,13]].forEach(b=>{
+    ctx.fillStyle=C.tree;ctx.globalAlpha=.7;ctx.beginPath();ctx.arc(b[0],b[1],b[2],0,7);ctx.fill();ctx.globalAlpha=1;});
+  // kill zone
+  ctx.strokeStyle=C.amber;ctx.globalAlpha=.7;ctx.setLineDash([6,5]);ctx.lineWidth=1.3;ctx.strokeRect(112,255,126,150);ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=C.amber;ctx.font='10px "Share Tech Mono"';ctx.textAlign='left';ctx.fillText('KILL ZONE',116,268);
+  // hand-grenade range ring
+  ctx.strokeStyle=C.amber;ctx.globalAlpha=.4;ctx.setLineDash([2,6]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(170,330,140,-1.15,1.15);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=C.amber;ctx.globalAlpha=.8;ctx.font='9px "Share Tech Mono"';ctx.textAlign='left';ctx.fillText('HAND-GRENADE RANGE (~35 m)',250,452);
+  ctx.globalAlpha=1;
+  // north arrow
+  ctx.strokeStyle=C.dim;ctx.fillStyle=C.dim;ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(W-22,52);ctx.lineTo(W-22,24);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W-22,18);ctx.lineTo(W-27,28);ctx.lineTo(W-17,28);ctx.closePath();ctx.fill();
+  ctx.textAlign='center';ctx.fillText('N',W-22,66);
+}
+function arrowHead(x,y,a,col,sz){ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-sz*Math.cos(a-0.45),y-sz*Math.sin(a-0.45));ctx.lineTo(x-sz*Math.cos(a+0.45),y-sz*Math.sin(a+0.45));ctx.closePath();ctx.fill();}
+function tracer(a,b,col,inten,dashBase){
+  ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.globalAlpha=.35+.5*inten;
+  ctx.setLineDash([4,dashBase/inten]);ctx.lineDashOffset=-clock*170;
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  ctx.setLineDash([]);ctx.lineDashOffset=0;ctx.globalAlpha=1;
+  if(Math.sin(clock*40+a[0])>0.2){ctx.fillStyle=col;ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(a[0],a[1],3.2,0,7);ctx.fill();ctx.globalAlpha=1;}
+}
+function lbl(txt,x,y,col,al){ctx.fillStyle=col;ctx.font='10px "Share Tech Mono"';ctx.textAlign=al||'center';ctx.fillText(txt,x,y);}
+function draw(){
+  drawTerrain();
+  const fx=P[cur].fx,E=S.E,st={};UIDS.forEach(u=>st[u]=unitState(u,cur,t));
+  const es=enemyState(cur,t);
+
+  // B route preview
+  if(fx.route){
+    const pts=PATH[cur].BTL;ctx.strokeStyle=C.green;ctx.globalAlpha=.55;ctx.lineWidth=1.5;ctx.setLineDash([6,6]);
+    ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+    const e=pts[pts.length-1],q=pts[pts.length-2];arrowHead(e[0],e[1],Math.atan2(e[1]-q[1],e[0]-q[0]),C.green,9);
+  }
+  // enemy fire
+  if(es==='active'){
+    const tg=[st.ATL.p,st.AAR.p,st.AGL.p,st.SL.p];
+    E.forEach((e,i)=>tracer(e,tg[i],C.red,.85,10));
+  }
+  // A fire
+  if(fx.aF&&es!=='dead'){
+    AU.forEach((u,i)=>{
+      const tgt=fx.aF==='shift'?[S.SHIFT[0]+(i-1.5)*7,S.SHIFT[1]+(i%2?8:-6)]:E[i%4];
+      tracer(st[u].p,tgt,C.cyan,.9,12);
+    });
+  }
+  // B fire
+  if(fx.bF&&es!=='dead'&&t>=(fx.bT||0)){
+    BU.forEach((u,i)=>{
+      const tgt=fx.bF==='shift'?[S.SHIFT[0]+(i-1.5)*7,S.SHIFT[1]+(i%2?8:-6)]:E[i%4];
+      tracer(st[u].p,tgt,C.green,.8,12);
+    });
+  }
+  // grenades (near): arcs then bursts
+  if(fx.gren){
+    ['AAR','ATL','AGL'].forEach((u,i)=>{
+      const a=st[u].p,b=E[i+0],m=[(a[0]+b[0])/2,(a[1]+b[1])/2-34];
+      if(t<1.4){const k=t/1.4,x=(1-k)*(1-k)*a[0]+2*(1-k)*k*m[0]+k*k*b[0],y=(1-k)*(1-k)*a[1]+2*(1-k)*k*m[1]+k*k*b[1];
+        ctx.strokeStyle=C.amber;ctx.lineWidth=1.2;ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.quadraticCurveTo(m[0],m[1],b[0],b[1]);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=C.amber;ctx.beginPath();ctx.arc(x,y,3.5,0,7);ctx.fill();}
+      else if(t<2.0){const r=(t-1.4)/0.6;ctx.strokeStyle=C.amber;ctx.globalAlpha=1-r;ctx.lineWidth=2;ctx.beginPath();ctx.arc(b[0],b[1],8+r*22,0,7);ctx.stroke();ctx.globalAlpha=1;}
+    });
+  }
+  // 40mm arc (far)
+  if(fx.gl){
+    const a=st.AGL.p,b=S.ECTR,m=[(a[0]+b[0])/2,(a[1]+b[1])/2-90],k=(clock*1.1)%1;
+    ctx.strokeStyle=C.amber;ctx.lineWidth=1.3;ctx.setLineDash([2,5]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.quadraticCurveTo(m[0],m[1],b[0],b[1]);ctx.stroke();ctx.setLineDash([]);
+    const x=(1-k)*(1-k)*a[0]+2*(1-k)*k*m[0]+k*k*b[0],y=(1-k)*(1-k)*a[1]+2*(1-k)*k*m[1]+k*k*b[1];
+    ctx.fillStyle=C.amber;ctx.beginPath();ctx.arc(x,y,3.5,0,7);ctx.fill();
+  }
+  // radio
+  if(fx.radio&&t>=(fx.radioT||0)){
+    const a=st.SL.p;ctx.strokeStyle=C.amber;ctx.lineWidth=1.2;ctx.globalAlpha=.7;ctx.setLineDash([2,4]);ctx.lineDashOffset=-clock*60;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(PL[0],PL[1]);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
+    for(let i=0;i<3;i++){const r=((clock*30+i*14)%42);ctx.globalAlpha=1-r/42;ctx.beginPath();ctx.arc(a[0],a[1],8+r,0,7);ctx.stroke();}
+    ctx.globalAlpha=1;lbl(fx.radio,PL[0]+62,PL[1]-4,C.amber);
+  }
+  // ready signal
+  if(fx.ready){
+    ctx.strokeStyle=C.green;ctx.lineWidth=1.4;ctx.setLineDash([2,5]);ctx.lineDashOffset=-clock*60;
+    ctx.beginPath();ctx.moveTo(st.BTL.p[0],st.BTL.p[1]);ctx.lineTo(st.ATL.p[0],st.ATL.p[1]);ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
+    lbl('READY',(st.BTL.p[0]+st.ATL.p[0])/2,(st.BTL.p[1]+st.ATL.p[1])/2-8,C.green);
+  }
+  // shift arrow
+  if(fx.shiftArrow){
+    const a=[S.ECTR[0],S.ECTR[1]-30],b=[S.SHIFT[0],S.SHIFT[1]+(S.key==='far'?30:-30)];
+    ctx.strokeStyle=C.amber;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(S.ECTR[0],S.ECTR[1]+(S.key==='far'?-20:30));ctx.lineTo(b[0],b[1]);ctx.stroke();
+    arrowHead(b[0],b[1],Math.atan2(b[1]-(S.ECTR[1]+(S.key==='far'?-20:30)),b[0]-S.ECTR[0]),C.amber,9);
+    lbl('SHIFT',(S.ECTR[0]+b[0])/2+16,(S.ECTR[1]+b[1])/2,C.amber);
+  }
+  // enemy
+  function hex(r){ctx.beginPath();for(let k=0;k<6;k++){const a=k*Math.PI/3;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();}
+  E.forEach((e,i)=>{
+    ctx.save();ctx.translate(e[0],e[1]);
+    if(es==='dead'){hex(9);ctx.strokeStyle=C.dim;ctx.lineWidth=1.2;ctx.stroke();ctx.beginPath();ctx.moveTo(-6,-6);ctx.lineTo(6,6);ctx.moveTo(6,-6);ctx.lineTo(-6,6);ctx.stroke();}
+    else{hex(9);ctx.fillStyle=C.red;ctx.fill();
+      if(i===1){ctx.fillStyle=C.light?'#fff':'#1a0505';ctx.font='bold 8px "Share Tech Mono"';ctx.textAlign='center';ctx.fillText('MG',0,3);}
+      if(es==='active'){ctx.strokeStyle=C.red;ctx.globalAlpha=.6*(.5+.5*Math.sin(clock*9+i));hex(15);ctx.stroke();ctx.globalAlpha=1;}
+      else{ctx.strokeStyle=C.dim;ctx.setLineDash([3,3]);hex(15);ctx.stroke();ctx.setLineDash([]);}}
+    ctx.restore();
+  });
+  lbl(es==='dead'?'EN KIA':es==='sup'?'EN AMBUSH: SUPPRESSED':'EN AMBUSH',S.ECTR[0]+(S.key==='far'?40:0),S.E[0][1]-24,es==='dead'?C.dim:C.red);
+
+  // units
+  UIDS.forEach(u=>{
+    const s=st[u],tm=TEAM[u],col=tm==='sl'?C.amber:tm==='a'?C.cyan:C.green;
+    let ang;
+    if(fx.ring&&t>2.2&&u!=='SL'){const c=S.key==='near'?[300,340]:[310,320];ang=Math.atan2(s.p[1]-c[1],s.p[0]-c[0]);}
+    else if(s.moving)ang=s.dir;
+    else ang=Math.atan2(S.ECTR[1]-s.p[1],S.ECTR[0]-s.p[0]);
+    const sc=u==='SL'?1.15:1;
+    ctx.save();ctx.translate(s.p[0],s.p[1]);ctx.rotate(ang);ctx.scale(sc,sc);
+    ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-7.5);ctx.lineTo(-3,0);ctx.lineTo(-7,7.5);ctx.closePath();
+    ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=C.light?'#fff':'#000';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();
+    if(u==='SL'||u==='ATL'||u==='BTL')lbl(u==='SL'?'SL':u==='ATL'?'A-TL':'B-TL',s.p[0],s.p[1]-12,col);
+  });
+  if(fx.aLab){const ys=['ATL','AAR','AGL','ARM'].map(u=>st[u].p[1]);lbl(fx.aLab,Math.max(80,Math.min(W-80,st.ATL.p[0])),Math.min.apply(null,ys)-18,C.cyan);}
+  if(fx.bLab)lbl(fx.bLab,Math.max(70,Math.min(W-80,st.BTL.p[0])),st.BRM.p[1]+(fx.route||cur>=5&&S.key==='far'?24:22),C.green);
+  if(cur===0&&t<2.6){
+    ctx.fillStyle=C.red;ctx.font='bold 22px Rajdhani';ctx.textAlign='center';ctx.globalAlpha=.4+.6*Math.abs(Math.sin(clock*8));
+    ctx.fillText('AMBUSH RIGHT!',160,205);ctx.globalAlpha=1;
+  }
+}
+
+/* ============ UI ============ */
+let cardTab='what';
+function setTab(k){cardTab=k;renderCard();}
+function renderCard(){
+  const p=P[cur];
+  document.getElementById('capK').textContent='STEP '+(cur+1)+' OF '+N;
+  document.getElementById('capN').textContent=cur+1;
+  document.getElementById('capV').textContent=p.cap;
+  document.getElementById('stepNum').textContent=cur+1;
+  document.getElementById('stepOf').textContent='STEP '+(cur+1)+' OF '+N;
+  document.getElementById('stepTitle').textContent=p.t;
+  document.querySelectorAll('#cardTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===cardTab));
+  const pane=document.getElementById('cardPane');
+  if(cardTab==='what')pane.innerHTML='<div class="body">'+p.body+'</div>';
+  else if(cardTab==='who')pane.innerHTML='<div class="roles">'+p.roles.map(r=>'<div class="role '+r[1]+'"><b>'+r[0]+'</b><span>'+r[2]+'</span></div>').join('')+'</div>';
+  else pane.innerHTML='<div class="keybox"><span class="k">KEY POINT</span>'+p.lead+'</div>';
+  const chips=document.querySelectorAll('#progress button');
+  chips.forEach((b,i)=>b.className=i<cur?'done':i===cur?'on':'');
+  const c=chips[cur],box=document.getElementById('progress');
+  if(c&&box)box.scrollLeft=c.offsetLeft-box.clientWidth/2+c.clientWidth/2;
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===N-1;
+}
+function setTCS(i){
+  document.getElementById('tcsPane').innerHTML=S.tcs[i];
+  document.querySelectorAll('#tcsSeg button').forEach((b,j)=>b.classList.toggle('on',i===j));
+}
+function setPhase(i,instant){cur=Math.max(0,Math.min(N-1,i));t=instant?P[cur].settle:0;renderCard();}
+function step(d){setPhase(cur+d,d<0);}
+function togglePlay(){
+  if(!playing&&cur===N-1&&t>=P[cur].settle+P[cur].hold-0.05)setPhase(0,false);
+  playing=!playing;updatePlay();
+}
+function updatePlay(){document.getElementById('playBtn').innerHTML=playing?'&#10074;&#10074; Pause':'&#9654; Play';}
+function cycleSpeed(){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];document.getElementById('speedBtn').innerHTML=speed+'&times;';}
+function resetAnim(){playing=false;updatePlay();cur=0;t=0;renderCard();}
+function toggleFS(){
+  const el=document.getElementById('player');
+  if(document.fullscreenElement){document.exitFullscreen();return;}
+  if(el.classList.contains('fs')){el.classList.remove('fs');return;}
+  if(el.requestFullscreen){el.requestFullscreen().catch(()=>el.classList.add('fs'));}else el.classList.add('fs');
+}
+function toggleTheme(){
+  const r=document.documentElement,l=r.getAttribute('data-theme')==='light';
+  if(l)r.removeAttribute('data-theme');else r.setAttribute('data-theme','light');
+  document.getElementById('themeBtn').textContent=l?'LIGHT':'DARK';readColors();
+}
+function build(){
+  document.getElementById('progress').innerHTML=P.map((p,i)=>'<button onclick="setPhase('+i+',false)"><b>'+(i+1)+'</b>'+p.s+'</button>').join('');
+  document.getElementById('seq').innerHTML=P.map((p,i)=>
+    '<details class="row"><summary><span class="n">'+(i+1)+'</span><h4>'+p.t+'</h4></summary><div class="in"><p>'+p.body+'</p><button class="watch" onclick="watchStep('+i+')">REPLAY ON MAP</button></div></details>').join('');
+  document.getElementById('seqTitle').textContent='All '+N+' Steps';
+  setTCS(0);
+}
+function setMode(k){
+  loadScenario(k);playing=false;updatePlay();cur=0;t=0;
+  document.querySelectorAll('#modeSeg button').forEach((b,i)=>b.classList.toggle('on',(i===0)===(k==='near')));
+  build();renderCard();
+}
+function watchStep(i){playing=false;updatePlay();setPhase(i,false);document.getElementById('player').scrollIntoView({behavior:'smooth',block:'start'});}
+
+/* ============ LOOP ============ */
+function fit(){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,3);
+  const w=Math.max(1,Math.round(r.width*dpr)),h=Math.round(w*H/W);
+  if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;}
+  ctx.setTransform(cv.width/W,0,0,cv.width/W,0,0);
+}
+function frame(ts){
+  const dt=Math.min(0.05,(ts-lastTs)/1000||0);lastTs=ts;
+  const d=dt*speed;clock+=d;
+  const p=P[cur];
+  if(playing||t<p.settle)t+=d;
+  if(playing&&t>=p.settle+p.hold){if(cur<N-1)setPhase(cur+1,false);else{playing=false;updatePlay();}}
+  fit();draw();requestAnimationFrame(frame);
+}
+loadScenario('near');readColors();build();renderCard();
+window.addEventListener('resize',fit);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

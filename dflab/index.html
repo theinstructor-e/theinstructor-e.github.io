@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Man-Pack DF Lab | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--purple:#bb88ff}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--purple:#6b3fb5}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:180px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:640px;margin:0 auto;padding:12px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:27px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:4px 0 6px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px}
+.choices{display:grid;gap:10px;margin-top:14px}
+.choice{font-family:'Rajdhani',sans-serif;text-align:left;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--green);padding:11px 14px;cursor:pointer;color:var(--text)}
+.choice.alt{border-left-color:var(--cyan)}
+.choice b{display:block;font-size:19px;letter-spacing:.04em;text-transform:uppercase}.choice span{font-size:15px;color:var(--dim)}
+.hud{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px}
+.hud-top{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.hud-k{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.hud-obj{font-size:18px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px;white-space:nowrap}
+.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.msg{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;min-height:17px}
+.msg.good{color:var(--green)}.msg.err{color:var(--red)}
+.cardx{background:var(--panel);border:1px solid var(--line);margin-bottom:10px}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2);gap:8px;flex-wrap:wrap}
+.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:6px 8px;cursor:pointer;min-height:32px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+canvas.cv{display:block;width:100%;height:auto;background:#000}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.row>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:70px}
+.ctl{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 10px}
+.mb{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.05em;background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:12px 2px;cursor:pointer;touch-action:none;text-align:center}
+.mb.down{background:var(--green-dark);border-color:var(--green)}
+.mb.go{border-color:var(--green);color:var(--green)}
+.mb.warn{border-color:var(--amber);color:var(--amber)}
+.mb.red{border-color:var(--red);color:var(--red)}
+.big{display:flex;justify-content:space-between;align-items:flex-end;padding:8px 10px;background:#0a140a;border-bottom:1px solid #000;font-family:'Share Tech Mono',monospace}
+.big .v{font-size:34px;color:#5dffb0;line-height:1;letter-spacing:1px}.big .u{font-size:11px;color:#2a9a68}
+.big .r{text-align:right;color:#5dffb0;font-size:12px;line-height:1.5}
+.sbar{height:8px;background:#102016;width:140px;margin-left:auto;position:relative}.sbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#00ff88 0%,#ffb300 80%,#ff4444 100%)}
+.tbl{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px}
+.tbl td{padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td:last-child{text-align:right}
+.badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 8px;border:1px solid var(--green);color:var(--green);margin:2px 4px 2px 0}
+.badge.bad{border-color:var(--red);color:var(--red)}.badge.warn{border-color:var(--amber);color:var(--amber)}
+.note{font-size:15.5px;color:var(--dim);padding:6px 10px 8px;line-height:1.35}
+.acc summary{cursor:pointer;list-style:none;padding:9px 10px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--cyan);background:var(--panel2)}
+.acc summary::-webkit-details-marker{display:none}
+.acc .in{padding:8px 10px 10px;font-size:16px;line-height:1.4}
+.acc .in h4{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--amber);font-weight:400;margin:10px 0 3px}
+.acc .in li{margin:4px 0 4px 18px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:40;padding:14px}
+.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}
+.sheet p,.sheet li{font-size:16.5px;line-height:1.38}.sheet ol{padding-left:20px}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:12px 14px;cursor:pointer;margin-top:10px}
+.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+table.aar{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px;margin:8px 0}
+table.aar td{padding:5px 4px;border-bottom:1px solid var(--line)}table.aar td:last-child{text-align:right}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>Man-Pack DF Lab</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+
+<section id="start">
+  <div class="hero"><div class="eyebrow">ELECTROMAGNETIC WARFARE SUPPORT &middot; HANDS-ON</div><h2>Man-Pack DF Lab</h2>
+  <p>You are a Soldier with an SDR and a backpack antenna array. Walk the field, watch the signal strength, and take lines of bearing from the array. Find the transmitter and send a fix.</p>
+  <span class="sim">SIMPLIFIED MODEL &middot; TRAINING ONLY &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+  <div class="choices" id="scnList"></div>
+</section>
+
+<div id="app" style="display:none">
+<div class="hud"><div class="hud-top"><div><div class="hud-k" id="hudK">MISSION</div><div class="hud-obj" id="hudObj"></div></div>
+<div style="white-space:nowrap"><button class="hbtn" id="hintBtn" onclick="hint()">HINT</button><button class="hbtn c" onclick="openOv('ovMenu')">MENU</button></div></div><div class="msg" id="msg"></div></div>
+
+<div class="cardx"><div class="ch"><b>FIELD (400 m &times; 400 m)</b><div class="chips"><button class="chip" id="revBtn" onclick="toggleReveal()" style="display:none">REVEAL: OFF</button></div></div>
+<canvas class="cv" id="map" width="480" height="480"></canvas>
+<div class="ctl">
+ <button class="mb" id="bL">&#8634; TURN</button><button class="mb" id="bUp">&#9650; N</button><button class="mb" id="bR">TURN &#8635;</button><button class="mb red" onclick="stopWalk()">STOP</button>
+ <button class="mb" id="bLeft">&#9664; W</button><button class="mb" id="bDown">&#9660; S</button><button class="mb" id="bRight">E &#9654;</button><button class="mb go" onclick="markLob()">MARK LOB</button>
+</div>
+<div class="ctl" style="padding-top:0"><button class="mb warn" onclick="clearLobs()" style="grid-column:span 2">CLEAR LINES</button><button class="mb go" id="subBtn" onclick="submitFix()" style="grid-column:span 2">SUBMIT FIX</button></div>
+<div class="note" id="mapNote">Tap the map to walk there. Colored dots show how strong the signal was where you walked: blue is weak, red is strong.</div></div>
+
+<div class="cardx"><div class="ch"><b>SDR SCREEN</b><span class="k" id="sdrInfo"></span></div>
+<div class="big"><div><div class="u">RSSI</div><div class="v" id="rssiV">-----</div><div class="u" id="rssiU">dBm</div></div><div class="r"><div id="snrV">SNR --</div><div id="stateV">--</div><div class="sbar"><i id="sBar" style="width:0%"></i></div></div></div>
+<canvas class="cv" id="scope" width="480" height="110"></canvas></div>
+
+<div class="cardx"><div class="ch"><b>BACKPACK ARRAY</b><span class="k" id="arrInfo"></span></div>
+<canvas class="cv" id="arr" width="480" height="230"></canvas>
+<div class="cb"><table class="tbl" id="dtT"></table><div id="dfBadges" style="margin-top:6px"></div></div></div>
+
+<div class="cardx"><div class="ch"><b>SETTINGS</b></div><div class="cb" id="set"></div></div>
+
+<div class="cardx"><details class="acc"><summary>HOW IT WORKS</summary><div class="in">
+<h4>RSSI HOMING</h4><p>Signal strength falls as you move away, so you can walk toward "hotter" readings. It is slow, and buildings, trees, and fading make it jump around.</p>
+<h4>THE ARRAY AND TIME DIFFERENCE OF ARRIVAL</h4><p>A radio wave reaches each antenna on the pack at a slightly different instant. For antennas half a meter apart that is at most about 1.7 nanoseconds. The SDR measures these tiny differences as phase between its coherent channels. With known antenna positions it solves for the direction the wave came from: that is one line of bearing. Two antennas leave a front/back ambiguity. Four resolve it.</p>
+<h4>WHY SPACING AND FREQUENCY MATTER</h4><p>Phase only tells you the time difference modulo one wave period. If any two antennas are more than half a wavelength apart, the measurement wraps and the bearing is wrong. If they are far less than a wavelength apart, noise and calibration errors swamp the tiny difference.</p>
+<h4>FIXING THE EMITTER</h4><p>One line of bearing points toward the emitter. Lines taken from different places cross at the emitter. Lines that cross at a shallow angle give a poor fix, and reflections off buildings can bend a line.</p>
+<h4>TRUE TDOA GEOLOCATION</h4><p>Real TDOA geolocation uses several time-synchronized sensors spread over distance. Each pair of sensors gives a hyperbola of constant time difference, and the hyperbolas intersect at the emitter. A single pack uses the same time difference idea across a tiny array to get a bearing. The DF Trainer covers fixes from several sensors.</p>
+<h4>REAL SYSTEMS (PUBLIC SOURCES)</h4><ul>
+<li><b>KrakenSDR</b>: a 5-channel coherent SDR doing correlative interferometry and MUSIC, used with a phone for GPS and compass.</li>
+<li><b>R&amp;S MP007</b>: man-portable tactical DF, 9 MHz to 8 GHz, about 2&deg; RMS typical.</li>
+<li><b>SwRI AP-460 &ldquo;tent&rdquo;</b>: a collapsible fabric DF array that stows in a backpack, set up in under 5 minutes, better than 5&deg; RMS.</li>
+<li><b>JTWS man-portable</b>: backpack system with VHF/UHF DF capability.</li>
+<li><b>TCI 903S</b>: man-portable COMINT and DF.</li>
+<li><b>Keysight 85574A</b>: handheld DF antenna with digital compass for manual bearings.</li>
+<li><b>Ham TDOA homers</b>: two-antenna switched arrays that you sweep to find the direction.</li></ul>
+</div></details></div>
+</div>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+</main>
+
+<div class="ov" id="ovMenu"><div class="sheet"><div class="k">MENU</div><h2>Man-Pack DF Lab</h2><div id="menuList"></div><button class="btn alt" onclick="closeOv('ovMenu')">CLOSE</button></div></div>
+<div class="ov" id="ovAar"><div class="sheet"><div class="k">AFTER ACTION REVIEW</div><h2 id="aH">Fix sent</h2>
+<table class="aar"><tr><td>Fix error</td><td id="aErr"></td></tr><tr><td>Lines of bearing used</td><td id="aLob"></td></tr><tr><td>Time</td><td id="aT"></td></tr><tr><td>Hints used</td><td id="aHints"></td></tr></table>
+<p id="aP"></p><button class="btn" onclick="closeOv('ovAar');restart()">TRY AGAIN</button><button class="btn alt" onclick="closeOv('ovAar');openOv('ovMenu')">OTHER SCENARIOS</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* =============================================================
+   WORLD
+============================================================= */
+const C0=299792458,FIELD=400,PX=480/FIELD,d2r=Math.PI/180;
+const BLD=[{x:200,y:80,w:70,h:50,n:'WAREHOUSE',block:true},{x:100,y:215,w:50,h:45,n:'SHED',block:true}];
+const FOREST={x:20,y:60,w:90,h:110};
+const WALL={x:375,y1:40,y2:190,n:'CONTAINER WALL'};
+const SCN=[
+ {id:'open',t:'Open field',s:'150 MHz transmitter. Learn homing, then take lines of bearing.',f:150,arr:'sq4',L:0.5,mp:false,burst:false,em:[310,70],obj:'Find the transmitter and send a fix within 25 m.',
+  why:'Lines of bearing taken from different places cross at the emitter. Spread your positions out: lines that cross at a shallow angle give a poor fix.'},
+ {id:'mp',t:'Behind the warehouse',s:'A short-burst transmitter, a blocking building, and a reflective wall.',f:150,arr:'sq4',L:0.5,mp:true,burst:true,em:[300,105],obj:'Find the transmitter. It only talks in short bursts, and a reflection can bend your lines.',
+  why:'Buildings block the direct path and walls reflect it, so a line can point at the reflection instead of the emitter. Take several lines from different spots and distrust the one that does not agree.'},
+ {id:'uhf',t:'The UHF trap',s:'Same field, 900 MHz. Your array reports odd bearings.',f:900,arr:'sq4',L:0.5,mp:false,burst:false,em:[290,285],obj:'The lines do not make sense. Fix the array for this frequency, then find the transmitter.',
+  why:'At 900 MHz the wavelength is 33 cm, so antennas 50 cm apart are more than half a wavelength apart. The phase wraps and the bearing is ambiguous. A smaller array (15 cm) fixes it.'}
+];
+let ST={scn:SCN[0],f:150,arr:'sq4',L:0.5,mp:false,burst:false,reveal:false,free:false,pt:27};
+let P={x:60,y:340,h:20,tx:null,ty:null},EM={x:310,y:70};
+let lobs=[],trail=[],fix=null,t0=0,hints=0,hintLvl=0,submitted=false,clock=0,lastT=0,rssiHist=[],dfHist=[],gid=0;
+let CAL=[0,0,0,0],DF=null,CH=null,mode='start';
+const $=id=>document.getElementById(id);
+function openOv(i){if(i==='ovMenu')buildMenu();$(i).classList.add('on');}function closeOv(i){$(i).classList.remove('on');}
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';l?r.removeAttribute('data-theme'):r.setAttribute('data-theme','light');$('tb').textContent=l?'LIGHT':'DARK';}
+function setMsg(t,c){$('msg').textContent=t||'';$('msg').className='msg '+(c||'');}
+const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+const wrapPi=a=>a-2*Math.PI*Math.round(a/(2*Math.PI));
+const az=(dx,dy)=>((Math.atan2(dx,dy)/d2r)+360)%360;
+const fspl=(fMHz,dkm)=>32.44+20*Math.log10(fMHz)+20*Math.log10(Math.max(dkm,0.0001));
+
+/* =============================================================
+   PROPAGATION AND ARRAY PHYSICS
+============================================================= */
+function segHits(x0,y0,x1,y1,r){for(let i=0;i<=24;i++){const x=x0+(x1-x0)*i/24,y=y0+(y1-y0)*i/24;if(x>r.x&&x<r.x+r.w&&y>r.y&&y<r.y+r.h)return true;}return false;}
+function inForestLen(x0,y0,x1,y1){let n=0;const N=40;for(let i=0;i<N;i++){const x=x0+(x1-x0)*(i+.5)/N,y=y0+(y1-y0)*(i+.5)/N;if(x>FOREST.x&&x<FOREST.x+FOREST.w&&y>FOREST.y&&y<FOREST.y+FOREST.h)n++;}return Math.hypot(x1-x0,y1-y0)*n/N;}
+function pathLoss(ax,ay,bx,by){let l=0;BLD.forEach(b=>{if(b.block&&segHits(ax,ay,bx,by,b))l+=18;});l+=Math.min(18,0.12*inForestLen(ax,ay,bx,by));return l;}
+const fade=(x,y)=>3*Math.sin(0.17*x+1.3)*Math.sin(0.21*y+0.4)+2*Math.sin(0.53*x+0.29*y);
+function reflection(){
+  const ex=EM.x,ey=EM.y,ix=2*WALL.x-ex,iy=ey; // image across vertical wall
+  if(P.x>=WALL.x||ex>=WALL.x)return null;
+  const t=(WALL.x-P.x)/(ix-P.x),yy=P.y+(iy-P.y)*t;if(t<=0||t>=1||yy<WALL.y1||yy>WALL.y2)return null;
+  const dr=Math.hypot(ix-P.x,iy-P.y);return {u:[(ix-P.x)/dr,(iy-P.y)/dr],d:dr,hit:[WALL.x,yy]};
+}
+function channel(){
+  const f=ST.f,lam=C0/(f*1e6),dx=EM.x-P.x,dy=EM.y-P.y,d=Math.max(2,Math.hypot(dx,dy));
+  const on=!ST.burst||((clock%3.6)<1.2);
+  const Pd=ST.pt-fspl(f,d/1000)-pathLoss(P.x,P.y,EM.x,EM.y)+fade(P.x,P.y)-2;
+  const paths=[{u:[dx/d,dy/d],P:Pd,psi:0}];
+  if(ST.mp){const r=reflection();if(r){const pr=ST.pt-fspl(f,r.d/1000)-6-pathLoss(P.x,P.y,r.hit[0],r.hit[1])-pathLoss(r.hit[0],r.hit[1],EM.x,EM.y)+fade(P.x,P.y)-2;
+    paths.push({u:r.u,P:pr,psi:2*Math.PI*(r.d-d)/lam+Math.PI});}}
+  const lin=paths.reduce((s,p)=>s+Math.pow(10,p.P/10),0),Ps=10*Math.log10(lin);
+  paths.forEach(p=>p.a=Math.sqrt(Math.pow(10,p.P/10)/lin));
+  const F=10*Math.log10(Math.pow(10,(67.2-27.7*Math.log10(f))/10)+Math.pow(10,(52-23*Math.log10(f))/10)+3),N=-174+10*Math.log10(12500)+F;
+  return {on,Ps,N,paths,lam,d,blocked:paths.length&&pathLoss(P.x,P.y,EM.x,EM.y)>0};
+}
+function rssiNow(ch){const lin=Math.pow(10,ch.N/10)*(1+0.2*gauss()*0)+(ch.on?Math.pow(10,ch.Ps/10):0);return 10*Math.log10(lin)+0.8*gauss();}
+function elems(){const L=ST.L,h=P.h*d2r,r=[Math.cos(h),-Math.sin(h)],f=[Math.sin(h),Math.cos(h)];
+  const q=L/Math.SQRT2/2,body=ST.arr==='two'?[[-L/2,0],[L/2,0]]:[[-q,q],[q,q],[q,-q],[-q,-q]];
+  return {body,world:body.map(b=>[b[0]*r[0]+b[1]*f[0],b[0]*r[1]+b[1]*f[1]])};
+}
+const NS=60;
+function measure(ch){
+  const E=elems(),lam=ch.lam,k=2*Math.PI/lam,snrEff=Math.pow(10,(ch.Ps-ch.N)/10)*NS;
+  const s=E.world.map((p,i)=>{let re=0,im=0;ch.paths.forEach(pa=>{const ph=k*(p[0]*pa.u[0]+p[1]*pa.u[1])+pa.psi;re+=pa.a*Math.cos(ph);im+=pa.a*Math.sin(ph);});
+    const sg=Math.sqrt(1/(2*snrEff));re+=sg*gauss();im+=sg*gauss();const c=Math.cos(CAL[i]),sn=Math.sin(CAL[i]);return [re*c-im*sn,re*sn+im*c];});
+  const ph0=Math.atan2(s[0][1],s[0][0]),dphi=[];for(let i=1;i<s.length;i++)dphi.push(wrapPi(Math.atan2(s[i][1],s[i][0])-ph0));
+  const dt=dphi.map(d=>-d/(2*Math.PI*ST.f*1e6)); // seconds, arrival of element i relative to element 0
+  const A=[];for(let i=1;i<E.world.length;i++)A.push([E.world[i][0]-E.world[0][0],E.world[i][1]-E.world[0][1]]);
+  const b=dphi.map(d=>lam/(2*Math.PI)*d);
+  let out={dt,dphi,A,snrEff};
+  if(ST.arr==='two'){const c1=Math.max(-1,Math.min(1,b[0]/ST.L)),a=Math.acos(c1)/d2r,base=P.h+90;out.cands=[(base+a+360)%360,(base-a+360)%360];out.az=out.cands[0];out.q=1;}
+  else{let a11=0,a12=0,a22=0,r1=0,r2=0;A.forEach((a,i)=>{a11+=a[0]*a[0];a12+=a[0]*a[1];a22+=a[1]*a[1];r1+=a[0]*b[i];r2+=a[1]*b[i];});
+    const det=a11*a22-a12*a12,ux=(a22*r1-a12*r2)/det,uy=(-a12*r1+a11*r2)/det,m=Math.hypot(ux,uy);out.az=az(ux,uy);out.q=m;}
+  return out;
+}
+function dfUpdate(ch){
+  if(!ch.on){DF={off:true};return;}
+  const m=measure(ch);m.rel=(m.az-P.h+360)%360;
+  dfHist.push(m.az);if(dfHist.length>24)dfHist.shift();
+  let sx=0,sy=0;dfHist.forEach(a=>{sx+=Math.sin(a*d2r);sy+=Math.cos(a*d2r);});const R=Math.hypot(sx,sy)/dfHist.length;
+  m.avg=az(sx,sy);m.sig=Math.max(1,Math.sqrt(-2*Math.log(Math.max(R,1e-6)))/d2r);
+  if(ST.arr==='two'){m.avg=m.az;}
+  m.amb=ST.L/ch.lam>0.5;m.dl=ST.L/ch.lam;DF=m;
+}
+
+/* =============================================================
+   UI
+============================================================= */
+function buildStart(){$('scnList').innerHTML=SCN.map((s,i)=>'<button class="choice'+(i?'':'')+'" onclick="startScn('+i+')"><b>'+(i+1)+'. '+s.t+'</b><span>'+s.s+'</span></button>').join('')+'<button class="choice alt" onclick="startFree()"><b>Free play</b><span>Every setting open, with a switch that reveals the transmitter.</span></button>';}
+function buildMenu(){$('menuList').innerHTML=SCN.map((s,i)=>'<button class="choice" style="margin-bottom:8px;width:100%" onclick="closeOv(\'ovMenu\');startScn('+i+')"><b>'+(i+1)+'. '+s.t+'</b><span>'+s.s+'</span></button>').join('')+'<button class="choice alt" style="margin-bottom:8px;width:100%" onclick="closeOv(\'ovMenu\');startFree()"><b>Free play</b><span>All settings open.</span></button>';}
+function chipRow(id,items,cur,fn){return '<div class="chips" id="'+id+'">'+items.map(it=>'<button class="chip'+(String(it[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+it[0]+'\')">'+it[1]+'</button>').join('')+'</div>';}
+function buildSettings(){
+  $('set').innerHTML='<div class="row"><label>FREQUENCY</label>'+chipRow('cF',[[30,'30 MHz'],[150,'150 MHz'],[450,'450 MHz'],[900,'900 MHz']],ST.f,'setF')+'</div>'+
+   '<div class="row"><label>ARRAY</label>'+chipRow('cA',[['two','2 ELEMENT'],['sq4','4 ELEMENT']],ST.arr,'setArr')+'</div>'+
+   '<div class="row"><label>MAX SPACING</label>'+chipRow('cL',[[0.15,'15 cm'],[0.5,'50 cm'],[1.0,'100 cm']],ST.L,'setL')+'</div>'+
+   '<div class="row"><label>MULTIPATH</label>'+chipRow('cM',[['0','OFF'],['1','ON']],ST.mp?1:0,'setMp')+'</div>'+
+   '<div class="row"><label>TRANSMITS</label>'+chipRow('cB',[['0','CONTINUOUS'],['1','SHORT BURSTS']],ST.burst?1:0,'setBurst')+'</div>';
+}
+function refresh(){buildSettings();}
+function setF(v){ST.f=Number(v);dfHist=[];refresh();}
+function setArr(v){ST.arr=v;dfHist=[];refresh();}
+function setL(v){ST.L=Number(v);dfHist=[];refresh();}
+function setMp(v){ST.mp=v==='1';dfHist=[];refresh();}
+function setBurst(v){ST.burst=v==='1';refresh();}
+function newEmitterFree(){EM={x:60+Math.random()*280,y:30+Math.random()*200};}
+function startScn(i){const s=SCN[i];ST={scn:s,f:s.f,arr:s.arr,L:s.L,mp:s.mp,burst:s.burst,reveal:false,free:false,pt:27};EM={x:s.em[0],y:s.em[1]};begin(s.obj,'MISSION '+(i+1)+' OF '+SCN.length);}
+function startFree(){ST={scn:null,f:150,arr:'sq4',L:0.5,mp:false,burst:false,reveal:false,free:true,pt:27};newEmitterFree();begin('Walk, measure, and fix the transmitter. Change anything.','FREE PLAY');}
+function restart(){if(ST.free)startFree();else startScn(SCN.indexOf(ST.scn));}
+function begin(obj,k){mode='run';$('start').style.display='none';$('app').style.display='block';P={x:60,y:340,h:20,tx:null,ty:null};lobs=[];trail=[];fix=null;t0=Date.now();hints=0;hintLvl=0;submitted=false;rssiHist=[];dfHist=[];gid=0;
+  CAL=[0,1,2,3].map(()=>gauss()*2*d2r);$('hudK').textContent=k;$('hudObj').textContent=obj;$('hintBtn').style.display=ST.free?'none':'';$('revBtn').style.display=ST.free?'':'none';$('revBtn').textContent='REVEAL: OFF';$('subBtn').style.display='';
+  setMsg('');refresh();window.scrollTo(0,0);}
+function toggleReveal(){ST.reveal=!ST.reveal;$('revBtn').textContent='REVEAL: '+(ST.reveal?'ON':'OFF');}
+
+/* walking */
+function stopWalk(){P.tx=null;}
+$('map').addEventListener('click',e=>{const r=$('map').getBoundingClientRect(),x=(e.clientX-r.left)/r.width*FIELD,y=(e.clientY-r.top)/r.height*FIELD;
+  // tap a pending 2-element line to keep it
+  for(const l of lobs){if(l.pair&&!l.resolved){const d=distToLine(x,y,l);if(d<10){resolvePair(l);return;}}}
+  P.tx=Math.max(2,Math.min(FIELD-2,x));P.ty=Math.max(2,Math.min(FIELD-2,y));});
+function distToLine(x,y,l){const dx=Math.sin(l.az*d2r),dy=Math.cos(l.az*d2r),t=(x-l.x)*dx+(y-l.y)*dy;if(t<0)return 1e9;return Math.abs((x-l.x)*dy-(y-l.y)*dx);}
+function holdBtn(id,fn){const el=$(id);let iv=null;el.addEventListener('pointerdown',e=>{e.preventDefault();el.classList.add('down');fn();iv=setInterval(fn,60);});['pointerup','pointerleave','pointercancel'].forEach(ev=>el.addEventListener(ev,()=>{el.classList.remove('down');clearInterval(iv);}));}
+const nudge=(dx,dy)=>()=>{P.tx=null;P.x=Math.max(2,Math.min(FIELD-2,P.x+dx*0.9));P.y=Math.max(2,Math.min(FIELD-2,P.y+dy*0.9));P.h=az(dx,-dy);noteTrail();};
+holdBtn('bUp',nudge(0,-1));holdBtn('bDown',nudge(0,1));holdBtn('bLeft',nudge(-1,0));holdBtn('bRight',nudge(1,0));
+holdBtn('bL',()=>{P.h=(P.h+345)%360;dfHist=[];});holdBtn('bR',()=>{P.h=(P.h+15)%360;dfHist=[];});
+let lastTrail={x:-99,y:-99};
+function noteTrail(){if(!CH)return;if(Math.hypot(P.x-lastTrail.x,P.y-lastTrail.y)>=5){lastTrail={x:P.x,y:P.y};trail.push({x:P.x,y:P.y,r:CH.on?rssiShown:CH.N});if(trail.length>400)trail.shift();}}
+let rssiShown=-130;
+
+/* LOBs and fix */
+function markLob(){
+  if(!DF||DF.off){setMsg('No signal at this instant. The transmitter is not keyed.','err');return;}
+  if(ST.arr==='two'&&DF.cands){const g=++gid;DF.cands.forEach(a=>lobs.push({x:P.x,y:P.y,az:a,sig:Math.max(2,DF.sig||3),pair:g,resolved:false}));setMsg('Two lines: the pair is mirror images. Tap the one you believe, or turn and mark again.','');}
+  else{lobs.push({x:P.x,y:P.y,az:DF.avg,sig:Math.max(2,DF.sig),pair:0,resolved:true});setMsg('Line of bearing '+Math.round(DF.avg)+'&deg; marked.'.replace('&deg;','\u00b0'),'good');}
+  if(lobs.length>24)lobs.shift();solveFix();
+}
+function resolvePair(l){lobs=lobs.filter(x=>x.pair!==l.pair||x===l);l.resolved=true;solveFix();setMsg('Line kept.','good');}
+function clearLobs(){lobs=[];fix=null;setMsg('Lines cleared.','');}
+function solveFix(){
+  const L=lobs.filter(l=>l.resolved);if(L.length<2){fix=null;return;}
+  let x=L.reduce((s,l)=>s+l.x,0)/L.length,y=L.reduce((s,l)=>s+l.y,0)/L.length,res;
+  for(let it=0;it<2;it++){let a11=0,a12=0,a22=0,b1=0,b2=0;
+    L.forEach(l=>{const dx=Math.sin(l.az*d2r),dy=Math.cos(l.az*d2r),nx=dy,ny=-dx,rng=Math.max(20,Math.hypot(x-l.x,y-l.y)),w=1/Math.pow(Math.max(l.sig,1)*d2r*rng,2);
+      a11+=w*nx*nx;a12+=w*nx*ny;a22+=w*ny*ny;const c=nx*l.x+ny*l.y;b1+=w*nx*c;b2+=w*ny*c;});
+    const det=a11*a22-a12*a12;if(Math.abs(det)<1e-12){fix=null;return;}
+    x=(a22*b1-a12*b2)/det;y=(-a12*b1+a11*b2)/det;res={a11,a12,a22,det};}
+  const t=res.a11+res.a22,dsc=Math.sqrt(Math.max(0,t*t/4-res.det)),lmin=t/2-dsc;
+  const rad=Math.min(120,Math.max(3,2/Math.sqrt(Math.max(lmin,1e-9))));
+  fix={x,y,r:rad,n:L.length};
+}
+function submitFix(){
+  if(!fix){setMsg('You need at least two lines from different places first.','err');return;}
+  if(submitted)return;submitted=true;const err=Math.hypot(fix.x-EM.x,fix.y-EM.y);
+  ST.reveal=true;const ok=err<=25;
+  $('aH').textContent=ok?'Good fix':'Fix sent';$('aErr').textContent=Math.round(err)+' m ('+(ok?'inside 25 m':'outside 25 m')+')';$('aLob').textContent=String(lobs.filter(l=>l.resolved).length);
+  const s=Math.round((Date.now()-t0)/1000);$('aT').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');$('aHints').textContent=String(hints);
+  $('aP').textContent=(ST.scn?ST.scn.why:'Lines of bearing from different positions cross at the emitter.')+(ok?'':' Try again with more lines from well-separated spots.');
+  setTimeout(()=>openOv('ovAar'),500);
+}
+function hint(){
+  if(ST.free)return;hints++;hintLvl=Math.min(3,hintLvl+1);const id=ST.scn.id;
+  const H={open:['Start by walking. The colored trail shows where the signal gets stronger.','Take a line of bearing with MARK LOB. Then walk well to the side and mark another.','Mark two or three lines from points at least 100 m apart, then SUBMIT FIX.'],
+   mp:['The transmitter only keys up for about a second every few seconds. Watch the RSSI and mark during a burst.','Compare lines taken from different spots. A reflection makes one point at the wall instead of the emitter.','Mark from three or more places. Ignore the line that does not cross with the others.'],
+   uhf:['Open the SETTINGS and look at the baseline-to-wavelength ratio in the array panel.','Every pair of antennas must be less than half a wavelength apart. At 900 MHz that is about 16 cm, so the widest spacing must stay under that.','Set the spacing to 15 cm, then take lines of bearing as before.']}[id];
+  setMsg('HINT: '+H[hintLvl-1],'');
+}
+
+/* =============================================================
+   DRAW: MAP
+============================================================= */
+const mx=$('map').getContext('2d');
+function rssiCol(r){const t=Math.max(0,Math.min(1,(r+110)/70));return 'hsl('+(240-240*t)+',90%,55%)';}
+function drawMap(){
+  const c=mx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#0b1710';c.fillRect(0,0,480,480);
+  c.strokeStyle='#14281c';c.lineWidth=1;c.fillStyle='#3e5b48';c.font='9px "Share Tech Mono"';for(let m=0;m<=FIELD;m+=50){c.beginPath();c.moveTo(m*PX,0);c.lineTo(m*PX,480);c.moveTo(0,m*PX);c.lineTo(480,m*PX);c.stroke();if(m)c.fillText(m,m*PX+2,10);}
+  c.fillStyle='#1a2b20';c.fillRect(FOREST.x*PX,FOREST.y*PX,FOREST.w*PX,FOREST.h*PX);c.fillStyle='#24402b';for(let i=0;i<40;i++){const x=FOREST.x+((i*37)%FOREST.w),y=FOREST.y+((i*53)%FOREST.h);c.beginPath();c.arc(x*PX,y*PX,4,0,7);c.fill();}c.fillStyle='#5e8a6a';c.fillText('TREES',FOREST.x*PX+3,FOREST.y*PX+FOREST.h*PX-4);
+  BLD.forEach(b=>{c.fillStyle='#26364a';c.fillRect(b.x*PX,b.y*PX,b.w*PX,b.h*PX);c.strokeStyle='#4f7396';c.lineWidth=2;c.strokeRect(b.x*PX,b.y*PX,b.w*PX,b.h*PX);c.fillStyle='#8aa6c2';c.fillText(b.n,b.x*PX+3,b.y*PX+12);});
+  if(ST.mp){c.strokeStyle='#ffb300';c.lineWidth=4;c.beginPath();c.moveTo(WALL.x*PX,WALL.y1*PX);c.lineTo(WALL.x*PX,WALL.y2*PX);c.stroke();c.fillStyle='#ffb300';c.fillText('REFLECTIVE WALL',WALL.x*PX-84,WALL.y1*PX-4);}
+  trail.forEach(t=>{c.fillStyle=rssiCol(t.r);c.beginPath();c.arc(t.x*PX,t.y*PX,3,0,7);c.fill();});
+  // lobs
+  lobs.forEach(l=>{const dx=Math.sin(l.az*d2r),dy=Math.cos(l.az*d2r),len=900,s=l.sig*d2r;
+    const col=l.pair&&!l.resolved?'#ffb300':'#00d4ff';c.fillStyle=l.pair&&!l.resolved?'rgba(255,179,0,.10)':'rgba(0,212,255,.10)';c.beginPath();c.moveTo(l.x*PX,l.y*PX);
+    [-s,s].forEach(a=>{c.lineTo((l.x+Math.sin(l.az*d2r+a)*len)*PX,(l.y+Math.cos(l.az*d2r+a)*len)*PX);});c.closePath();c.fill();
+    c.strokeStyle=col;c.lineWidth=1.6;if(l.pair&&!l.resolved)c.setLineDash([6,5]);c.beginPath();c.moveTo(l.x*PX,l.y*PX);c.lineTo((l.x+dx*len)*PX,(l.y+dy*len)*PX);c.stroke();c.setLineDash([]);
+    c.fillStyle=col;c.beginPath();c.arc(l.x*PX,l.y*PX,3.5,0,7);c.fill();});
+  if(fix){c.strokeStyle='#00ff88';c.lineWidth=2;c.beginPath();c.arc(fix.x*PX,fix.y*PX,fix.r*PX,0,7);c.stroke();c.beginPath();c.moveTo(fix.x*PX-9,fix.y*PX);c.lineTo(fix.x*PX+9,fix.y*PX);c.moveTo(fix.x*PX,fix.y*PX-9);c.lineTo(fix.x*PX,fix.y*PX+9);c.stroke();c.fillStyle='#00ff88';c.font='10px "Share Tech Mono"';c.fillText('FIX ('+fix.n+' lines)',fix.x*PX+10,fix.y*PX-8);}
+  if(ST.reveal){c.fillStyle='#ff4444';c.beginPath();c.arc(EM.x*PX,EM.y*PX,7,0,7);c.fill();c.strokeStyle='#fff';c.lineWidth=1.5;c.stroke();c.fillStyle='#ff4444';c.font='bold 10px "Share Tech Mono"';c.fillText('TRANSMITTER',EM.x*PX+10,EM.y*PX+3);}
+  if(P.tx!==null){c.strokeStyle='rgba(255,255,255,.4)';c.setLineDash([3,4]);c.beginPath();c.moveTo(P.x*PX,P.y*PX);c.lineTo(P.tx*PX,P.ty*PX);c.stroke();c.setLineDash([]);c.beginPath();c.arc(P.tx*PX,P.ty*PX,4,0,7);c.stroke();}
+  // little soldier
+  const x=P.x*PX,y=P.y*PX;c.save();c.translate(x,y);c.rotate(P.h*d2r);
+  c.fillStyle='#3b4a2c';c.fillRect(-6,3,12,8);c.strokeStyle='#e8e6dc';c.lineWidth=1;c.strokeRect(-6,3,12,8); // backpack (behind)
+  c.fillStyle='#00ff88';c.beginPath();c.ellipse(0,-1,8,5,0,0,7);c.fill(); // shoulders
+  c.fillStyle='#d8c8a8';c.beginPath();c.arc(0,-1,3.6,0,7);c.fill(); // head
+  c.fillStyle='#00ff88';c.beginPath();c.moveTo(0,-15);c.lineTo(4,-8);c.lineTo(-4,-8);c.closePath();c.fill();
+  c.fillStyle='#ffb300';[[-5,3],[5,3],[5,11],[-5,11]].forEach(p=>{c.beginPath();c.arc(p[0],p[1],1.6,0,7);c.fill();});
+  c.restore();
+}
+
+/* =============================================================
+   DRAW: SCOPE + ARRAY
+============================================================= */
+const sc=$('scope').getContext('2d'),ac=$('arr').getContext('2d');
+function drawScope(){
+  const c=sc;c.setTransform(1,0,0,1,0,0);c.fillStyle='#050a10';c.fillRect(0,0,480,110);const lo=-130,hi=-20;
+  c.strokeStyle='#14263a';c.fillStyle='#4f677f';c.font='9px "Share Tech Mono"';for(let d=-120;d<=-30;d+=30){const y=110-(d-lo)/(hi-lo)*110;c.beginPath();c.moveTo(0,y);c.lineTo(480,y);c.stroke();c.fillText(d,2,y-2);}
+  c.strokeStyle='#00ff88';c.lineWidth=1.5;c.beginPath();rssiHist.forEach((v,i)=>{const x=i/119*480,y=110-(Math.max(lo,Math.min(hi,v))-lo)/(hi-lo)*110;i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();
+  if(CH){const yn=110-(CH.N-lo)/(hi-lo)*110;c.strokeStyle='rgba(255,179,0,.7)';c.setLineDash([3,3]);c.beginPath();c.moveTo(0,yn);c.lineTo(480,yn);c.stroke();c.setLineDash([]);c.fillStyle='#ffb300';c.fillText('noise floor',400,yn-3);}
+}
+function drawArr(){
+  const c=ac,W=480,H=230,cx=150,cy=118;c.setTransform(1,0,0,1,0,0);c.fillStyle='#050a10';c.fillRect(0,0,W,H);
+  const E=elems().body,sc_=ST.arr==='two'?55/ST.L*0.5*2:48/ST.L*0.5*2;
+  // body outline
+  c.strokeStyle='#2a4660';c.lineWidth=2;c.beginPath();c.ellipse(cx,cy+60,52,18,0,0,7);c.stroke();c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='center';c.fillText('BACK OF PACK (top view)',cx,cy+96);c.textAlign='left';
+  c.fillStyle='#00ff88';c.beginPath();c.moveTo(cx,22);c.lineTo(cx+7,34);c.lineTo(cx-7,34);c.closePath();c.fill();c.fillText('FRONT',cx+10,32);
+  // wavefront
+  let rel=null;if(DF&&!DF.off)rel=(DF.az-P.h+360)%360;
+  if(rel!==null){const a=rel*d2r,ux=Math.sin(a),uy=-Math.cos(a);c.strokeStyle='rgba(255,179,0,.55)';c.lineWidth=1.5;for(let k=-1;k<=2;k++){const ox=cx+ux*(70+k*22)*1,oy=cy+uy*(70+k*22);c.beginPath();c.moveTo(ox-uy*70,oy+ux*70);c.lineTo(ox+uy*70,oy-ux*70);c.stroke();}
+    c.strokeStyle='#ffb300';c.lineWidth=2.5;c.beginPath();c.moveTo(cx+ux*140,cy+uy*140);c.lineTo(cx+ux*60,cy+uy*60);c.stroke();const ax=cx+ux*60,ay=cy+uy*60;c.fillStyle='#ffb300';c.beginPath();c.moveTo(ax,ay);c.lineTo(ax+ux*10+uy*6,ay+uy*10-ux*6);c.lineTo(ax+ux*10-uy*6,ay+uy*10+ux*6);c.closePath();c.fill();}
+  E.forEach((b,i)=>{const x=cx+b[0]*sc_*2,y=cy-b[1]*sc_*2;c.fillStyle=i===0?'#ff4444':'#00d4ff';c.beginPath();c.arc(x,y,8,0,7);c.fill();c.fillStyle='#001018';c.font='bold 10px "Share Tech Mono"';c.textAlign='center';c.fillText(i,x,y+3.5);
+    if(i>0&&DF&&!DF.off&&DF.dt){c.fillStyle='#ffd34d';c.font='10px "Share Tech Mono"';c.fillText((DF.dt[i-1]*1e9>=0?'+':'')+(DF.dt[i-1]*1e9).toFixed(2)+' ns',x,y-12);}});
+  c.textAlign='left';
+  // polar bearing dial
+  const dx=360,dy=118,r=84;c.strokeStyle='#1e3a52';c.lineWidth=1;c.beginPath();c.arc(dx,dy,r,0,7);c.stroke();c.beginPath();c.arc(dx,dy,r/2,0,7);c.stroke();
+  c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='center';c.fillText('N',dx,dy-r-4);c.fillText('E',dx+r+8,dy+3);c.fillText('S',dx,dy+r+12);c.fillText('W',dx-r-9,dy+3);
+  if(DF&&!DF.off){const draw=(a,col,w)=>{const t=a*d2r;c.strokeStyle=col;c.lineWidth=w;c.beginPath();c.moveTo(dx,dy);c.lineTo(dx+Math.sin(t)*r,dy-Math.cos(t)*r);c.stroke();};
+    if(DF.cands){draw(DF.cands[0],'#ffb300',3);draw(DF.cands[1],'#ffb300',3);}else{const s=(DF.sig||3)*d2r,t=DF.avg*d2r;c.fillStyle='rgba(0,212,255,.22)';c.beginPath();c.moveTo(dx,dy);c.arc(dx,dy,r,t-s-Math.PI/2,t+s-Math.PI/2);c.closePath();c.fill();draw(DF.avg,'#00d4ff',3);draw(DF.az,'rgba(0,255,136,.5)',1);}}
+  c.fillStyle='#e8e6dc';c.font='bold 12px "Share Tech Mono"';c.fillText(DF&&!DF.off?(DF.cands?'TWO CANDIDATES':'AZ '+String(Math.round(DF.avg)).padStart(3,'0')+'\u00b0'):'NO SIGNAL',dx,dy+r+28);c.textAlign='left';
+}
+
+/* =============================================================
+   READOUTS
+============================================================= */
+function readouts(){
+  if(!CH)return;const wl=CH.lam;$('sdrInfo').textContent=ST.f+' MHz \u00b7 12.5 kHz';$('arrInfo').textContent=(ST.arr==='two'?'2':'4')+' elements \u00b7 '+Math.round(ST.L*100)+' cm';
+  $('rssiV').textContent=CH.on?Math.round(rssiShown):Math.round(CH.N);$('rssiU').textContent=CH.on?'dBm':'dBm (noise only)';
+  const snr=CH.on?CH.Ps-CH.N:0;$('snrV').textContent=CH.on?'SNR '+Math.round(snr)+' dB':'SNR --';
+  $('stateV').textContent=ST.burst?(CH.on?'KEYED':'WAITING'):(CH.blocked?'SHADOWED':'CLEAR');
+  $('sBar').style.width=Math.max(0,Math.min(100,(rssiShown+120)/90*100))+'%';
+  const dl=ST.L/wl;let rows='<tr><td>Wavelength</td><td>'+(wl*100).toFixed(1)+' cm</td></tr><tr><td>Widest spacing / wavelength</td><td style="color:'+(dl>0.5?'var(--red)':dl<0.1?'var(--amber)':'var(--green)')+'">'+dl.toFixed(2)+'</td></tr>';
+  if(DF&&!DF.off){rows+='<tr><td>Relative bearing</td><td>'+Math.round(DF.cands?DF.rel:(DF.avg-P.h+360)%360)+'\u00b0</td></tr><tr><td>Azimuth (pack heading '+Math.round(P.h)+'\u00b0)</td><td>'+(DF.cands?DF.cands.map(a=>Math.round(a)+'\u00b0').join(' / '):Math.round(DF.avg)+'\u00b0')+'</td></tr>';if(!DF.cands)rows+='<tr><td>Jitter (1 sigma)</td><td>'+DF.sig.toFixed(1)+'\u00b0</td></tr><tr><td>Solution quality</td><td>'+DF.q.toFixed(2)+' (1.00 is ideal)</td></tr>';}
+  $('dtT').innerHTML=rows;
+  let b='';if(DF&&!DF.off){if(dl>0.5)b+='<span class="badge bad">PHASE WRAPS: SPACING &gt; &frac12; &lambda;</span>';if(dl<0.1)b+='<span class="badge warn">TINY BASELINE: NOISE-LIMITED</span>';if(DF.cands)b+='<span class="badge warn">FRONT/BACK AMBIGUITY</span>';if(CH.paths.length>1)b+='<span class="badge warn">REFLECTION PRESENT</span>';if(!b)b='<span class="badge">CLEAN MEASUREMENT</span>';}
+  $('dfBadges').innerHTML=b;
+}
+
+/* =============================================================
+   LOOP
+============================================================= */
+let tick=0,walkAcc=0;
+function loop(ts){
+  const dt=Math.min(.1,(ts-lastT)/1000||0);lastT=ts;clock+=dt;
+  if(mode==='run'){
+    if(P.tx!==null){const dx=P.tx-P.x,dy=P.ty-P.y,d=Math.hypot(dx,dy),step=Math.min(d,8*dt);if(d<1){P.tx=null;}else{P.x+=dx/d*step;P.y+=dy/d*step;P.h=az(dx,-dy);noteTrail();}}
+    tick+=dt;if(tick>=0.125){tick=0;CH=channel();rssiShown=rssiNow(CH);dfUpdate(CH);}
+    walkAcc+=dt;if(walkAcc>=0.25){walkAcc=0;rssiHist.push(CH?rssiShown:-130);if(rssiHist.length>120)rssiHist.shift();}
+    drawMap();drawScope();drawArr();readouts();
+  }
+  requestAnimationFrame(loop);
+}
+buildStart();requestAnimationFrame(loop);
+(function(){const p=new URLSearchParams(location.search).get('mode');if(p==='free')startFree();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Analyst Bench | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f;--purple:#bb88ff}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede;--purple:#6b3fb5}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:180px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:640px;margin:0 auto;padding:12px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:27px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:4px 0 6px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px}
+.cardx{background:var(--panel);border:1px solid var(--line);margin:10px 0}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2);gap:8px;flex-wrap:wrap}
+.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 9px;cursor:pointer;min-height:34px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.good{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.bad{background:var(--red-dark);color:var(--red);border-color:var(--red)}
+.chip.pick{background:var(--cyan-dark);color:var(--cyan);border-color:var(--cyan)}
+.chip.amb{color:var(--amber);border-color:var(--amber)}
+.tabs{display:flex;border:1px solid var(--line);margin:10px 0}
+.tabs button{flex:1;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;padding:11px 4px;background:var(--panel);color:var(--dim);border:0;border-right:1px solid var(--line);cursor:pointer}
+.tabs button:last-child{border-right:0}.tabs button.on{background:var(--cyan-dark);color:var(--cyan)}
+canvas.cv{display:block;width:100%;height:auto;background:#000}
+.lcd{background:#0a140a;padding:6px 10px;display:flex;justify-content:space-between;align-items:flex-end;font-family:'Share Tech Mono',monospace;border-bottom:1px solid #000}
+.lcd .fr{font-size:26px;color:#5dffb0;letter-spacing:1px;line-height:1}.lcd .s{font-size:11px;color:#2a9a68;text-align:right;line-height:1.5}
+.ctl{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px 10px 0}
+.tb{font-family:'Share Tech Mono',monospace;font-size:12px;background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:10px 2px;cursor:pointer;touch-action:none;text-align:center}
+.tb.down{background:var(--green-dark);border-color:var(--green)}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.row>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:62px}
+.tbl{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px}
+.tbl td{padding:4px 6px;border-bottom:1px solid var(--line)}.tbl td:last-child{text-align:right;color:var(--green)}
+.q{margin:8px 0}.q .k{display:block;margin-bottom:4px}
+.attr{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--cyan);padding:8px 10px;margin-top:8px;font-size:16px;line-height:1.38}
+.attr h4{font-size:19px;letter-spacing:.03em;text-transform:uppercase}
+.attr .r{display:flex;justify-content:space-between;gap:10px;font-family:'Share Tech Mono',monospace;font-size:12px;padding:3px 0;border-bottom:1px solid var(--line)}
+.attr .r span:last-child{text-align:right;color:var(--green)}
+.fb{padding:8px 10px;margin-top:8px;border:1px solid var(--line);font-size:16px;line-height:1.38}
+.fb.ok{border-color:var(--green);background:var(--green-dark)}.fb.no{border-color:var(--amber);background:var(--amber-dark)}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:12px 14px;cursor:pointer;margin:8px 6px 0 0}
+.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.score{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.06em}
+.msg{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:6px;min-height:16px;line-height:1.4}
+.msg.err{color:var(--red)}.msg.good{color:var(--green)}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>Signal Analyst Bench</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+<div class="hero"><div class="eyebrow">B2 PHYSICS / EW SUPPORT &middot; HANDS-ON</div><h2>Signal Analyst Bench</h2>
+<p>Measure signals with cursors on a spectrum and a waterfall, then work out what is wrong with a capture. To practice naming unknown signals, use the <a href="/sigid/" style="color:var(--cyan)">Signal ID Trainer</a>.</p>
+<span class="sim">SIMULATED SIGNALS &middot; TRAINING ONLY &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+
+<div class="cardx">
+ <div class="lcd"><div><div class="s" id="sceneName">LIBRARY</div><div class="fr" id="lFreq">52.0000 MHz</div></div><div class="s"><div id="lSpan">SPAN 25 kHz</div><div id="lAtt">ATT 0 dB</div></div></div>
+ <canvas class="cv" id="spec" width="480" height="170"></canvas>
+ <canvas class="cv" id="wf" width="480" height="160"></canvas>
+ <div class="ctl"><button class="tb" id="tLL">&#9664;&#9664;</button><button class="tb" id="tL">&#9664;</button><button class="tb" id="tFz" onclick="toggleFreeze()">FREEZE</button><button class="tb" id="tR">&#9654;</button><button class="tb" id="tRR">&#9654;&#9654;</button></div>
+ <div class="cb">
+  <div class="row"><label>SPAN</label><div class="chips" id="spans"></div></div>
+  <div class="row"><label>ATTEN</label><div class="chips" id="atts"></div></div>
+  <div class="row"><label>CURSORS</label><div class="chips"><button class="chip on" id="cA" onclick="setCur('A')">A</button><button class="chip" id="cB" onclick="setCur('B')">B</button><button class="chip" id="cT" onclick="setCur('T')">TIME</button><button class="chip" onclick="clearCur()">CLEAR</button></div></div>
+  <div class="msg" style="margin:0 0 4px">Tap the spectrum to place a frequency cursor. Choose TIME, then tap the waterfall to time something.</div>
+  <table class="tbl" id="read"></table>
+ </div>
+</div>
+
+<div class="tabs" id="tabs"><button class="on" data-t="lib">EXAMPLES</button><button data-t="dia">DIAGNOSE</button></div>
+
+<div id="p-lib" class="cardx"><div class="ch"><b>EXAMPLES TO MEASURE</b></div><div class="cb"><div class="k" style="margin:2px 0 4px">SIGNALS</div><div class="chips" id="libSig"></div><div class="k" style="margin:10px 0 4px">PROBLEMS</div><div class="chips" id="libPrb"></div><div id="libCard"></div></div></div>
+<div id="p-dia" class="cardx" style="display:none"><div class="ch"><b>DIAGNOSE</b><span class="score" id="diaScore">0 of 0</span></div><div class="cb" id="diaBox"></div></div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* =============================================================
+   TABLES
+============================================================= */
+const BWC={A:'Under 500 Hz',B:'2 to 4 kHz',C:'5 to 15 kHz',D:'20 to 200 kHz',E:'Over 1 MHz'};
+const ACT={cont:'Continuous',speech:'Speech (irregular)',code:'Code (dots, dashes)',burst:'Regular bursts',hop:'Hopping',pulse:'Short pulses'};
+const SHP={line:'One thin line',carrier:'Carrier + sidebands',oneside:'One-sided block',two:'Two parallel lines',hump:'Rounded hump',block:'Flat-topped block',dots:'Scattered dots',stripe:'Full-width stripe'};
+const SIGS={
+ am:{n:'AM voice',bw:'C',act:'speech',shape:'carrier',w:'about 6 kHz',span:25000,use:'Aircraft and broadcast voice, and some legacy radio.',cue:'A steady carrier line with sidebands on both sides that flicker with speech.'},
+ fm:{n:'Narrowband FM voice',bw:'C',act:'speech',shape:'hump',w:'about 11 kHz',span:25000,use:'Push-to-talk voice on tactical and public-safety VHF/UHF radios.',cue:'A rounded hump that appears when someone keys up and widens with speech, with a thin carrier line while keyed.'},
+ ssb:{n:'SSB voice (USB)',bw:'B',act:'speech',shape:'oneside',w:'about 2.7 kHz',span:25000,use:'HF voice for long-range communications.',cue:'A one-sided block with no carrier. Bright blobs follow the syllables.'},
+ cw:{n:'CW (Morse code)',bw:'A',act:'code',shape:'line',w:'under 200 Hz',span:5000,use:'Morse code. Very narrow and efficient.',cue:'A single thin line that blinks in dots and dashes.'},
+ fsk:{n:'FSK (two-tone data)',bw:'A',act:'cont',shape:'two',w:'about 250 Hz',span:5000,use:'Teleprinter-style data and simple data links.',cue:'Two thin parallel lines that trade brightness as bits flip. Always on.'},
+ psk:{n:'Narrow PSK data',bw:'A',act:'cont',shape:'line',w:'about 60 Hz',span:5000,use:'Narrow keyboard-to-keyboard digital modes.',cue:'A steady thin fuzzy line that never blinks. Compare with CW, which keys on and off.'},
+ ofdm:{n:'Wideband digital (OFDM)',bw:'D',act:'cont',shape:'block',w:'about 100 kHz here',span:500000,use:'Wi-Fi, LTE, digital TV and other wideband data.',cue:'A crisp flat-topped block with sharp edges, on all the time and noise-like inside.'},
+ burst:{n:'Burst data (TDMA)',bw:'C',act:'burst',shape:'block',w:'about 12 kHz',span:25000,use:'Time-slotted radios and packet data.',cue:'Equal flat blocks that repeat at a regular interval.'},
+ fhss:{n:'Frequency hopper',bw:'D',act:'hop',shape:'dots',w:'about 25 kHz per hop',span:2000000,use:'Tactical frequency-hopping radios and Bluetooth.',cue:'Short bursts that land on a new frequency every row, scattered across the span.'},
+ radar:{n:'Pulsed radar',bw:'E',act:'pulse',shape:'stripe',w:'over 1 MHz',span:2000000,use:'Air search, weather, and tracking radars.',cue:'Short stripes across the whole span at a steady repeat rate.'}
+};
+const PRBS={
+ cochan:{n:'Co-channel interference',span:25000,cue:'Two different on and off patterns share one frequency. When one talker stops, the other keeps going.',test:'Watch the waterfall for a while. Two patterns interleave on the same spot.',fix:'Move to another channel. If you are the cause, reduce power or use a directional antenna.'},
+ splat:{n:'Overmodulation splatter',span:25000,cue:'The signal is wider than it should be, with extra humps on both sides that flash on loud speech.',test:'Measure the width with the cursors and compare with a clean SSB signal of about 2.7 kHz.',fix:'Lower the microphone gain or drive level at the transmitter.'},
+ imd:{n:'Receiver overload (intermodulation)',span:25000,cue:'Extra signals appear, evenly spaced, beside two strong signals.',test:'Add attenuation. Real signals drop dB for dB. False products drop much faster and disappear.',fix:'Add attenuation or a filter in front of the receiver.'},
+ image:{n:'Image (mirror) signal',span:25000,cue:'A weak ghost copy of a strong signal on the opposite side of center.',test:'Retune. The real signal moves one way and its image moves the other way.',fix:'Tune so the strong signal is away from center, or use a preselector filter.'},
+ dc:{n:'DC spike (receiver leakage)',span:25000,cue:'A thin line exactly at center that never changes.',test:'Retune. Real signals move. The spike stays at center because it is in the receiver.',fix:'Ignore it, or tune slightly off the signal you care about.'},
+ drift:{n:'Frequency drift',span:5000,cue:'The signal slants steadily across the waterfall instead of staying vertical.',test:'Zoom in and watch the slant. It moves at a steady rate.',fix:'Let the oscillator warm up, or use a more stable reference.'},
+ bjam:{n:'Barrage jammer',span:500000,cue:'A wide, bright, ragged block of noise covering the channel.',test:'Compare with a wideband digital signal: this one is far stronger and ragged, with soft edges.',fix:'Change frequency, use a directional antenna, or use anti-jam techniques such as hopping.'},
+ sjam:{n:'Spot jammer',span:25000,cue:'A very strong, steady narrow line sitting on top of the channel.',test:'Retune. Unlike a DC spike, it moves with the frequency.',fix:'Change frequency, use a notch or directional antenna, or report it.'},
+ swjam:{n:'Sweep jammer',span:100000,cue:'A bright diagonal line that sweeps across the band and repeats.',test:'Time the sweep with the TIME cursors.',fix:'Use error-correcting or hopping modes, or change frequency.'}
+};
+const NB=256,ROWS=160,DT=0.05,NOISE=-108,SPANS=[5000,25000,100000,500000,2000000],ATTS=[0,10,20,30];
+const fmtSpan=s=>s>=1e6?(s/1e6)+' MHz':(s/1e3)+' kHz';
+
+/* =============================================================
+   STATE
+============================================================= */
+let SC=null,FC=52e6,SPAN=25000,ATT=0,frozen=false,idx=0,curMode='A',curA=null,curB=null,tA=null,tB=null,acc=0,lastT=0;
+let rowsBuf=[],img=null,tab='lib',MORSE=null;
+const $=id=>document.getElementById(id);
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';l?r.removeAttribute('data-theme'):r.setAttribute('data-theme','light');$('tb').textContent=l?'LIGHT':'DARK';}
+const rnd=s=>{const x=Math.sin(s*12.9898+78.233)*43758.5453;return x-Math.floor(x);};
+const p10=d=>Math.pow(10,d/10);
+function gdet(s){return (rnd(s)+rnd(s+17.3)+rnd(s+41.1)-1.5)*1.6;}
+
+/* =============================================================
+   SIGNAL SYNTHESIS (deterministic in time so history can be rebuilt)
+============================================================= */
+(function(){const pat={C:'-.-.',Q:'--.-',D:'-..',E:'.',W:'.--',1:'.----',A:'.-',B:'-...',K:'-.-'};const msg='CQ CQ DE W1ABC K';const seq=[];for(const ch of msg){if(ch===' '){seq.push([0,0.6]);continue;}for(const s of pat[ch]){seq.push([1,s==='.'?0.15:0.45]);seq.push([0,0.15]);}seq.push([0,0.3]);}let t=0;MORSE={ev:seq.map(e=>{const o={on:e[0],t0:t,t1:t+e[1]};t+=e[1];return o;}),T:t+1.5};})();
+function morseOn(t,seed){const m=(t+seed)%MORSE.T;for(const e of MORSE.ev)if(m>=e.t0&&m<e.t1)return e.on===1;return false;}
+function envSpeech(t,seed){const talk=((t+seed*3.7)%11)<6.5;if(!talk)return 0;return (0.3+0.7*Math.abs(Math.sin(2*Math.PI*3.3*t+seed)))*(0.6+0.4*Math.abs(Math.sin(1.7*t+seed*2)));}
+function fmKeyed(t,seed){return ((t+seed*5.1)%14)<9;}
+function mkEm(type,f,L,o){return Object.assign({type,f,L,seed:Math.random()*40},o||{});}
+
+function addLine(lin,fAbs,dB,w,bin,f0){const sg=Math.max(bin*0.55,w/2.355),b0=Math.max(0,Math.floor((fAbs-4*sg-f0)/bin)),b1=Math.min(NB-1,Math.ceil((fAbs+4*sg-f0)/bin));for(let b=b0;b<=b1;b++){const x=f0+(b+0.5)*bin-fAbs;lin[b]+=p10(dB)*Math.exp(-0.5*x*x/(sg*sg));}}
+function addBlock(lin,fAbs,w,dB,bin,f0,seed,edgeF,rip){const e=Math.max(bin*1.2,w*(edgeF||0.1)),b0=Math.max(0,Math.floor((fAbs-w/2-e-f0)/bin)),b1=Math.min(NB-1,Math.ceil((fAbs+w/2+e-f0)/bin));for(let b=b0;b<=b1;b++){const x=Math.abs(f0+(b+0.5)*bin-fAbs)-w/2;let k=x<=0?1:Math.exp(-0.5*(x/(e*0.55))*(x/(e*0.55)));lin[b]+=p10(dB+(rip===undefined?2.5:rip)*gdet(seed*977+b))*k;}}
+function addTri(lin,f1,f2,dB,bin,f0,seed,drop){const lo=Math.min(f1,f2),hi=Math.max(f1,f2),b0=Math.max(0,Math.floor((lo-f0)/bin)),b1=Math.min(NB-1,Math.ceil((hi-f0)/bin));for(let b=b0;b<=b1;b++){const x=f0+(b+0.5)*bin,u=Math.abs(x-f1)/Math.abs(f2-f1);lin[b]+=p10(dB-(drop||12)*u+2.5*gdet(seed*811+b));}}
+
+function renderEm(e,t,ix,lin,bin,f0,att,mirror,dbo){
+  const L=e.L-att+(dbo||0);let f=e.f+(e.drift?e.drift*(t%(e.cycle||20)):0);
+  if(mirror)f=2*FC-f;
+  switch(e.type){
+   case 'am':{addLine(lin,f,L,60,bin,f0);const v=envSpeech(t,e.seed);if(v>0.05){addTri(lin,f,f+3000,L-6+10*Math.log10(v),bin,f0,ix,14);addTri(lin,f,f-3000,L-6+10*Math.log10(v),bin,f0,ix+3,14);}break;}
+   case 'fm':{if(fmKeyed(t,e.seed)){addLine(lin,f,L-3,80,bin,f0);const v=envSpeech(t,e.seed+1.3);if(v>0.05)addBlock(lin,f,5000+8000*Math.min(1,v+0.15),L-9+10*Math.log10(Math.max(v,0.1)),bin,f0,ix,0.35,3.5);}break;}
+   case 'ssb':{const v=envSpeech(t,e.seed);if(v>0.05){const sgn=mirror?-1:1;addTri(lin,f+sgn*150,f+sgn*2850,L-2+10*Math.log10(v),bin,f0,ix,8);}break;}
+   case 'cw':{if(morseOn(t,e.seed))addLine(lin,f,L,50,bin,f0);break;}
+   case 'fsk':{const bit=rnd(ix*31+e.seed)>0.5,sh=e.shift||170;addLine(lin,f-sh/2,L-(bit?0:14),50,bin,f0);addLine(lin,f+sh/2,L-(bit?14:0),50,bin,f0);break;}
+   case 'psk':{addBlock(lin,f,70,L+1.5*Math.sin(t*0.9),bin,f0,ix,0.35,3);break;}
+   case 'ofdm':{addBlock(lin,f,e.bw||100000,L,bin,f0,ix,0.025,2.5);break;}
+   case 'burst':{if((t+e.seed)%1.6<0.45)addBlock(lin,f,12000,L,bin,f0,ix,0.1,2);break;}
+   case 'fhss':{const K=16,ch=Math.floor(rnd(ix*13+e.seed)*K);addBlock(lin,f+(ch-(K-1)/2)*100000,25000,L,bin,f0,ix,0.12,2);break;}
+   case 'radar':{if(ix%20===0)addBlock(lin,f,1400000,L,bin,f0,ix,0.05,3);break;}
+   case 'bjam':{addBlock(lin,f,e.bw||150000,L,bin,f0,ix,0.12,5);break;}
+   case 'sjam':{addLine(lin,f,L,350,bin,f0);break;}
+   case 'swjam':{const T=3,ph=((t+e.seed)%T)/T,fa=f+(ph-0.5)*(e.sw||80000);addBlock(lin,fa,6000,L,bin,f0,ix,0.3,1);break;}
+   case 'splat':{const v=envSpeech(t,e.seed);addTri(lin,f+150,f+2850,L-2+10*Math.log10(Math.max(v,0.02))*(v>0.05?1:0)-(v>0.05?0:60),bin,f0,ix,8);if(v>0.35){const sp=L-26+20*Math.log10(v);addTri(lin,f+2850,f+6000,sp,bin,f0,ix+5,10);addTri(lin,f+150,f-3000,sp,bin,f0,ix+9,10);}break;}
+   case 'cochan':{const k1=fmKeyed(t,e.seed),k2=fmKeyed(t+4,e.seed+9);if(k1){addLine(lin,f,L-3,80,bin,f0);const v=envSpeech(t,e.seed+1.3);if(v>0.05)addBlock(lin,f,6000+7000*Math.min(1,v),L-9+10*Math.log10(Math.max(v,0.1)),bin,f0,ix,0.35,3.5);}
+      if(k2){addLine(lin,f+250,L-6,80,bin,f0);const v=envSpeech(t+2,e.seed+5.5);if(v>0.05)addBlock(lin,f+250,6000+7000*Math.min(1,v),L-12+10*Math.log10(Math.max(v,0.1)),bin,f0,ix+4,0.35,3.5);}break;}
+   case 'imd':{const l=L,Pin=l,im=-2*(-10-Pin);addLine(lin,e.f1,l,60,bin,f0);addLine(lin,e.f2,l,60,bin,f0);
+      const sp=Pin+im;addLine(lin,2*e.f1-e.f2,sp,60,bin,f0);addLine(lin,2*e.f2-e.f1,sp,60,bin,f0);break;}
+  }
+}
+function rowFor(ix){
+  const t=ix*DT,bin=SPAN/NB,f0=FC-SPAN/2,lin=new Float64Array(NB);
+  for(let b=0;b<NB;b++){const u1=rnd(ix*1031+b*7+1),u2=rnd(ix*577+b*13+5);lin[b]=p10(NOISE)*(-Math.log(Math.max(u1,1e-6))-Math.log(Math.max(u2,1e-6)))/2;}
+  if(SC){
+    SC.em.forEach(e=>{renderEm(e,t,ix,lin,bin,f0,ATT,false);if(e.image)renderEm(e,t,ix,lin,bin,f0,ATT,true,-42);});
+    if(SC.dc)addLine(lin,FC,-82,SPAN*0.004+40,bin,f0);
+  }
+  const out=new Float32Array(NB);for(let b=0;b<NB;b++)out[b]=10*Math.log10(lin[b]);return out;
+}
+
+/* =============================================================
+   SCENES
+============================================================= */
+const rand=(a,b)=>a+Math.random()*(b-a);
+function sigScene(type){
+  const s=SIGS[type],span=s.span,fc=Math.round(rand(40e6,85e6)/1000)*1000,off=(Math.random()<0.5?-1:1)*rand(0.08,0.28)*span;
+  let L=rand(-62,-48);const f=fc+(type==='fhss'||type==='radar'?0:off);
+  const o={};if(type==='ofdm')o.bw=100000;
+  return {name:'SIGNAL',span,fc,att:0,em:[mkEm(type,f,L,o)],kind:'sig',type};
+}
+function prbScene(id){
+  const p=PRBS[id],fc=Math.round(rand(40e6,85e6)/1000)*1000,span=p.span;let em=[],dc=false;
+  if(id==='cochan')em=[mkEm('cochan',fc,-52)];
+  if(id==='splat')em=[mkEm('splat',fc-2500,-50)];
+  if(id==='imd')em=[mkEm('imd',0,-35,{f1:fc-6200,f2:fc-1400})];
+  if(id==='image')em=[mkEm('am',fc+0.28*span,-40,{image:true})];
+  if(id==='dc'){em=[mkEm('fm',fc+0.22*span,-62)];dc=true;}
+  if(id==='drift')em=[mkEm('psk',fc-1200,-52,{drift:220,cycle:18})];
+  if(id==='bjam')em=[mkEm('fm',fc-60000,-70),mkEm('bjam',fc,-42,{bw:150000})];
+  if(id==='sjam')em=[mkEm('fm',fc,-62),mkEm('sjam',fc+400,-35)];
+  if(id==='swjam')em=[mkEm('fm',fc-9000,-58),mkEm('swjam',fc,-38,{sw:80000})];
+  return {name:'PROBLEM',span,fc,att:0,em,dc,kind:'prb',type:id};
+}
+function load(sc,silent){SC=sc;FC=sc.fc;SPAN=sc.span;ATT=sc.att||0;frozen=false;curA=curB=tA=tB=null;curMode='A';idx=Math.floor(rand(1000,9000));regen();syncUI();}
+function regen(){rowsBuf=[];for(let i=ROWS-1;i>=0;i--)rowsBuf.push(rowFor(idx-i));initImg();for(let r=0;r<ROWS;r++)paintRow(ROWS-1-r,rowsBuf[r]);}
+
+/* =============================================================
+   DRAWING
+============================================================= */
+const spec=$('spec'),sx=spec.getContext('2d'),wf=$('wf'),wx=wf.getContext('2d');
+const CM=(()=>{const st=[[0,[2,6,30]],[0.25,[10,40,120]],[0.5,[0,170,160]],[0.72,[120,230,60]],[0.88,[255,220,40]],[1,[255,70,40]]],t=[];for(let i=0;i<256;i++){const v=i/255;for(let k=1;k<st.length;k++)if(v<=st[k][0]){const a=st[k-1],b=st[k],u=(v-a[0])/(b[0]-a[0]);t.push([0,1,2].map(j=>Math.round(a[1][j]+(b[1][j]-a[1][j])*u)));break;}}return t;})();
+const LO=-125,HI=-30;
+function initImg(){img=wx.createImageData(480,ROWS);for(let i=3;i<img.data.length;i+=4)img.data[i]=255;}
+function paintRow(y,row){for(let x=0;x<480;x++){const b=Math.min(NB-1,Math.floor(x/480*NB)),v=Math.max(0,Math.min(255,Math.round((row[b]-LO)/(HI-LO)*255))),c=CM[v],o=(y*480+x)*4;img.data[o]=c[0];img.data[o+1]=c[1];img.data[o+2]=c[2];}}
+function pushRow(){const r=rowFor(idx);rowsBuf.push(r);if(rowsBuf.length>ROWS)rowsBuf.shift();img.data.copyWithin(480*4,0,480*4*(ROWS-1));paintRow(0,r);}
+const xOf=f=>(f-(FC-SPAN/2))/SPAN*480,fOf=x=>FC-SPAN/2+x/480*SPAN;
+function smoothSpec(){const out=new Float32Array(NB),n=Math.min(3,rowsBuf.length);for(let b=0;b<NB;b++){let s=0;for(let k=0;k<n;k++)s+=p10(rowsBuf[rowsBuf.length-1-k][b]);out[b]=10*Math.log10(s/n);}return out;}
+let sm=null;
+function draw(){
+  sm=smoothSpec();const c=sx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#050a10';c.fillRect(0,0,480,170);
+  c.strokeStyle='#14263a';c.fillStyle='#4f677f';c.font='9px "Share Tech Mono"';c.textAlign='left';for(let d=-120;d<=-40;d+=20){const y=170-(d-LO)/(HI-LO)*170;c.beginPath();c.moveTo(0,y);c.lineTo(480,y);c.stroke();c.fillText(d+' dBm',2,y-2);}
+  for(let i=1;i<10;i++){c.beginPath();c.moveTo(i*48,0);c.lineTo(i*48,170);c.stroke();}
+  c.strokeStyle='#00ff88';c.lineWidth=1.2;c.beginPath();for(let b=0;b<NB;b++){const x=(b+0.5)/NB*480,y=170-(Math.max(LO,Math.min(HI,sm[b]))-LO)/(HI-LO)*170;b?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();
+  cursors(c,170);
+  wx.putImageData(img,0,0);const w=wx;w.font='9px "Share Tech Mono"';w.fillStyle='rgba(255,255,255,.7)';w.textAlign='right';for(let s=0;s<=8;s++){const y=s/DT>=ROWS?ROWS-1:s/DT;if(s%2===0){w.fillText('-'+s+'s',478,y+10);w.fillRect(470,y,10,1);}}
+  cursors(w,ROWS);timeMarks(w);
+}
+function cursors(c,H){[[curA,'#00d4ff','A'],[curB,'#ffb300','B']].forEach(a=>{if(a[0]===null)return;const x=xOf(a[0]);if(x<0||x>480)return;c.strokeStyle=a[1];c.lineWidth=1.5;c.setLineDash([4,3]);c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke();c.setLineDash([]);c.fillStyle=a[1];c.font='bold 11px "Share Tech Mono"';c.textAlign='left';c.fillText(a[2],x+3,12);});}
+function rowOfTime(t){return (idx*DT-t)/DT;}
+function timeMarks(c){[[tA,'#bb88ff','T1'],[tB,'#ff88cc','T2']].forEach(a=>{if(a[0]===null)return;const y=rowOfTime(a[0]);if(y<0||y>ROWS)return;c.strokeStyle=a[1];c.lineWidth=1.5;c.beginPath();c.moveTo(0,y);c.lineTo(480,y);c.stroke();c.fillStyle=a[1];c.font='bold 10px "Share Tech Mono"';c.textAlign='left';c.fillText(a[2],3,y-2);});}
+
+/* =============================================================
+   INTERACTION
+============================================================= */
+function setCur(m){curMode=m;['A','B','T'].forEach(k=>$('c'+k).classList.toggle('on',k===m));}
+function clearCur(){curA=curB=tA=tB=null;setCur('A');}
+spec.addEventListener('click',e=>{const r=spec.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*480,f=fOf(x);if(curMode==='T')setCur('A');if(curMode==='B'){curB=f;setCur('A');}else{curA=f;setCur('B');}});
+wf.addEventListener('click',e=>{const r=wf.getBoundingClientRect(),y=(e.clientY-r.top)/r.height*ROWS,t=idx*DT-y*DT;if(curMode!=='T')setCur('T');if(tA===null||(tA!==null&&tB!==null))tA=t,tB=null;else tB=t;});
+function toggleFreeze(){frozen=!frozen;$('tFz').textContent=frozen?'RUN':'FREEZE';$('tFz').style.color=frozen?'var(--amber)':'';}
+function holdBtn(id,fn){const el=$(id);let iv=null;el.addEventListener('pointerdown',e=>{e.preventDefault();el.classList.add('down');fn();iv=setInterval(fn,180);});['pointerup','pointerleave','pointercancel'].forEach(ev=>el.addEventListener(ev,()=>{el.classList.remove('down');clearInterval(iv);}));}
+function tuneBy(frac){FC+=SPAN*frac;regen();syncUI();}
+holdBtn('tLL',()=>tuneBy(-0.5));holdBtn('tL',()=>tuneBy(-0.1));holdBtn('tR',()=>tuneBy(0.1));holdBtn('tRR',()=>tuneBy(0.5));
+function setSpan(v){const old=SPAN;SPAN=Number(v);regen();syncUI();}
+function setAtt(v){ATT=Number(v);regen();syncUI();}
+function syncUI(){
+  $('lFreq').textContent=(FC/1e6).toFixed(4)+' MHz';$('lSpan').textContent='SPAN '+fmtSpan(SPAN);$('lAtt').textContent='ATT '+ATT+' dB';
+  $('spans').innerHTML=SPANS.map(s=>'<button class="chip'+(s===SPAN?' on':'')+'" onclick="setSpan('+s+')">'+fmtSpan(s)+'</button>').join('');
+  $('atts').innerHTML=ATTS.map(a=>'<button class="chip'+(a===ATT?' on':'')+'" onclick="setAtt('+a+')">'+a+' dB</button>').join('');
+  $('sceneName').textContent=(SC?(SC.kind==='prb'&&tab==='dia'&&!revealed?'UNKNOWN PROBLEM':(SC.kind==='sig'?SIGS[SC.type].n:PRBS[SC.type].n)):'').toUpperCase();
+}
+function readout(){
+  if(!sm){return;}const lv=f=>{const b=Math.max(0,Math.min(NB-1,Math.floor((f-(FC-SPAN/2))/SPAN*NB)));return sm[b];};
+  const fm=f=>(f/1e6).toFixed(5)+' MHz',fd=d=>d>=1e6?(d/1e6).toFixed(3)+' MHz':d>=1e3?(d/1e3).toFixed(2)+' kHz':d.toFixed(0)+' Hz';
+  let h='';if(curA!==null)h+='<tr><td>Cursor A</td><td>'+fm(curA)+'  '+lv(curA).toFixed(0)+' dBm</td></tr>';if(curB!==null)h+='<tr><td>Cursor B</td><td>'+fm(curB)+'  '+lv(curB).toFixed(0)+' dBm</td></tr>';
+  if(curA!==null&&curB!==null)h+='<tr><td>Width (B &minus; A)</td><td>'+fd(Math.abs(curB-curA))+'</td></tr>';
+  if(tA!==null)h+='<tr><td>Time T1</td><td>'+(tA-idx*DT).toFixed(2)+' s</td></tr>';if(tB!==null)h+='<tr><td>Time T2</td><td>'+(tB-idx*DT).toFixed(2)+' s</td></tr>';
+  if(tA!==null&&tB!==null)h+='<tr><td>Interval (T2 &minus; T1)</td><td>'+Math.abs(tB-tA).toFixed(2)+' s</td></tr>';
+  if(!h)h='<tr><td>No cursors yet</td><td>--</td></tr>';
+  $('read').innerHTML=h;
+}
+
+/* =============================================================
+   TABS: LIBRARY, CLASSIFY, DIAGNOSE
+============================================================= */
+let revealed=true,DG={n:0,ok:0,cur:null,pick:null,done:false,hint:0};
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.t));
+function setTab(t){tab=t;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('p-lib').style.display=t==='lib'?'':'none';$('p-dia').style.display=t==='dia'?'':'none';
+  if(t==='lib'){revealed=true;buildLib();pickLib('sig','am');}if(t==='dia'){if(!DG.cur)newDia();else{load(DG.cur);revealed=DG.done;renderDia();}}syncUI();}
+function buildLib(){$('libSig').innerHTML=Object.keys(SIGS).map(k=>'<button class="chip" id="ls_'+k+'" onclick="pickLib(\'sig\',\''+k+'\')">'+SIGS[k].n+'</button>').join('');$('libPrb').innerHTML=Object.keys(PRBS).map(k=>'<button class="chip" id="lp_'+k+'" onclick="pickLib(\'prb\',\''+k+'\')">'+PRBS[k].n+'</button>').join('');}
+function pickLib(kind,k){revealed=true;document.querySelectorAll('#libSig .chip,#libPrb .chip').forEach(c=>c.classList.remove('on'));const el=$((kind==='sig'?'ls_':'lp_')+k);if(el)el.classList.add('on');
+  load(kind==='sig'?sigScene(k):prbScene(k));
+  if(kind==='sig'){const s=SIGS[k];$('libCard').innerHTML='<div class="attr"><h4>'+s.n+'</h4><div class="r"><span>Width (measure it)</span><span>'+s.w+'</span></div><div class="r"><span>Activity</span><span>'+ACT[s.act]+'</span></div><div class="r"><span>Shape</span><span>'+SHP[s.shape]+'</span></div><div class="r"><span>Used for</span><span style="max-width:62%">'+s.use+'</span></div><p style="margin-top:6px"><b>What to notice:</b> '+s.cue+'</p></div>';}
+  else{const p=PRBS[k];$('libCard').innerHTML='<div class="attr"><h4>'+p.n+'</h4><p><b>What you see:</b> '+p.cue+'</p><p style="margin-top:4px"><b>How to prove it:</b> '+p.test+'</p><p style="margin-top:4px"><b>Fix:</b> '+p.fix+'</p></div>';}}
+
+/* ---- DIAGNOSE ---- */
+function newDia(){const ks=Object.keys(PRBS);let k;do{k=ks[Math.floor(Math.random()*ks.length)];}while(DG.cur&&k===DG.cur.type);DG.cur=prbScene(k);DG.pick=null;DG.done=false;DG.hint=0;DG.opts=[k];while(DG.opts.length<4){const r=ks[Math.floor(Math.random()*ks.length)];if(!DG.opts.includes(r))DG.opts.push(r);}DG.opts.sort(()=>Math.random()-0.5);revealed=false;load(DG.cur);renderDia();}
+function renderDia(){
+  let h='<p style="color:var(--dim);font-size:15.5px">Something is wrong with this capture. Use the tests below, then pick the cause.</p><div class="k" style="margin:4px 0">TESTS</div><div class="chips"><button class="chip amb" onclick="setAtt(20)">ATT +20 dB</button><button class="chip amb" onclick="setAtt(0)">ATT 0</button><button class="chip amb" onclick="tuneBy(0.15)">RETUNE +15% OF SPAN</button><button class="chip amb" onclick="tuneBy(-0.15)">RETUNE &minus;15%</button><button class="chip amb" onclick="setSpan(5000)">ZOOM 5 kHz</button></div><div class="q"><span class="k">WHAT IS THE CAUSE?</span><div class="chips">'+DG.opts.map(k=>{let c='chip';const pk=DG.pick===k;if(DG.done){if(k===DG.cur.type)c+=' good';else if(pk)c+=' bad';}else if(pk)c+=' pick';return '<button class="'+c+'" onclick="pickD(\''+k+'\')">'+PRBS[k].n+'</button>';}).join('')+'</div></div><div class="msg" id="diaMsg"></div>';
+  if(!DG.done)h+='<button class="btn" onclick="checkDia()">CHECK</button><button class="btn alt" onclick="diaHint()">HINT</button><button class="btn alt" onclick="newDia()">SKIP</button>';
+  else{const p=PRBS[DG.cur.type],ok=DG.pick===DG.cur.type;h+='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?'Correct.':'Not quite.')+'</b> This was <b>'+p.n+'</b>.<br><b>What you see:</b> '+p.cue+'<br><b>How to prove it:</b> '+p.test+'<br><b>Fix:</b> '+p.fix+'</div><button class="btn" onclick="newDia()">NEXT PROBLEM</button>';}
+  $('diaBox').innerHTML=h;$('diaScore').textContent=DG.ok+' of '+DG.n+' correct';
+}
+function pickD(k){if(DG.done)return;DG.pick=k;renderDia();}
+function checkDia(){if(!DG.pick){$('diaMsg').textContent='Pick a cause first.';$('diaMsg').className='msg err';return;}DG.done=true;revealed=true;DG.n++;if(DG.pick===DG.cur.type)DG.ok++;renderDia();syncUI();}
+function diaHint(){DG.hint++;const id=DG.cur.type,p=PRBS[id];const h=['Is it a signal, or something the receiver is doing? Change a setting and see what moves.',p.test,'The answer starts with: '+p.n.split(' ')[0]+'.'][Math.min(2,DG.hint-1)];$('diaMsg').textContent='HINT: '+h;$('diaMsg').className='msg';}
+
+/* =============================================================
+   LOOP
+============================================================= */
+function loop(ts){
+  const dt=Math.min(.2,(ts-lastT)/1000||0);lastT=ts;
+  if(!frozen){acc+=dt;let n=0;while(acc>=DT&&n<8){acc-=DT;idx++;pushRow();n++;}if(n>=8)acc=0;}
+  if(SC){draw();readout();}
+  requestAnimationFrame(loop);
+}
+buildLib();setTab('lib');requestAnimationFrame(loop);
+</script>
+</body>
+</html>

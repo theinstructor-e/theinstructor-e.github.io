@@ -10,445 +10,705 @@
   --olive:#4b4f3f; --olive-dark:#33362b; --olive-light:#5d6250;
   --panel:#2a2c24; --panel-dark:#1c1e18;
   --metal:#7a7f6e; --metal-dark:#3a3d32;
-  --lcd-bg:#0d1a0f; --lcd-text:#5dffb0; --lcd-dim:#1f6b45;
+  --lcd-bg:#8d9b6b; --lcd-text:#1b2410; --lcd-dim:#4c5a35;
   --key-bg:#1a1a18; --key-text:#e8e6dc; --key-border:#3a3830;
-  --stencil:#c8c4a8;
-  --warn:#ff9500; --red:#e04030;
+  --stencil:#c8c4a8; --good:#5dffb0; --warn:#ff9500; --red:#e04030;
   --mono:'Share Tech Mono',monospace; --disp:'Rajdhani',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
-body{
-  margin:0; min-height:100vh; background:#14140f;
-  background-image:radial-gradient(ellipse at 50% 0%, #1e1e17 0%, #0d0d09 70%);
-  display:flex; align-items:center; justify-content:center; padding:24px 12px;
-  font-family:var(--disp); color:var(--stencil);
-}
-.wrap{max-width:640px; width:100%}
-.hdr{text-align:center; margin-bottom:14px; color:#6b6b5e; font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase}
+html,body{margin:0}
+body{min-height:100vh;background:#14140f;background-image:radial-gradient(ellipse at 50% 0%,#1e1e17 0%,#0d0d09 70%);color:var(--stencil);font-family:var(--disp);padding:10px 8px 24px;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.app{max-width:480px;margin:0 auto}
+.hdr{text-align:center;margin-bottom:8px;color:#6b6b5e;font-family:var(--mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase}
 .hdr b{color:#9a9a86}
 
-/* ===== Chassis ===== */
-.chassis{
-  background:linear-gradient(160deg, var(--olive-light) 0%, var(--olive) 45%, var(--olive-dark) 100%);
-  border-radius:10px;
-  padding:18px 18px 22px;
-  box-shadow:0 12px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -3px 10px rgba(0,0,0,.35);
-  position:relative;
-  border:1px solid #2a2c22;
-}
-.rivet{position:absolute; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #9a9c86, #4a4c3e 70%); box-shadow:inset 0 0 2px rgba(0,0,0,.6)}
-.rivet.tl{top:10px; left:10px} .rivet.tr{top:10px; right:10px} .rivet.bl{bottom:10px; left:10px} .rivet.br{bottom:10px; right:10px}
+/* HUD */
+.hud{background:#101109;border:1px solid #2a2c22;border-radius:6px;padding:8px 10px;margin-bottom:8px;display:none}
+.hud-top{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.hud-step{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#8a8a76}
+.hud-obj{font-size:19px;font-weight:700;letter-spacing:.4px;color:#e8e6dc;line-height:1.15;margin-top:2px}
+.hud-btn{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:#f0c060;background:#1d1a12;border:1px solid #6a5830;border-radius:4px;padding:7px 10px;cursor:pointer;white-space:nowrap}
+.hud-btn.sm{color:#8ec8e8;border-color:#35586a}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 7px;border-radius:10px;border:1px solid #3a3d32;color:#6b6b5e}
+.pill.ok{color:#071a10;background:var(--good);border-color:var(--good)}
+.msg{min-height:20px;font-family:var(--mono);font-size:11.5px;color:#c8c6b0;margin-top:6px;line-height:1.4}
+.msg.err{color:#ff9d8a}.msg.good{color:var(--good)}
 
-.nameplate{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:4px 10px; margin-bottom:12px;
-  background:var(--panel-dark); border-radius:3px; border:1px solid #000;
-}
-.nameplate .nm-l{font-family:var(--mono); font-size:12px; letter-spacing:1.5px; color:var(--stencil)}
-.nameplate .nm-r{font-family:var(--mono); font-size:9px; letter-spacing:1px; color:#8a8a76}
+/* scenes */
+.scene{display:none}
+.scene.on{display:block}
+canvas.cv{display:block;width:100%;height:auto;aspect-ratio:3/4;border-radius:8px;border:1px solid #2a2c22;background:#000;touch-action:none}
+.cvwrap{position:relative}
+.bigbtn{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font-family:var(--mono);font-size:14px;letter-spacing:2px;color:#0b1a10;background:var(--good);border:0;border-radius:6px;padding:15px 24px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);touch-action:none}
+.bigbtn.walk{background:#e8e6dc;color:#14140f}
+.bigbtn[hidden]{display:none}
+.say{position:absolute;left:10px;right:10px;top:10px;background:rgba(10,10,6,.78);border:1px solid #3a3d32;border-radius:6px;padding:8px 10px;font-size:16px;line-height:1.25;color:#e8e6dc}
+.say b{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#f0c060;display:block;margin-bottom:2px;font-weight:400}
 
-/* ===== Display ===== */
-.display-bay{
-  background:var(--panel-dark); border-radius:5px; padding:10px;
-  border:2px solid #14150f; box-shadow:inset 0 3px 10px rgba(0,0,0,.6);
-  margin-bottom:14px;
-}
-.lcd{
-  background:var(--lcd-bg); border-radius:2px; padding:12px 14px;
-  border:1px solid #000;
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.7);
-  font-family:var(--mono); color:var(--lcd-text);
-  min-height:92px;
-  position:relative;
-  overflow:hidden;
-}
-.lcd::before{
-  content:''; position:absolute; inset:0;
-  background:repeating-linear-gradient(0deg, rgba(0,0,0,.15) 0px, rgba(0,0,0,.15) 1px, transparent 1px, transparent 3px);
-  pointer-events:none;
-}
-.lcd-row{display:flex; justify-content:space-between; align-items:baseline; font-size:11px; letter-spacing:1px; opacity:.85; margin-bottom:4px}
-.lcd-freq{font-size:30px; font-weight:700; letter-spacing:4px; text-align:center; margin:6px 0; text-shadow:0 0 8px rgba(93,255,176,.5)}
-.lcd-status{font-size:12px; text-align:center; letter-spacing:2px; color:var(--lcd-dim); min-height:16px}
-.lcd.off{color:#0a1a10}
-.lcd.off .lcd-freq, .lcd.off .lcd-row, .lcd.off .lcd-status{opacity:0}
-.lcd-blink{animation:blink 1s step-start infinite}
-@keyframes blink{50%{opacity:.15}}
+/* start */
+.start{background:#101109;border:1px solid #2a2c22;border-radius:8px;padding:18px 16px;text-align:center}
+.start h1{font-size:26px;letter-spacing:1px;margin:2px 0 6px;color:#e8e6dc}
+.start p{color:#a8a894;font-size:16.5px;line-height:1.35;margin:6px 0}
+.start .row{display:grid;gap:10px;margin-top:14px}
+.choice{font-family:var(--disp);text-align:left;background:#181a12;border:1px solid #3a3d32;border-left:4px solid var(--good);border-radius:6px;padding:12px 14px;cursor:pointer;color:#e8e6dc}
+.choice.free{border-left-color:#8ec8e8}
+.choice b{display:block;font-size:19px;letter-spacing:.5px}
+.choice span{font-size:15px;color:#a8a894}
 
-/* ===== Controls row ===== */
-.controls-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:14px}
-.ctrl-block{text-align:center}
-.ctrl-label{font-family:var(--mono); font-size:9px; letter-spacing:1.5px; color:#a8a894; margin-bottom:6px; text-transform:uppercase}
-
-/* rotary dial */
-.dial-wrap{position:relative; width:150px; height:150px; margin:0 auto}
-.dial-face{
-  width:76px; height:76px; border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, var(--metal), var(--metal-dark) 75%);
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  box-shadow:0 3px 8px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.25);
-  cursor:pointer;
-}
-.dial-pointer{
-  position:absolute; top:50%; left:50%; width:4px; height:32px;
-  background:linear-gradient(#e8e6dc, #b8b6a0);
-  transform-origin:top center; border-radius:2px;
-  box-shadow:0 0 3px rgba(0,0,0,.4);
-}
-.dial-pointer::after{content:''; position:absolute; bottom:-3px; left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:#d8d6c0}
-.dial-tick{position:absolute; font-family:var(--mono); font-size:9px; color:#c8c6b0; white-space:nowrap; cursor:pointer; padding:2px 4px; border-radius:3px; transition:background .15s,color .15s}
-.dial-tick:hover{background:rgba(0,0,0,.25)}
-.dial-tick.active{color:#fff; font-weight:700; background:rgba(93,255,176,.18)}
-
-/* toggle switch (2-position) */
-.toggle-sw{display:flex; flex-direction:column; align-items:center; gap:4px}
-.toggle-track{
-  width:44px; height:78px; border-radius:8px; background:var(--metal-dark);
-  box-shadow:inset 0 2px 6px rgba(0,0,0,.6); position:relative; cursor:pointer;
-  border:1px solid #222;
-}
-.toggle-lever{
-  position:absolute; left:6px; width:32px; height:32px; border-radius:5px;
-  background:linear-gradient(160deg, var(--metal), var(--metal-dark));
-  box-shadow:0 2px 5px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.3);
-  transition:top .18s;
-}
-.toggle-lbl{font-family:var(--mono); font-size:9px; color:#c8c6b0; letter-spacing:1px}
-.toggle-lbl.on{color:#5dffb0}
-
-/* keypad */
-.keypad-bay{background:var(--panel-dark); border-radius:5px; padding:12px; border:2px solid #14150f; box-shadow:inset 0 3px 8px rgba(0,0,0,.5)}
-.keypad-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; max-width:220px; margin:0 auto 8px}
-.key{
-  font-family:var(--mono); font-size:16px; font-weight:700; color:var(--key-text);
-  background:linear-gradient(160deg, #26251f, var(--key-bg));
-  border:1px solid var(--key-border); border-top:1px solid #4a4840;
-  border-radius:5px; padding:12px 0; cursor:pointer; user-select:none;
-  box-shadow:0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.06);
-}
-.key:active{box-shadow:0 0 0 #000; transform:translateY(2px)}
-.fn-row{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; max-width:100%}
-.fn-key{
-  font-family:var(--mono); font-size:10.5px; font-weight:700; letter-spacing:.5px; color:#f0c060;
-  background:linear-gradient(160deg, #2c2820, #1a1712);
-  border:1px solid #4a3d20; border-top:1px solid #6a5830;
-  border-radius:5px; padding:10px 2px; cursor:pointer; user-select:none;
-  box-shadow:0 2px 0 #000, inset 0 1px 0 rgba(255,255,255,.05);
-}
-.fn-key:active{box-shadow:0 0 0 #000; transform:translateY(2px)}
-.fn-key.util{color:#8ec8e8}
-
-.hint{font-family:var(--mono); font-size:11px; color:#8a8a76; text-align:center; margin-top:12px; line-height:1.6; padding:0 8px}
+/* ===== Radio rig ===== */
+.rig{position:relative;padding-top:104px}
+.rigsvg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:5;overflow:visible}
+.chassis{background:linear-gradient(160deg,var(--olive-light) 0%,var(--olive) 45%,var(--olive-dark) 100%);border-radius:10px;padding:12px 12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 10px rgba(0,0,0,.35);position:relative;border:1px solid #2a2c22}
+.rivet{position:absolute;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9a9c86,#4a4c3e 70%)}
+.rivet.tl{top:6px;left:6px}.rivet.tr{top:6px;right:6px}.rivet.bl{bottom:6px;left:6px}.rivet.br{bottom:6px;right:6px}
+.conns{display:flex;justify-content:space-between;align-items:flex-end;padding:0 6px 8px}
+.conn{text-align:center;font-family:var(--mono);font-size:8.5px;letter-spacing:1px;color:var(--stencil)}
+.conn i{display:block;margin:3px auto 0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#8a8e7a,#2c2e24 70%);border:2px solid #15160f;box-shadow:inset 0 0 4px #000}
+.conn.bnc i{width:30px;height:30px}.conn.mil i{width:26px;height:26px}
+.nameplate{display:flex;justify-content:space-between;align-items:center;padding:3px 9px;margin-bottom:8px;background:var(--panel-dark);border-radius:3px;border:1px solid #000}
+.nameplate .l{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;color:var(--stencil)}
+.nameplate .r{font-family:var(--mono);font-size:8.5px;letter-spacing:1px;color:#8a8a76}
+.display-bay{background:var(--panel-dark);border-radius:5px;padding:8px;border:2px solid #14150f;box-shadow:inset 0 3px 10px rgba(0,0,0,.6);margin-bottom:10px}
+.mhdr{display:flex;justify-content:space-around;margin-bottom:5px}
+.mhdr span{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#76766a;padding:1px 6px;border-radius:2px}
+.mhdr span.active{color:#14180a;background:var(--lcd-bg)}
+.lcd{background:var(--lcd-bg);border-radius:2px;padding:9px 12px;border:1px solid #000;box-shadow:inset 0 2px 8px rgba(0,0,0,.45);font-family:var(--mono);color:var(--lcd-text);min-height:96px;position:relative;overflow:hidden}
+.lcd::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0,rgba(0,0,0,.07) 1px,transparent 1px,transparent 3px);pointer-events:none}
+.lcd-row{display:flex;justify-content:space-between;font-size:11px;letter-spacing:1px;opacity:.85}
+.lcd-freq{font-size:30px;font-weight:700;letter-spacing:3px;text-align:center;margin:6px 0 3px;white-space:nowrap}
+.lcd-status{font-size:11.5px;text-align:center;letter-spacing:1.5px;color:var(--lcd-dim);min-height:15px}
+.lcd.off{background:#2b3024}.lcd.off *{opacity:0}
+.lcd-blink{animation:blink 1s step-start infinite}@keyframes blink{50%{opacity:.15}}
+.tx-badge{position:absolute;right:8px;top:6px;font-size:11px;letter-spacing:1px;background:var(--lcd-text);color:var(--lcd-bg);padding:0 5px;display:none}
+.lcd.tx .tx-badge{display:block}
+.mid{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.dial-wrap{position:relative;width:160px;height:160px;flex:none}
+.dial-face{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--metal),var(--metal-dark) 75%);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 3px 8px rgba(0,0,0,.5),inset 0 1px 2px rgba(255,255,255,.25);cursor:grab;touch-action:none}
+.dial-pointer{position:absolute;top:50%;left:50%;width:4px;height:29px;background:linear-gradient(#e8e6dc,#b8b6a0);transform-origin:top center;border-radius:2px;pointer-events:none}
+.dial-tick{position:absolute;font-family:var(--mono);font-size:9.5px;color:#c8c6b0;white-space:nowrap;cursor:pointer;padding:3px 4px;border-radius:3px}
+.dial-tick.active{color:#fff;font-weight:700;background:rgba(93,255,176,.2)}
+.ctrl-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:#a8a894;text-align:center;margin-bottom:2px}
+.midright{flex:1;display:flex;flex-direction:column;gap:7px}
+.handset{display:flex;align-items:center;gap:10px;background:var(--panel-dark);border:2px solid #14150f;border-radius:8px;padding:8px 10px}
+.hs-body{flex:1;font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:#8a8a76;line-height:1.4}
+.ptt{font-family:var(--mono);font-size:13px;letter-spacing:2px;color:#f6f2e0;background:linear-gradient(160deg,#3b3a33,#14140f);border:1px solid #55524a;border-radius:10px;padding:16px 14px;cursor:pointer;touch-action:none;min-width:84px;box-shadow:0 3px 0 #000}
+.ptt.down{transform:translateY(2px);box-shadow:none;background:linear-gradient(160deg,#6a2a20,#2b0d08);border-color:#c0503a}
+.cardbtn{width:100%;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:#14140f;background:#d9d2b0;border:1px solid #8a8466;border-radius:4px;padding:9px;cursor:pointer}
+.keypad-bay{background:var(--panel-dark);border-radius:5px;padding:9px;border:2px solid #14150f;box-shadow:inset 0 3px 8px rgba(0,0,0,.5)}
+.keygrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.key{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--key-text);background:linear-gradient(160deg,#26251f,var(--key-bg));border:1px solid var(--key-border);border-top:1px solid #4a4840;border-radius:5px;padding:8px 0 5px;cursor:pointer;user-select:none;text-align:center;box-shadow:0 2px 0 #000,inset 0 1px 0 rgba(255,255,255,.06);line-height:1.1;touch-action:manipulation}
+.key .sub{display:block;font-size:8.5px;font-weight:400;letter-spacing:.5px;color:#f0c060;margin-top:2px}
+.key.fn{font-size:13px}
+.key:active{box-shadow:none;transform:translateY(2px)}
+.hint{font-family:var(--mono);font-size:11px;color:#8a8a76;text-align:center;margin-top:10px;line-height:1.55;padding:0 6px;min-height:34px}
 .hint b{color:#c8c6b0}
+.srcstrip{margin:14px auto 0;font-family:var(--mono);font-size:10px;line-height:1.7;color:#6b6b5e;text-align:center;padding:0 8px}
+.srcstrip b{color:#9a9a86;letter-spacing:1px}
+.backlink{text-align:center;margin-top:8px}
+.backlink a{color:#7fa8b8;text-decoration:none;font-family:sans-serif;font-size:11px;letter-spacing:.03em}
 
-.src-strip{max-width:640px; margin:16px auto 0; font-family:var(--mono); font-size:10.5px; line-height:1.7; color:#6b6b5e; text-align:center; padding:0 8px}
-.src-strip b{color:#9a9a86; letter-spacing:1px}
-.back-link{text-align:center; margin-top:10px; padding-bottom:4px}
-.back-link a{color:#7fa8b8; text-decoration:none; font-family:sans-serif; font-size:11px; letter-spacing:.03em}
-.back-link a:hover{text-decoration:underline}
-
-@media (max-width:480px){
-  .dial-wrap{width:130px;height:130px}
-  .dial-face{width:64px;height:64px}
-  .lcd-freq{font-size:24px;letter-spacing:2px}
-}
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:40;padding:14px}
+.ov.on{display:flex}
+.sheet{background:#17180f;border:1px solid #4a4d3a;border-radius:10px;max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px 14px 16px}
+.sheet h2{margin:0 0 6px;font-size:22px;letter-spacing:.8px;color:#e8e6dc}
+.sheet .k{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#f0c060}
+.card{background:#e6dfbd;color:#1d1c12;border-radius:4px;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.8;box-shadow:0 4px 0 #8a8466;border:1px solid #a49c7a}
+.card h3{margin:0 0 4px;font-size:12px;letter-spacing:1.5px;border-bottom:1px solid #8a8466;padding-bottom:4px;font-weight:400}
+.card .r{display:flex;justify-content:space-between}.card .r b{font-size:15px}
+.opt{display:block;width:100%;text-align:left;font-family:var(--disp);font-size:17px;line-height:1.2;color:#e8e6dc;background:#1e2016;border:1px solid #3d4030;border-left:3px solid #f0c060;border-radius:5px;padding:11px 12px;margin-top:8px;cursor:pointer}
+.btn{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;color:#0b1a10;background:var(--good);border:0;border-radius:5px;padding:12px 14px;cursor:pointer;margin-top:12px}
+.btn.alt{background:#2a2c22;color:#c8c6b0;border:1px solid #4a4d3a}
+.log{font-family:var(--mono);font-size:12px;line-height:1.5;color:#c8c6b0;background:#0e0f09;border:1px solid #2a2c22;border-radius:5px;padding:8px 10px;margin-top:8px;min-height:40px}
+.log .me{color:#8ec8e8}.log .them{color:#f0c060}
+table.aar{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0}
+table.aar td{padding:5px 6px;border-bottom:1px solid #2a2c22}table.aar td:last-child{text-align:right;color:#e8e6dc}
+ol.seq{margin:8px 0 0;padding-left:20px;font-size:15.5px;line-height:1.35;color:#c8c6b0}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
   <div class="hdr">Training Simulator &middot; Not for Operational Use &middot; <b>RT-1523E(C)/U ASIP</b> &middot; AN/PRC-119F Family</div>
-  <div class="chassis">
-    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-    <div class="nameplate">
-      <div class="nm-l">RT-1523E(C)/U</div>
-      <div class="nm-r">SINCGARS &middot; 30&ndash;87.975 MHz</div>
-    </div>
 
-    <div class="display-bay">
-      <div class="lcd" id="lcd">
-        <div class="lcd-row"><span id="lcdMode">SC</span><span id="lcdChan">CH: MAN</span></div>
-        <div class="lcd-freq" id="lcdFreq">-----</div>
-        <div class="lcd-status" id="lcdStatus">SET FCTN TO LD</div>
-      </div>
+  <!-- START -->
+  <div class="start" id="start">
+    <div class="hdr" style="margin:0">SINCGARS &middot; Radio Setup</div>
+    <h1>Set up the radio</h1>
+    <p>You walk up to a radio on the ground with its antenna and handset still disconnected. Put it together, load it from the card, and make a radio check. No radio in your hands needed.</p>
+    <div class="row">
+      <button class="choice" onclick="startLane()"><b>SETUP LANE</b><span>First-person scenario with the card and a radio check. About 5 minutes.</span></button>
+      <button class="choice free" onclick="startFree()"><b>FREE PRACTICE</b><span>Skip the walk-up and work the radio panel on your own, with hints for each position.</span></button>
     </div>
-
-    <div class="controls-row">
-      <div class="ctrl-block">
-        <div class="ctrl-label">Fctn</div>
-        <div class="dial-wrap" id="fctnDial">
-          <div class="dial-face"></div>
-          <div class="dial-pointer" id="fctnPointer"></div>
-        </div>
-      </div>
-      <div class="ctrl-block">
-        <div class="ctrl-label">Chan</div>
-        <div class="dial-wrap" id="chanDial">
-          <div class="dial-face"></div>
-          <div class="dial-pointer" id="chanPointer"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="keypad-bay">
-      <div class="keypad-grid" id="numGrid"></div>
-      <div class="fn-row">
-        <div class="fn-key util" id="keyFreq">FREQ</div>
-        <div class="fn-key util" id="keyClr">CLR</div>
-        <div class="fn-key util" id="keySto">STO</div>
-        <div class="fn-key util" id="keyEnt">ENT</div>
-        <div class="fn-key" id="keyLoad">LOAD</div>
-        <div class="fn-key" id="keyBatt">BATT</div>
-        <div class="fn-key" id="keyTime">TIME</div>
-        <div class="fn-key" id="keyMenu">MENU</div>
-      </div>
-    </div>
-
-    <div class="hint" id="hintText">Set <b>FCTN</b> to <b>LD</b>, pick a channel, press <b>FREQ</b>, then <b>CLR</b>, type 5 digits, and press <b>STO</b>.</div>
   </div>
 
-  <div class="src-strip">
-    <b>SOURCE</b> TM 11-5820-890-10-1, SINCGARS Operator's Manual &middot; TM 11-5820-890-10-6 / -10-7, ICOM Pocket Guides &middot; Training aid &mdash; confirm with instructor.
+  <!-- HUD -->
+  <div class="hud" id="hud">
+    <div class="hud-top">
+      <div><div class="hud-step" id="hudStep">STEP 1 OF 4</div><div class="hud-obj" id="hudObj">Walk up to the radio.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px"><button class="hud-btn" id="hintBtn" onclick="giveHint()">HINT</button><button class="hud-btn sm" id="cardBtn" onclick="openCard()">CARD</button></div>
+    </div>
+    <div class="pills" id="pills"></div>
+    <div class="msg" id="msg"></div>
   </div>
-  <div class="back-link"><a href="/classic.html?page=army">&#8592; Tactics</a> &nbsp;&nbsp; <a href="/">Back to E-WIT</a></div>
+
+  <!-- SCENE 1 -->
+  <div class="scene" id="s1"><div class="cvwrap">
+    <canvas class="cv" id="cv1" width="480" height="640"></canvas>
+    <div class="say"><b>SQUAD LEADER</b>"Get that radio up on the net. Setup card is on the poncho. I want a radio check with Alpha 6."</div>
+    <button class="bigbtn walk" id="walkBtn">HOLD TO WALK &#9650;</button>
+    <button class="bigbtn" id="kneelBtn" hidden>KNEEL DOWN</button>
+  </div></div>
+
+  <!-- SCENE 2 -->
+  <div class="scene" id="s2"><div class="cvwrap">
+    <canvas class="cv" id="cv2" width="480" height="640"></canvas>
+    <button class="bigbtn" id="pickBtn" hidden>PICK UP THE RADIO</button>
+  </div></div>
+
+  <!-- SCENE 3 -->
+  <div class="scene" id="s3">
+    <div class="rig">
+      <svg class="rigsvg" id="rigSvg"></svg>
+      <div class="chassis">
+        <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+        <div class="conns">
+          <div class="conn bnc">ANT<i></i></div>
+          <div style="flex:1"></div>
+          <div class="conn mil" style="margin-right:12px">AUD/FILL<i></i></div>
+          <div class="conn mil">AUD/DATA<i></i></div>
+        </div>
+        <div class="nameplate"><div class="l">RT-1523E(C)/U</div><div class="r">SINCGARS &middot; 30&ndash;87.975 MHz</div></div>
+        <div class="display-bay">
+          <div class="mhdr"><span id="hdrPwr">PWR</span><span id="hdrMode">MODE</span><span id="hdrChan">CHAN</span><span id="hdrCmsc">CMSC</span></div>
+          <div class="lcd" id="lcd"><div class="tx-badge">TX</div>
+            <div class="lcd-row"><span id="lcdL">SC PT</span><span id="lcdR">CH: MAN</span></div>
+            <div class="lcd-freq" id="lcdFreq">-----</div>
+            <div class="lcd-status" id="lcdStatus"></div>
+          </div>
+        </div>
+        <div class="mid">
+          <div><div class="ctrl-label">FCTN</div><div class="dial-wrap" id="dial"><div class="dial-face" id="dialFace"></div><div class="dial-pointer" id="dialPtr"></div></div></div>
+          <div class="midright">
+            <div class="handset"><div class="hs-body">H-250 HANDSET<br>HOLD PTT TO TRANSMIT</div><button class="ptt" id="ptt">PTT</button></div>
+            <button class="cardbtn" id="cardBtn2" onclick="openCard()">SETUP CARD</button>
+          </div>
+        </div>
+        <div class="keypad-bay"><div class="keygrid" id="keyGrid"></div></div>
+      </div>
+    </div>
+    <div class="hint" id="hintText"></div>
+  </div>
+
+  <div class="srcstrip"><b>SOURCE</b> TM 11-5820-890-10-1, SINCGARS Operator&rsquo;s Manual &middot; TM 11-5820-890-10-6 / -10-7, ICOM Pocket Guides &middot; Training aid &mdash; confirm with instructor.</div>
+  <div class="backlink"><a href="/classic.html?page=army">&#8592; Tactics</a> &nbsp;&nbsp; <a href="/">Back to E-WIT</a></div>
+</div>
+
+<!-- CARD -->
+<div class="ov" id="ovCard"><div class="sheet">
+  <div class="k">SETUP CARD</div><h2>Signal operating instructions</h2>
+  <div class="card"><h3>EXTRACT &middot; PLT COMMAND NET</h3>
+    <div class="r"><span>BEFORE USE</span><b>SELF-TEST</b></div>
+    <div class="r"><span>MODE</span><b>SC</b></div>
+    <div class="r"><span>COMSEC</span><b>PT</b></div>
+    <div class="r"><span>CHANNEL</span><b>2</b></div>
+    <div class="r"><span>FREQUENCY</span><b>40500</b></div>
+    <div class="r"><span>POWER</span><b>M</b></div>
+    <div class="r"><span>OPERATE</span><b>SQ ON</b></div>
+    <div class="r"><span>YOU / NCS</span><b>ALPHA 1 / ALPHA 6</b></div>
+  </div>
+  <button class="btn" onclick="closeOv('ovCard')">GOT IT</button>
+</div></div>
+
+<!-- TRANSMIT -->
+<div class="ov" id="ovTx"><div class="sheet">
+  <div class="k">HANDSET KEYED</div><h2 id="txTitle">What do you transmit?</h2>
+  <div id="txOpts"></div>
+  <div class="log" id="txLog"></div>
+</div></div>
+
+<!-- AAR -->
+<div class="ov" id="ovAar"><div class="sheet">
+  <div class="k">AFTER ACTION REVIEW</div><h2>Radio check complete</h2>
+  <table class="aar"><tr><td>Time</td><td id="aarTime"></td></tr><tr><td>Wrong keypresses and calls</td><td id="aarErr"></td></tr><tr><td>Hints used</td><td id="aarHint"></td></tr></table>
+  <div class="k" style="margin-top:6px">THE SEQUENCE</div>
+  <ol class="seq">
+    <li>Mate the antenna base with ANT and hand-tighten. Plug the handset into AUD/DATA, lining up the keys.</li>
+    <li>Turn FCTN to TST and wait for GOOD.</li>
+    <li>Turn FCTN to LD.</li>
+    <li>MENU: CHAN to 2 (press 2), PWR to M, MODE to SC, CMSC to PT (CHG changes PWR, MODE, and CMSC).</li>
+    <li>Press FREQ, CLR (MENU/CLR), key in 40500, and STO within 7 seconds.</li>
+    <li>Turn FCTN to SQ ON.</li>
+    <li>Radio check: callsigns, say what you want, over. Acknowledge, out.</li>
+  </ol>
+  <button class="btn" onclick="closeOv('ovAar');startLane()">RUN IT AGAIN</button>
+  <button class="btn alt" onclick="closeOv('ovAar');startFree()">FREE PRACTICE</button>
+</div></div>
 
 <script>
-/* ===================== STATE ===================== */
-const FCTN_POS=['OFF','STBY','TST','Z','LD','SQ ON','SQ OFF','REM','RXMT'];
-const CHAN_POS=['MAN','CUE','1','2','3','4','5','6'];
-let fctn='OFF', chan='MAN', mode='SC', comsec='PT';
-let channelFreq={MAN:null,CUE:null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null};
-let editBuffer=null; // string of entered digits while editing, or null if not editing
-let blankTimer=null;
-let menuScreen=null; // null | 'MODE' | 'CMSC'
-const MODE_VALS=['SC','FH','FHM'];
-const CMSC_VALS=['PT','CT'];
+/* =============================================================
+   STATE
+============================================================= */
+let mode='start';           // 'start' | 'lane' | 'free'
+let step='start';           // approach | assemble | configure | check | done
+let errors=0,hintsUsed=0,t0=0,hintLevel=0;
+let ant={locked:false},hs={locked:false,port:null};
 
-/* ===================== BUILD DIALS ===================== */
-function buildDial(containerId, positions, angleStart, angleStep, radius){
-  const wrap=document.getElementById(containerId);
-  positions.forEach(function(p,i){
-    const ang=(angleStart+i*angleStep)*Math.PI/180;
-    const x=75+Math.cos(ang)*radius, y=75+Math.sin(ang)*radius;
-    const t=document.createElement('div');
-    t.className='dial-tick';
-    t.textContent=p;
-    t.style.left=x+'px'; t.style.top=y+'px'; t.style.transform='translate(-50%,-50%)';
-    t.dataset.val=p;
-    t.onclick=function(){ containerId==='fctnDial' ? setFctn(p) : setChan(p); };
-    wrap.appendChild(t);
+/* ---------- radio state ---------- */
+const FCTN_POS=['OFF','STBY','TST','Z-FH','LD','SQ ON','SQ OFF','REM','RXMT'];
+const PWR_VALS=['LO','M','HI','PA'],MODE_VALS=['SC','FH','FHM'],CMSC_VALS=['PT','CT','TD'];
+let R;
+function resetRadio(){R={fctn:'OFF',pwr:'LO',mode:'FH',comsec:'CT',chan:'1',vol:5,tested:false,timerDone:false,freq:{MAN:null,CUE:null,'1':null,'2':null,'3':null,'4':null,'5':null,'6':null},edit:null,menu:null};}
+resetRadio();
+let blankTimer=null,flashTimer=null,flashing=false;
+
+/* =============================================================
+   FLOW
+============================================================= */
+function show(id){['s1','s2','s3'].forEach(x=>document.getElementById(x).classList.toggle('on',x===id));}
+function hud(on){document.getElementById('hud').style.display=on?'block':'none';}
+function setObj(stepTxt,obj){document.getElementById('hudStep').textContent=stepTxt;document.getElementById('hudObj').textContent=obj;}
+function setMsg(t,cls){const m=document.getElementById('msg');m.textContent=t||'';m.className='msg '+(cls||'');}
+function startLane(){
+  mode='lane';resetRadio();errors=0;hintsUsed=0;hintLevel=0;ant={locked:false,seated:false};hs={locked:false,seated:false,port:null};antPos=A0.slice();plugPos=H0.slice();holdProg={ant:0,hs:0};holding=null;dragging=null;txStage=0;txBusy=false;document.getElementById('txLog').innerHTML='';delete document.getElementById('pickBtn').dataset.said;t0=Date.now();
+  document.getElementById('start').style.display='none';
+  document.getElementById('cardBtn2').style.display='block';
+  hud(true);document.getElementById('hintBtn').style.display='';document.getElementById('cardBtn').style.display='';
+  document.getElementById('pills').style.display='none';
+  step='approach';dist=100;
+  setObj('STEP 1 OF 4','Walk up to the radio.');setMsg('');show('s1');
+  document.getElementById('kneelBtn').hidden=true;document.getElementById('walkBtn').hidden=false;
+  render();updateHint();buildPills();
+}
+function startFree(){
+  mode='free';resetRadio();step='free';
+  document.getElementById('start').style.display='none';
+  document.getElementById('cardBtn2').style.display='none';
+  hud(false);show('s3');ant.locked=hs.locked=true;hs.port='data';
+  render();updateHint();layoutRig();setTimeout(layoutRig,60);
+}
+function closeOv(id){document.getElementById(id).classList.remove('on');}
+function openCard(){document.getElementById('ovCard').classList.add('on');}
+
+/* =============================================================
+   SCENE 1 — first-person approach
+============================================================= */
+const cv1=document.getElementById('cv1'),c1=cv1.getContext('2d');
+let dist=100,walking=false,bob=0,lastT=0;
+const walkBtn=document.getElementById('walkBtn');
+['pointerdown'].forEach(e=>walkBtn.addEventListener(e,ev=>{walking=true;ev.preventDefault();}));
+['pointerup','pointerleave','pointercancel'].forEach(e=>walkBtn.addEventListener(e,()=>{walking=false;}));
+document.getElementById('kneelBtn').onclick=function(){
+  step='assemble';show('s2');this.hidden=true;
+  setObj('STEP 2 OF 4','Connect the antenna and the handset.');setMsg('Drag each one to its connector, then hold it to tighten.');
+  document.getElementById('pickBtn').hidden=true;
+};
+const TREES=(function(){const o=[];let r=11;const rnd=()=>{r=(r*9301+49297)%233280;return r/233280;};for(let i=0;i<34;i++)o.push([rnd()*520-20,14+rnd()*36,18+rnd()*22]);return o;})();
+function drawS1(dt){
+  const W=480,H=640,hz=262;
+  if(walking&&dist>0){dist=Math.max(0,dist-dt*24);bob+=dt*9;}
+  const s=14/(14+dist);
+  // sky
+  let g=c1.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#101826');g.addColorStop(.6,'#2b3a42');g.addColorStop(1,'#59665c');c1.fillStyle=g;c1.fillRect(0,0,W,hz);
+  // treeline
+  c1.fillStyle='#0e1510';TREES.forEach(t=>{const x=t[0],h=t[2]*(1+(1-s)*0.1)+10;c1.beginPath();c1.moveTo(x-t[2]*.5,hz);c1.lineTo(x,hz-h-6);c1.lineTo(x+t[2]*.5,hz);c1.closePath();c1.fill();});
+  c1.fillRect(0,hz-10,W,12);
+  // ground
+  g=c1.createLinearGradient(0,hz,0,H);g.addColorStop(0,'#2a3220');g.addColorStop(1,'#14180e');c1.fillStyle=g;c1.fillRect(0,hz,W,H-hz);
+  // path
+  c1.fillStyle='#3a3626';c1.beginPath();c1.moveTo(W/2-10,hz);c1.lineTo(W/2+10,hz);c1.lineTo(W/2+170,H);c1.lineTo(W/2-170,H);c1.closePath();c1.fill();
+  // moving ground marks
+  c1.strokeStyle='rgba(255,255,255,.07)';c1.lineWidth=2;
+  const ph=((100-dist)/100*10)%1;
+  for(let k=0;k<14;k++){const z=((k+ph)/14);const y=hz+(H-hz)*Math.pow(z,2.2);const hw=14+z*160;c1.beginPath();c1.moveTo(W/2-hw,y);c1.lineTo(W/2+hw,y);c1.stroke();}
+  // poncho + gear
+  const yb=hz+(H*0.92-hz)*s,pw=450*s,ph2=140*s;
+  c1.fillStyle='#202a1a';c1.beginPath();c1.moveTo(W/2-pw*.42,yb-ph2);c1.lineTo(W/2+pw*.42,yb-ph2);c1.lineTo(W/2+pw*.5,yb);c1.lineTo(W/2-pw*.5,yb);c1.closePath();c1.fill();
+  c1.strokeStyle='#33402a';c1.lineWidth=Math.max(1,2*s);c1.stroke();
+  // radio
+  const rw=170*s,rh=118*s,rx=W/2-rw/2+10*s,ry=yb-ph2*.95-rh*.1;
+  c1.fillStyle='#4b4f3f';c1.fillRect(rx,ry,rw,rh);c1.fillStyle='#2a2c24';c1.fillRect(rx+rw*.08,ry+rh*.35,rw*.84,rh*.55);
+  c1.fillStyle='#8d9b6b';c1.fillRect(rx+rw*.14,ry+rh*.42,rw*.5,rh*.2);
+  c1.fillStyle='#14140f';for(let i=0;i<3;i++)for(let j=0;j<4;j++)c1.fillRect(rx+rw*(.14+j*.2),ry+rh*(.66+i*.08),rw*.15,rh*.06);
+  // antenna on ground
+  c1.strokeStyle='#0e0f0a';c1.lineWidth=Math.max(1.2,3*s);c1.beginPath();c1.moveTo(W/2-pw*.40,yb-ph2*.25);c1.lineTo(W/2-pw*.05,yb-ph2*.1);c1.stroke();
+  // handset
+  c1.fillStyle='#0c0c0a';c1.fillRect(W/2+pw*.26,yb-ph2*.5,44*s,24*s);
+  c1.strokeStyle='#0c0c0a';c1.lineWidth=Math.max(1,2*s);c1.beginPath();c1.moveTo(W/2+pw*.26,yb-ph2*.42);c1.bezierCurveTo(W/2+pw*.1,yb-ph2*.15,W/2+pw*.02,yb-ph2*.5,W/2-pw*.04,yb-ph2*.62);c1.stroke();
+  // card
+  c1.fillStyle='#e6dfbd';c1.fillRect(W/2-pw*.34,yb-ph2*.9,46*s,32*s);
+  // boots
+  const b=Math.sin(bob)*8;c1.fillStyle='#0a0a07';
+  c1.beginPath();c1.ellipse(150,H-6+Math.max(0,b),54,24,0,0,7);c1.fill();c1.beginPath();c1.ellipse(330,H-6+Math.max(0,-b),54,24,0,0,7);c1.fill();
+  // vignette
+  const v=c1.createRadialGradient(W/2,H*.45,H*.25,W/2,H*.5,H*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.55)');c1.fillStyle=v;c1.fillRect(0,0,W,H);
+  if(dist<=0&&step==='approach'){document.getElementById('walkBtn').hidden=true;document.getElementById('kneelBtn').hidden=false;setObj('STEP 1 OF 4','You are at the radio.');}
+}
+
+/* =============================================================
+   SCENE 2 — connect antenna and handset
+============================================================= */
+const cv2=document.getElementById('cv2'),c2=cv2.getContext('2d');
+const PORTS={ant:[110,118,'ANT'],fill:[280,118,'AUD/FILL'],data:[376,118,'AUD/DATA']};
+const A0=[88,500],H0=[236,430];
+let antPos=A0.slice(),plugPos=H0.slice(),dragging=null,dragOff=[0,0],holdProg={ant:0,hs:0},holding=null;
+function lp(ev){const r=cv2.getBoundingClientRect();return [(ev.clientX-r.left)*480/r.width,(ev.clientY-r.top)*640/r.height];}
+function d2(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);}
+cv2.addEventListener('pointerdown',ev=>{
+  if(step!=='assemble')return;ev.preventDefault();cv2.setPointerCapture(ev.pointerId);
+  const p=lp(ev);
+  if(d2(p,[398,548])<56){openCard();return;}
+  if(ant.seated&&!ant.locked&&d2(p,[PORTS.ant[0],PORTS.ant[1]])<46){holding='ant';return;}
+  if(hs.seated&&!hs.locked&&d2(p,[PORTS[hs.port][0],PORTS[hs.port][1]])<46){holding='hs';return;}
+  if(!ant.seated&&d2(p,antPos)<40){dragging='ant';dragOff=[antPos[0]-p[0],antPos[1]-p[1]];}
+  else if(!hs.seated&&d2(p,plugPos)<40){dragging='hs';dragOff=[plugPos[0]-p[0],plugPos[1]-p[1]];}
+});
+cv2.addEventListener('pointermove',ev=>{
+  if(!dragging)return;const p=lp(ev);const q=[p[0]+dragOff[0],p[1]+dragOff[1]];
+  if(dragging==='ant')antPos=q;else plugPos=q;
+});
+function endDrag(){
+  holding=null;
+  if(!dragging)return;
+  const which=dragging;dragging=null;
+  const pos=which==='ant'?antPos:plugPos;
+  const near=Object.keys(PORTS).find(k=>d2(pos,[PORTS[k][0],PORTS[k][1]])<46);
+  if(!near){if(which==='ant')antPos=A0.slice();else plugPos=H0.slice();return;}
+  if(which==='ant'){
+    if(near==='ant'){ant.seated=true;antPos=[PORTS.ant[0],PORTS.ant[1]];setMsg('Base mated with ANT. Press and hold to tighten it, by hand only.','good');}
+    else{antPos=A0.slice();bad('That is not the antenna connector. The antenna base mates with ANT.');}
+  }else{
+    if(near==='data'){hs.seated=true;hs.port='data';plugPos=[PORTS.data[0],PORTS.data[1]];setMsg('Keys lined up. Press and hold the plug collar to tighten it.','good');}
+    else if(near==='fill'){hs.seated=true;hs.port='fill';plugPos=[PORTS.fill[0],PORTS.fill[1]];setMsg('Seated on AUD/FILL. It works, but that port is for fill devices. The normal handset connector is AUD/DATA. Hold to tighten.','good');}
+    else{plugPos=H0.slice();bad('That is the antenna connector. The handset plugs into AUD/DATA.');}
+  }
+}
+['pointerup','pointercancel'].forEach(e=>cv2.addEventListener(e,endDrag));
+function bad(t){errors++;setMsg(t,'err');}
+function drawS2(dt){
+  const W=480,H=640;
+  // poncho
+  c2.fillStyle='#1a2216';c2.fillRect(0,0,W,H);
+  c2.strokeStyle='rgba(255,255,255,.04)';c2.lineWidth=2;for(let i=0;i<9;i++){c2.beginPath();c2.moveTo(0,60+i*70);c2.bezierCurveTo(140,40+i*70,340,90+i*70,W,50+i*70);c2.stroke();}
+  // radio body (leaning, front edge toward viewer, top edge with ports)
+  c2.fillStyle='#4b4f3f';rr(c2,60,96,360,300,12);c2.fill();c2.strokeStyle='#2a2c22';c2.lineWidth=3;c2.stroke();
+  c2.fillStyle='#2a2c24';rr(c2,84,170,312,200,6);c2.fill();
+  c2.fillStyle='#8d9b6b';rr(c2,104,188,200,52,3);c2.fill();
+  c2.fillStyle='#17180f';for(let i=0;i<4;i++)for(let j=0;j<4;j++){rr(c2,112+j*72,262+i*26,58,18,4);c2.fill();}
+  c2.fillStyle='#c8c4a8';c2.font='13px "Share Tech Mono"';c2.textAlign='left';c2.font='12px "Share Tech Mono"';c2.fillText('RT-1523E(C)/U',84,162);
+  // ports
+  Object.keys(PORTS).forEach(k=>{
+    const p=PORTS[k],isB=k==='ant',r=isB?20:17;
+    const glow=dragging&&d2(dragging==='ant'?antPos:plugPos,[p[0],p[1]])<46;
+    c2.fillStyle='#14150f';c2.beginPath();c2.arc(p[0],p[1],r+5,0,7);c2.fill();
+    c2.fillStyle='#050505';c2.beginPath();c2.arc(p[0],p[1],r-3,0,7);c2.fill();
+    c2.strokeStyle=glow?'#5dffb0':'#8a8e7a';c2.lineWidth=glow?4:2;c2.beginPath();c2.arc(p[0],p[1],r+5,0,7);c2.stroke();
+    if(!isB){c2.fillStyle='#8a8e7a';c2.fillRect(p[0]-2,p[1]-r-1,4,6);}
+    c2.fillStyle='#c8c4a8';c2.font='12px "Share Tech Mono"';c2.textAlign='center';c2.fillText(p[2],p[0],p[1]-r-12);
   });
-}
-buildDial('fctnDial', FCTN_POS, -110, 27.5, 64);
-buildDial('chanDial', CHAN_POS, -100, 28.5, 64);
-
-function updatePointer(pointerId, positions, val, angleStart, angleStep){
-  const i=positions.indexOf(val);
-  const ang=angleStart+i*angleStep;
-  document.getElementById(pointerId).style.transform='rotate('+(ang+90)+'deg)';
-}
-function refreshDialActive(containerId, val){
-  Array.from(document.getElementById(containerId).querySelectorAll('.dial-tick')).forEach(function(t){
-    t.classList.toggle('active', t.dataset.val===val);
-  });
-}
-
-/* ===================== FCTN / CHAN / MODE / COMSEC ===================== */
-function setFctn(v){
-  fctn=v;
-  updatePointer('fctnPointer', FCTN_POS, v, -110, 27.5);
-  refreshDialActive('fctnDial', v);
-  editBuffer=null;
-  menuScreen=null;
-  clearTimeout(blankTimer);
-  render();
-}
-function setChan(v){
-  chan=v;
-  updatePointer('chanPointer', CHAN_POS, v, -100, 28.5);
-  refreshDialActive('chanDial', v);
-  editBuffer=null;
-  render();
-}
-document.getElementById('keyMenu').onclick=function(){
-  if(fctn==='OFF'){flashStatus('TURN RADIO ON FIRST');return;}
-  editBuffer=null;
-  menuScreen = menuScreen===null ? 'MODE' : (menuScreen==='MODE' ? 'CMSC' : null);
-  render();
-};
-
-/* ===================== NUMERIC KEYPAD ===================== */
-const numGrid=document.getElementById('numGrid');
-['1','2','3','4','5','6','7','8','9'].forEach(addNumKey);
-const zeroKey=document.createElement('div'); // placeholder to keep 0 centered bottom row
-addNumKey('0');
-function addNumKey(n){
-  const k=document.createElement('div');
-  k.className='key'; k.textContent=n;
-  k.onclick=function(){ pressDigit(n); };
-  numGrid.appendChild(k);
-}
-function pressDigit(n){
-  if(menuScreen==='MODE'&&n==='7'){
-    mode=MODE_VALS[(MODE_VALS.indexOf(mode)+1)%MODE_VALS.length];
-    render();
-    return;
-  }
-  if(menuScreen==='CMSC'&&n==='7'){
-    comsec=CMSC_VALS[(CMSC_VALS.indexOf(comsec)+1)%CMSC_VALS.length];
-    render();
-    return;
-  }
-  if(menuScreen!==null)return;
-  if(fctn!=='LD'||editBuffer===null)return;
-  if(editBuffer.length>=5)return;
-  editBuffer+=n;
-  resetBlankTimer();
-  render();
-}
-
-/* ===================== FUNCTION KEYS ===================== */
-document.getElementById('keyFreq').onclick=function(){
-  if(fctn!=='LD'){flashStatus('SET FCTN TO LD');return;}
-  const stored=channelFreq[chan];
-  editBuffer = stored ? stored : '00000';
-  resetBlankTimer();
-  render();
-};
-document.getElementById('keyClr').onclick=function(){
-  if(fctn==='Z'){ flashStatus('COMSEC ZEROIZED'); return; }
-  if(fctn!=='LD'||editBuffer===null){flashStatus('SET FCTN TO LD, THEN FREQ');return;}
-  editBuffer='';
-  resetBlankTimer();
-  render();
-};
-document.getElementById('keySto').onclick=function(){
-  if(fctn!=='LD'||editBuffer===null){flashStatus('NOTHING TO STORE');return;}
-  if(editBuffer.length!==5){flashStatus('ENTER 5 DIGITS FIRST');return;}
-  channelFreq[chan]=editBuffer;
-  clearTimeout(blankTimer);
-  editBuffer=null;
-  flashStatus('STORED TO CHAN '+chan);
-  render();
-};
-document.getElementById('keyEnt').onclick=function(){ flashStatus('ENT'); };
-document.getElementById('keyLoad').onclick=function(){
-  if(fctn!=='LD'){flashStatus('SET FCTN TO LD');return;}
-  flashStatus('LOAD: CONNECT FILL DEVICE');
-};
-document.getElementById('keyBatt').onclick=function(){ flashStatus('BATT: 26.4V  GOOD'); };
-document.getElementById('keyTime').onclick=function(){ flashStatus('JULIAN '+julianDate()+'  ZULU'); };
-
-let statusFlashTimer=null;
-function flashStatus(msg){
-  clearTimeout(statusFlashTimer);
-  const el=document.getElementById('lcdStatus');
-  el.textContent=msg;
-  statusFlashTimer=setTimeout(render,1800);
-}
-function resetBlankTimer(){
-  clearTimeout(blankTimer);
-  blankTimer=setTimeout(function(){
-    editBuffer=null;
-    render();
-    flashStatus('DISPLAY TIMED OUT - PRESS FREQ');
-  },7000);
-}
-function julianDate(){
-  const now=new Date();
-  const start=new Date(now.getFullYear(),0,0);
-  const diff=now-start;
-  const day=Math.floor(diff/86400000);
-  return String(now.getFullYear()).slice(2)+String(day).padStart(3,'0');
-}
-
-/* ===================== RENDER ===================== */
-function render(){
-  const lcd=document.getElementById('lcd');
-  const lcdMode=document.getElementById('lcdMode');
-  const lcdChan=document.getElementById('lcdChan');
-  const lcdFreq=document.getElementById('lcdFreq');
-  const lcdStatus=document.getElementById('lcdStatus');
-
-  if(fctn==='OFF'){
-    lcd.classList.add('off');
-    lcdStatus.textContent='';
-    updateHint('Turn <b>FCTN</b> off <b>OFF</b> to power on the radio.');
-    return;
-  }
-  lcd.classList.remove('off');
-  lcdMode.textContent=mode;
-  lcdChan.textContent='CH: '+chan;
-
-  if(menuScreen==='MODE'){
-    lcdFreq.textContent='MODE '+mode;
-    lcdStatus.textContent='PRESS 7 TO CHANGE';
-    updateHint('On the <b>MODE</b> screen: press <b>7</b> to cycle SC &#8594; FH &#8594; FHM. Press <b>MENU</b> again for COMSEC.');
-    return;
-  }
-  if(menuScreen==='CMSC'){
-    lcdFreq.textContent='CMSC '+comsec;
-    lcdStatus.textContent='PRESS 7 TO CHANGE';
-    updateHint('On the <b>CMSC</b> screen: press <b>7</b> to cycle PT &#8594; CT. Press <b>MENU</b> again to exit.');
-    return;
-  }
-
-  if(fctn==='LD'){
-    if(editBuffer!==null){
-      const padded=editBuffer.padEnd(5,'-');
-      lcdFreq.innerHTML='<span'+(editBuffer.length<5?' class="lcd-blink"':'')+'>'+padded.split('').join(' ')+'</span>';
-      lcdStatus.textContent = editBuffer.length===5 ? 'PRESS STO TO SAVE' : 'ENTER '+(5-editBuffer.length)+' MORE DIGIT'+(5-editBuffer.length===1?'':'S');
-    }else{
-      lcdFreq.textContent = channelFreq[chan] ? channelFreq[chan].split('').join(' ') : '-- -- -- -- --';
-      lcdStatus.textContent='PRESS FREQ TO EDIT';
+  // setup card on poncho
+  c2.save();c2.translate(398,548);c2.rotate(-.12);c2.fillStyle='#e6dfbd';c2.fillRect(-46,-30,92,60);c2.fillStyle='#8a8466';c2.font='9px "Share Tech Mono"';c2.textAlign='center';c2.fillText('SETUP CARD',0,-6);c2.fillText('tap to read',0,10);c2.restore();
+  // handset body + cord
+  const hb=[336,468];
+  c2.save();c2.translate(hb[0],hb[1]);c2.rotate(.25);c2.fillStyle='#0c0c0a';rr(c2,-58,-22,116,44,14);c2.fill();c2.fillStyle='#2b2b26';rr(c2,-30,-30,46,12,5);c2.fill();c2.fillStyle='#55524a';c2.font='11px "Share Tech Mono"';c2.textAlign='center';c2.fillText('H-250',10,5);c2.restore();
+  const hp=PORTS[hs.port||'data'];const pp=hs.seated?[hp[0],hp[1]]:plugPos;
+  c2.strokeStyle='#0c0c0a';c2.lineWidth=5;c2.beginPath();c2.moveTo(hb[0]-52,hb[1]-8);
+  c2.bezierCurveTo(hb[0]-150,hb[1]+70,pp[0]+(hs.seated?150:30),pp[1]+(hs.seated?40:150),pp[0],pp[1]);c2.stroke();
+  // plug
+  c2.save();c2.translate(pp[0],pp[1]);c2.fillStyle='#17170f';c2.beginPath();c2.arc(0,0,17,0,7);c2.fill();c2.strokeStyle=hs.locked?'#5dffb0':'#8a8e7a';c2.lineWidth=3;c2.stroke();c2.fillStyle='#8a8e7a';c2.fillRect(-2,-22,4,6);c2.restore();
+  // antenna
+  const ab=ant.seated?[PORTS.ant[0],PORTS.ant[1]]:antPos;
+  c2.strokeStyle='#0a0b07';c2.lineWidth=4;c2.lineCap='round';c2.beginPath();
+  if(ant.seated){c2.moveTo(ab[0],ab[1]);c2.bezierCurveTo(ab[0]-12,ab[1]-40,ab[0]+8,ab[1]-80,ab[0]-6,0);c2.stroke();}
+  else{c2.moveTo(ab[0],ab[1]);c2.bezierCurveTo(ab[0]+60,ab[1]+10,ab[0]+140,ab[1]+36,ab[0]+230,ab[1]+60);c2.stroke();}
+  c2.save();c2.translate(ab[0],ab[1]);c2.fillStyle='#22241b';c2.beginPath();c2.arc(0,0,17,0,7);c2.fill();c2.strokeStyle=ant.locked?'#5dffb0':'#8a8e7a';c2.lineWidth=3;c2.stroke();c2.restore();
+  c2.lineCap='butt';
+  // hold-to-tighten
+  if(holding){holdProg[holding]=Math.min(1,holdProg[holding]+dt/1.0);}
+  [['ant',ant,PORTS.ant],['hs',hs,PORTS[hs.port||'data']]].forEach(a=>{
+    const key=a[0],o=a[1],p=a[2];
+    if(o.seated&&!o.locked){
+      c2.strokeStyle='#f0c060';c2.lineWidth=4;c2.beginPath();c2.arc(p[0],p[1],30,-Math.PI/2,-Math.PI/2+Math.PI*2*holdProg[key]);c2.stroke();
+      c2.fillStyle='#f0c060';c2.font='10px "Share Tech Mono"';c2.textAlign='center';c2.fillText('HOLD',p[0],p[1]+48);
+      if(holdProg[key]>=1){o.locked=true;setMsg(key==='ant'?'Antenna tight.':'Handset connector tight.','good');}
     }
-    updateHint('Press <b>FREQ</b>, then <b>CLR</b>, type 5 digits, then <b>STO</b> within 7 seconds.');
-    return;
-  }
+  });
+  if(ant.locked&&hs.locked&&step==='assemble'){document.getElementById('pickBtn').hidden=false;if(!document.getElementById('pickBtn').dataset.said){document.getElementById('pickBtn').dataset.said=1;setMsg('Both connected.','good');}}
+}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+document.getElementById('pickBtn').onclick=function(){
+  this.hidden=true;step='configure';show('s3');
+  setObj('STEP 3 OF 4','Set up the radio per the card.');setMsg('');hintLevel=0;
+  document.getElementById('pills').style.display='flex';render();updateHint();buildPills();checkProgress();layoutRig();
+};
 
-  if(fctn==='Z'){
-    lcdFreq.textContent='GOOD';
-    lcdStatus.textContent='COMSEC ZEROIZED';
-    updateHint('<b>Z</b> erases loaded COMSEC keys. Confirmed by the GOOD indication.');
+/* =============================================================
+   RADIO — FCTN dial
+============================================================= */
+const dial=document.getElementById('dial');
+const DSTART=-220,DSTEP=32;
+FCTN_POS.forEach((p,i)=>{
+  const a=(DSTART+i*DSTEP)*Math.PI/180,x=80+Math.cos(a)*66,y=80+Math.sin(a)*66;
+  const t=document.createElement('div');t.className='dial-tick';t.textContent=p;t.style.left=x+'px';t.style.top=y+'px';t.style.transform='translate(-50%,-50%)';t.dataset.val=p;
+  t.onclick=()=>setFctn(p);dial.appendChild(t);
+});
+function updateDial(){
+  const i=FCTN_POS.indexOf(R.fctn),ang=DSTART+i*DSTEP;
+  document.getElementById('dialPtr').style.transform='rotate('+(ang+90)+'deg)';
+  dial.querySelectorAll('.dial-tick').forEach(t=>t.classList.toggle('active',t.dataset.val===R.fctn));
+}
+let dialDrag=false;
+document.getElementById('dialFace').addEventListener('pointerdown',e=>{dialDrag=true;e.target.setPointerCapture(e.pointerId);e.preventDefault();});
+document.getElementById('dialFace').addEventListener('pointermove',e=>{
+  if(!dialDrag)return;const r=dial.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  let a=Math.atan2(e.clientY-cy,e.clientX-cx)*180/Math.PI;if(a>DSTART+DSTEP*8+30)a-=360;
+  let best=0,bd=1e9;FCTN_POS.forEach((p,i)=>{let ang=DSTART+i*DSTEP,df=Math.abs(((a-ang+540)%360)-180);if(df<bd){bd=df;best=i;}});
+  if(FCTN_POS[best]!==R.fctn)setFctn(FCTN_POS[best]);
+});
+['pointerup','pointercancel'].forEach(e=>document.getElementById('dialFace').addEventListener(e,()=>{dialDrag=false;}));
+let fctnTimer=null;
+function setFctn(v){
+  R.fctn=v;R.edit=null;R.menu=null;R.timerDone=false;clearTimeout(blankTimer);clearTimeout(fctnTimer);
+  if(v==='OFF')R.tested=false;
+  if(v==='TST')fctnTimer=setTimeout(()=>{if(R.fctn==='TST'){R.timerDone=true;R.tested=true;render();checkProgress();}},2500);
+  if(v==='Z-FH')fctnTimer=setTimeout(()=>{if(R.fctn==='Z-FH'){R.timerDone=true;render();}},5000);
+  render();checkProgress();
+}
+
+/* =============================================================
+   RADIO — keypad (4x4 as printed on the ASIP)
+============================================================= */
+const KEYS=[
+ {b:'1',s:'CMSC',a:'d'},{b:'2',s:'RCU',a:'d'},{b:'3',s:'SYNC',a:'d'},{b:'FREQ',s:'',a:'freq'},
+ {b:'4',s:'DATA',a:'d'},{b:'5',s:'GPS',a:'d'},{b:'6',s:'SA',a:'d'},{b:'ERF',s:'OFST',a:'ofst'},
+ {b:'7',s:'CHG',a:'d'},{b:'8',s:'CID',a:'d'},{b:'9',s:'LOUT',a:'d'},{b:'TIME',s:'',a:'time'},
+ {b:'MENU',s:'CLR',a:'menu'},{b:'0',s:'LOAD',a:'d'},{b:'STO',s:'',a:'sto'},{b:'BATT',s:'CALL',a:'batt'}
+];
+const kg=document.getElementById('keyGrid');
+KEYS.forEach(k=>{
+  const el=document.createElement('div');el.className='key'+(k.a!=='d'?' fn':'');
+  el.innerHTML=k.b+(k.s?'<span class="sub">'+k.s+'</span>':'');
+  el.onclick=()=>pressKey(k);kg.appendChild(el);
+});
+function err(msg){if(mode==='lane')errors++;flash(msg);}
+function pressKey(k){
+  if(mode==='lane'&&step!=='configure'&&step!=='check')return;
+  if(k.a==='freq'){
+    if(R.fctn!=='LD'){err('SET FCTN TO LD');return;}
+    R.menu=null;const st=R.freq[R.chan];R.edit=st?st:'00000';resetBlank();render();return;
+  }
+  if(k.a==='menu'){
+    if(R.fctn==='OFF'){err('TURN RADIO ON FIRST');return;}
+    if(R.edit!==null&&R.fctn==='LD'){R.edit='';resetBlank();render();return;}
+    const order=[null,'VOL','CHAN','PWR','MODE','CMSC'],i=order.indexOf(R.menu);R.menu=order[(i+1)%order.length];render();return;
+  }
+  if(k.a==='sto'){
+    if(R.fctn!=='LD'||R.edit===null){err('NOTHING TO STORE');return;}
+    if(R.edit.length!==5){err('ENTER 5 DIGITS FIRST');return;}
+    R.freq[R.chan]=R.edit;clearTimeout(blankTimer);R.edit=null;flash('STORED TO CHAN '+R.chan);checkProgress();return;
+  }
+  if(k.a==='time'){flash('JULIAN '+julian()+'  ZULU');return;}
+  if(k.a==='batt'){flash('BATT: 26.4V  GOOD');return;}
+  if(k.a==='ofst'){flash('ERF/OFST: NOT USED HERE');return;}
+  digit(k.b);
+}
+function digit(n){
+  if(R.fctn==='OFF'){err('TURN RADIO ON FIRST');return;}
+  if(R.fctn==='LD'&&R.edit!==null){if(R.edit.length>=5)return;R.edit+=n;resetBlank();render();return;}
+  if(R.menu==='VOL'){R.vol=n==='0'?'WHSP':Number(n);render();return;}
+  if(R.menu==='CHAN'){
+    const map={'0':'MAN','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'CUE'};
+    if(map[n]){R.chan=map[n];render();checkProgress();}else flash('PRESS 0-6 OR 7=CUE');return;
+  }
+  if(n==='7'){
+    if(R.menu==='PWR'){R.pwr=PWR_VALS[(PWR_VALS.indexOf(R.pwr)+1)%PWR_VALS.length];render();checkProgress();return;}
+    if(R.menu==='MODE'){R.mode=MODE_VALS[(MODE_VALS.indexOf(R.mode)+1)%MODE_VALS.length];render();checkProgress();return;}
+    if(R.menu==='CMSC'){R.comsec=CMSC_VALS[(CMSC_VALS.indexOf(R.comsec)+1)%CMSC_VALS.length];render();checkProgress();return;}
+    err('CHG: OPEN A MENU FIRST');return;
+  }
+  if(R.menu){flash('PRESS 7 (CHG) TO CHANGE');return;}
+  if(n==='0'){if(R.fctn==='LD'){flash('LOAD: CONNECT FILL DEVICE');}else err('SET FCTN TO LD');return;}
+  if(n==='5'||n==='6'||n==='8'){flash({'5':'GPS','6':'SA','8':'CID'}[n]+': NOT USED ON ASIP');return;}
+  flash({'1':'CMSC','2':'RCU','3':'SYNC','4':'DATA','9':'LOUT'}[n]+': NOT USED HERE');
+}
+function julian(){const n=new Date(),s=new Date(n.getFullYear(),0,0),d=Math.floor((n-s)/86400000);return String(n.getFullYear()).slice(2)+String(d).padStart(3,'0');}
+function flash(msg){clearTimeout(flashTimer);flashing=true;const el=document.getElementById('lcdStatus');el.textContent=msg;flashTimer=setTimeout(()=>{flashing=false;render();},1800);}
+function resetBlank(){clearTimeout(blankTimer);blankTimer=setTimeout(()=>{R.edit=null;render();flash('DISPLAY TIMED OUT - PRESS FREQ');},7000);}
+
+/* =============================================================
+   RADIO — display
+============================================================= */
+function render(){
+  const lcd=document.getElementById('lcd'),fq=document.getElementById('lcdFreq'),st=document.getElementById('lcdStatus');
+  ['Pwr','Mode','Chan','Cmsc'].forEach(h=>document.getElementById('hdr'+h).classList.remove('active'));
+  updateDial();
+  if(R.fctn==='OFF'){lcd.classList.add('off');st.textContent='';fq.textContent='';hintFree('Turn <b>FCTN</b> off <b>OFF</b> to power on the radio.');return;}
+  lcd.classList.remove('off');
+  document.getElementById('lcdL').textContent=R.mode+' '+R.comsec+'  PWR '+R.pwr;
+  document.getElementById('lcdR').textContent='CH: '+R.chan;
+  const set=(f,s)=>{fq.innerHTML=f;if(!flashing)st.textContent=s;};
+  if(R.menu){
+    if(R.menu!=='VOL')document.getElementById('hdr'+R.menu.charAt(0)+R.menu.slice(1).toLowerCase()).classList.add('active');
+    if(R.menu==='VOL'){set('VOL '+R.vol,'PRESS 1-9 (0=WHSP)');hintFree('On <b>VOL</b>: press <b>1-9</b> for volume, <b>0</b> for whisper. <b>MENU</b> for CHAN.');}
+    if(R.menu==='PWR'){set('PWR '+R.pwr,'PRESS 7 (CHG) TO CHANGE');hintFree('On <b>PWR</b>: press <b>7</b> (CHG) to cycle LO, M, HI, PA. <b>MENU</b> for MODE.');}
+    if(R.menu==='MODE'){set('MODE '+R.mode,'PRESS 7 (CHG) TO CHANGE');hintFree('On <b>MODE</b>: press <b>7</b> (CHG) to cycle SC, FH, FHM. <b>MENU</b> for CMSC.');}
+    if(R.menu==='CHAN'){set('CHAN '+R.chan,'PRESS 0-6 OR 7=CUE');hintFree('On <b>CHAN</b>: press <b>0</b>=MAN, <b>1-6</b>, or <b>7</b>=CUE. <b>MENU</b> for PWR.');}
+    if(R.menu==='CMSC'){set('CMSC '+R.comsec,'PRESS 7 (CHG) TO CHANGE');hintFree('On <b>CMSC</b>: press <b>7</b> (CHG) to cycle PT, CT, TD. <b>MENU</b> to exit.');}
     return;
   }
-  if(fctn==='TST'){
-    lcdFreq.textContent='GO';
-    lcdStatus.textContent='SELF TEST';
-    updateHint('<b>TST</b> runs the built-in self test and reports GO / NO-GO.');
-    return;
+  if(R.fctn==='LD'){
+    if(R.edit!==null){const p=R.edit.padEnd(5,'-');set('<span'+(R.edit.length<5?' class="lcd-blink"':'')+'>'+p.split('').join(' ')+'</span>',R.edit.length===5?'PRESS STO TO SAVE':'ENTER '+(5-R.edit.length)+' MORE DIGIT'+(5-R.edit.length===1?'':'S'));}
+    else set(R.freq[R.chan]?R.freq[R.chan].split('').join(' '):'-- -- -- -- --','PRESS FREQ TO EDIT');
+    hintFree('<b>FREQ</b>, then <b>CLR</b>, type 5 digits, then <b>STO</b> within 7 seconds. The frequency goes to the channel shown top right.');return;
   }
-  if(fctn==='STBY'){
-    lcdFreq.textContent='STBY';
-    lcdStatus.textContent='STANDBY - LOW POWER';
-    updateHint('<b>STBY</b> keeps the set warm on low power between transmissions.');
-    return;
-  }
-  if(fctn==='SQ ON'||fctn==='SQ OFF'){
-    const f=channelFreq[chan];
-    lcdFreq.textContent = f ? f.split('').join(' ') : '-- -- -- -- --';
-    lcdStatus.textContent = fctn==='SQ ON' ? 'SQUELCH ON - NORMAL OPS' : 'SQUELCH OFF';
-    updateHint('<b>'+fctn+'</b> is the normal operating position for CHAN '+chan+'.');
-    return;
-  }
-  if(fctn==='REM'){
-    lcdFreq.textContent='REM';
-    lcdStatus.textContent='REMOTE CONTROL ACTIVE';
-    updateHint('<b>REM</b> lets an RCU control this set remotely.');
-    return;
-  }
-  if(fctn==='RXMT'){
-    lcdFreq.textContent='RXMT';
-    lcdStatus.textContent='RETRANSMIT LINKED';
-    updateHint('<b>RXMT</b> links two RTs to relay traffic between nets.');
-    return;
+  if(R.fctn==='Z-FH'){set(R.timerDone?'GOOD':'Z-FH',R.timerDone?'FH DATA CLEARED':'WAIT 5 SECONDS');hintFree('<b>Z-FH</b>: leave the switch here for 5 seconds to clear all frequency hopping data. Do not park it here by accident.');return;}
+  if(R.fctn==='TST'){set(R.timerDone?'GOOD':'TEST',R.timerDone?'SELF TEST PASSED':'SELF TEST - WAIT');hintFree('<b>TST</b> runs the self-test. Wait for <b>GOOD</b>, then move FCTN to STBY or SQ ON (or LD to load).');return;}
+  if(R.fctn==='STBY'){set('STBY','STANDBY - LOW POWER');hintFree('<b>STBY</b> keeps the set warm between transmissions.');return;}
+  if(R.fctn==='SQ ON'||R.fctn==='SQ OFF'){const f=R.freq[R.chan];set(f?f.split('').join(' '):'-- -- -- -- --',R.fctn==='SQ ON'?'SQUELCH ON - NORMAL OPS':'SQUELCH OFF');hintFree('<b>'+R.fctn+'</b> is the normal operating position for CHAN '+R.chan+'. Press <b>MENU</b> to review settings.');return;}
+  if(R.fctn==='REM'){set('REM','REMOTE CONTROL ACTIVE');hintFree('<b>REM</b> lets an RCU control this set remotely.');return;}
+  if(R.fctn==='RXMT'){set('RXMT','RETRANSMIT LINKED');hintFree('<b>RXMT</b> links two RTs to relay traffic between nets.');return;}
+}
+function hintFree(h){if(mode==='free')document.getElementById('hintText').innerHTML=h;}
+function updateHint(){if(mode==='lane')document.getElementById('hintText').innerHTML='';}
+
+/* =============================================================
+   CARD CHECK, PILLS, HINTS
+============================================================= */
+const REQ=[
+ ['TEST',()=>R.tested],
+ ['CHAN',()=>R.chan==='2'],
+ ['PWR',()=>R.pwr==='M'],
+ ['MODE',()=>R.mode==='SC'],
+ ['CMSC',()=>R.comsec==='PT'],
+ ['FREQ',()=>R.freq['2']==='40500'],
+ ['OPERATE',()=>R.fctn==='SQ ON']
+];
+function buildPills(){document.getElementById('pills').innerHTML=REQ.map(r=>'<span class="pill" data-k="'+r[0]+'">'+r[0]+'</span>').join('');}
+function configured(){return REQ.every(r=>r[1]());}
+function checkProgress(){
+  if(mode!=='lane'||(step!=='configure'&&step!=='check'))return;
+  REQ.forEach(r=>{const el=document.querySelector('.pill[data-k="'+r[0]+'"]');if(el)el.classList.toggle('ok',r[1]());});
+  if(step==='configure'&&configured()){
+    step='check';setObj('STEP 4 OF 4','Radio check with Alpha 6.');setMsg('Radio is set to the card. Key the handset (hold PTT).','good');hintLevel=0;
+  }else if(step==='check'&&!configured()){
+    step='configure';setObj('STEP 3 OF 4','Set up the radio per the card.');setMsg('Settings no longer match the card.','err');
   }
 }
-function updateHint(html){ document.getElementById('hintText').innerHTML=html; }
+function giveHint(){
+  if(mode!=='lane')return;
+  hintsUsed++;hintLevel=Math.min(3,hintLevel+1);
+  let L;
+  if(step==='approach'){L=['Hold the walk button.','Keep holding until you reach the poncho.','Hold the walk button, then tap KNEEL DOWN.'];}
+  else if(step==='assemble'){
+    if(!ant.locked)L=['The antenna is lying on the ground at the lower left.','Drag the antenna base to the ANT connector (the round one on the left), then hold it to tighten.','Drag the antenna base to ANT, then press and hold it until the ring fills.'];
+    else L=['The handset cord still needs a connector.','Drag the cord plug to a top-right connector. The handset has a normal connector for operations.','Drag the plug to AUD/DATA and hold it to tighten.'];
+  }else if(step==='configure'||step==='check'){
+    let n=REQ.find(r=>!r[1]());
+    if(R.fctn==='OFF')L=['The radio is off. Look at the FCTN dial.','Turn FCTN to an ON position. Menus and loading work once the radio is on.','Turn FCTN to TST to power up and run the self-test.'];
+    else if(!n)L=['Everything matches the card.','Hold PTT on the handset.','Hold PTT, then call Alpha 6 for a radio check.'];
+    else{
+      const h={
+       TEST:['Radios get a self-test before use.','FCTN has a test position. The display tells you when it is done.','Turn FCTN to TST and wait for GOOD.'],
+       PWR:['Compare the power level on the card with the radio.','Power is a menu screen. Press MENU until PWR lights above the display.','MENU until PWR, then press 7 (CHG) until it shows M.'],
+       MODE:['Check the mode against the card.','Mode is a menu screen. Press MENU until MODE lights up.','MENU until MODE, then press 7 (CHG) until it shows SC.'],
+       CMSC:['Check the COMSEC setting.','COMSEC is the last menu screen.','MENU until CMSC, then press 7 (CHG) until it shows PT (it cycles PT, CT, TD).'],
+       CHAN:['The card names a channel. Which one is the radio on?','Channel is a menu screen. Press a number key there.','MENU until CHAN, then press 2.'],
+       FREQ:['The card channel has no frequency stored yet.','Frequencies are loaded with FCTN in LD, after the channel is selected.','FCTN to LD, then FREQ, CLR, 4 0 5 0 0, STO (within 7 seconds).'],
+       OPERATE:['You are not in the operating position.','FCTN has an operating position that listens and transmits normally.','Turn FCTN to SQ ON.']}[n[0]];
+      L=h;
+    }
+  }else L=['','',''];
+  setMsg('HINT: '+L[hintLevel-1],'');
+}
 
-/* ===================== INIT ===================== */
-setFctn('OFF');
-setChan('MAN');
-render();
+/* =============================================================
+   PTT AND RADIO CHECK
+============================================================= */
+const ptt=document.getElementById('ptt');let pttT=null;
+ptt.addEventListener('pointerdown',e=>{
+  e.preventDefault();ptt.classList.add('down');document.getElementById('lcd').classList.add('tx');
+  if(mode==='lane'&&step==='check'){pttT=setTimeout(()=>{pttT=null;openTx();},450);}
+});
+['pointerup','pointerleave','pointercancel'].forEach(ev=>ptt.addEventListener(ev,()=>{
+  ptt.classList.remove('down');document.getElementById('lcd').classList.remove('tx');
+  if(pttT){clearTimeout(pttT);pttT=null;}
+  if(mode==='lane'&&step==='configure')flash('NO COMMS - CHECK SETTINGS');
+}));
+const TX=[
+ {t:'Call Alpha 6 for a radio check.',o:[
+   ['Alpha 6, this is Alpha 1, radio check, over.',1],
+   ['Hey Alpha 6, can you hear me? Over.',0,'Use callsigns and standard procedure.'],
+   ['Alpha 1, this is Alpha 6, radio check, over.',0,'Callsigns are reversed. You are calling Alpha 6, so Alpha 6 goes first.']],
+  rx:'Alpha 1, this is Alpha 6, read you loud and clear, over.'},
+ {t:'Acknowledge the reply.',o:[
+   ['Alpha 6, this is Alpha 1, roger, out.',1],
+   ['Alpha 6, this is Alpha 1, roger, over and out.',0,'"Over and out" is never used together. Over means you expect a reply, out means you do not.'],
+   ['Roger.',0,'Identify the station you are talking to and who you are.']],rx:null}
+];
+let txStage=0,txBusy=false;
+function openTx(){
+  if(txStage>=TX.length)return;
+  const s=TX[txStage];
+  document.getElementById('txTitle').textContent=s.t;
+  document.getElementById('txOpts').innerHTML=s.o.map((o,i)=>'<button class="opt" onclick="pickTx('+i+')">'+o[0]+'</button>').join('');
+  document.getElementById('ovTx').classList.add('on');
+}
+function logLine(cls,txt){const l=document.getElementById('txLog');l.innerHTML+='<div class="'+cls+'">'+txt+'</div>';}
+function pickTx(i){
+  if(txBusy)return;
+  const s=TX[txStage],o=s.o[i];
+  if(!o[1]){errors++;logLine('them','CORRECTION: '+o[2]);return;}
+  txBusy=true;logLine('me','ALPHA 1: '+o[0]);
+  if(!configured()){setTimeout(()=>{logLine('them','(static) no reply');txBusy=false;errors++;},900);return;}
+  if(s.rx){setTimeout(()=>{logLine('them','ALPHA 6: '+s.rx);txStage++;txBusy=false;
+    setTimeout(()=>{document.getElementById('ovTx').classList.remove('on');setMsg('Reply received. Hold PTT to acknowledge.','good');},1300);},900);}
+  else{setTimeout(()=>{txBusy=false;txStage++;document.getElementById('ovTx').classList.remove('on');finish();},700);}
+}
+function finish(){
+  step='done';
+  const s=Math.round((Date.now()-t0)/1000);
+  document.getElementById('aarTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  document.getElementById('aarErr').textContent=errors;document.getElementById('aarHint').textContent=hintsUsed;
+  setObj('COMPLETE','Radio check complete.');
+  setTimeout(()=>document.getElementById('ovAar').classList.add('on'),500);
+}
+document.getElementById('ovTx').addEventListener('click',e=>{if(e.target.id==='ovTx'&&!txBusy)e.currentTarget.classList.remove('on');});
+
+/* =============================================================
+   LAYOUT HELPERS + LOOP
+============================================================= */
+function layoutRig(){
+  if(mode==='start')return;
+  const rig=document.querySelector('.rig'),rb=rig.getBoundingClientRect();if(!rb.width)return;
+  const c=sel=>{const e=document.querySelector(sel).getBoundingClientRect();return [e.left+e.width/2-rb.left,e.top+e.height/2-rb.top,e];};
+  const a=c('.conn.bnc i'),f=c('.conn.mil:nth-of-type('+(hs.port==='fill'?'3':'4')+') i'),h=c('.handset');
+  const W=rb.width;
+  let svg='';
+  // whip antenna
+  svg+='<path d="M'+a[0]+' '+a[1]+' C'+(a[0]-10)+' '+(a[1]-34)+' '+(a[0]+8)+' '+(a[1]-70)+' '+(a[0]-2)+' '+(a[1]-100)+'" stroke="#050503" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  svg+='<path d="M'+a[0]+' '+a[1]+' C'+(a[0]-10)+' '+(a[1]-34)+' '+(a[0]+8)+' '+(a[1]-70)+' '+(a[0]-2)+' '+(a[1]-100)+'" stroke="#7b806a" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  svg+='<rect x="'+(a[0]-8)+'" y="'+(a[1]-26)+'" width="16" height="22" rx="3" fill="#2a2c22" stroke="#000"/>';
+  // handset cord down the right edge
+  const hx=h[2].left+h[2].width-rb.left-24,hy=h[2].top-rb.top+h[2].height/2;
+  svg+='<path d="M'+f[0]+' '+f[1]+' C'+f[0]+' '+(f[1]-52)+' '+(W-4)+' '+(f[1]-52)+' '+(W-4)+' '+(f[1]+20)+' L'+(W-4)+' '+(hy-6)+' Q'+(W-4)+' '+hy+' '+(hx+30)+' '+hy+'" stroke="#050503" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="1 0"/>';
+  svg+='<circle cx="'+f[0]+'" cy="'+f[1]+'" r="9" fill="#17170f" stroke="#5dffb0" stroke-width="2"/>';
+  svg+='<circle cx="'+a[0]+'" cy="'+(a[1])+'" r="12" fill="none" stroke="#5dffb0" stroke-width="2"/>';
+  document.getElementById('rigSvg').innerHTML=svg;
+}
+window.addEventListener('resize',layoutRig);
+function loop(ts){
+  const dt=Math.min(.05,(ts-lastT)/1000||0);lastT=ts;
+  if(step==='approach')drawS1(dt);
+  if(step==='assemble')drawS2(dt);
+  requestAnimationFrame(loop);
+}
+(function(){
+  const p=new URLSearchParams(location.search).get('mode');
+  requestAnimationFrame(loop);
+  render();
+  if(p==='free')startFree();
+  if(p==='lane')startLane();
+})();
 </script>
 </body>
 </html>

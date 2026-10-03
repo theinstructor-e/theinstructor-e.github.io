@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FPV Flight School | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f;--purple:#bb88ff}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede;--purple:#6b3fb5}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overscroll-behavior:none}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:160px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:760px;margin:0 auto;padding:10px 12px 20px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:26px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:3px 0 4px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px}
+.lesson{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px}
+.lt{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.lk{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.lo{font-size:18px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px;white-space:nowrap}
+.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pill{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border:1px solid var(--line);color:var(--dim)}
+.pill.ok{background:var(--green);border-color:var(--green);color:#00180d}
+.lm{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;min-height:17px}
+.lm.good{color:var(--green)}.lm.err{color:var(--red)}
+.simwrap{position:relative;background:#000;border:1px solid var(--line);touch-action:none;width:100%;padding-top:75%;overflow:hidden}
+canvas#view{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.pads{display:flex;justify-content:space-between;padding:8px 6px 4px;background:var(--panel)}
+.pad{position:relative;width:132px;height:132px;border:2px solid #2a4660;border-radius:50%;background:radial-gradient(circle,#0e1a28 0%,#0a121c 100%);touch-action:none;flex:none}
+.pad .cross{position:absolute;inset:0}
+.pad .cross:before,.pad .cross:after{content:'';position:absolute;background:#1e3048}
+.pad .cross:before{left:50%;top:8px;bottom:8px;width:1px}.pad .cross:after{top:50%;left:8px;right:8px;height:1px}
+.thumb{position:absolute;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a6a86,#1c3144);border:2px solid var(--cyan);left:42px;top:42px;pointer-events:none}
+.pad .lab{position:absolute;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--dim);pointer-events:none}
+.lab.t{top:3px;left:0;right:0;text-align:center}.lab.b{bottom:3px;left:0;right:0;text-align:center}.lab.l{left:5px;top:56px}.lab.r{right:5px;top:56px}
+.mid{flex:1;display:flex;flex-direction:column;gap:5px;padding:0 8px;justify-content:center;min-width:0}
+.mid .row{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.btn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--text);background:var(--panel2);border:1px solid var(--line);padding:9px 6px;cursor:pointer;min-width:0;flex:1;text-align:center;touch-action:manipulation}
+.btn.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.btn.arm{border-color:var(--red);color:var(--red);font-weight:700}.btn.arm.on{background:var(--red-dark)}
+.btn.go{border-color:var(--green);color:var(--green)}
+.cardx{background:var(--panel);border:1px solid var(--line);margin:10px 0}
+.ch{padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2)}.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px;font-size:16px;line-height:1.4}
+.cb table{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px}.cb td{padding:4px 6px;border-bottom:1px solid var(--line)}.cb td:first-child{color:var(--green);white-space:nowrap}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 9px;cursor:pointer;min-height:32px}.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.row2{display:flex;align-items:center;gap:8px;margin:5px 0;flex-wrap:wrap}.row2>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:76px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:60;padding:14px}.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}.sheet p{font-size:16.5px;line-height:1.38}
+.lbtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);padding:9px 12px;margin-top:8px;cursor:pointer;color:var(--text);font-family:'Rajdhani',sans-serif}
+.lbtn b{display:block;font-size:18px;letter-spacing:.03em;text-transform:uppercase}.lbtn span{font-size:14.5px;color:var(--dim)}.lbtn.done{border-left-color:var(--cyan)}
+.sbtn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:12px 14px;cursor:pointer;margin:10px 6px 0 0}.sbtn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+/* fullscreen/overlay layout */
+body.fs{overflow:hidden}
+body.fs main{position:fixed;inset:0;max-width:none;padding:0;background:#000;z-index:50}
+body.fs .hero,body.fs header,body.fs .statusbar,body.fs .back,body.fs .cardx,body.fs footer{display:none}
+body.fs .lesson{position:absolute;top:0;left:0;right:0;z-index:5;margin:0;background:rgba(10,16,24,.78);border:0;padding:4px 8px}
+body.fs .lesson .pills,body.fs .lesson .lm{display:none}
+body.fs .lo{font-size:14px}
+body.fs .simwrap{position:absolute;inset:0;border:0;padding-top:0;width:auto}
+body.fs canvas#view{width:100%;height:100%}
+body.fs .pads{position:absolute;left:0;right:0;bottom:0;background:transparent;padding:0 14px 14px;pointer-events:none;align-items:flex-end;z-index:6}
+body.fs .pad{pointer-events:auto;opacity:.82;width:150px;height:150px}
+body.fs .thumb{left:51px;top:51px}body.fs .lab.l,body.fs .lab.r{top:66px}
+body.fs .mid{pointer-events:none;align-self:flex-end;flex:0 0 auto;width:230px;padding:0}body.fs .mid .btn{pointer-events:auto;background:rgba(15,24,36,.82);padding:7px 4px;font-size:10px}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>FPV Flight School</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+<div class="hero"><div class="eyebrow">UAS &middot; HANDS-ON</div><h2>FPV Flight School</h2>
+<p>Learn what each stick does and how a small FPV quadcopter flies. Start on the bench, lift off, steer through gates, land, then try acro mode and a link-loss test.</p>
+<span class="sim">SIMPLIFIED FLIGHT MODEL &middot; TRAINING ONLY &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+
+<div class="lesson"><div class="lt"><div><div class="lk" id="lk">LESSON 1 OF 8</div><div class="lo" id="lo"></div></div>
+<div style="white-space:nowrap"><button class="hbtn" onclick="hint()">HINT</button><button class="hbtn c" onclick="openLessons()">LESSONS</button></div></div>
+<div class="pills" id="pills"></div><div class="lm" id="lm"></div></div>
+
+<div class="simwrap" id="simwrap">
+  <canvas id="view" width="640" height="480"></canvas>
+</div>
+<div class="pads" id="pads">
+  <div class="pad" id="padL"><div class="cross"></div><span class="lab t">THROTTLE +</span><span class="lab b">THROTTLE &minus;</span><span class="lab l">YAW &#9664;</span><span class="lab r">&#9654; YAW</span><div class="thumb" id="thL"></div></div>
+  <div class="mid">
+    <div class="row"><button class="btn arm" id="armBtn" onclick="toggleArm()">ARM</button><button class="btn" id="modeBtn" onclick="toggleMode()">ANGLE</button></div>
+    <div class="row"><button class="btn" id="camBtn" onclick="toggleCam()">CAM: FPV</button><button class="btn" onclick="resetFlight(true)">RESET</button></div>
+    <div class="row"><button class="btn" id="sndBtn" onclick="toggleSound()">SOUND OFF</button><button class="btn" onclick="toggleFS()">FULLSCREEN</button></div>
+  </div>
+  <div class="pad" id="padR"><div class="cross"></div><span class="lab t">PITCH FWD</span><span class="lab b">PITCH BACK</span><span class="lab l">ROLL &#9664;</span><span class="lab r">&#9654; ROLL</span><div class="thumb" id="thR"></div></div>
+</div>
+
+<div class="cardx"><div class="ch"><b>SETTINGS</b></div><div class="cb">
+ <div class="row2"><label>CAMERA TILT</label><div class="chips" id="tiltC"></div></div>
+ <div class="row2"><label>WIND</label><div class="chips" id="windC"></div></div>
+ <div class="row2"><label>FLIGHT MODE</label><div class="chips" id="modeC"></div></div>
+ <div class="k" style="margin-top:4px" id="setNote">Mode and wind are set by the lesson. They are free in Free Flight.</div>
+</div></div>
+
+<div class="cardx"><div class="ch"><b>CONTROLS</b></div><div class="cb">
+<p><b>Mode 2 layout.</b> Left stick: up and down is <b>throttle</b> (it stays where you leave it), left and right is <b>yaw</b> (turn). Right stick: up and down is <b>pitch</b> (forward and back), left and right is <b>roll</b> (slide left and right). The right stick springs back to center.</p>
+<table style="margin-top:6px">
+<tr><td>Keyboard</td><td>W / S throttle &middot; A / D yaw &middot; Arrow keys pitch and roll &middot; Space arm &middot; R reset &middot; C camera &middot; M mode</td></tr>
+<tr><td>Touch</td><td>Drag the two stick pads. Use FULLSCREEN to play with the sticks over the picture.</td></tr>
+<tr><td>Gamepad</td><td>If a gamepad or USB radio is connected, the sticks follow it (left: yaw and throttle, right: roll and pitch).</td></tr>
+</table></div></div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<div class="ov" id="ovLessons"><div class="sheet"><div class="k">FLIGHT SCHOOL</div><h2>Pick a lesson</h2><div id="lessonList"></div><button class="sbtn alt" onclick="closeOv('ovLessons')">CLOSE</button></div></div>
+<div class="ov" id="ovDone"><div class="sheet"><div class="k">LESSON COMPLETE</div><h2 id="dH"></h2><p id="dP"></p><button class="sbtn" onclick="nextLesson()">NEXT LESSON</button><button class="sbtn alt" onclick="closeOv('ovDone')">KEEP FLYING</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* =============================================================
+   MATH
+============================================================= */
+const d2r=Math.PI/180,G=9.81;
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],mul=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const len=a=>Math.hypot(a[0],a[1],a[2]),norm=a=>{const l=len(a)||1;return [a[0]/l,a[1]/l,a[2]/l];};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const $=id=>document.getElementById(id);
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';l?r.removeAttribute('data-theme'):r.setAttribute('data-theme','light');$('tb').textContent=l?'LIGHT':'DARK';}
+function closeOv(i){$(i).classList.remove('on');}
+
+/* =============================================================
+   WORLD
+============================================================= */
+const GATES=[[0,28,3,0],[22,55,4,35],[48,70,3,80],[80,64,5,135],[90,32,3,180],[72,6,2.5,235]].map((g,i)=>({n:i+1,c:[g[0],g[1],g[2]],nv:[Math.sin(g[3]*d2r),Math.cos(g[3]*d2r),0],r:1.7}));
+const BLDG=[{x:-32,y:42,w:12,h:10,z:9},{x:34,y:-28,w:10,h:14,z:7},{x:100,y:92,w:16,h:12,z:11},{x:-70,y:-20,w:14,h:14,z:12}];
+const TREES=(()=>{const o=[];let r=17;const rnd=()=>{r=(r*9301+49297)%233280;return r/233280;};let n=0;while(o.length<46&&n++<400){const x=(rnd()-0.5)*420,y=(rnd()-0.5)*420;
+  if(Math.hypot(x,y)<22)continue;let bad=false;GATES.forEach(g=>{if(Math.hypot(x-g.c[0],y-g.c[1])<14)bad=true;});BLDG.forEach(b=>{if(Math.abs(x-b.x)<b.w+6&&Math.abs(y-b.y)<b.h+6)bad=true;});if(Math.hypot(x,y-230)<18||Math.hypot(x,y-110)<55||Math.hypot(x+35,y)<12||Math.abs(x)<6&&y>0&&y<260)bad=true;if(!bad)o.push({x,y,h:5+rnd()*4});}return o;})();
+const PAD={x:0,y:0,r:3};
+
+/* =============================================================
+   STATE
+============================================================= */
+let S={cam:'fpv',tilt:30,mode:'angle',wind:0,sound:false,lesson:-1};
+let D=null,IN={tv:-1,yv:0,pv:0,rv:0},KEY={},padActive={L:false,R:false},gp=null;
+let msg='',msgT=0,crashN=0,t0=Date.now();
+function mkR(yawDeg){const y=yawDeg*d2r;return {X:[Math.cos(y),-Math.sin(y),0],Y:[Math.sin(y),Math.cos(y),0],Z:[0,0,1]};}
+function newDrone(p,yaw,armed,thr){D={p:p.slice(),pp:p.slice(),v:[0,0,0],R:mkR(yaw),w:[0,0,0],armed:!!armed,crash:null,crashT:0,used:0,time:0,link:1,linkLow:0,maxPitch:0,maxRoll:0,yawAcc:0,lastPsi:yaw*d2r,airborne:!!(p[2]>0.3),thrOut:0,home:[0,0]};if(armed&&thr!==undefined)IN.tv=thr;}
+function heading(){return (Math.atan2(D.R.Y[0],D.R.Y[1])/d2r+360)%360;}
+function tiltAng(){return Math.acos(clamp(D.R.Z[2],-1,1))/d2r;}
+function pitchRoll(){const Y=D.R.Y,X=D.R.X;return {pitch:Math.asin(clamp(Y[2],-1,1))/d2r,roll:Math.asin(clamp(X[2],-1,1))/d2r};}
+function crash(why){if(D.crash)return;D.crash=why;D.crashT=0;D.armed=false;crashN++;setMsg('CRASH: '+why,'err');}
+
+/* =============================================================
+   PHYSICS
+============================================================= */
+const TMAX=26;
+function linkQ(){
+  const d=Math.hypot(D.p[0],D.p[1],D.p[2]*0.5);let q=clamp(1-(d-60)/280,0,1);
+  if(S.lesson===7){const dj=Math.hypot(D.p[0]-0,D.p[1]-110);if(dj<45)q*=0.01;else if(dj<75)q*=1-0.99*(1-(dj-45)/30);}
+  return q;
+}
+function step(dt){
+  if(!D)return;D.time+=dt;
+  const thr=(IN.tv+1)/2;
+  if(D.crash){D.crashT+=dt;if(D.crashT>1.8)resetFlight(false);return;}
+  D.pp=D.p.slice();
+  // battery
+  const cell=4.2-0.75*Math.min(1,D.used/120)-(D.armed?0.18*(D.thrOut/TMAX):0),V=4*cell;D.V=V;
+  let derate=V<13.0?0.6:1;
+  // link and failsafe
+  D.link=linkQ();if(D.link<0.05&&D.armed){D.linkLow+=dt;if(D.linkLow>1.5){D.failsafe=true;}}else{D.linkLow=Math.max(0,D.linkLow-dt);}
+  if(D.failsafe&&D.armed){setMsg('FAILSAFE: link lost, motors cut','err');D.armed=false;D.failsafe=false;}
+  // desired body rates
+  let wd=[0,0,0];const R=D.R;
+  const sx=IN.pv,sy=IN.rv,sz=IN.yv;
+  if(S.mode==='angle'){
+    const psi=Math.atan2(R.Y[0],R.Y[1]),fwd=[Math.sin(psi),Math.cos(psi),0],right=[Math.cos(psi),-Math.sin(psi),0],mt=42*d2r;
+    const ud=norm(add(add([0,0,1],mul(fwd,Math.tan(sx*mt))),mul(right,Math.tan(sy*mt))));
+    const e=cross(R.Z,ud);wd[0]=clamp(9*dot(e,R.X),-8,8);wd[1]=clamp(9*dot(e,R.Y),-8,8);wd[2]=-sz*200*d2r;
+  }else{
+    const ex=(s,ex_)=>ex_*s*s*s+(1-ex_)*s;
+    wd[0]=-ex(sx,0.45)*450*d2r;wd[1]=ex(sy,0.45)*450*d2r;wd[2]=-ex(sz,0.35)*400*d2r;
+  }
+  const k=1-Math.exp(-dt/0.045);for(let i=0;i<3;i++)D.w[i]+= (wd[i]-D.w[i])*k;
+  if(!D.armed&&D.p[2]<=0.01){D.w=[0,0,0];}
+  const ow=add(add(mul(R.X,D.w[0]),mul(R.Y,D.w[1])),mul(R.Z,D.w[2]));
+  R.X=add(R.X,mul(cross(ow,R.X),dt));R.Y=add(R.Y,mul(cross(ow,R.Y),dt));R.Z=add(R.Z,mul(cross(ow,R.Z),dt));
+  R.Z=norm(R.Z);R.X=norm(sub(R.X,mul(R.Z,dot(R.Z,R.X))));R.Y=cross(R.Z,R.X);
+  // thrust
+  let T=0;if(D.armed)T=TMAX*(0.03+0.97*thr)*derate;D.thrOut=T;
+  let a=mul(R.Z,T);a[2]-=G;
+  const v=D.v,sp=len(v);a=sub(a,add(mul(v,0.28),mul(v,0.018*sp)));
+  if(S.wind>0){const wd_=[S.wind*Math.sin(0.7),S.wind*Math.cos(0.7),0],gust=1+0.5*Math.sin(D.time*0.9)*Math.sin(D.time*0.37);const rel=sub(mul(wd_,gust),[0,0,0]);a=add(a,mul(rel,0.28));}
+  D.v=add(D.v,mul(a,dt));D.p=add(D.p,mul(D.v,dt));
+  if(D.armed)D.used+=dt*(0.2+1.6*Math.pow(T/TMAX,2));
+  // ground
+  if(D.p[2]<=0){
+    const vz=D.v[2],hs=Math.hypot(D.v[0],D.v[1]),tilt=tiltAng();
+    if(D.airborne&&(vz<-4.5||hs>9||tilt>55))crash(tilt>55?'landed upside down or too tilted':vz<-4.5?'hard landing':'too fast on touchdown');
+    else{D.p[2]=0;if(D.v[2]<0)D.v[2]=0;D.v[0]*=0.85;D.v[1]*=0.85;if(!D.armed||T<G){D.v[0]*=0.8;D.v[1]*=0.8;if(!D.armed){D.R.X=norm(sub(D.R.X,mul([0,0,1],D.R.X[2])));D.R.Z=[0,0,1];D.R.Y=cross(D.R.Z,D.R.X);D.w=[0,0,0];}}if(tilt>35&&D.armed&&T>G)D.airborne=true;D.airborne=false;}
+  }else if(D.p[2]>0.4)D.airborne=true;
+  if(D.p[2]>120){D.p[2]=120;D.v[2]=Math.min(0,D.v[2]);}
+  // obstacles
+  if(D.p[2]>0.05){BLDG.forEach(b=>{if(Math.abs(D.p[0]-b.x)<b.w/2+0.3&&Math.abs(D.p[1]-b.y)<b.h/2+0.3&&D.p[2]<b.z+0.3)crash('hit a building');});
+    TREES.forEach(t=>{if(Math.hypot(D.p[0]-t.x,D.p[1]-t.y)<1.4&&D.p[2]<t.h)crash('hit a tree');});}
+  // bookkeeping
+  const pr=pitchRoll();D.pitch=pr.pitch;D.roll=pr.roll;
+  const psi=Math.atan2(R.Y[0],R.Y[1]);let dp=psi-D.lastPsi;dp=Math.atan2(Math.sin(dp),Math.cos(dp));D.yawAcc+=dp/d2r;D.lastPsi=psi;
+  D.maxPitch=Math.max(D.maxPitch,D.pitch);D.maxRoll=Math.max(D.maxRoll,Math.abs(D.roll));
+}
+function resetFlight(manual){
+  const L=lessons[S.lesson];
+  if(L&&L.spawn){L.spawn();}else newDrone([0,0,0],0,false);
+  if(manual){crashN=crashN;} D.pp=D.p.slice();
+  if(L&&L.onReset)L.onReset();
+  if(!manual)setMsg('Reset to the start.','');
+}
+
+/* =============================================================
+   INPUT
+============================================================= */
+function stickPad(pad,thumb,side){
+  const el=$(pad),th=$(thumb);let id=null;
+  const upd=e=>{const r=el.getBoundingClientRect(),rad=r.width/2,cx=r.left+rad,cy=r.top+rad;let dx=(e.clientX-cx)/(rad-20),dy=(e.clientY-cy)/(rad-20);const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m;}
+    if(side==='L'){IN.yv=Math.abs(dx)<0.05?0:dx;IN.tv=clamp(-dy,-1,1);}else{IN.rv=Math.abs(dx)<0.04?0:dx;IN.pv=Math.abs(dy)<0.04?0:-dy;}};
+  el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);id=e.pointerId;padActive[side]=true;upd(e);});
+  el.addEventListener('pointermove',e=>{if(e.pointerId===id)upd(e);});
+  const up=e=>{if(e.pointerId!==id)return;id=null;padActive[side]=false;if(side==='L')IN.yv=0;else{IN.rv=0;IN.pv=0;}};
+  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+}
+stickPad('padL','thL','L');stickPad('padR','thR','R');
+window.addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();KEY[e.code]=true;
+  if(e.code==='Space'&&!e.repeat)toggleArm();if(e.code==='KeyR'&&!e.repeat)resetFlight(true);if(e.code==='KeyC'&&!e.repeat)toggleCam();if(e.code==='KeyM'&&!e.repeat)toggleMode();});
+window.addEventListener('keyup',e=>{KEY[e.code]=false;});
+function readKeys(dt){
+  if(KEY.KeyW)IN.tv=clamp(IN.tv+1.1*dt,-1,1);if(KEY.KeyS)IN.tv=clamp(IN.tv-1.4*dt,-1,1);
+  const tgt=(a,b)=>(KEY[a]?1:0)-(KEY[b]?1:0);
+  if(!padActive.L){const t=tgt('KeyD','KeyA');IN.yv+=((t)-IN.yv)*Math.min(1,dt*10);if(Math.abs(IN.yv)<0.01)IN.yv=0;}
+  if(!padActive.R){const tp=tgt('ArrowUp','ArrowDown'),tr=tgt('ArrowRight','ArrowLeft');IN.pv+=(tp*0.9-IN.pv)*Math.min(1,dt*10);IN.rv+=(tr*0.9-IN.rv)*Math.min(1,dt*10);if(Math.abs(IN.pv)<0.01)IN.pv=0;if(Math.abs(IN.rv)<0.01)IN.rv=0;}
+  const g=navigator.getGamepads?navigator.getGamepads()[0]:null;
+  if(g&&g.axes.length>=4){const dz=v=>Math.abs(v)<0.08?0:v;if(Math.hypot(g.axes[0],g.axes[1],g.axes[2],g.axes[3])>0.15||gp){gp=true;IN.yv=dz(g.axes[0]);IN.tv=clamp(-g.axes[1],-1,1);IN.rv=dz(g.axes[2]);IN.pv=dz(-g.axes[3]);}}
+}
+function toggleArm(){
+  if(!D||D.crash)return;
+  if(D.armed){D.armed=false;setMsg('Disarmed.','');return;}
+  if(IN.tv>-0.85){setMsg('Cannot arm: throttle must be fully low.','err');if(lessons[S.lesson]&&lessons[S.lesson].armFail)lessons[S.lesson].armFail();return;}
+  D.armed=true;setMsg('Armed. Motors idle. Raise throttle slowly.','good');
+}
+function toggleMode(){const L=lessons[S.lesson];if(L&&L.lockMode){setMsg('This lesson fixes the flight mode.','err');return;}S.mode=S.mode==='angle'?'acro':'angle';syncUI();}
+function toggleCam(){S.cam=S.cam==='fpv'?'chase':'fpv';syncUI();}
+function toggleFS(){const on=!document.body.classList.contains('fs');document.body.classList.toggle('fs',on);if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});if(!on&&document.fullscreenElement)document.exitFullscreen();}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.body.classList.remove('fs');});
+function setMsg(t,c){msg=t;msgT=3;$('lm').textContent=t;$('lm').className='lm '+(c||'');}
+function syncUI(){
+  $('armBtn').textContent=D&&D.armed?'DISARM':'ARM';$('armBtn').classList.toggle('on',!!(D&&D.armed));
+  $('modeBtn').textContent=S.mode==='angle'?'ANGLE':'ACRO';$('modeBtn').classList.toggle('on',S.mode==='acro');
+  $('camBtn').textContent='CAM: '+(S.cam==='fpv'?'FPV':'CHASE');$('sndBtn').textContent='SOUND '+(S.sound?'ON':'OFF');$('sndBtn').classList.toggle('on',S.sound);
+  $('tiltC').innerHTML=[0,15,30,45].map(v=>'<button class="chip'+(S.tilt===v?' on':'')+'" onclick="setTilt('+v+')">'+v+'&deg;</button>').join('');
+  const L=lessons[S.lesson],free=!L||L.free;
+  $('windC').innerHTML=[0,3,6].map(v=>'<button class="chip'+(S.wind===v?' on':'')+'"'+(free?'':' disabled style="opacity:.4"')+' onclick="setWind('+v+')">'+(v?v+' m/s':'CALM')+'</button>').join('');
+  $('modeC').innerHTML=['angle','acro'].map(v=>'<button class="chip'+(S.mode===v?' on':'')+'"'+(L&&L.lockMode?' disabled style="opacity:.4"':'')+' onclick="S.mode=\''+v+'\';syncUI()">'+v.toUpperCase()+'</button>').join('');
+}
+function setTilt(v){S.tilt=v;syncUI();}function setWind(v){const L=lessons[S.lesson];if(L&&!L.free)return;S.wind=v;syncUI();}
+function toggleSound(){S.sound=!S.sound;syncUI();if(S.sound)startAudio();else if(AC)AC.suspend();}
+let AC=null,osc=null,og=null,osc2=null;
+function startAudio(){try{if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();osc.type='sawtooth';og=AC.createGain();og.gain.value=0;osc.connect(og);osc2=AC.createOscillator();osc2.type='square';const g2=AC.createGain();g2.gain.value=0.02;osc2.connect(g2);g2.connect(og);og.connect(AC.destination);osc.start();osc2.start();}AC.resume();}catch(e){}}
+function audioTick(){if(!AC||!S.sound||!D)return;const t=D.armed?(D.thrOut/TMAX):0,f=D.armed?90+t*320:0;osc.frequency.value=f||60;osc2.frequency.value=(f||60)*1.5;og.gain.value=D.armed?0.025+0.06*t:0;}
+
+/* =============================================================
+   3D RENDER
+============================================================= */
+const cv=$('view'),cx=cv.getContext('2d');let CW=640,CH=480,FOC=0;
+function camera(){
+  let pos,f,u,r;
+  if(S.cam==='fpv'){const th=S.tilt*d2r,R=D.R;
+    f=norm(add(mul(R.Y,Math.cos(th)),mul(R.Z,Math.sin(th))));u=norm(add(mul(R.Y,-Math.sin(th)),mul(R.Z,Math.cos(th))));r=R.X;pos=add(D.p,add(mul(R.Y,0.08),mul(R.Z,0.05)));
+  }else{const psi=Math.atan2(D.R.Y[0],D.R.Y[1]),back=[-Math.sin(psi),-Math.cos(psi),0];pos=add(D.p,add(mul(back,4.6),[0,0,2.0]));
+    f=norm(sub(add(D.p,[0,0,0.3]),pos));r=norm(cross(f,[0,0,1]));u=cross(r,f);}
+  return {pos,f,u,r};
+}
+let CAM=null;
+function toCam(p){const d=sub(p,CAM.pos);return [dot(d,CAM.r),dot(d,CAM.u),dot(d,CAM.f)];}
+function scr(c){return [CW/2+FOC*c[0]/c[2],CH/2-FOC*c[1]/c[2]];}
+const NEAR=0.15;
+function clipPoly(pc){const out=[];for(let i=0;i<pc.length;i++){const a=pc[i],b=pc[(i+1)%pc.length],ain=a[2]>=NEAR,bin=b[2]>=NEAR;if(ain)out.push(a);if(ain!==bin){const t=(NEAR-a[2])/(b[2]-a[2]);out.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,NEAR]);}}return out;}
+function clipSeg(a,b){if(a[2]<NEAR&&b[2]<NEAR)return null;if(a[2]<NEAR){const t=(NEAR-a[2])/(b[2]-a[2]);a=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,NEAR];}else if(b[2]<NEAR){const t=(NEAR-b[2])/(a[2]-b[2]);b=[b[0]+(a[0]-b[0])*t,b[1]+(a[1]-b[1])*t,NEAR];}return [a,b];}
+function shade(col,k){return 'rgb('+col.map(v=>Math.round(clamp(v*k,0,255))).join(',')+')';}
+function fog(z){return clamp(1-(z-60)/340,0.25,1);}
+let list=[];
+function poly(pts,col,k,opt){const pc=pts.map(toCam);const cl=clipPoly(pc);if(cl.length<3)return;const z=cl.reduce((s,p)=>s+p[2],0)/cl.length;list.push({t:0,pts:cl.map(scr),z,col,k:k===undefined?1:k,o:opt});}
+function seg(a,b,w,col,k){const s=clipSeg(toCam(a),toCam(b));if(!s)return;const z=(s[0][2]+s[1][2])/2;list.push({t:1,a:scr(s[0]),b:scr(s[1]),w:Math.max(1.2,w*FOC/z),z,col,k:k===undefined?1:k});}
+function disc(p,r,col,k,lab){const c=toCam(p);if(c[2]<NEAR)return;const s=scr(c);list.push({t:2,s,r:Math.max(2,r*FOC/c[2]),z:c[2],col,k:k===undefined?1:k,lab});}
+function box(x,y,w,h,z0,z1,col){const x0=x-w/2,x1=x+w/2,y0=y-h/2,y1=y+h/2;const P=(a,b,c)=>[a,b,c];
+  poly([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)],col,1.15);
+  poly([P(x0,y0,z0),P(x1,y0,z0),P(x1,y0,z1),P(x0,y0,z1)],col,0.8);poly([P(x1,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x1,y0,z1)],col,0.62);
+  poly([P(x1,y1,z0),P(x0,y1,z0),P(x0,y1,z1),P(x1,y1,z1)],col,0.74);poly([P(x0,y1,z0),P(x0,y0,z0),P(x0,y0,z1),P(x0,y1,z1)],col,0.58);}
+function buildScene(){
+  list=[];const L=lessons[S.lesson],p=D.p;
+  // ground grid
+  const gx=Math.round(p[0]/10)*10,gy=Math.round(p[1]/10)*10;
+  for(let i=-18;i<=18;i++){seg([gx+i*10,gy-180,0],[gx+i*10,gy+180,0],0.05,[40,86,56],0.9);seg([gx-180,gy+i*10,0],[gx+180,gy+i*10,0],0.05,[40,86,56],0.9);}
+  // distant hills and compass poles
+  for(let i=0;i<14;i++){const a=i/14*6.283+0.2,r=650+((i*37)%5)*40,h=35+((i*53)%7)*12,w=110+((i*29)%4)*30,cxp=D.p[0]+Math.cos(a)*r,cyp=D.p[1]+Math.sin(a)*r,tx=-Math.sin(a),ty=Math.cos(a);
+    poly([[cxp-tx*w,cyp-ty*w,0],[cxp+tx*w,cyp+ty*w,0],[cxp,cyp,h]],[70,110,90],0.8);}
+  [[0,420,'N',[255,70,70]],[420,0,'E',[240,240,240]],[0,-420,'S',[240,240,240]],[-420,0,'W',[240,240,240]]].forEach(c=>{seg([c[0],c[1],0],[c[0],c[1],50],0.9,c[3],1);disc([c[0],c[1],56],6,c[3],1,c[2]);});
+  // pad
+  poly([[-3,-3,0.02],[3,-3,0.02],[3,3,0.02],[-3,3,0.02]],[210,210,200],0.9);
+  seg([-1.4,-1.6,0.03],[-1.4,1.6,0.03],0.25,[30,30,30]);seg([1.4,-1.6,0.03],[1.4,1.6,0.03],0.25,[30,30,30]);seg([-1.4,0,0.03],[1.4,0,0.03],0.25,[30,30,30]);
+  if(L&&L.id==='land'){for(let a=0;a<16;a++){const a0=a/16*6.283,a1=(a+1)/16*6.283;seg([Math.cos(a0)*6,Math.sin(a0)*6,0.03],[Math.cos(a1)*6,Math.sin(a1)*6,0.03],0.2,[255,180,0]);}}
+  BLDG.forEach(b=>box(b.x,b.y,b.w,b.h,0,b.z,[120,130,150]));
+  TREES.forEach(t=>{const n=6;for(let i=0;i<n;i++){const a0=i/n*6.283,a1=(i+1)/n*6.283;poly([[t.x,t.y,t.h],[t.x+Math.cos(a0)*2,t.y+Math.sin(a0)*2,1.5],[t.x+Math.cos(a1)*2,t.y+Math.sin(a1)*2,1.5]],[40,110,60],0.7+0.5*Math.abs(Math.cos(a0)));}});
+  // gates
+  const showG=!L||L.gates;const gi=L&&L.gateIdx!==undefined?L.gateIdx():-1;
+  if(showG)GATES.forEach((g,i)=>{if(L&&L.gateSet&&!L.gateSet.includes(i))return;const col=i===gi?[0,255,136]:(L&&L.gatesDone&&L.gatesDone[i])?[60,120,220]:[255,140,30];const n=g.nv,r=[n[1],-n[0],0];const N=12;
+    for(let k=0;k<N;k++){const a0=k/N*6.283,a1=(k+1)/N*6.283;const q=a=>add(g.c,add(mul(r,Math.cos(a)*g.r),[0,0,Math.sin(a)*g.r]));seg(q(a0),q(a1),0.16,col,1.1);}
+    seg(add(g.c,[0,0,-g.r]),[g.c[0],g.c[1],0],0.07,[120,120,120]);});
+  // markers
+  if(L&&L.markers)L.markers().forEach(m=>{disc(m.p,m.r||1.2,m.col||[0,255,136],1.2,m.lab);});
+  if(L&&L.jam){const J=L.jam;for(let a=0;a<36;a++){const a0=a/36*6.283,a1=(a+1)/36*6.283;seg([J.x+Math.cos(a0)*J.r,J.y+Math.sin(a0)*J.r,0.05],[J.x+Math.cos(a1)*J.r,J.y+Math.sin(a1)*J.r,0.05],0.5,[255,60,60],1.2);}
+    [0,1,2,3].forEach(i=>{const a=i*1.5708+0.4;seg([J.x+Math.cos(a)*J.r,J.y+Math.sin(a)*J.r,0.05],[J.x+Math.cos(a)*J.r,J.y+Math.sin(a)*J.r,6],0.2,[255,60,60]);});}
+  // drone model in chase view
+  if(S.cam==='chase')droneModel();
+  list.sort((a,b)=>b.z-a.z);
+}
+function droneModel(){const R=D.R,p=D.p,s=4;const W=(x,y,z)=>add(p,add(add(mul(R.X,x*s),mul(R.Y,y*s)),mul(R.Z,z*s)));
+  const arm=0.17;const pr=[[1,1],[-1,1],[-1,-1],[1,-1]];
+  pr.forEach((q,i)=>{seg(W(0,0,0),W(q[0]*arm,q[1]*arm,0),0.035,[60,60,60]);const c=W(q[0]*arm,q[1]*arm,0.02),col=q[1]>0?[255,60,60]:[240,240,240];const m=10;const pts=[];for(let k=0;k<m;k++){const a=k/m*6.283;pts.push(W(q[0]*arm+Math.cos(a)*0.1,q[1]*arm+Math.sin(a)*0.1,0.03));}
+    poly(pts,col,0.9);});
+  poly([W(-0.05,-0.08,0.03),W(0.05,-0.08,0.03),W(0.05,0.08,0.03),W(-0.05,0.08,0.03)],[30,30,40],1.2);
+  seg(W(0,0.08,0.02),W(0,0.2,0.02),0.03,[255,200,0]);}
+function drawScene(){
+  CAM=camera();FOC=(CW/2)/Math.tan(52*d2r);
+  // sky
+  const g=cx.createLinearGradient(0,0,0,CH);g.addColorStop(0,'#3f6fa8');g.addColorStop(0.5,'#a8c4de');g.addColorStop(1,'#cfdcea');cx.fillStyle=g;cx.fillRect(0,0,CW,CH);
+  // ground: huge polygon
+  const gp_=[[-3000,-3000,0],[3000,-3000,0],[3000,3000,0],[-3000,3000,0]].map(q=>[q[0]+D.p[0],q[1]+D.p[1],0]);const pc=clipPoly(gp_.map(toCam));
+  if(pc.length>=3){const pts=pc.map(scr);cx.fillStyle='#4f8a50';cx.beginPath();pts.forEach((q,i)=>i?cx.lineTo(q[0],q[1]):cx.moveTo(q[0],q[1]));cx.closePath();cx.fill();
+    const hz=cx.createLinearGradient(0,0,0,CH);}
+  buildScene();
+  list.forEach(o=>{
+    if(o.t===0){cx.fillStyle=shade(o.col,o.k*fog(o.z));cx.beginPath();o.pts.forEach((q,i)=>i?cx.lineTo(q[0],q[1]):cx.moveTo(q[0],q[1]));cx.closePath();cx.fill();}
+    else if(o.t===1){cx.strokeStyle=shade(o.col,o.k*fog(o.z));cx.lineWidth=o.w;cx.lineCap='round';cx.beginPath();cx.moveTo(o.a[0],o.a[1]);cx.lineTo(o.b[0],o.b[1]);cx.stroke();}
+    else{cx.fillStyle=shade(o.col,o.k);cx.globalAlpha=0.85;cx.beginPath();cx.arc(o.s[0],o.s[1],o.r,0,7);cx.fill();cx.globalAlpha=1;cx.strokeStyle='#fff';cx.lineWidth=1.5;cx.stroke();if(o.lab){cx.fillStyle='#fff';cx.font='bold '+Math.max(10,Math.min(22,o.r))+'px "Share Tech Mono"';cx.textAlign='center';cx.fillText(o.lab,o.s[0],o.s[1]+4);}}
+  });
+}
+
+/* =============================================================
+   OSD
+============================================================= */
+function txt(s,x,y,al,col,sz){cx.font=(sz||13)+'px "Share Tech Mono"';cx.textAlign=al||'left';cx.lineWidth=3;cx.strokeStyle='rgba(0,0,0,.8)';cx.strokeText(s,x,y);cx.fillStyle=col||'#7dff9d';cx.fillText(s,x,y);}
+function drawOsd(){
+  const FS=document.body.classList.contains('fs'),K=Math.max(0.6,Math.min(CW/640,CH/480)*(FS?0.85:1));cx.save();cx.scale(K,K);const CWL=CW/K,CHL=CH/K;
+  const L=lessons[S.lesson],armed=D.armed;const OFF=FS?48:0;if(FS)cx.translate(0,OFF);
+  const MY=FS?CHL*0.40:CHL/2,sp=Math.hypot(D.v[0],D.v[1]),alt=D.p[2];
+  txt((D.V||16.8).toFixed(1)+'V',10,22,'left',(D.V||16.8)<14?'#ff5555':'#7dff9d',16);
+  const bw=70,fr=clamp(((D.V||16.8)-12.8)/4,0,1);cx.fillStyle='rgba(0,0,0,.6)';cx.fillRect(10,28,bw,7);cx.fillStyle=fr<0.25?'#ff5555':'#7dff9d';cx.fillRect(10,28,bw*fr,7);
+  const tm=Math.floor(D.time),mm=String(Math.floor(tm/60)).padStart(2,'0'),ss=String(tm%60).padStart(2,'0');
+  txt(mm+':'+ss,CWL/2,22,'center','#7dff9d',16);txt((armed?'ARMED':'DISARMED')+'  '+(S.mode==='angle'?'ANGLE':'ACRO'),CWL/2,40,'center',armed?'#ffd34d':'#ff7777',13);
+  const q=Math.round(D.link*100);txt('LINK '+q+'%',CWL-10,22,'right',q<35?'#ff5555':'#7dff9d',16);
+  cx.fillStyle='rgba(0,0,0,.6)';cx.fillRect(CWL-80,28,70,7);cx.fillStyle=q<35?'#ff5555':'#7dff9d';cx.fillRect(CWL-80,28,70*D.link,7);
+  txt('ALT '+alt.toFixed(1)+' m',10,MY-6,'left');txt('VS '+(D.v[2]>=0?'+':'')+D.v[2].toFixed(1),10,MY+12,'left','#7dff9d',12);
+  txt((sp*3.6).toFixed(0)+' km/h',CWL-10,MY-6,'right');txt('HDG '+String(Math.round(heading())).padStart(3,'0'),CWL/2,58,'center');
+  txt('THR '+Math.round(((IN.tv+1)/2)*100)+'%',10,MY+30,'left','#7dff9d',12);
+  // horizon / attitude
+  const R=D.R;const tilt=S.cam==='fpv'?S.tilt*d2r:0;
+  cx.save();cx.translate(CWL/2,CHL/2);cx.strokeStyle='rgba(125,255,157,.9)';cx.lineWidth=1.5;cx.beginPath();cx.moveTo(-9,0);cx.lineTo(-3,0);cx.moveTo(3,0);cx.lineTo(9,0);cx.moveTo(0,-9);cx.lineTo(0,-3);cx.moveTo(0,3);cx.lineTo(0,9);cx.stroke();
+  if(S.cam==='fpv'){const roll=Math.atan2(R.X[2],R.Z[2]),pit=Math.asin(clamp(R.Y[2],-1,1));cx.rotate(-roll);const off=-(pit+tilt)*FOC*0.0;
+    cx.strokeStyle='rgba(125,255,157,.45)';cx.beginPath();cx.moveTo(-70,off);cx.lineTo(-24,off);cx.moveTo(24,off);cx.lineTo(70,off);cx.stroke();}
+  cx.restore();
+  // home arrow
+  const hd=Math.hypot(D.p[0],D.p[1]),brg=Math.atan2(-D.p[0],-D.p[1])-Math.atan2(-D.R.Y[0],-D.R.Y[1]);
+  cx.save();cx.translate(CWL-34,MY+66);cx.rotate(-(brg));cx.fillStyle='#7dff9d';cx.beginPath();cx.moveTo(0,-14);cx.lineTo(8,8);cx.lineTo(0,4);cx.lineTo(-8,8);cx.closePath();cx.fill();cx.restore();txt('HOME '+Math.round(hd)+' m',CWL-10,MY+30,'right','#7dff9d',12);
+  // target bracket / arrow
+  const tg=L&&L.target?L.target():null;if(tg){const c=toCam(tg.p),s0=scr(c),s=[s0[0]/K,s0[1]/K];if(c[2]>0.5&&s[0]>20&&s[0]<CWL-20&&s[1]>50&&s[1]<CHL-30){cx.strokeStyle='#00ff88';cx.lineWidth=2;cx.strokeRect(s[0]-14,s[1]-14,28,28);txt(Math.round(len(sub(tg.p,D.p)))+' m',s[0],s[1]-20,'center','#00ff88',12);}
+    else{const a=Math.atan2(-c[1]*(c[2]<0?-1:1),c[0]*(c[2]<0?-1:1)),ex=CWL/2+Math.cos(a)*(CWL/2-30),ey=CHL/2+Math.sin(a)*(MY-60);cx.save();cx.translate(clamp(ex,24,CWL-24),clamp(ey,56,CHL-40));cx.rotate(a);cx.fillStyle='#00ff88';cx.beginPath();cx.moveTo(14,0);cx.lineTo(-8,9);cx.lineTo(-8,-9);cx.closePath();cx.fill();cx.restore();}}
+  // video degradation
+  cx.restore();cx.save();cx.scale(K,K);if(FS)cx.translate(0,OFF);const lq=D.link;if(lq<0.55){const a=(0.55-lq)/0.55;cx.globalAlpha=Math.min(0.85,a*0.9);for(let i=0;i<Math.floor(a*120);i++){const y=Math.random()*CHL,w=20+Math.random()*180,x=Math.random()*CWL;cx.fillStyle=Math.random()<0.5?'#fff':'#889';cx.fillRect(x,y,w,1+Math.random()*2);}
+    for(let i=0;i<a*900;i++){cx.fillStyle=Math.random()<0.5?'#ddd':'#222';cx.fillRect(Math.random()*CWL,Math.random()*CHL,2,2);}cx.globalAlpha=1;
+    if(lq<0.06){cx.fillStyle='#000';cx.fillRect(0,0,CWL,CHL);txt('NO VIDEO',CWL/2,CHL/2,'center','#ff5555',26);}}
+  // messages
+  if(D.crash){cx.fillStyle='rgba(120,0,0,.45)';cx.fillRect(0,0,CWL,CHL);txt('CRASHED',CWL/2,MY-6,'center','#ff6666',30);txt(D.crash,CWL/2,CHL/2+20,'center','#ffd0d0',14);}
+  if(S.cam==='chase')txt('CHASE VIEW',CWL/2,76,'center','#ffd34d',11);
+  if(!armed&&!D.crash&&alt<0.1)txt('Throttle low, then ARM',CWL/2,CHL/2+60,'center','#ffd34d',14);
+  cx.restore();
+}
+
+/* =============================================================
+   LESSONS
+============================================================= */
+const free=()=>({});
+const lessons=[
+ {id:'sticks',t:'Know your sticks',s:'Bench test with the props off.',obj:'Move every stick and learn what it does.',lockMode:true,free:false,
+  spawn(){newDrone([0,0,0],0,false);S.mode='angle';S.cam='chase';this.f={};}, pills:['THROTTLE UP','THROTTLE DOWN','YAW LEFT','YAW RIGHT','PITCH FWD','PITCH BACK','ROLL LEFT','ROLL RIGHT'],
+  check(){const f=this.f;if(IN.tv>0.6)f[0]=1;if(IN.tv<-0.9&&f[0])f[1]=1;if(IN.yv<-0.6)f[2]=1;if(IN.yv>0.6)f[3]=1;if(IN.pv>0.6)f[4]=1;if(IN.pv<-0.6)f[5]=1;if(IN.rv<-0.6)f[6]=1;if(IN.rv>0.6)f[7]=1;return [0,1,2,3,4,5,6,7].every(i=>f[i]);},
+  state(){return this.f;},
+  hints:['Use the two pads, or the keyboard keys listed under Controls.','Left stick: up and down is throttle. Push it up, then pull it back all the way down. Left and right is yaw.','Right stick: up and down is pitch, left and right is roll. Push each way once.'],
+  why:['What each stick does','The left stick sets motor power (throttle) and turns the aircraft (yaw). The right stick tilts it: pitch tilts forward and back, roll tilts left and right. Tilting is how a quadcopter moves sideways, because the thrust points where it leans. Throttle stays where you leave it.']},
+ {id:'hover',t:'Arm and hover',s:'Lift off and hold 2 meters.',obj:'Arm, lift off, and hold about 2 m for 4 seconds.',lockMode:true,
+  spawn(){newDrone([0,0,0],0,false);IN.tv=-1;S.mode='angle';S.cam='chase';this.hold=0;this.armTry=0;},
+  pills:['ARMED','AIRBORNE','HOLD 2 m (4 s)'],check(dt){const ok=D.p[2]>1&&D.p[2]<3.2&&D.armed;this.hold=ok?this.hold+dt:Math.max(0,this.hold-dt*2);return this.hold>=4;},
+  state(){return {0:D.armed,1:D.p[2]>0.3,2:this.hold>=4};},
+  markers(){return [{p:[0,0,2],r:0.5,col:[0,255,136]}];},target(){return {p:[0,0,2]};},
+  hints:['Pull the throttle all the way down, then press ARM. It will refuse otherwise.','Raise the throttle slowly. The drone lifts off at roughly 40% throttle.','Small throttle changes. When it climbs too fast, ease back. The OSD shows altitude and climb rate (VS).'],
+  why:['Arming and hover','Arming is blocked unless the throttle is low, so the motors cannot spin up at full power. A quad hovers when thrust equals weight, here around 40% throttle. Throttle is touchy: small, smooth changes hold altitude.']},
+ {id:'yaw',t:'Yaw and heading',s:'Turn on the spot.',obj:'Hover over the pad and make one full turn using yaw.',lockMode:true,
+  spawn(){newDrone([0,0,2],0,true,-0.2);S.mode='angle';S.cam='chase';this.ya=0;D.yawAcc=0;},
+  pills:['ONE FULL TURN'],check(){if(D.p[2]>0.8&&Math.hypot(D.p[0],D.p[1])<9)this.ya=Math.max(this.ya,Math.abs(D.yawAcc));return this.ya>=340;},state(){return {0:this.ya>=340};},
+  markers(){return [{p:[0,0,2],r:0.5,col:[0,255,136]}];},
+  hints:['The left stick, left and right.','Hold the stick gently. Yaw is a turn rate: more stick turns faster.','Keep the throttle steady so you do not climb or sink while you turn. Stay near the pad.'],
+  why:['Yaw turns the camera','In FPV you fly from the drone\'s point of view, so yaw changes where the camera points. Forward on the right stick always goes where the camera faces. Keep altitude steady while you yaw.']},
+ {id:'square',t:'Angle mode: fly a square',s:'Reach four markers in order.',obj:'Fly to markers 1 to 4 in order. Keep it between 1 and 8 m high.',lockMode:true,
+  spawn(){newDrone([0,0,2],0,true,-0.2);S.mode='angle';S.cam='fpv';this.i=0;},
+  P:[[0,18,3],[18,18,3],[18,0,3],[0,0,3]],
+  pills:['MARKER 1','MARKER 2','MARKER 3','MARKER 4'],check(){const p=this.P[this.i];if(!p)return true;if(len(sub(D.p,p))<3.2&&D.p[2]>1){this.i++;if(this.i>=4)return true;}return false;},state(){const o={};for(let k=0;k<4;k++)o[k]=this.i>k;return o;},
+  markers(){return this.P.map((p,k)=>({p,r:1.2,col:k===this.i?[0,255,136]:k<this.i?[60,120,220]:[255,140,30],lab:String(k+1)}));},target(){const p=this.P[this.i];return p?{p}:null;},
+  hints:['Right stick forward to move forward. The aircraft tilts and accelerates; release and it levels out.','More stick means more tilt and more speed. Stop by pulling the stick back briefly.','Tilting loses lift, so add a little throttle when you tilt. Turn with yaw, then push forward.'],
+  why:['Angle mode','In angle (self-level) mode the right stick sets a tilt angle and the drone levels itself when you let go. Tilt is speed. Because tilting spreads thrust sideways, you need a bit more throttle to hold altitude while moving.']},
+ {id:'gates',t:'Gate course',s:'Fly through six gates.',obj:'Fly through all six gates in order.',gates:true,lockMode:true,
+  spawn(){newDrone([0,0,0],0,false);IN.tv=-1;S.mode='angle';this.i=0;this.done=[];this.gatesDone=this.done;},
+  pills:['G1','G2','G3','G4','G5','G6'],gateIdx(){return this.i;},check(){const g=GATES[this.i];if(!g)return true;const a=dot(sub(D.pp,g.c),g.nv),b=dot(sub(D.p,g.c),g.nv);
+    if(a*b<0){const t=a/(a-b),q=add(D.pp,mul(sub(D.p,D.pp),t));if(len(sub(q,g.c))<g.r){this.done[this.i]=true;this.i++;setMsg('Gate '+(this.i)+' cleared.','good');}else setMsg('Missed gate '+(this.i+1)+': you passed outside the ring.','err');}return this.i>=6;},
+  state(){const o={};for(let k=0;k<6;k++)o[k]=this.i>k;return o;},target(){const g=GATES[this.i];return g?{p:g.c}:null;},
+  hints:['Arm first (throttle low), lift off, then head for the green gate.','Look through the gate, not at the ground. Plan the turn into the next one early.','Fly slowly at first. Use yaw to line up, then push the right stick forward. Camera tilt 30 degrees helps at speed.'],
+  why:['Lines and look-ahead','Gates teach you to plan a line, smooth your inputs, and look ahead to the next gate. The more camera tilt you use, the more forward speed you can fly with the horizon in view.']},
+ {id:'land',t:'Landing',s:'Put it down gently on the pad.',obj:'Land on the pad: touch down softly, then disarm.',lockMode:true,
+  spawn(){newDrone([-36,0,12],90,true,-0.25);S.mode='angle';this.settle=0;},
+  pills:['ON THE PAD','SOFT TOUCHDOWN'],check(dt){const on=Math.hypot(D.p[0],D.p[1])<4.5&&D.p[2]<0.05;if(on&&!D.armed)this.settle+=dt;return this.settle>1.2;},
+  state(){return {0:Math.hypot(D.p[0],D.p[1])<4.5&&D.p[2]<0.05,1:this.settle>1.2};},target(){return {p:[0,0,0.5]};},
+  hints:['Fly over the pad first. Ease the throttle down so you descend slowly.','Descend about 1 to 2 m per second. Use the right stick to stop any drift over the pad.','At about 1 m, reduce throttle a little more and let it settle, then pull throttle fully down and press DISARM.'],
+  why:['Landing','Most crashes happen on landing. Come in over the pad, set a slow, steady descent, and cancel sideways drift with the right stick before touching down. Cutting throttle from height drops the aircraft.']},
+ {id:'acro',t:'Acro mode',s:'Sticks command rotation, not tilt.',obj:'In ACRO, tilt forward then level out, roll right then level out, and fly through the gate.',lockMode:true,gates:true,gateSet:[0],
+  spawn(){newDrone([0,0,5],0,true,-0.2);S.mode='acro';this.a={};this.gdone=false;this.gatesDone=[];D.maxPitch=0;D.maxRoll=0;},
+  pills:['PITCH FORWARD AND LEVEL','ROLL RIGHT AND LEVEL','FLY THE GATE'],
+  check(){const t=tiltAng();if(D.maxPitch<-28||this.pitchF)this.pf=1;if(this.pf&&Math.abs(D.pitch)<8&&D.p[2]>0.5)this.a[0]=1;if(D.maxRoll>38)this.rf=1;if(this.rf&&Math.abs(D.roll)<8&&D.p[2]>0.5)this.a[1]=1;
+    const g=GATES[0],a=dot(sub(D.pp,g.c),g.nv),b=dot(sub(D.p,g.c),g.nv);if(a*b<0){const q=add(D.pp,mul(sub(D.p,D.pp),a/(a-b)));if(len(sub(q,g.c))<g.r){this.a[2]=1;this.gatesDone[0]=true;}}return this.a[0]&&this.a[1]&&this.a[2];},
+  state(){return this.a;},target(){return this.a[2]?null:{p:GATES[0].c};},gateIdx(){return this.a[2]?-1:0;},
+  hints:['Nothing levels the aircraft for you. Stick deflection spins it; centered sticks hold whatever angle it has.','To move forward: push the right stick forward briefly, then pull back to level it. Watch the horizon line on the OSD.','Small, quick taps. Keep adding throttle when tilted, and pull the pitch stick back to stop the rotation.'],
+  why:['Acro (rate) mode','In acro the right stick sets how fast the drone rotates. Center the stick and it stops rotating, but it does not return to level. This gives full control, including flips, and is how racing and freestyle pilots fly. It takes practice.']},
+ {id:'link',t:'Link and failsafe',s:'Signal fades with range and interference.',obj:'Fly to the far marker without crossing the jammed area, then return home.',lockMode:true,
+  jam:{x:0,y:110,r:45},
+  spawn(){newDrone([0,0,0],0,false);IN.tv=-1;S.mode='angle';this.far=false;this.home=false;},
+  pills:['REACH FAR MARKER','RETURN HOME','NO CRASH OR FAILSAFE'],
+  check(){if(len(sub(D.p,[0,230,6]))<10&&D.p[2]>2)this.far=true;if(this.far&&Math.hypot(D.p[0],D.p[1])<20&&D.p[2]<8)this.home=true;return this.far&&this.home;},
+  state(){return {0:this.far,1:this.home,2:this.far&&this.home&&!D.crash};},markers(){return [{p:[0,230,6],r:2.5,col:this.far?[60,120,220]:[0,255,136],lab:'FAR'}];},target(){return this.far?{p:[0,0,3]}:{p:[0,230,6]};},
+  hints:['Watch the LINK bar and the video as you fly away. Static appears before the link is gone.','The red ring is an area of strong interference. Inside it the link collapses.','Go around the ring, east or west. Turn back while the link is still above 30%. If it drops to zero for a moment, the motors cut.'],
+  why:['Range, interference, and failsafe','Radio signal fades with distance and with obstacles. Interference or jamming can cut the control link and video entirely. When the link is lost the flight controller runs its failsafe: here the motors cut and it falls. This is the weakness that electronic warfare against small drones exploits, and why operators plan routes and range.']},
+ {id:'free',t:'Free flight',s:'Everything open. Mode, wind, and the course.',obj:'Fly the gate course, change modes, add wind, and practice.',free:true,gates:true,
+  spawn(){newDrone([0,0,0],0,false);IN.tv=-1;},pills:[],check(){return false;},state(){return {};},hints:['Try ACRO once you can hold a steady hover in ANGLE.','Add wind from the settings and see how much you drift.','Press C to switch to the chase view and watch the aircraft tilt.'],why:['','']}
+];
+let LD={};
+function openLessons(){$('lessonList').innerHTML=lessons.map((l,i)=>'<button class="lbtn'+(LD[l.id]?' done':'')+'" onclick="startLesson('+i+')"><b>'+(i+1)+'. '+l.t+(LD[l.id]?' \u2713':'')+'</b><span>'+l.s+'</span></button>').join('');$('ovLessons').classList.add('on');}
+function startLesson(i){closeOv('ovLessons');closeOv('ovDone');S.lesson=i;const L=lessons[i];if(!L.free)S.wind=0;L.hintN=0;L.spawn();if(L.gatesDone)L.gatesDone=L.gatesDone||[];
+  $('lk').textContent=L.free?'FREE FLIGHT':'LESSON '+(i+1)+' OF '+(lessons.length-1);$('lo').textContent=L.obj;buildPills();setMsg('','');syncUI();
+  if(L.id==='sticks')setMsg('Use both sticks. Every pill below lights as you try it.','');}
+function nextLesson(){closeOv('ovDone');startLesson(Math.min(lessons.length-1,S.lesson+1));}
+function buildPills(){const L=lessons[S.lesson];$('pills').innerHTML=(L.pills||[]).map((p,i)=>'<span class="pill" id="pl'+i+'">'+p+'</span>').join('');}
+function updatePills(){const L=lessons[S.lesson],st=L.state?L.state():{};(L.pills||[]).forEach((p,i)=>{const e=$('pl'+i);if(e)e.classList.toggle('ok',!!st[i]);});}
+function hint(){const L=lessons[S.lesson];if(!L)return;L.hintN=Math.min(3,(L.hintN||0)+1);setMsg('HINT: '+L.hints[L.hintN-1],'');}
+function complete(){const L=lessons[S.lesson];if(LD[L.id]||L.free)return;LD[L.id]=true;$('dH').textContent=L.why[0];$('dP').textContent=L.why[1];$('ovDone').classList.add('on');}
+
+/* =============================================================
+   LOOP
+============================================================= */
+let last=0,acc=0,fr=0,errShown=false;
+window.addEventListener('error',e=>{if(errShown)return;errShown=true;const m=$('lm');m.textContent='ERROR: '+(e.message||'unknown')+' (line '+e.lineno+')';m.className='lm err';});
+function fit(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1),w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(w&&(cv.width!==w||cv.height!==h)){cv.width=w;cv.height=h;}CW=cv.width;CH=cv.height;cx.setTransform(1,0,0,1,0,0);}
+function drawSticks(){const set=(th,x,y)=>{const pad=th.parentElement,rad=pad.clientWidth/2,tr=th.clientWidth/2;th.style.left=(rad+x*(rad-tr-6)-tr)+'px';th.style.top=(rad-y*(rad-tr-6)-tr)+'px';};set($('thL'),IN.yv,IN.tv);set($('thR'),IN.rv,IN.pv);}
+function loop(ts){
+  const dt=Math.min(0.05,(ts-last)/1000||0);last=ts;fr++;readKeys(dt);
+  acc+=dt;let n=0;while(acc>=1/120&&n<10){acc-=1/120;step(1/120);n++;const L=lessons[S.lesson];if(L&&L.check&&!D.crash&&n%2===0){if(L.check(1/60))complete();}}
+  fit();if(D){drawScene();drawOsd();}
+  drawSticks();updatePills();if(fr%4===0){syncArm();}audioTick();
+  requestAnimationFrame(loop);
+}
+function syncArm(){const a=!!(D&&D.armed);if($('armBtn').textContent!==(a?'DISARM':'ARM')){$('armBtn').textContent=a?'DISARM':'ARM';$('armBtn').classList.toggle('on',a);}}
+startLesson(0);requestAnimationFrame(loop);
+</script>
+</body>
+</html>

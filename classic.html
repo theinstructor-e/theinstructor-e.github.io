@@ -88,7 +88,7 @@ h1 span{color:var(--text-dim);font-weight:400}
     <h1>Electromagnetic Warfare Interactive Tool (E-WIT)</h1>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
-    <a href="index.html" class="theme-btn" style="text-decoration:none;display:inline-flex;align-items:center">🎮 ADVENTURE MAP</a>
+    <a href="adventure.html" class="theme-btn" style="text-decoration:none;display:inline-flex;align-items:center">🎮 ADVENTURE MAP</a>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728; LIGHT MODE</button>
   </div>
 </header>
@@ -158,7 +158,7 @@ h1 span{color:var(--text-dim);font-weight:400}
 
 <script>
 // Section order. Empty sections still render (placeholder shown) so you can fill them later.
-const CATEGORIES=['B1 Math','B2 Physics','C BET','D Networking','E EW Theory','F Systems','G Planning'];
+const CATEGORIES=['B1 Math','B2 Physics','C BET','D Networking','E EW Theory','F Systems'];
 // hrefs/labels match your existing site. Edit "file" if your paths change.
 const TOOLS=[
   // B1 Math
@@ -170,6 +170,7 @@ const TOOLS=[
   {cat:'B2 Physics',nm:'Physics',ds:'Frequency, propagation, antennas, modulation, link budget',file:'rftheory',color:'#00ff88'},
   {cat:'B2 Physics',nm:'AC Circuit Theory & Impedance',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
   {cat:'B2 Physics',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
+  {cat:'F Systems',nm:'Propagation Lab',ds:'Hands-on SDR receiver on a world map: move the stations, change time of day, solar flux, flares, weather, and antennas, and watch MUF, absorption, skip zone, noise, and the signal change',file:'proplab',color:'#00ff88',kw:'propagation lab sdr receiver waterfall world map ionosphere D layer F2 MUF LUF critical frequency skip zone NVIS ground wave skywave line of sight radio horizon duct tropospheric sporadic E solar flux sunspot solar flare blackout geomagnetic Kp gray line terminator day night noise floor man-made atmospheric galactic S-meter SNR link budget path loss antenna height take-off angle time lapse'},
   {cat:'B2 Physics',nm:'Signal Quality & Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
   {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff',kw:'signal identification waterfall frequency band spectrum analyzer emitter recognition'},
   // C BET
@@ -184,6 +185,7 @@ const TOOLS=[
   {cat:'E EW Theory',nm:'EW Principles',ds:'ES/EA/EP framework, antennas, electromagnetic attack, J-series',file:'EW Principles',color:'#ff4444',kw:'electromagnetic support electromagnetic attack electromagnetic protection jamming warfare framework'},
   {cat:'E EW Theory',nm:'Antenna Builder',ds:'Antenna types & Yagi-Uda designer with cut list and matching',file:'antenna',color:'#00d4ff',kw:'dipole yagi antenna gain radiation pattern element spacing directional'},
   {cat:'E EW Theory',nm:'DF Trainer',ds:'Baseline geometry, terrain masking, radio horizon across 4 biomes, plus a Find-the-Emitter geolocation Quiz Mode',file:'df',color:'#bb88ff',kw:'direction finding triangulation geolocation emitter location bearing lines terrain masking'},
+  {cat:'F Systems',nm:'Man-Pack DF Lab',ds:'Walk a field with an SDR and a backpack antenna array: watch signal strength, read time-difference-of-arrival between elements, take lines of bearing, and fix the emitter',file:'dflab',color:'#00ff88',kw:'direction finding man pack backpack DF array TDOA time difference of arrival interferometer phase correlative MUSIC line of bearing LOB RSSI homing signal strength fix triangulation multipath baseline half wavelength ambiguity front back transmitter hunt krakensdr compass azimuth sdr'},
   {cat:'E EW Theory',nm:'GPS Spoof',ds:'GPS spoofing & meaconing concepts',file:'GPS',color:'#bb88ff',kw:'satellite navigation jamming fake location signal deception position spoofing PNT denial'},
   {cat:'E EW Theory',nm:'Frequency Hop',ds:'Frequency-hopping spread spectrum visualizer',file:'fhop',color:'#00d4ff',kw:'FHSS anti-jam frequency agility spread spectrum hopping sequence dwell time'},
   // D Networking
@@ -191,6 +193,7 @@ const TOOLS=[
   {cat:'D Networking',nm:'Network',ds:'OSI, MAC, topologies, IP/subnetting, Wi-Fi standards & channels',file:'network',color:'#00d4ff'},
   {cat:'D Networking',nm:'Subnet',ds:'IP subnetting & CIDR calculator',file:'subnet',color:'#00d4ff'},
   {cat:'D Networking',kind:'guide',nm:'Wi-Fi Explained',ds:'Plain-language guide: Wi-Fi standards, bands & channels',file:'wifiguide',color:'#00d4ff'},
+  {cat:'D Networking',nm:'Wi-Fi Passive Analyzer',ds:'Hands-on ES survey: monitor-mode capture, find a hidden SSID, catch an evil twin and forged deauth frames, then walk the rogue down with a directional antenna',file:'wifianalyzer',color:'#00d4ff',kw:'wifi wi-fi 802.11 passive scan monitor mode capture beacon probe request association deauthentication evil twin rogue access point hidden SSID BSSID OUI MAC randomization channel overlap 1 6 11 spectrum RSSI direction finding directional antenna electronic warfare support survey kismet inssider wireshark'},
   {cat:'D Networking',nm:'Mesh Radio',ds:'Program mesh radios, simulate subnet/range/channel faults',file:'mesh',color:'#00ff88'},
   {cat:'D Networking',kind:'guide',nm:'Cellular Explained',ds:'Plain-language guide: generations, architecture, identifiers & logical channels',file:'cellularguide',color:'#00ff88'},
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
@@ -202,17 +205,14 @@ const TOOLS=[
   {cat:'F Systems',nm:'UAS Signature',ds:'Counter-unmanned aircraft systems',file:'cuas',color:'#ff7700',kw:'counter drone anti-drone UAS defeat detection tracking signature'},
   {cat:'F Systems',nm:'C-UAS Demo',ds:'Counter-UAS trainer: RF links, detection, engagement simulator, kill chain',file:'cuasdemo',color:'#ff7700',kw:'counter drone anti-drone UAS defeat engagement kill chain interceptor jamming'},
   {cat:'F Systems',nm:'Signal ID Trainer',ds:'50 real signals across a scrollable live spectrum survey, an ID quiz with anomaly detection, and a categorized reference library',file:'sigid',color:'#ff4444',kw:'signal identification waterfall spectrum analyzer SIGINT anomaly detection radar OTH jammer cellular'},
+  {cat:'F Systems',nm:'Signal Analyst Bench',ds:'Measure signals with spectrum and waterfall cursors (width, timing), then diagnose problems: co-channel, splatter, intermod, image, DC spike, drift, and jammers. For naming unknown signals, use the Signal ID Trainer',file:'siganalyst',color:'#00ff88',kw:'signal analysis analyst diagnose spectrum waterfall cursor bandwidth measure AM FM SSB CW morse FSK RTTY PSK OFDM TDMA burst frequency hopper radar jammer barrage spot sweep interference co-channel splatter overmodulation intermodulation overload attenuator image mirror DC spike LO leakage drift duty cycle '},
   {cat:'F Systems',kind:'guide',nm:'Software-Defined Radio Explained',ds:'Plain-language guide: SDR hardware, common software, tuning, gain, demod modes, and reading a waterfall',file:'sdrguide',color:'#ff7700',kw:'SDR RTL-SDR HackRF GNU Radio GQRX SDR# tuning gain demodulation'},
   {cat:'F Systems',nm:'SDR Console Simulator',ds:'A hands-on practice SDR interface — tune, adjust gain, switch demodulation modes, and find 5 hidden practice signals',file:'sdrsim',color:'#ff7700',kw:'SDR tuning gain demodulation AM FM USB LSB CW waterfall spectrum'},
+  {cat:'F Systems',nm:'DAGR GPS Simulator',ds:'First-person nav lane: install batteries, power up the AN/PSN-13A DAGR, set datum and MGRS grid from a card, mark a waypoint, GOTO it, and report a 6-digit grid. Or free practice on the keys and menus',file:'dagr',color:'#00ff88',kw:'DAGR AN/PSN-13A defense advanced GPS receiver handheld GPS satellite navigation power on SV sky view present position datum WGS 84 coordinate system MGRS UTM lat lon grid resolution 6-digit mark waypoint GOTO NAV pointer azimuth range batteries first person navigation lane'},
+  {cat:'F Systems',nm:'FPV Flight School',ds:'Learn the controls and basics of flying an FPV quadcopter: bench stick test, arm and hover, yaw, angle mode, a gate course, landing, acro mode, and a link-loss test with a jammed area',file:'fpvschool',color:'#00ff88',kw:'FPV drone flight simulator quadcopter controls throttle yaw pitch roll mode 2 sticks arm disarm angle mode acro rate mode gates landing failsafe link loss jammer OSD battery camera tilt wind UAS first person view'},
   {cat:'F Systems',nm:'Drone Defender Simulator',ds:'A hands-on counter-UAS engagement simulator — detect, track, and defeat drone threats',file:'dronedef',color:'#ff7700',kw:'counter drone UAS defender simulator arcade wave engagement TLS manpack jamming'},
   {cat:'F Systems',nm:'FOB Defense',ds:'Build a layered defense — spectrum detectors, EW jammers, and C-UAS turrets — to protect your FOB from escalating drone waves',file:'fobdefense',color:'#ff7700',kw:'tower defense FOB base counter-UAS spectrum monitoring jammer turret layered defense wave'},
   {cat:'F Systems',nm:'Field Ops: Enlist to First Unit',ds:'A narrative training game following a Soldier from enlistment through Basic, AIT, and their first unit',file:'fieldops',color:'#ff7700',kw:'narrative game story mode basic training AIT first unit SDR land nav compass loadout'},
-  // G Planning
-  {cat:'G Planning',kind:'guide',nm:'Planning & Tactics Explained',ds:'Plain-language guide: TLP, OPORD, battle drills & formations',file:'planningguide',color:'#bb88ff'},
-  {cat:'G Planning',nm:'TLP Trainer',ds:'The 8 troop leading procedures, METT-TC & sequencing practice',file:'tlp',color:'#bb88ff',kw:'troop leading procedures mission planning sequence order of operations METT-TC'},
-  {cat:'G Planning',nm:'OPORD Builder',ds:'Build a 5-paragraph operation order with live preview',file:'opord',color:'#bb88ff',kw:'operation order five paragraph order mission planning document'},
-  {cat:'G Planning',nm:'WTBD & FOOM',ds:'Warrior tasks, animated battle drill sims, formations & movement',file:'wtbd',color:'#bb88ff',kw:'warrior tasks battle drills formations of movement squad tactics'},
-  {cat:'G Planning',kind:'cards',nm:'Warrior Tasks & Battle Drills',ds:'The five task categories, the core Battle Drills, and key standards \u00b7 6 flashcards',file:'army/warrior-tasks/',color:'#00d4ff',kw:'warrior tasks battle drills flashcards zeroing protective mask'},
 ];
 function catId(cat){ return cat.replace(/[^a-zA-Z0-9]/g,'-'); }
 
@@ -335,7 +335,7 @@ function globalSearch(){
     }
   });
   ARMY.forEach(a=>{
-    if(a.kind==='hub'||a.file==='army/warrior-tasks/') return;
+    if(a.kind==='hub'||a.hide) return;
     if(normalize(a.nm+' '+a.ds+' '+(a.kw||'')).includes(q)){
       const isG=a.kind==='guide',isT=a.kind==='tool',isCards=a.kind==='cards';
       results.push({type:isG?'GUIDE':isT?'INTERACTIVE':isCards?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:isCards?'Slides \u2014 Army Basics':'Tactics', nm:a.nm, ds:a.ds,
@@ -394,7 +394,7 @@ const ARMY=[
   "ds": "The eight steps, the one-third and two-thirds rule, a worked squad patrol, and TLP versus MDMP",
   "file": "army/tlp-guide/",
   "kind": "guide",
-  "kw": "TLP troop leading procedures warning order WARNORD METT-TC tentative plan reconnaissance rehearsal PCC PCI one third two thirds"
+  "kw": "troop leading procedures mission planning sequence order of operations METT-TC TLP warning order WARNORD METT-TC tentative plan reconnaissance rehearsal PCC PCI one third two thirds"
  },
  {
   "nm": "TLP Planner",
@@ -402,6 +402,13 @@ const ARMY=[
   "file": "army/tlp-planner/",
   "kind": "tool",
   "kw": "TLP planner troop leading procedures time plan one third two thirds warning order rehearsal PCC PCI backward planning step through squad patrol"
+ },
+ {
+  "nm": "OPORD Builder",
+  "ds": "Build a 5-paragraph operation order with live preview",
+  "file": "opord",
+  "kind": "tool",
+  "kw": "operation order five paragraph order OPORD situation mission execution sustainment command and signal mission planning document"
  },
  {
   "nm": "MDMP Explained",
@@ -418,9 +425,17 @@ const ARMY=[
   "kw": "MDMP planner course of action COA decision matrix screening suitable feasible acceptable distinguishable complete timeline one third two thirds planning time seven steps sequence wargame quiz"
  },
  {
+  "nm": "WTBD & FOOM",
+  "ds": "Warrior Tasks & Battle Drills and FOOM in one place: animated battle drills (React to Contact, Break Contact, React to Ambush), animated FOOM formations and movement techniques, plus the trainers, guides, flashcards, and slides",
+  "file": "army/wtbd/",
+  "kind": "tool",
+  "kw": "FOOM formations order of movement wedge file column line vee squad platoon fire team traveling traveling overwatch bounding overwatch alternate successive bounds danger area intervals ATP 3-21.8 FOOM trainer formation movement technique decision aid scenarios bounding overwatch alternate successive traveling wedge column line squad battle drills react to contact break contact ambush near far peel indirect fire cue immediate action battle drill animation simulation react to contact break contact ambush near far indirect fire immediate action quiz practice mission walk game score reps What are the 5 categories of Warrior Tasks? Name the 4 core Battle Drills. What is the standard for zeroing an M4? What is the time standard to don, clear, and check a protective mask? What's the difference between a Warrior Task and a Battle Drill? What publication is the authoritative source for Warrior Tasks and Battle Drills? WTBD warrior tasks battle drills animated walkthrough react to contact break contact react to ambush near far kill zone hand grenade range FOOM formations order of movement fire team wedge file squad column line traveling overwatch bounding overwatch successive alternate bounds who stands where sectors of fire flashcards slides"
+ },
+ {
   "nm": "FOOM Explained",
   "ds": "Formations and order of movement: formations, movement techniques, and control",
   "file": "army/foom-guide/",
+  "hide": true,
   "kind": "guide",
   "kw": "FOOM formations order of movement wedge file column line vee squad platoon fire team traveling traveling overwatch bounding overwatch alternate successive bounds danger area intervals ATP 3-21.8"
  },
@@ -428,6 +443,7 @@ const ARMY=[
   "nm": "FOOM Trainer",
   "ds": "Decision aid for movement technique and formation, scenario drill, alternate versus successive bounds",
   "file": "army/foom/",
+  "hide": true,
   "kind": "tool",
   "kw": "FOOM trainer formation movement technique decision aid scenarios bounding overwatch alternate successive traveling wedge column line squad"
  },
@@ -463,6 +479,7 @@ const ARMY=[
   "nm": "Battle Drills Explained",
   "ds": "React to Contact, Break Contact, near versus far ambush, and React to Indirect Fire",
   "file": "army/battle-drills-guide/",
+  "hide": true,
   "kind": "guide",
   "kw": "battle drills react to contact break contact ambush near far peel indirect fire cue immediate action"
  },
@@ -470,6 +487,7 @@ const ARMY=[
   "nm": "Battle Drill Trainer",
   "ds": "Scored Practice Mission (seek cover, react to the range, consolidate), the animated near/far ambush reaction, and a 15-item drill quiz",
   "file": "army/battle-drills/",
+  "hide": true,
   "kind": "tool",
   "kw": "battle drill animation simulation react to contact break contact ambush near far indirect fire immediate action quiz practice mission walk game score reps"
  },
@@ -492,14 +510,14 @@ const ARMY=[
   "ds": "Scored Training Lane (walk to each station and perform the real action: clear the weapon, load the radio, aim the claymore), plus hands-on simulators for all 7 stations",
   "file": "army/rtt/",
   "kind": "tool",
-  "kw": "RTT ranger tactical tasks RAP week M4 M249 M240B function check simulator clear load radio SINCGARS frequency slider radio check knots square knot clove hitch bowline prusik DAGR GPS waypoint drag claymore M18A1 aim fan practice mission training lane walk game score reps"
+  "kw": "RTT ranger tactical tasks RAP week M4 M249 M240B function check simulator clear load radio SINCGARS frequency slider radio check knots square knot clove hitch bowline prusik claymore M18A1 aim fan practice mission training lane walk game score reps"
  },
  {
   "nm": "SINCGARS Radio Simulator",
-  "ds": "A fully modeled RT-1523E(C)/U ASIP front panel — FCTN and CHAN dials, the real MENU+7 mode/COMSEC procedure, and the actual frequency load sequence (FREQ, CLR, digits, STO)",
+  "ds": "First-person setup lane: walk up to the radio, connect the antenna and handset, load it from the setup card, and make a radio check. Or free practice on the full RT-1523E(C)/U front panel (FCTN dial, menu screens, frequency load)",
   "file": "army/sincgars/",
   "kind": "tool",
-  "kw": "SINCGARS ASIP RT-1523E radio simulator FCTN CHAN dial MENU mode COMSEC PT CT SC FH load frequency FREQ CLR STO zeroize self test squelch PRC-119"
+  "kw": "SINCGARS ASIP RT-1523E radio simulator FCTN CHAN dial MENU mode COMSEC PT CT SC FH load frequency FREQ CLR STO zeroize self test squelch PRC-119 first person scenario setup lane assemble antenna handset H-250 AUD/FILL ANT setup card SOI radio check callsigns proword PTT squelch SQ ON PWR MODE CMSC channel perform voice communications"
  },
  {
   "nm": "9-Line MEDEVAC & TCCC Explained",
@@ -582,6 +600,7 @@ const ARMY=[
   "nm": "Warrior Tasks & Battle Drills",
   "ds": "The five task categories, the core Battle Drills, and key standards. · 6 flashcards",
   "file": "army/warrior-tasks/",
+  "hide": true,
   "kind": "cards",
   "kw": "What are the 5 categories of Warrior Tasks? Name the 4 core Battle Drills. What is the standard for zeroing an M4? What is the time standard to don, clear, and check a protective mask? What's the difference between a Warrior Task and a Battle Drill? What publication is the authoritative source for Warrior Tasks and Battle Drills?"
  },
@@ -614,7 +633,7 @@ function renderSlides(){
   vh+='</div>';
   vh+='<h3 style="font-size:13px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin:22px 0 8px">🎖️ Army Basics — Flashcards</h3>';
   vh+='<div class="grid">';
-  ARMY.filter(a=>a.kind==='cards'&&a.file!=='army/warrior-tasks/').forEach(a=>{
+  ARMY.filter(a=>a.kind==='cards'&&!a.hide).forEach(a=>{
     vh+=`<a class="card" href="${a.file}" style="--accent:#00d4ff">
       <div class="cat">ARMY <span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span></div><div class="nm">${a.nm}</div>
       <div class="ds">${a.ds}</div><div class="go">STUDY \u2192</div></a>`;
@@ -777,12 +796,11 @@ const WRAVEN_MODULES=[
 function renderArmy(){
   const GROUPS=[
     {label:'Land Navigation', files:['army/land-nav-guide/','army/land-nav/']},
-    {label:'Troop Leading Procedures', files:['army/tlp-guide/','army/tlp-planner/']},
+    {label:'Troop Leading Procedures & OPORD', files:['army/tlp-guide/','army/tlp-planner/','opord']},
     {label:'MDMP', files:['army/mdmp-guide/','army/mdmp/']},
-    {label:'FOOM', files:['army/foom-guide/','army/foom/']},
+    {label:'WTBD & FOOM', files:['army/wtbd/']},
     {label:'OAKOC', files:['army/oakoc-guide/','army/oakoc/']},
     {label:'Route Planning', files:['army/route-planning-guide/','army/route-planning/']},
-    {label:'Battle Drills', files:['army/battle-drills-guide/','army/battle-drills/']},
     {label:'Patrol Base', files:['army/patrol-base-guide/','army/patrol-base/']},
     {label:'Ranger Tactical Tasks (RTT)', files:['army/rtt/']},
     {label:'SINCGARS Radio Simulator', files:['army/sincgars/']},
