@@ -607,5 +607,14 @@ function frame(ts){
 reset();requestAnimationFrame(frame);
 (function(){const p=new URLSearchParams(location.search).get('mode');if(p==='sandbox')startSandbox();if(p==='mission')startMission();})();
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

@@ -19,6 +19,8 @@
   --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;
   --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
 }
+:root{--c-tool:#3d8bff;--c-guide:#00ff88;--c-cards:#ff8c1a}
+:root[data-theme="light"]{--c-tool:#1f5fcf;--c-guide:#00804a;--c-cards:#c25e00}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
@@ -40,10 +42,9 @@ h1 span{color:var(--text-dim);font-weight:400}
 .card .ds{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.6}
 .card .go{font-family:var(--mono);font-size:11px;color:var(--accent,var(--green));margin-top:10px;letter-spacing:1px}
 .tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;font-weight:700}
-.tag-guide{color:#7a5cff;background:rgba(140,110,255,.16);border:1px solid rgba(140,110,255,.4)}
-.tag-int{color:var(--text-dim);background:transparent;border:1px solid var(--border-bright)}
-.tag-quiz{color:#ffb300;background:rgba(255,179,0,.16);border:1px solid rgba(255,179,0,.4)}
-[data-theme="light"] .tag-guide{color:#5a3ccc}
+.tag-guide{color:var(--c-guide);background:transparent;border:1px solid var(--c-guide)}
+.tag-int,.tag-quiz{color:var(--c-tool);background:transparent;border:1px solid var(--c-tool)}
+.tag-fc{color:var(--c-cards);background:transparent;border:1px solid var(--c-cards)}
 .card.is-guide{border-style:dashed}
 .card.is-guide::before{opacity:.75;background:repeating-linear-gradient(90deg,var(--accent,var(--green)),var(--accent,var(--green)) 8px,transparent 8px,transparent 12px)}
 .section-label{font-family:var(--mono);font-size:13px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:24px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:color .15s}
@@ -172,7 +173,7 @@ const TOOLS=[
   {cat:'B2 Physics',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
   {cat:'F Systems',nm:'Propagation Lab',ds:'Hands-on SDR receiver on a world map: move the stations, change time of day, solar flux, flares, weather, and antennas, and watch MUF, absorption, skip zone, noise, and the signal change',file:'proplab',color:'#00ff88',kw:'propagation lab sdr receiver waterfall world map ionosphere D layer F2 MUF LUF critical frequency skip zone NVIS ground wave skywave line of sight radio horizon duct tropospheric sporadic E solar flux sunspot solar flare blackout geomagnetic Kp gray line terminator day night noise floor man-made atmospheric galactic S-meter SNR link budget path loss antenna height take-off angle time lapse'},
   {cat:'B2 Physics',nm:'Signal Quality & Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
-  {cat:'B2 Physics',nm:'RF Spectrum',ds:'RF spectrum visualizer & signal identification',file:'rfspect',color:'#00d4ff',kw:'signal identification waterfall frequency band spectrum analyzer emitter recognition'},
+  {cat:'B2 Physics',kind:'guide',nm:'RF Spectrum',ds:'Frequency allocation reference, 3 MHz to 6 GHz: what each band is used for and whether it is taboo, protected, guarded, licensed, or unlicensed',file:'rfspect',color:'#00d4ff',kw:'frequency allocation FCC NTIA ITU band plan taboo protected guarded licensed unlicensed Part 15 HF VHF UHF SHF reference chart who uses what spectrum'},
   // C BET
   {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
   {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
@@ -199,6 +200,7 @@ const TOOLS=[
   {cat:'D Networking',nm:'Cellular',ds:'Logical channels, network identifiers, architecture & flow',file:'cellular',color:'#00ff88'},
   {cat:'D Networking',nm:'Traffic Analyzer',ds:'Click a device to filter its packets, inspect frame layers, then find-the-frame in Quiz Mode',file:'nettrace',color:'#cc88ff'},
   {cat:'D Networking',nm:'MITM Simulator',ds:'Watch a man-in-the-middle intercept unencrypted, SSL-stripped & spoofed-cert traffic \u2014 then see encryption shut it down',file:'mitm',color:'#ff5c7a',kw:'man in the middle attack mitm adversary-in-the-middle eavesdropping packet interception ssl strip downgrade fake certificate rogue access point ARP poisoning session hijacking'},
+
   // F Systems
   {cat:'E EW Theory',kind:'guide',nm:'Space & Drones Explained',ds:'Plain-language guide: orbits, satellite links, drones & counter-UAS',file:'systemsguide',color:'#bb88ff'},
   {cat:'E EW Theory',nm:'Orbits',ds:'Satellite orbits & space systems',file:'sat',color:'#bb88ff'},
@@ -229,6 +231,7 @@ function setCat(c){
   document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('on', el.dataset.c===c));
   render();
 }
+const kindCol=k=>k==='guide'?'var(--c-guide)':k==='cards'?'var(--c-cards)':'var(--c-tool)';
 function sortWeight(t){
   if(t.kind==='guide') return 0;
   if(t.kind==='quiz') return 2;
@@ -251,16 +254,16 @@ function render(){
   }
   const cardHtml=t=>{
     if(t.soon){
-      return `<div class="card is-soon" style="--accent:${t.color};opacity:.55;cursor:default;filter:grayscale(.4)">
+      return `<div class="card is-soon" style="--accent:${kindCol(t.kind)};opacity:.55;cursor:default;filter:grayscale(.4)">
         <div class="cat">${t.cat} <span class="tag tag-int" style="border-color:var(--amber);color:var(--amber)">COMING SOON</span></div><div class="nm">${t.nm}</div>
         <div class="ds">${t.ds}</div><div class="go" style="color:var(--text-dim)">IN DEVELOPMENT</div></div>`;
     }
     const guide=t.kind==='guide';
     const quiz=t.kind==='quiz';
     const cards=t.kind==='cards';
-    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':cards?'<span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span>':'<span class="tag tag-int">INTERACTIVE</span>';
+    const tag=guide?'<span class="tag tag-guide">GUIDE</span>':quiz?'<span class="tag tag-quiz">QUIZ</span>':cards?'<span class="tag tag-fc">FLASHCARDS</span>':'<span class="tag tag-int">INTERACTIVE</span>';
     const go=guide?'READ \u2192':cards?'STUDY \u2192':'LAUNCH \u2192';
-    return `<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${t.color}">
+    return `<a class="card${guide?' is-guide':''}" href="${t.file}" style="--accent:${kindCol(t.kind)}">
       <div class="cat">${t.cat} ${tag}</div><div class="nm">${t.nm}</div>
       <div class="ds">${t.ds}</div><div class="go">${go}</div></a>`;
   };
@@ -319,7 +322,7 @@ function globalSearch(){
       const rType=t.kind==='guide'?'GUIDE':t.kind==='quiz'?'QUIZ':'INTERACTIVE';
       const rClass=t.kind==='guide'?'tag-guide':t.kind==='quiz'?'tag-quiz':'tag-int';
       results.push({type:rType, typeClass:rClass,
-        section:t.cat, nm:t.nm, ds:t.ds, href:t.file, color:t.color, go:t.kind==='guide'?'READ \u2192':'LAUNCH \u2192'});
+        section:t.cat, nm:t.nm, ds:t.ds, href:t.file, color:kindCol(t.kind), go:t.kind==='guide'?'READ \u2192':'LAUNCH \u2192'});
     }
   });
   SLIDES.forEach(s=>{
@@ -338,8 +341,8 @@ function globalSearch(){
     if(a.kind==='hub'||a.hide) return;
     if(normalize(a.nm+' '+a.ds+' '+(a.kw||'')).includes(q)){
       const isG=a.kind==='guide',isT=a.kind==='tool',isCards=a.kind==='cards';
-      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':isCards?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':'tag-int', section:isCards?'Slides \u2014 Army Basics':'Tactics', nm:a.nm, ds:a.ds,
-        href:a.file, color:isG?'#7a5cff':isT?'#00ff88':'#00d4ff', go:isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192'});
+      results.push({type:isG?'GUIDE':isT?'INTERACTIVE':isCards?'FLASHCARDS':'ARMY', typeClass:isG?'tag-guide':isCards?'tag-fc':'tag-int', section:isCards?'Slides \u2014 Army Basics':'Tactics', nm:a.nm, ds:a.ds,
+        href:a.file, color:isG?'var(--c-guide)':isT?'var(--c-tool)':'var(--c-cards)', go:isG?'READ \u2192':isT?'LAUNCH \u2192':'STUDY \u2192'});
     }
   });
   WRAVEN_MODULES.forEach(m=>{
@@ -634,8 +637,8 @@ function renderSlides(){
   vh+='<h3 style="font-size:13px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin:22px 0 8px">🎖️ Army Basics — Flashcards</h3>';
   vh+='<div class="grid">';
   ARMY.filter(a=>a.kind==='cards'&&!a.hide).forEach(a=>{
-    vh+=`<a class="card" href="${a.file}" style="--accent:#00d4ff">
-      <div class="cat">ARMY <span class="tag" style="border-color:#00d4ff;color:#00d4ff">FLASHCARDS</span></div><div class="nm">${a.nm}</div>
+    vh+=`<a class="card" href="${a.file}" style="--accent:var(--c-cards)">
+      <div class="cat">ARMY <span class="tag tag-fc">FLASHCARDS</span></div><div class="nm">${a.nm}</div>
       <div class="ds">${a.ds}</div><div class="go">STUDY \u2192</div></a>`;
   });
   vh+='</div>';
@@ -810,7 +813,7 @@ function renderArmy(){
   const cardHtml=a=>{
     const isG=a.kind==='guide',isT=a.kind==='tool';
     const tag=isG?'<span class="tag tag-guide">GUIDE</span>':'<span class="tag tag-int">INTERACTIVE</span>';
-    const color=isG?'#7a5cff':'#00ff88';
+    const color=isG?'var(--c-guide)':'var(--c-tool)';
     const go=isG?'READ \u2192':'LAUNCH \u2192';
     return `<a class="card${isG?' is-guide':''}" href="${a.file}" style="--accent:${color}">
       <div class="cat">TACTICS ${tag}</div><div class="nm">${a.nm}</div>

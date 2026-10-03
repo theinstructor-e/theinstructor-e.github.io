@@ -485,5 +485,14 @@ function loop(ts){
 function syncArm(){const a=!!(D&&D.armed);if($('armBtn').textContent!==(a?'DISARM':'ARM')){$('armBtn').textContent=a?'DISARM':'ARM';$('armBtn').classList.toggle('on',a);}}
 startLesson(0);requestAnimationFrame(loop);
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>

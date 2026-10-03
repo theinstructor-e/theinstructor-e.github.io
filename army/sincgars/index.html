@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,10 +125,38 @@ canvas.cv{display:block;width:100%;height:auto;aspect-ratio:3/4;border-radius:8p
 table.aar{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0}
 table.aar td{padding:5px 6px;border-bottom:1px solid #2a2c22}table.aar td:last-child{text-align:right;color:#e8e6dc}
 ol.seq{margin:8px 0 0;padding-left:20px;font-size:15.5px;line-height:1.35;color:#c8c6b0}
+
+/* ---- light / dark toggle (page chrome only; the equipment faces stay as hardware) ---- */
+.app{position:relative}
+.themebtn{position:absolute;top:-2px;right:0;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:#7fa8b8;background:transparent;border:1px solid #35586a;border-radius:4px;padding:5px 8px;cursor:pointer;z-index:3}
+.hdr{padding:0 66px}
+html[data-theme="light"] body{background:#e9edf1;background-image:none;color:#1b2430}
+html[data-theme="light"] .themebtn{color:#0a5f84;border-color:#7ab8d4;background:#fff}
+html[data-theme="light"] .hdr{color:#4a5a6b}html[data-theme="light"] .hdr b{color:#1b2430}
+html[data-theme="light"] .hud{background:#fff;border-color:#c5d0db}
+html[data-theme="light"] .hud-step{color:#5a6b7c}html[data-theme="light"] .hud-obj{color:#14212f}
+html[data-theme="light"] .hud-btn{background:#fff7e6;color:#8a5a00;border-color:#c99a40}
+html[data-theme="light"] .hud-btn.sm{background:#e8f4fb;color:#0a5f84;border-color:#7ab8d4}
+html[data-theme="light"] .pill{border-color:#c5d0db;color:#5a6b7c}
+html[data-theme="light"] .msg{color:#3a4a5a}html[data-theme="light"] .msg.err{color:#b02a1a}html[data-theme="light"] .msg.good{color:#0a7a46}
+html[data-theme="light"] .start{background:#fff;border-color:#c5d0db}
+html[data-theme="light"] .start h1{color:#14212f}html[data-theme="light"] .start p{color:#4a5a6b}
+html[data-theme="light"] .choice{background:#f4f7fa;border-color:#c5d0db;color:#14212f}
+html[data-theme="light"] .choice span{color:#4a5a6b}
+html[data-theme="light"] .srcstrip{color:#5a6b7c}html[data-theme="light"] .srcstrip b{color:#2a3a4a}
+html[data-theme="light"] .backlink a{color:#0a5f84}
+html[data-theme="light"] .sheet{background:#fff;border-color:#9fb0c0}
+html[data-theme="light"] .sheet h2{color:#14212f}html[data-theme="light"] .sheet .k{color:#8a5a00}
+html[data-theme="light"] table.aar td{border-color:#d5dde5;color:#14212f}html[data-theme="light"] table.aar td:last-child{color:#14212f}
+html[data-theme="light"] ol.seq{color:#2a3a4a}html[data-theme="light"] .note{color:#4a5a6b}
+html[data-theme="light"] .hint{color:#4a5a6b}html[data-theme="light"] .hint b{color:#14212f}
+html[data-theme="light"] .btn.alt{background:#eef2f6;color:#14212f;border-color:#b5c3d0}
+html[data-theme="light"] .digs input{background:#fff;color:#14212f;border-color:#9fb0c0}
 </style>
 </head>
 <body>
 <div class="app">
+  <button class="themebtn" id="tb" onclick="toggleTheme()">LIGHT</button>
   <div class="hdr">Training Simulator &middot; Not for Operational Use &middot; <b>RT-1523E(C)/U ASIP</b> &middot; AN/PRC-119F Family</div>
 
   <!-- START -->
@@ -709,6 +737,17 @@ function loop(ts){
   if(p==='free')startFree();
   if(p==='lane')startLane();
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';r.setAttribute('data-theme',l?'dark':'light');document.getElementById('tb').textContent=l?'LIGHT':'DARK';}
 </script>
 </body>
 </html>

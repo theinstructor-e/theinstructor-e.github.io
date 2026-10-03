@@ -396,5 +396,14 @@ function loop(ts){
 buildStart();requestAnimationFrame(loop);
 (function(){const p=new URLSearchParams(location.search).get('mode');if(p==='free')startFree();})();
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>
