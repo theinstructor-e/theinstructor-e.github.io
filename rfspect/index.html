@@ -730,10 +730,10 @@
         <span class="exp-penalty">⚠ Federal offense</span>
       </div>
       <p class="exp-body">
-        <strong>Absolutely no unauthorized transmission.</strong> These bands are reserved for safety-of-life or government-exclusive use. Transmitting — even accidentally or at low power — can endanger lives, disrupt navigation, or jam emergency services. The FCC and federal law treat violations as serious criminal offenses, not just regulatory infractions. Jamming GPS, for example, carries fines up to $100,000 per violation and potential prison time.
+        <strong>Absolutely no unauthorized transmission.</strong> These bands are reserved for safety-of-life or government-exclusive use. Transmitting — even accidentally or at low power — can endanger lives, disrupt navigation, or jam emergency services. The FCC and federal law treat violations as serious criminal offenses, not just regulatory infractions. Jamming GPS, for example, can bring penalties above $100,000 per violation according to FCC advisories (the amounts are adjusted for inflation every year), plus seizure of equipment and possible criminal penalties including imprisonment.
       </p>
       <div class="exp-examples">
-        Examples: <span>Aviation nav 108–136 MHz</span> <span>GPS L1/L2</span> <span>EPIRB 406 MHz</span> <span>Radio astronomy 1400 MHz</span> <span>Public safety 4.94 GHz</span>
+        Examples: <span>Aviation nav 108–137 MHz</span> <span>GPS L1/L2</span> <span>EPIRB 406 MHz</span> <span>Radio astronomy 1400 MHz</span> <span>Public safety 4.94 GHz</span>
       </div>
     </div>
 
@@ -912,11 +912,11 @@
           </td>
           <td class="td-status"><span class="pill pill-protected">Protected</span></td>
         </tr>
-        <tr data-status="taboo" data-min="108.0000" data-max="136.0000">
-          <td class="td-freq">108 – 136 MHz</td>
+        <tr data-status="taboo" data-min="108.0000" data-max="137.0000">
+          <td class="td-freq">108 – 137 MHz</td>
           <td class="td-name">Aviation nav / comm</td>
           <td class="td-use">VOR, ILS, ATIS, ATC voice — strictly aviation only. Unauthorized transmission is a federal offense.</td>
-          <td class="td-detail"><strong>VHF aeronautical band</strong> — the most safety-critical VHF allocation. <strong>VOR</strong> (VHF Omnidirectional Range, 108–118 MHz) provides bearing to a ground station. <strong>ILS</strong> (Instrument Landing System) guides aircraft on final approach. <strong>ATIS</strong> broadcasts automatic weather/runway info. ATC voice uses AM modulation (not FM) from 118–136 MHz so ground stations can hear multiple aircraft simultaneously.
+          <td class="td-detail"><strong>VHF aeronautical band</strong> — the most safety-critical VHF allocation. <strong>VOR</strong> (VHF Omnidirectional Range, 108–118 MHz) provides bearing to a ground station. <strong>ILS</strong> (Instrument Landing System) guides aircraft on final approach. <strong>ATIS</strong> broadcasts automatic weather/runway info. ATC voice uses AM modulation (not FM) from 118–137 MHz so ground stations can hear multiple aircraft simultaneously.
             <span class="detail-sub"><span class="dtag">VOR: 108–118 MHz</span><span class="dtag">ILS localizer: 108–112 MHz</span><span class="dtag">ATC voice: AM (not FM)</span><span class="dtag">121.5 MHz: emergency</span></span>
           </td>
           <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
@@ -1017,7 +1017,7 @@
           <td class="td-freq">1227.6 / 1575.42 MHz</td>
           <td class="td-name">GPS L2 / L1</td>
           <td class="td-use">GPS satellite navigation signals — civilian and military positioning. Jamming is a federal crime.</td>
-          <td class="td-detail"><strong>GPS L1 (1575.42 MHz)</strong> carries the civilian C/A code used by every consumer GPS device. <strong>L2 (1227.6 MHz)</strong> carries a military P(Y) code and is also used by dual-frequency receivers for ionospheric error correction — enabling centimetre-level precision. GPS signals arrive at Earth at roughly −130 dBm (far weaker than a TV signal), making them trivially easy to jam or spoof. A cheap illegal jammer can disrupt GPS across several city blocks.
+          <td class="td-detail"><strong>GPS L1 (1575.42 MHz)</strong> carries the civilian C/A code used by every consumer GPS device. <strong>L2 (1227.6 MHz)</strong> carries a military P(Y) code and is also used by dual-frequency receivers to correct ionospheric delay, which improves accuracy. Centimetre-level precision needs more than a second frequency: it takes carrier-phase techniques such as RTK with a nearby reference station. GPS signals arrive at Earth at roughly −130 dBm (far weaker than a TV signal), making them trivially easy to jam or spoof. A cheap illegal jammer can disrupt GPS across several city blocks.
             <span class="detail-sub"><span class="dtag">L1: civilian C/A code</span><span class="dtag">L2: military + dual-freq correction</span><span class="dtag">Signal power: −130 dBm at surface</span></span>
           </td>
           <td class="td-status"><span class="pill pill-taboo">Taboo</span></td>
@@ -1051,10 +1051,10 @@
         </tr>
         <tr data-status="guarded" data-min="2483.0000" data-max="2500.0000">
           <td class="td-freq">2483 – 2500 MHz</td>
-          <td class="td-name">L-band MSS uplink</td>
-          <td class="td-use">Mobile satellite services (Globalstar, Iridium uplink), shared with ISM</td>
-          <td class="td-detail"><strong>Mobile Satellite Service (MSS) uplink</strong> — used by LEO satellite constellations like Globalstar for voice and data from handheld satellite phones. These systems use the band to transmit from Earth up to low-orbiting satellites. Because it overlaps with the ISM band edge, interference from unlicensed devices is a known issue. Globalstar operates a unique CDMA-based satellite phone system here; Iridium uses a different architecture with cross-links between satellites.
-            <span class="detail-sub"><span class="dtag">Globalstar LEO uplink</span><span class="dtag">Overlaps ISM band edge</span><span class="dtag">Satellite phone service</span></span>
+          <td class="td-name">S-band MSS downlink</td>
+          <td class="td-use">Mobile satellite service downlink (Globalstar, satellite to handset), shared with ISM</td>
+          <td class="td-detail"><strong>Mobile Satellite Service (MSS) downlink</strong> — used by LEO satellite constellations like Globalstar for voice and data to handheld satellite phones. In this band the satellites transmit down to Earth. The Globalstar uplink, handset to satellite, is in the L-band at 1610 – 1626.5 MHz. Because it overlaps with the ISM band edge, interference from unlicensed devices is a known issue. Globalstar operates a CDMA-based satellite phone system; Iridium uses a different architecture, working in the L-band near 1616 – 1626.5 MHz, with cross-links between satellites.
+            <span class="detail-sub"><span class="dtag">Globalstar LEO downlink</span><span class="dtag">Overlaps ISM band edge</span><span class="dtag">Satellite phone service</span></span>
           </td>
           <td class="td-status"><span class="pill pill-guarded">Guarded</span></td>
         </tr>
@@ -1125,22 +1125,32 @@
         </tr>
         <tr data-status="protected" data-min="5350.0000" data-max="5470.0000">
           <td class="td-freq">5.35 – 5.47 GHz</td>
-          <td class="td-name">Federal radar (DFS zone)</td>
-          <td class="td-use">Federal radar protected — Wi-Fi devices must use DFS to detect and avoid; active radar takes priority</td>
-          <td class="td-detail"><strong>DFS exclusion zone</strong> — federal weather and military radars have primary rights here. Wi-Fi devices certified for this sub-band must implement DFS: listen for 60 seconds before transmitting on a channel, and clear the channel within 10 seconds if radar pulses are detected. This prevents Wi-Fi from jamming radar that the public never directly sees but depends on for weather forecasting and air defense. Many consumer routers skip these channels by default to avoid the DFS delay.
-            <span class="detail-sub"><span class="dtag">60-second pre-transmission scan</span><span class="dtag">10-second vacate on radar detect</span><span class="dtag">Many routers skip by default</span></span>
+          <td class="td-name">Federal radar (closed to Wi-Fi)</td>
+          <td class="td-use">Federal radar and satellite services. In the US this segment is not open to unlicensed Wi-Fi.</td>
+          <td class="td-detail"><strong>Not open to unlicensed devices in the US</strong> — this 120 MHz segment (sometimes called U-NII-2B) is used by federal radar and by Earth-exploration satellites, and the FCC has not allocated it for unlicensed Wi-Fi. The nearby U-NII-2A (5.25 – 5.35 GHz) and U-NII-2C (5.47 – 5.725 GHz) bands do allow Wi-Fi, but only with DFS (dynamic frequency selection): the device must listen for radar before it transmits and leave the channel if it detects radar.
+            <span class="detail-sub"><span class="dtag">Not open to Wi-Fi in the US</span><span class="dtag">Federal radar</span><span class="dtag">Neighbors use DFS</span></span>
           </td>
           <td class="td-status"><span class="pill pill-protected">Protected</span></td>
         </tr>
-        <tr data-status="unlicensed" data-min="5470.0000" data-max="5850.0000">
-          <td class="td-freq">5.47 – 5.85 GHz</td>
+        <tr data-status="unlicensed" data-min="5470.0000" data-max="5725.0000">
+          <td class="td-freq">5.47 – 5.725 GHz</td>
           <td class="td-name">U-NII-2C / Wi-Fi</td>
-          <td class="td-use">Wi-Fi 802.11a/n/ac with DFS (radar avoidance required), outdoor allowed at higher power</td>
-          <td class="td-detail"><strong>U-NII-2C</strong> (also called U-NII-2 Extended) — the widest single U-NII sub-band at 380 MHz. DFS is still required (shared with weather radar), but outdoor use and higher power (up to 1 W EIRP) are permitted, making this useful for point-to-point building links and outdoor hotspots. Wi-Fi channels 100–144 live here and offer the widest 80/160 MHz channel bonding options used by 802.11ac/ax for maximum throughput.
-            <span class="detail-sub"><span class="dtag">DFS required</span><span class="dtag">Outdoor use OK (up to 1 W)</span><span class="dtag">Wi-Fi ch. 100–144</span></span>
+          <td class="td-use">Wi-Fi 802.11a/n/ac/ax with DFS (radar avoidance required), outdoor use allowed</td>
+          <td class="td-detail"><strong>U-NII-2C</strong> (also called U-NII-2 Extended) — 255 MHz wide, the widest single U-NII sub-band. DFS is required (shared with weather radar), and power is limited to about 250 mW (outdoor use is allowed), so it suits indoor and short-range outdoor access points. Wi-Fi channels 100–144 live here and offer the widest 80/160 MHz channel bonding options used by 802.11ac/ax for maximum throughput.
+            <span class="detail-sub"><span class="dtag">DFS required</span><span class="dtag">Outdoor use OK</span><span class="dtag">Wi-Fi ch. 100–144</span></span>
           </td>
           <td class="td-status"><span class="pill pill-unlicensed">Unlicensed</span></td>
         </tr>
+        <tr data-status="unlicensed" data-min="5725.0000" data-max="5850.0000">
+          <td class="td-freq">5.725 – 5.85 GHz</td>
+          <td class="td-name">U-NII-3 / ISM / Wi-Fi</td>
+          <td class="td-use">Wi-Fi 802.11a/n/ac/ax, no DFS required, higher power allowed, shared with the 5.8 GHz ISM band</td>
+          <td class="td-detail"><strong>U-NII-3</strong> (U-NII Upper) — 125 MHz at 5.725 – 5.85 GHz. DFS is not required here, and higher power (up to about 1 W) is allowed, which is why wireless internet providers and point-to-point links favor it. It overlaps the 5.8 GHz ISM band used by many drone video links, cordless phones, and other devices. Wi-Fi channels 149–165 live here.
+            <span class="detail-sub"><span class="dtag">No DFS</span><span class="dtag">Higher power (about 1 W)</span><span class="dtag">Overlaps 5.8 GHz ISM</span><span class="dtag">Wi-Fi ch. 149–165</span></span>
+          </td>
+          <td class="td-status"><span class="pill pill-unlicensed">Unlicensed</span></td>
+        </tr>
+
         <tr data-status="guarded" data-min="5850.0000" data-max="5925.0000">
           <td class="td-freq">5.85 – 5.925 GHz</td>
           <td class="td-name">U-NII-4 / V2X</td>
@@ -1208,7 +1218,7 @@
     { a:3000, b:6000, color:'#3fb950', label:'SHF 3–6 GHz' },
   ];
   const tabooSegs = [
-    { a:108,  b:136,   label:'Aviation nav/comm' },
+    { a:108,  b:137,   label:'Aviation nav/comm' },
     { a:406,  b:406.1, label:'EPIRB distress' },
     { a:960,  b:1215,  label:'Aero radionavigation' },
     { a:1227, b:1240,  label:'GPS L2' },
