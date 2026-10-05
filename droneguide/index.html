@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drone Flight Basics Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>Drone Flight Basics <span>Explained</span></h1>
+  <p class="hero-sub">What a multirotor is, how four motors become six movements, what its flight modes and failsafes do, how long it can fly, how its links work, and what each type depends on. Six chapters with hands-on widgets.</p>
+</header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>Comfortable with link budgets? See <a href="../physicsguide/">Radio Waves Explained</a>. Want the counter-drone side first? Read <a href="../systemsguide/">Space &amp; Drones Explained</a>. GPS details are in <a href="../gnssguide/">GNSS &amp; Navigation Explained</a>.</div><div><b>Then practice in the tools</b><a href="../fpvschool/">FPV Flight School</a> &middot; <a href="../cuas/">UAS Signature</a> &middot; <a href="../cuasdemo/">C-UAS Demo</a> &middot; <a href="../dronedef/">Drone Defender Simulator</a> &middot; <a href="../fobdefense/">FOB Defense</a>. About 40 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<!-- ============ CHAPTER 1 ============ -->
+<section class="ch on" id="ch1">
+  <h2>1 &middot; What a Multirotor Is</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Name the main parts of a small multirotor and what each does.</li>
+    <li>Place a drone in the DoD UAS group system.</li>
+    <li>Describe LiPo battery voltages and the basic care they need.</li></ul></div>
+
+  <p>A small unmanned aircraft is a flying computer with four motors. To understand how it works, how to fly one, and how to counter one, you need to know its parts, because each part is a dependency.</p>
+  <h3>The parts</h3>
+  <table class="t"><tr><th>Part</th><th>Job</th></tr>
+   <tr><td>Frame and arms</td><td>Hold everything. A quadcopter has four arms, so four motors.</td></tr>
+   <tr><td>Motors and propellers</td><td>Brushless motors spin the props to make thrust. The speed of each motor is controlled separately.</td></tr>
+   <tr><td>ESCs</td><td>Electronic speed controllers. They take a signal from the flight controller and drive each motor.</td></tr>
+   <tr><td>Flight controller (FC)</td><td>The brain. It reads gyroscopes and accelerometers many hundreds or thousands of times a second and adjusts the four motors to keep the drone stable and doing what you commanded.</td></tr>
+   <tr><td>Battery</td><td>Usually a lithium polymer (LiPo) pack. It is also the heaviest single part.</td></tr>
+   <tr><td>Radio receiver</td><td>Hears your control commands.</td></tr>
+   <tr><td>GPS and compass</td><td>Optional. Give position, speed, and a heading reference for hold and return-to-home modes.</td></tr>
+   <tr><td>Camera and video transmitter</td><td>Send what the drone sees back to the pilot, in FPV (first-person view) flying.</td></tr></table>
+  <p>The four motors do not all spin the same way. Diagonal pairs spin one direction and the other pair spins the opposite way. Each spinning motor pushes back on the frame with a twisting force (torque). Two spinning one way and two spinning the other make those twists cancel, so the drone does not spin on its own.</p>
+
+  <h3>Military UAS groups</h3>
+  <p>The Department of Defense sorts unmanned aircraft into five groups by weight, altitude, and speed. If a UAS meets the limits of a higher group on <b>any</b> one measure, it goes in that higher group.</p>
+  <table class="t"><tr><th>Group</th><th>Weight</th><th>Operating altitude</th><th>Speed</th><th>Example</th></tr>
+   <tr><td>1</td><td>0 to 20 lb</td><td>under 1,200 ft AGL</td><td>under 100 kt</td><td>Raven, small quadcopters</td></tr>
+   <tr><td>2</td><td>21 to 55 lb</td><td>under 3,500 ft AGL</td><td>under 250 kt</td><td>ScanEagle</td></tr>
+   <tr><td>3</td><td>under 1,320 lb</td><td>under 18,000 ft</td><td>under 250 kt</td><td>Shadow</td></tr>
+   <tr><td>4</td><td>over 1,320 lb</td><td>under 18,000 ft</td><td>any</td><td>Gray Eagle</td></tr>
+   <tr><td>5</td><td>over 1,320 lb</td><td>over 18,000 ft</td><td>any</td><td>Reaper, Global Hawk</td></tr></table>
+  <div class="try"><div class="th">Try it: which group?</div><div class="tb">
+    <div class="ctl"><label>Weight</label><input type="range" id="d1w" min="0" max="100" step="1" value="40" oninput="Gp.calc()"><span class="v" id="d1wv"></span></div>
+    <div class="ctl"><label>Altitude</label><input type="range" id="d1a" min="0" max="100" step="1" value="35" oninput="Gp.calc()"><span class="v" id="d1av"></span></div>
+    <div class="ctl"><label>Speed</label><input type="range" id="d1s" min="0" max="100" step="1" value="35" oninput="Gp.calc()"><span class="v" id="d1sv"></span></div>
+    <div class="read" id="d1r"></div>
+    <div class="note">The group is set by the highest of the three. A light drone that flies fast or high still moves up a group.</div></div></div>
+
+  <h3>LiPo batteries in brief</h3>
+  <p>A LiPo pack is built from <b>cells</b>. Each cell is about <b>3.7 V nominal</b>, about <b>4.2 V fully charged</b>. Packs are named by how many cells are in series: 4S is four cells. So a 4S pack is 14.8 V nominal and 16.8 V full.</p>
+  <ul>
+   <li>Do not discharge a cell below about 3.0 V, and land well before that. A common rule is to land by about 3.5 V per cell under load.</li>
+   <li>Charge only with the right charger, set to the right cell count, in a safe place and never unattended.</li>
+   <li>A swollen, punctured, or crushed pack is a fire hazard. Do not use it. Dispose of it through the proper channel.</li></ul>
+
+  <div class="why"><b>Why a 17E cares</b>Every part on this list is something a counter-drone system can target. The control receiver, the video link, and the GPS are radio dependencies. The battery limits how long the drone can stay up. Knowing the parts is knowing the weak points.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Frame, motors, ESCs, flight controller, battery, receiver, optional GPS, and camera. The FC stabilizes the drone constantly.</li><li>Diagonal motors spin the same way so torques cancel.</li><li>DoD groups run 1 to 5. The highest measure sets the group. LiPo cells are 3.7 V nominal and 4.2 V full.</li></ul></div>
+  <div class="kt"><span class="term" data-t="uas">UAS</span><span class="term" data-t="fc">flight controller</span><span class="term" data-t="esc">ESC</span><span class="term" data-t="lipo">LiPo</span><span class="term" data-t="fpv">FPV</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: How it flies &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 2 ============ -->
+<section class="ch" id="ch2">
+  <h2>2 &middot; How It Flies</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Explain how throttle, pitch, roll, and yaw come from four motor speeds.</li>
+    <li>Calculate thrust-to-weight ratio and estimate hover throttle.</li>
+    <li>Say why a tilted drone needs more thrust to hold height.</li></ul></div>
+
+  <h3>Four commands</h3>
+  <p>A quadcopter has only four motors and can do six things (move in three directions, rotate about three axes) because it tilts. The pilot has four controls. On the standard Mode 2 transmitter:</p>
+  <table class="t"><tr><th>Stick</th><th>Control</th><th>What it does</th></tr>
+   <tr><td>Left, up and down</td><td>Throttle</td><td>Total thrust: climb or descend.</td></tr>
+   <tr><td>Left, left and right</td><td>Yaw</td><td>Rotate left or right on the spot, nose swinging around.</td></tr>
+   <tr><td>Right, up and down</td><td>Pitch</td><td>Tilt nose down to go forward, nose up to go back.</td></tr>
+   <tr><td>Right, left and right</td><td>Roll</td><td>Tilt to the side to slide left or right.</td></tr></table>
+  <h3>The mixer</h3>
+  <p>The flight controller blends the four commands into four motor speeds. Throttle raises or lowers all four together. To pitch forward it speeds up the rear motors and slows the front ones, which tips the nose down. To roll right it speeds up the left side and slows the right. To yaw it speeds up one diagonal pair and slows the other, so the net twist on the frame turns the drone.</p>
+  <div class="try"><div class="th">Try it: the motor mixer</div><div class="tb">
+    <canvas id="d2c" width="480" height="240"></canvas>
+    <div class="ctl"><label>Throttle</label><input type="range" id="d2th" min="0" max="100" step="1" value="50" oninput="Mx.calc()"><span class="v" id="d2thv"></span></div>
+    <div class="ctl"><label>Pitch (forward)</label><input type="range" id="d2p" min="-30" max="30" step="1" value="0" oninput="Mx.calc()"><span class="v" id="d2pv"></span></div>
+    <div class="ctl"><label>Roll (right)</label><input type="range" id="d2ro" min="-30" max="30" step="1" value="0" oninput="Mx.calc()"><span class="v" id="d2rov"></span></div>
+    <div class="ctl"><label>Yaw (right)</label><input type="range" id="d2y" min="-30" max="30" step="1" value="0" oninput="Mx.calc()"><span class="v" id="d2yv"></span></div>
+    <div class="read" id="d2mr"></div>
+    <div class="note">The drone is seen from above, nose up on the screen. Bars show motor speed. The arrow on each motor shows its spin direction. Move one slider at a time and watch which motors change.</div></div></div>
+
+  <h3>Thrust and weight</h3>
+  <p>To hover, total thrust must equal weight. The ratio of maximum thrust to weight is the <span class="term" data-t="twr">thrust-to-weight ratio (TWR)</span>. A relaxed camera drone might have a TWR of about 2. A racing drone may be 8 or more. Because thrust rises roughly with throttle, hover throttle is about 1 &divide; TWR as a rough guide.</p>
+  <div class="formula">TWR = (number of motors &times; max thrust per motor) &divide; weight<br>hover throttle &approx; 100% &divide; TWR   (rough: thrust is not exactly linear)</div>
+  <div class="try"><div class="th">Try it: thrust-to-weight</div><div class="tb">
+    <div class="ctl"><label>Drone weight</label><input type="range" id="d2w" min="0" max="100" step="1" value="45" oninput="Tw.calc()"><span class="v" id="d2wv"></span></div>
+    <div class="ctl"><label>Max thrust per motor</label><input type="range" id="d2t" min="0" max="100" step="1" value="55" oninput="Tw.calc()"><span class="v" id="d2tv"></span></div>
+    <div class="read" id="d2r"></div></div></div>
+
+  <h3>Leaning costs thrust</h3>
+  <p>To move sideways, the drone tilts so part of its thrust points horizontally. But only the vertical part holds it up. To keep the same height, total thrust must rise.</p>
+  <div class="formula">thrust needed = weight &divide; cos(tilt angle)<br>horizontal acceleration &approx; g &times; tan(tilt angle)     g = 9.81 m/s&sup2;</div>
+  <div class="try"><div class="th">Try it: lean and thrust</div><div class="tb">
+    <div class="ctl"><label>Tilt angle</label><input type="range" id="d2l" min="0" max="70" step="1" value="30" oninput="Lt.calc()"><span class="v" id="d2lv"></span></div>
+    <div class="read" id="d2lr"></div>
+    <div class="note">At steep angles the drone needs far more thrust to hold height. A drone with low thrust margin cannot lean as hard, which limits its top speed and how fast it can accelerate.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>How a drone moves tells you how it will react when you disturb it. Lose a motor or a link and it does not just stop: it responds the way its flight controller was set up to, and you can predict it from this chapter.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Four commands become four motor speeds through the mixer. Yaw uses the difference between the two diagonal pairs.</li><li>TWR = total max thrust &divide; weight. Hover throttle &approx; 100% &divide; TWR.</li><li>Thrust needed = weight &divide; cos(tilt). Acceleration &approx; g &times; tan(tilt).</li></ul></div>
+  <div class="kt"><span class="term" data-t="throttle">throttle</span><span class="term" data-t="pitch">pitch</span><span class="term" data-t="roll">roll</span><span class="term" data-t="yaw">yaw</span><span class="term" data-t="twr">TWR</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Modes and failsafe &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 3 ============ -->
+<section class="ch" id="ch3">
+  <h2>3 &middot; Flight Modes and Failsafe</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Describe acro, angle, altitude hold, and position hold modes.</li>
+    <li>Explain what failsafe does when the control link is lost.</li>
+    <li>Predict what a drone does when each dependency is removed.</li></ul></div>
+
+  <h3>How much help does the flight controller give?</h3>
+  <p>A flight mode decides how much the flight controller does for the pilot.</p>
+  <div class="try"><div class="th">Try it: flight modes</div><div class="tb">
+    <div class="chips" id="d3m"></div>
+    <div class="fb ok" id="d3o" style="display:block;margin-top:8px;font-size:14px"></div></div></div>
+  <h3>Failsafe</h3>
+  <p>The receiver tells the flight controller whether it is still getting commands. If the link is lost, after a short timeout the controller runs a <span class="term" data-t="failsafe">failsafe</span>: a pre-set action. Common ones are:</p>
+  <ul>
+   <li><b>Disarm / drop.</b> Motors stop. Common on racing drones with no GPS.</li>
+   <li><b>Land.</b> Descend in place at a gentle rate.</li>
+   <li><b>Hover.</b> Hold position, if the drone knows where it is.</li>
+   <li><b>Return to home (RTH).</b> Climb to a set height and fly back to where it took off. It needs a GPS fix and a recorded home point.</li></ul>
+  <p>Which one applies is a setting, and it depends on what the drone has. A drone with no GPS cannot return home.</p>
+  <div class="try"><div class="th">Try it: the link drops</div><div class="tb">
+    <div class="ctl"><label>Drone</label><div class="chips" id="d3t"></div></div>
+    <div class="ctl"><label>Failsafe setting</label><div class="chips" id="d3f"></div></div>
+    <div class="fb ok" id="d3r" style="display:block;margin-top:6px;font-size:14px"></div>
+    <div class="note">General behaviors for teaching. Real drones vary by model and setup.</div></div></div>
+
+  <h3>Wind and GPS</h3>
+  <p>A drone flying in wind has an airspeed and a ground speed that differ. It may fly steadily relative to the air yet move quickly over the ground, and a small low-power drone may not be able to make headway against strong wind. If GPS is lost, a drone that relied on it for position hold will drift with the wind in an attitude-only mode, and the pilot has to fly it by hand.</p>
+
+  <div class="why"><b>Why a 17E cares</b>Failsafe is the reason &ldquo;jam the control link&rdquo; does not always mean &ldquo;the drone falls.&rdquo; The outcome is whatever the owner programmed. Knowing the options tells you what the drone will probably do next.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Acro gives no help. Angle self-levels. Altitude hold and position hold need a barometer and GPS.</li><li>Failsafe is a pre-set action when the link is lost: drop, land, hover, or return home.</li><li>RTH needs a GPS fix and a home point. A drone with no GPS cannot do it.</li></ul></div>
+  <div class="kt"><span class="term" data-t="acro">acro mode</span><span class="term" data-t="angle">angle mode</span><span class="term" data-t="poshold">position hold</span><span class="term" data-t="failsafe">failsafe</span><span class="term" data-t="rth">return to home</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Power &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 4 ============ -->
+<section class="ch" id="ch4">
+  <h2>4 &middot; Power and Endurance</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Calculate battery energy from cells and capacity.</li>
+    <li>Estimate flight time from average current.</li>
+    <li>Explain why endurance is short for small drones.</li></ul></div>
+
+  <p>A hovering multirotor is constantly pushing air down to stay up, so it uses power all the time. Endurance is limited by how much energy the battery holds.</p>
+  <div class="formula">pack voltage (nominal) = cells &times; 3.7 V<br>energy (watt-hours) = voltage &times; capacity in amp-hours<br>flight time (minutes) &approx; capacity (Ah) &times; usable fraction &divide; average current (A) &times; 60</div>
+  <p>Use about <b>80%</b> as the usable fraction: you land before the pack is flat. Batteries are rated in <b>mAh</b> (1,000 mAh = 1 Ah).</p>
+  <details class="work"><summary>Worked example: 4S 1500 mAh at 20 A average</summary><div>
+   <p>Voltage = 4 &times; 3.7 = 14.8 V. Energy = 14.8 &times; 1.5 Ah = 22.2 Wh.</p>
+   <p>Usable capacity = 1.5 &times; 0.8 = 1.2 Ah. Flight time = 1.2 &divide; 20 &times; 60 = 3.6 minutes.</p>
+   <p>Average power = 14.8 V &times; 20 A = 296 W. Racing drones fly hard and burn through a pack in a few minutes. A drone built for efficiency, with large slow props and a lighter load, averages much less current and flies for a long time.</p></div></details>
+  <div class="try"><div class="th">Try it: endurance</div><div class="tb">
+    <div class="ctl"><label>Cells in series</label><div class="chips" id="d4s"></div></div>
+    <div class="ctl"><label>Capacity</label><input type="range" id="d4c" min="0" max="100" step="1" value="30" oninput="En.calc()"><span class="v" id="d4cv"></span></div>
+    <div class="ctl"><label>Average current</label><input type="range" id="d4i" min="1" max="100" step="1" value="20" oninput="En.calc()"><span class="v" id="d4iv"></span></div>
+    <div class="read" id="d4r"></div>
+    <div class="note">Bigger batteries add energy but also weight, which raises current. The relationship is not linear, so doubling the battery does not double the time. Land by the voltage shown. Voltage sags under load, so watch it while flying, not just on the ground.</div></div></div>
+
+  <h3>What that means in the field</h3>
+  <ul>
+   <li><b>Small drones are short-lived.</b> Typical small multirotors fly for minutes to a few tens of minutes. The enemy and friendly pilots alike have to land and swap batteries.</li>
+   <li><b>Cold hurts batteries.</b> LiPo packs lose capacity and voltage in cold weather. Keep them warm until use.</li>
+   <li><b>Range is speed times time,</b> and also depends on the link (Chapter 5). A drone that can fly 20 minutes at 15 m/s could cover 18 km, but only if the link and the navigation hold up the whole way.</li></ul>
+
+  <div class="why"><b>Why a 17E cares</b>Battery life is a clock on every drone mission. It limits loiter time, forces return trips, and tells you when to expect a drone to leave or land. Operators who must conserve battery also tend to fly in predictable patterns.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Energy (Wh) = cells &times; 3.7 V &times; capacity (Ah).</li><li>Flight time &approx; capacity &times; 0.8 &divide; average current &times; 60 minutes.</li><li>Endurance is short because hovering burns power constantly and batteries are heavy.</li></ul></div>
+  <div class="kt"><span class="term" data-t="cellS">cell count (S)</span><span class="term" data-t="wh">watt-hour</span><span class="term" data-t="mah">mAh</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Links &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 5 ============ -->
+<section class="ch" id="ch5">
+  <h2>5 &middot; Radio and Video Links</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Name the common drone control and video frequency bands.</li>
+    <li>Estimate link range from power, antenna gains, and sensitivity.</li>
+    <li>Explain polarization and the radio horizon for a drone link.</li></ul></div>
+
+  <p>A piloted drone has two radio links. One carries commands <b>up</b>, and the other carries video <b>down</b>. Both are ordinary radio, so everything from the Radio Waves and Modulation guides applies.</p>
+  <table class="t"><tr><th>Link</th><th>Common bands</th><th>Notes</th></tr>
+   <tr><td>Control</td><td>2.4 GHz (very common), 900 MHz (long range), 5.8 GHz on some systems</td><td>Often frequency hopping, with a low data rate. Lower frequency goes farther and penetrates better.</td></tr>
+   <tr><td>Video</td><td>5.8 GHz (analog FPV and some digital systems), 2.4 GHz on some</td><td>Wide bandwidth, so it needs a strong signal. Analog degrades gradually with noise. Digital often holds then drops.</td></tr>
+   <tr><td>GPS</td><td>1.2 and 1.5 GHz, receive only</td><td>Faint, see GNSS &amp; Navigation Explained.</td></tr></table>
+  <p>Range comes from the link budget you already know: transmit power plus both antenna gains, minus path loss, compared with the receiver&rsquo;s sensitivity, with margin for fading.</p>
+  <div class="formula">allowed path loss = Pt + Gt + Gr &minus; receiver sensitivity &minus; fade margin<br>free-space range (km) = 10<sup>(allowed path loss &minus; 32.44 &minus; 20&middot;log<sub>10</sub>(f in MHz)) &divide; 20</sup></div>
+  <p>The free-space figure is a ceiling. In practice the <b>radio horizon</b> or obstacles cut it short. The horizon limit is 4.12 &times; (&radic;h1 + &radic;h2) km with heights in metres, as in Tactical Radio Basics.</p>
+  <div class="try"><div class="th">Try it: how far will it link?</div><div class="tb">
+    <div class="ctl"><label>Link</label><div class="chips" id="d5s"></div></div>
+    <div class="ctl"><label>Transmit power</label><input type="range" id="d5p" min="0" max="36" step="1" value="20" oninput="Lk.calc()"><span class="v" id="d5pv"></span></div>
+    <div class="ctl"><label>Transmit antenna</label><input type="range" id="d5g1" min="0" max="20" step="1" value="2" oninput="Lk.calc()"><span class="v" id="d5g1v"></span></div>
+    <div class="ctl"><label>Receive antenna</label><input type="range" id="d5g2" min="0" max="20" step="1" value="5" oninput="Lk.calc()"><span class="v" id="d5g2v"></span></div>
+    <div class="ctl"><label>Drone height</label><input type="range" id="d5h" min="1" max="500" step="1" value="100" oninput="Lk.calc()"><span class="v" id="d5hv"></span></div>
+    <div class="ctl"><label>Fade margin</label><input type="range" id="d5m" min="0" max="30" step="1" value="10" oninput="Lk.calc()"><span class="v" id="d5mv"></span></div>
+    <div class="read" id="d5r"></div>
+    <div class="note">Receiver sensitivities and powers are illustrative teaching values for each link type, not figures for any product. Real range is usually less than the smaller of the two numbers, because of trees, buildings, interference, and antenna pointing.</div></div></div>
+
+  <h3>Polarization</h3>
+  <p>FPV video antennas are usually <b>circularly polarized</b>, in one of two directions, right-hand (RHCP) or left-hand (LHCP). Circular polarization resists the fading caused by signals bouncing off the ground and buildings. But the transmit and receive antennas must have the <b>same</b> hand. Opposite hands lose a large amount of signal, often 20 dB or more. If video is noisy at short range, check the antennas match.</p>
+
+  <div class="why"><b>Why a 17E cares</b>These numbers tell you how much power an enemy needs to take a link away, and from how far. A control link at a few kilometres is one that a modest jammer or a sensitive detector can reach. See the Modulation &amp; Noise guide for what a jammer does to a link.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Control links use 2.4 GHz or 900 MHz. Video is often 5.8 GHz.</li><li>Allowed path loss = Pt + Gt + Gr &minus; sensitivity &minus; margin. Free-space range follows from it, and the horizon caps it.</li><li>Circular polarization needs matching hands. Opposite hands lose 20 dB or more.</li></ul></div>
+  <div class="kt"><span class="term" data-t="vtx">video transmitter</span><span class="term" data-t="circpol">circular polarization</span><span class="term" data-t="fade">fade margin</span><span class="term" data-t="los">radio horizon</span></div>
+  <a class="tool" href="../fpvschool/"><b>Try it in FPV Flight School &rarr;</b>Fly a simulated quadcopter, run lessons, and see the video degrade as the link weakens.</a>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Rules and weak points &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 6 ============ -->
+<section class="ch" id="ch6">
+  <h2>6 &middot; Rules, Safety, and Weak Points</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>State the main FAA rules for small drones and the basics of Remote ID.</li>
+    <li>Run a sensible pre-flight check in the right order.</li>
+    <li>Predict how different drone types respond to jamming and spoofing.</li></ul></div>
+
+  <h3>Rules you need to know</h3>
+  <p>In the United States the FAA regulates drone flying. These are the headline rules for small aircraft. Always check the current rules, and follow your unit and range control. Military installations, airfields, and restricted areas have their own limits.</p>
+  <table class="t"><tr><th></th><th>Recreational</th><th>Part 107 (work, business)</th></tr>
+   <tr><td>Who</td><td>Hobby flying only</td><td>Remote pilot certificate required (knowledge test)</td></tr>
+   <tr><td>Weight</td><td>Register at 250 g (0.55 lb) or more</td><td>Under 55 lb</td></tr>
+   <tr><td>Altitude</td><td>At or below 400 ft AGL in uncontrolled airspace</td><td>400 ft AGL, or within 400 ft of a structure</td></tr>
+   <tr><td>Sight</td><td>Visual line of sight, or a visual observer next to you</td><td>Visual line of sight (waivers exist)</td></tr>
+   <tr><td>Other</td><td>Pass the TRUST test and carry proof</td><td>Maximum groundspeed 100 mph (87 knots)</td></tr></table>
+  <p><b>Remote ID:</b> since September 2023, registered drones broadcast an identification and location signal, a digital license plate, unless flown in a recognized flying area. Anyone flying FPV in goggles needs a visual observer to keep the aircraft in sight.</p>
+
+  <h3>Pre-flight</h3>
+  <p>Good habits prevent most crashes. Tap the steps in a sensible order.</p>
+  <div class="try"><div class="th">Try it: pre-flight checklist order</div><div class="tb">
+    <div id="d6l"></div><div class="read" id="d6r"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="Pf.reset()">Start over</button></div></div></div>
+
+  <h3>Weak points: what each drone depends on</h3>
+  <p>Put together what you know. Each drone depends on different things, so each reacts differently when one is taken away. Pick a drone and see.</p>
+  <div class="try"><div class="th">Try it: dependencies and effects</div><div class="tb">
+    <div class="ctl"><label>Drone</label><div class="chips" id="d6t"></div></div>
+    <div id="d6o"></div>
+    <div class="note">These are teaching generalizations. Real systems vary, and many combine several methods.</div></div></div>
+  <p>Two lessons. First, there is no single answer: &ldquo;jam the control link&rdquo; defeats a manually flown drone but not a drone on a pre-programmed route. Second, a drone with no radio link at all, such as one that is controlled by a thin optical fibre that unspools behind it, is untouched by RF jamming and gives a passive RF detector nothing to hear. That is why defence needs layers: radio-frequency tools, radar, optical and acoustic sensors, and kinetic options.</p>
+
+  <div class="why"><b>Why a 17E cares</b>You will be asked what will work against a particular drone. Start from its dependencies: what does it need to fly, to see, and to know where it is? The answer points to the effect that will work and the ones that will not.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>FAA basics: register at 250 g, stay under 400 ft AGL, keep line of sight, Remote ID for registered drones.</li><li>Pre-flight: inspect, power the transmitter first, test failsafe with props off, check the area, then arm.</li><li>Defeat what the drone depends on. Different drones depend on different things, and fibre-optic drones depend on no radio at all.</li></ul></div>
+  <div class="kt"><span class="term" data-t="vlos">VLOS</span><span class="term" data-t="remoteid">Remote ID</span><span class="term" data-t="fiberfpv">fibre-optic FPV</span><span class="term" data-t="failsafe">failsafe</span></div>
+  <a class="tool" href="../systemsguide/"><b>Read Space &amp; Drones Explained &rarr;</b>The counter-UAS kill chain and how EW defeats a drone.</a>
+  <a class="tool" href="../cuasdemo/"><b>Run the C-UAS Demo &rarr;</b>Pick an effect and watch the drone react.</a>
+  <a class="tool" href="../dronedef/"><b>Try the Drone Defender Simulator &rarr;</b>Detect, track, and defeat drone threats.</a>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>DoD UAS group classification (Army Roadmap for UAS 2010&ndash;2035 and the joint UAS concept of operations). Group limits for weight, altitude, and speed.</li>
+   <li>FAA, 14 CFR Part 107 and the FAA recreational flyer rules. Registration at 250 g, 400 ft AGL, visual line of sight, the 100 mph limit, TRUST, and Remote ID.</li>
+   <li>Public multirotor design references and flight controller documentation (for example Betaflight and ArduPilot). Flight modes, mixing, and failsafe behavior.</li>
+   <li>Public LiPo battery safety guidance. Cell voltages and care. The 3.5 V per cell landing rule is a common guideline, not a specification.</li>
+   <li>ATP 3-01.81, <i>Counter-Unmanned Aircraft System</i>, and open reporting from Ukraine for how different drone types depend on different links, including fibre-optic FPV drones.</li>
+   <li><b>Notes.</b> Link sensitivities, powers, thrust figures, and behaviors are illustrative teaching values. Real drones differ by model and setup. Check current FAA rules and your unit&rsquo;s procedures before any flight. Your class slides and instructor remain the authority. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
+</div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">Drone Flight Basics Explained &middot; Interactive textbook &middot; Companion to FPV Flight School and the counter-UAS tools &middot; UNCLASSIFIED</div>
+<script>
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+const LOGV=(v,a,b)=>a*Math.pow(b/a,v/100);
+const nf=(x,d)=>x>=1000?Math.round(x).toLocaleString():x.toFixed(d===undefined?(x<10?1:0):d);
+/* ---- Gp: UAS group ---- */
+const Gp={calc(){const w=LOGV(+$('d1w').value,0.5,20000),a=LOGV(+$('d1a').value,50,60000),s=LOGV(+$('d1s').value,5,600);$('d1wv').textContent=nf(w)+' lb';$('d1av').textContent=nf(a)+' ft';$('d1sv').textContent=Math.round(s)+' kt';
+  const gw=w<=20?1:w<=55?2:w<1320?3:4,ga=a<1200?1:a<3500?2:a<18000?3:(w>1320?5:3),gs=s<100?1:s<250?2:3;let g=Math.max(gw,ga,gs);if(gw===4&&a>=18000)g=5;if(g===3&&gw===4)g=4;
+  const why=['weight','altitude','speed'][[gw,ga,gs].indexOf(Math.max(gw,ga,gs))];
+  read('d1r',[['By weight','Group '+gw],['By altitude','Group '+ga],['By speed','Group '+gs],['DoD group','Group '+g,g===1?'good':g<=3?'mid':'bad'],['Set by',why]]);}};
+/* ---- Mx: mixer ---- */
+const Mx={calc(){const T=+$('d2th').value,P=+$('d2p').value,R=+$('d2ro').value,Y=+$('d2y').value;$('d2thv').textContent=T+'%';$('d2pv').textContent=P;$('d2rov').textContent=R;$('d2yv').textContent=Y;
+  // FL, FR, RL, RR. pitch forward: rear up front down. roll right: left up right down. yaw right: CCW motors (FL, RR) up, CW motors (FR, RL) down
+  const m={FL:T-P+R+Y,FR:T-P-R-Y,RL:T+P+R-Y,RR:T+P-R+Y};Object.keys(m).forEach(k=>m[k]=Math.max(0,Math.min(100,m[k])));
+  const [c,x]=cv('d2c');clear(c,x);const pos={FL:[130,60,'ccw'],FR:[350,60,'cw'],RL:[130,180,'cw'],RR:[350,180,'ccw']},cx=240,cy=120;
+  x.strokeStyle='#4b6f8a';x.lineWidth=6;x.beginPath();x.moveTo(130,60);x.lineTo(350,180);x.moveTo(350,60);x.lineTo(130,180);x.stroke();x.fillStyle='#26394a';x.beginPath();x.arc(cx,cy,26,0,TAU);x.fill();x.fillStyle='#ffb454';x.beginPath();x.moveTo(cx,cy-18);x.lineTo(cx+10,cy+4);x.lineTo(cx-10,cy+4);x.closePath();x.fill();lab(x,'nose',cx,cy+20,'#9db4c8','center',10);
+  Object.keys(pos).forEach(k=>{const [px,py,d]=pos[k],v=m[k];x.fillStyle='#16283a';x.beginPath();x.arc(px,py,34,0,TAU);x.fill();x.fillStyle=v>66?'#e86a6a':v>33?'#ffb454':'#2edc8a';x.beginPath();x.arc(px,py,34*v/100+2,0,TAU);x.fill();
+   x.strokeStyle='#e8f1f8';x.lineWidth=2;x.beginPath();x.arc(px,py,38,d==='cw'?-0.2:Math.PI+0.2,d==='cw'?1.8:Math.PI-1.8+Math.PI,d!=='cw');x.stroke();lab(x,k+' '+Math.round(v)+'%',px,py+54,'#e8f1f8','center',12);lab(x,d==='cw'?'spins clockwise':'spins counter-clockwise',px,py-46,'#9db4c8','center',10);});
+  const nm=[];if(P>0)nm.push('nose down, moving forward');if(P<0)nm.push('nose up, moving back');if(R>0)nm.push('rolling right');if(R<0)nm.push('rolling left');if(Y>0)nm.push('yawing right');if(Y<0)nm.push('yawing left');
+  read('d2mr',[['Average motor speed',Math.round((m.FL+m.FR+m.RL+m.RR)/4)+'%'],['Front pair / rear pair',Math.round((m.FL+m.FR)/2)+'% / '+Math.round((m.RL+m.RR)/2)+'%'],['Left pair / right pair',Math.round((m.FL+m.RL)/2)+'% / '+Math.round((m.FR+m.RR)/2)+'%'],['Motion',nm.length?nm.join(', '):(T>50?'climbing':T===50?'near hover (example)':'descending')]]);}};
+/* ---- Tw: thrust to weight ---- */
+const Tw={calc(){const w=LOGV(+$('d2w').value,100,5000),t=LOGV(+$('d2t').value,100,3000);$('d2wv').textContent=Math.round(w)+' g';$('d2tv').textContent=Math.round(t)+' g';const r=4*t/w,hv=100/r;
+  read('d2r',[['Total max thrust',Math.round(4*t)+' g'],['Thrust-to-weight ratio',r.toFixed(1)+' : 1',r<1.5?'bad':r<2?'mid':'good'],['Hover throttle (rough)',r<1?'cannot hover':hv.toFixed(0)+' %',r<1?'bad':''],['Character',r<1?'will not lift off':r<2?'sluggish, little margin':r<4?'comfortable, camera-style':r<8?'sporty':'racing-style']]);}};
+/* ---- Lt: lean and thrust ---- */
+const Lt={calc(){const a=+$('d2l').value,th=a*Math.PI/180;$('d2lv').textContent=a+'\u00B0';const more=(1/Math.cos(th)-1)*100,acc=9.81*Math.tan(th);
+  read('d2lr',[['Thrust needed to hold height','\u00D7'+(1/Math.cos(th)).toFixed(2)+' ('+(more>=0?'+':'')+more.toFixed(1)+'%)',more>50?'bad':more>15?'mid':'good'],['Horizontal acceleration',acc.toFixed(1)+' m/s\u00B2'],['Same, in g',(acc/9.81).toFixed(2)+' g']]);}};
+/* ---- flight modes and failsafe ---- */
+const MODES={acro:['Acro (rate)','The sticks set how fast the drone rotates. Let go and it keeps its attitude, so it does not level itself. Needs skill, and allows flips and sharp racing moves. No GPS needed.','No self-level','No GPS'],
+ angle:['Angle (stabilize)','The sticks set a tilt angle, and the flight controller levels the drone when you centre them. Altitude is still yours to control. Good for learning. No GPS needed.','Self-levels','No GPS'],
+ alt:['Altitude hold','Like angle mode, but a barometer holds height when the throttle stick is centred. The drone still drifts sideways with the wind.','Self-levels, holds height','Barometer'],
+ pos:['Position hold (GPS)','With GPS and a compass, the drone holds its place over the ground when you let go of the sticks. This is what camera drones use. It depends on GPS.','Holds position and height','GPS and compass'],
+ rth:['Return to home','The drone climbs to a set height and flies back to the recorded home point by itself. It needs a GPS fix and a home point, and it works only if its position estimate is correct.','Automatic','GPS fix and home point']};
+const FMd={show(k){$('d3m').innerHTML=Object.keys(MODES).map(m=>'<button class="chip'+(m===k?' on':'')+'" onclick="FMd.show(\''+m+'\')">'+MODES[m][0]+'</button>').join('');const m=MODES[k];$('d3o').innerHTML='<b>'+m[0]+'.</b> '+m[1]+'<br><span style="color:var(--text-muted)">Help: '+m[2]+' &middot; Depends on: '+m[3]+'</span>';}};
+const DR=[['fpv','Racing FPV (no GPS)'],['gps','Camera drone (GPS)'],['auto','Waypoint mission'],['fiber','Fibre-optic FPV']],FS=[['drop','Disarm / drop'],['land','Land'],['hover','Hover'],['rth','Return home']];
+const FL={d:'gps',f:'rth',setD(v){this.d=v;this.calc();},setF(v){this.f=v;this.calc();},
+ calc(){chips('d3t',DR,this.d,'FL.setD');chips('d3f',FS,this.f,'FL.setF');let t;const d=this.d,f=this.f;
+  if(d==='auto')t='A drone on a pre-programmed route does not need the control link to keep flying, so losing it changes nothing in flight. Only a failsafe tied to telemetry would trigger. A failsafe setting matters little here.';
+  else if(d==='fiber')t='A fibre-optic drone has no radio link to lose. Jamming does nothing. If the fibre itself is cut, the control and video go with it, and the failsafe then applies: '+({drop:'it drops',land:'it lands',hover:'it has no GPS to hold position, so it behaves like a drop or drifts',rth:'it has no way to know where home is, so it cannot return'}[f])+'.';
+  else if(d==='fpv')t=({drop:'Motors stop and it falls. This is the usual setting for racing drones.',land:'It tries to descend, but with no GPS or altitude hold it cannot control the descent well. Expect a hard landing or a drift.',hover:'With no GPS it cannot hold position, so it will drift with the wind. It will not truly hover.',rth:'It has no GPS, so it cannot know where home is. Return-to-home is not available on this drone.'})[f];
+  else t=({drop:'Motors stop and it falls. Safe for people nearby only if nobody is underneath.',land:'It descends in place at a gentle rate and lands where it is.',hover:'It holds position using GPS until the battery runs low, then lands.',rth:'It climbs to its return height and flies back to where it took off, using GPS. If GPS is also jammed or spoofed, it may return to the wrong place or not at all.'})[f];
+  $('d3r').innerHTML='<b>The link drops.</b> '+t;}};
+/* ---- En: endurance ---- */
+const En={s:4,set(v){this.s=+v;this.calc();},calc(){chips('d4s',[1,2,3,4,5,6].map(i=>[i,i+'S']),this.s,'En.set');const cap=LOGV(+$('d4c').value,300,20000),I=+$('d4i').value;$('d4cv').textContent=Math.round(cap)+' mAh';$('d4iv').textContent=I+' A';
+  const V=this.s*3.7,E=V*cap/1000,min=cap/1000*0.8/I*60,P=V*I;
+  read('d4r',[['Pack voltage (nominal)',V.toFixed(1)+' V'],['Pack voltage (full)',(this.s*4.2).toFixed(1)+' V'],['Energy',E.toFixed(1)+' Wh'],['Average power',Math.round(P)+' W'],['Flight time (80% usable)',min.toFixed(1)+' min',min<5?'bad':min<15?'mid':'good'],['Land by about',(this.s*3.5).toFixed(1)+' V under load']]);}};
+/* ---- Lk: link range ---- */
+const SYS={ctl24:['2.4 GHz control',2400,-105,20],ctl9:['900 MHz control',915,-108,25],vid58:['5.8 GHz video',5800,-90,25]};
+const Lk={s:'ctl24',set(k){this.s=k;$('d5p').value=SYS[k][3];this.calc();},
+ calc(){chips('d5s',Object.keys(SYS).map(k=>[k,SYS[k][0]]),this.s,'Lk.set');const [nm,f,sens]=SYS[this.s],P=+$('d5p').value,g1=+$('d5g1').value,g2=+$('d5g2').value,h=+$('d5h').value,m=+$('d5m').value;
+  $('d5pv').textContent=P+' dBm ('+(Math.pow(10,P/10)/1000).toPrecision(2)+' W)';$('d5g1v').textContent=g1+' dBi';$('d5g2v').textContent=g2+' dBi';$('d5hv').textContent=h+' m';$('d5mv').textContent=m+' dB';
+  const apl=P+g1+g2-sens-m,d=Math.pow(10,(apl-32.44-20*Math.log10(f))/20),hz=4.12*(Math.sqrt(h)+Math.sqrt(2)),lim=Math.min(d,hz);
+  read('d5r',[['Frequency',f+' MHz'],['Receiver sensitivity',sens+' dBm'],['Allowed path loss',apl.toFixed(1)+' dB'],['Free-space range',d>=100?'>100 km':d.toFixed(1)+' km'],['Radio horizon',hz.toFixed(1)+' km'],['Usable range (smaller)',lim.toFixed(1)+' km',lim<2?'bad':lim<8?'mid':'good']]);}};
+/* ---- Pf: pre-flight order ---- */
+const PFS=['Inspect the frame, props, and motors for damage','Check the area, airspace, and any restrictions; brief the visual observer','Check the battery is charged, undamaged, and secured','Turn the transmitter on first','Power the aircraft and wait for GPS lock and self-checks','Confirm failsafe is set and test it with props off','Put props on and check the direction of each','Clear the area, announce, and arm','Take off and hover low to check control before flying away'];
+const Pf={n:0,order:null,miss:0,reset(){this.n=0;this.miss=0;this.order=PFS.map((s,i)=>i).sort(()=>Math.random()-0.5);this.draw('');},
+ pick(i){if(i===this.n){this.n++;this.draw('');}else{this.miss++;this.draw('Not yet. Think about what has to be true before that step.');}},
+ draw(msg){if(!this.order)return this.reset();$('d6l').innerHTML=PFS.slice(0,this.n).map((s,i)=>'<div class="fb ok" style="display:block;margin:3px 0;font-size:13.5px"><b>'+(i+1)+'.</b> '+s+'</div>').join('')+'<div style="margin-top:6px">'+this.order.filter(i=>i>=this.n).map(i=>'<button style="display:block;width:100%;text-align:left;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);font-size:13.5px;cursor:pointer" onclick="Pf.pick('+i+')">'+PFS[i]+'</button>').join('')+'</div>';
+  read('d6r',[['Steps in place',this.n+' of '+PFS.length],['Wrong taps',String(this.miss),this.miss?'mid':'good'],['Status',this.n===PFS.length?(this.miss?'Done, with '+this.miss+' wrong tap'+(this.miss===1?'':'s'):'Perfect order'):(msg||'Pick the next step'),this.n===PFS.length?'good':'']]);}};
+/* ---- Dm: dependency matrix ---- */
+const DMX={fpv:['Racing FPV, analog video, no GPS',['Failsafe, usually disarm and drop','The pilot loses the view; may still fly by sight at short range','No effect: it does not use GPS','No effect: it does not use GPS']],
+ gps:['Camera drone with GPS',['Failsafe, usually return home using GPS','Live view lost; control and flight are unaffected','Loses position hold, drifts in the wind, and can be hand-flown; return home may fail','May believe a false position; return home could go to the wrong place']],
+ auto:['Waypoint mission (autonomous)',['No effect once flying a stored route','No effect on flight','May lose navigation and drift or abort; can fall back on other sensors if fitted','Can be led off the route to a false position']],
+ fiber:['Fibre-optic FPV',['No effect: no radio control link','No effect: video travels in the fibre','No effect if it carries no GPS','No effect if it carries no GPS']]};
+const DMC=['Jam the control link','Jam the video link','Jam GPS','Spoof GPS'];
+const Dm={d:'gps',set(v){this.d=v;this.draw();},draw(){chips('d6t',Object.keys(DMX).map(k=>[k,DMX[k][0]]),this.d,'Dm.set');const r=DMX[this.d][1];$('d6o').innerHTML='<table class="t"><tr><th>Effect</th><th>What the drone does</th></tr>'+DMC.map((c,i)=>'<tr><td>'+c+'</td><td style="color:'+(/^No effect/.test(r[i])?'#1f8f4f':'var(--text-secondary)')+'">'+r[i]+'</td></tr>').join('')+'</table>'+(this.d==='fiber'?'<p class="note" style="font-size:13px">Its weakness is the physical fibre: limited length, and it can be cut. It also gives passive RF detection nothing to hear.</p>':'');}};
+/* ===================== questions ===================== */
+const Qd={
+ ch1:[
+  {id:'d1a',t:'num',q:'A drone weighs 15 lb, flies at 800 ft AGL, and tops out at 60 knots. Which DoD group is it? (number)',a:1,tol:0.01,u:'group',ex:'0 to 20 lb, under 1,200 ft AGL, and under 100 knots are all Group 1 limits.'},
+  {id:'d1b',t:'num',q:'A drone weighs 30 lb, flies at 2,000 ft AGL, and tops out at 90 knots. Which group? (number)',a:2,tol:0.01,u:'group',ex:'30 lb is 21 to 55 lb, which is Group 2. The altitude is also under 3,500 ft. Speed is Group 1, but the highest measure sets the group.'},
+  {id:'d1c',t:'num',q:'What is the fully charged voltage of a 4S LiPo pack? (volts)',a:16.8,tol:0.05,u:'V',ex:'4 cells \u00D7 4.2 V = 16.8 V.'},
+  {id:'d1d',t:'num',q:'What is the nominal voltage of a 6S pack? (volts)',a:22.2,tol:0.05,u:'V',ex:'6 \u00D7 3.7 V = 22.2 V.'},
+  {id:'d1e',t:'mc',q:'Why do a quadcopter\u2019s motors spin in opposite directions on opposite diagonals?',o:['To cancel the twisting forces on the frame so it does not spin on its own','To make it quieter','To save battery','To make the video sharper'],a:0,ex:'Each spinning motor twists the frame the other way. Two of each direction cancel out.'},
+  {id:'d1f',t:'mc',q:'What does the flight controller do?',o:['It only receives radio commands.','It reads gyros and accelerometers and adjusts the four motors constantly to keep the drone stable and doing what you command.','It stores video.','It charges the battery.'],a:1,ex:'The flight controller is the brain: it runs the stabilizing loop hundreds or thousands of times a second.'}],
+ ch2:[
+  {id:'d2a',t:'num',q:'A drone weighs 800 g and each of four motors makes 600 g of thrust at full power. What is its thrust-to-weight ratio? (one decimal)',a:3.0,tol:0.05,u:': 1',ex:'4 \u00D7 600 = 2,400 g. 2,400 \u00F7 800 = 3.0.'},
+  {id:'d2b',t:'num',q:'About what throttle does that drone need to hover? (percent, nearest whole)',a:33,tol:1,u:'%',ex:'Hover throttle \u2248 100 \u00F7 TWR = 100 \u00F7 3.0 \u2248 33%.'},
+  {id:'d2c',t:'num',q:'The drone leans 30\u00B0 and must hold its height. How much more thrust does it need? (percent, one decimal)',a:15.5,tol:0.3,u:'%',ex:'1 \u00F7 cos 30\u00B0 = 1.155, which is 15.5% more thrust.'},
+  {id:'d2d',t:'num',q:'What horizontal acceleration does a 20\u00B0 lean give? (m/s\u00B2, one decimal)',a:3.6,tol:0.1,u:'m/s\u00B2',ex:'9.81 \u00D7 tan 20\u00B0 = 3.57, about 3.6 m/s\u00B2.'},
+  {id:'d2e',t:'mc',q:'On a Mode 2 transmitter, what does the left stick moving left or right do?',o:['Roll','Pitch','Yaw','Throttle'],a:2,ex:'Left stick up and down is throttle. Left and right is yaw. The right stick is pitch and roll.'},
+  {id:'d2f',t:'mc',q:'To pitch the nose down and move forward, the mixer:',o:['Speeds up the rear motors and slows the front ones','Speeds up all four motors','Speeds up the front motors and slows the rear ones','Stops two motors'],a:0,ex:'Slower front motors and faster rear motors tip the nose down, so thrust gets a forward part.'}],
+ ch3:[
+  {id:'d3a',t:'mc',q:'Which flight mode does NOT level the drone by itself when you centre the sticks?',o:['Angle','Acro','Position hold','Altitude hold'],a:1,ex:'In acro the sticks set rotation rates, so the drone keeps whatever tilt you leave it at.'},
+  {id:'d3b',t:'mc',q:'What does return-to-home need to work?',o:['A GPS fix and a recorded home point','Only a battery','A visual observer','A stronger transmitter'],a:0,ex:'The drone must know where it is and where home is, which means GPS and a recorded take-off point.'},
+  {id:'d3c',t:'mc',q:'A racing drone with no GPS loses its control link. What does it most likely do?',o:['Return home','Hover in place','Disarm and drop','Climb away'],a:2,ex:'Without GPS it cannot hold position or return, so the usual failsafe is to stop the motors.'},
+  {id:'d3d',t:'mc',q:'A drone is flying a stored waypoint route. You jam its control link. What happens to its flight?',o:['It falls immediately.','Nothing changes, because it does not need the link to follow its route.','It lands at once.','It returns to you.'],a:1,ex:'A route-following drone does not rely on live commands. The control link is not what keeps it on course.'},
+  {id:'d3e',t:'mc',q:'GPS is jammed on a camera drone in position hold. What is the most likely result?',o:['It drifts with the wind and must be flown by hand','It climbs straight up','It continues perfectly','It shuts down at once'],a:0,ex:'Without GPS it loses its position reference. It can still be flown by hand in an attitude mode.'},
+  {id:'d3f',t:'mc',q:'Why is failsafe a setting and not a fixed behaviour?',o:['The owner programs what the drone does, and it depends on what the drone has (for example, GPS).','The law sets it.','It is random.','It changes with the weather.'],a:0,ex:'Disarm, land, hover, or return home are choices, and some are impossible without GPS.'}],
+ ch4:[
+  {id:'d4a',t:'num',q:'A 4S pack has 1500 mAh. How much energy is in it? (Wh, one decimal)',a:22.2,tol:0.1,u:'Wh',ex:'4 \u00D7 3.7 = 14.8 V. 14.8 \u00D7 1.5 Ah = 22.2 Wh.'},
+  {id:'d4b',t:'num',q:'That pack powers a drone drawing 20 A on average, using 80% of the capacity. How many minutes of flight? (one decimal)',a:3.6,tol:0.1,u:'min',ex:'1.5 \u00D7 0.8 = 1.2 Ah. 1.2 \u00F7 20 \u00D7 60 = 3.6 minutes.'},
+  {id:'d4c',t:'num',q:'A 6S 5000 mAh pack holds how much energy? (Wh, nearest whole)',a:111,tol:0.6,u:'Wh',ex:'6 \u00D7 3.7 = 22.2 V. 22.2 \u00D7 5 Ah = 111 Wh.'},
+  {id:'d4d',t:'num',q:'A 10 Ah pack feeds a drone drawing 10 A on average, using 80%. How many minutes of flight?',a:48,tol:0.5,u:'min',ex:'10 \u00D7 0.8 = 8 Ah. 8 \u00F7 10 \u00D7 60 = 48 minutes.'},
+  {id:'d4e',t:'num',q:'By the 3.5 V per cell rule, at what voltage should you land a 4S pack?',a:14,tol:0.05,u:'V',ex:'4 \u00D7 3.5 V = 14.0 V under load.'},
+  {id:'d4f',t:'mc',q:'Why is endurance short for most small multirotors?',o:['They hover constantly, which uses power all the time, and batteries are heavy.','They have no batteries.','Radios use all the power.','They are always overloaded with video.'],a:0,ex:'Staying in the air takes continuous power, and the battery adds weight that needs more power to carry.'}],
+ ch5:[
+  {id:'d5a',t:'num',q:'A 2.4 GHz link: 20 dBm transmit power, antennas of 2 dBi and 5 dBi, receiver sensitivity \u2212105 dBm, fade margin 10 dB. What is the free-space range? (km, one decimal; use 2,400 MHz)',a:12.5,tol:0.3,u:'km',ex:'Allowed path loss = 20 + 2 + 5 + 105 \u2212 10 = 122 dB. Range = 10^((122 \u2212 32.44 \u2212 67.6) \u00F7 20) \u2248 12.5 km.'},
+  {id:'d5b',t:'num',q:'A drone flies 100 m high and the ground antenna is 2 m up. What is the radio horizon? (km, nearest whole)',a:47,tol:0.6,u:'km',ex:'4.12 \u00D7 (\u221A100 + \u221A2) = 4.12 \u00D7 (10 + 1.414) \u2248 47 km.'},
+  {id:'d5c',t:'num',q:'Everything else equal, how does the free-space range at 5,800 MHz compare with 2,400 MHz? (ratio, two decimals)',a:0.41,tol:0.01,u:'\u00D7',ex:'Path loss grows with 20\u00B7log\u2081\u2080 of frequency, so range is inversely proportional to frequency: 2,400 \u00F7 5,800 = 0.41.'},
+  {id:'d5d',t:'mc',q:'Your FPV video is noisy at short range and the antennas are the same size. What should you check?',o:['That both antennas have the same circular polarization hand','The battery colour','The GPS','The propellers'],a:0,ex:'Opposite hands of circular polarization lose 20 dB or more.'},
+  {id:'d5e',t:'mc',q:'Why do long-range control links often use 900 MHz?',o:['Lower frequency has less path loss and penetrates obstacles better.','It is the only legal band.','It carries more video.','It is cheaper to jam.'],a:0,ex:'Free-space path loss rises with frequency, and lower frequencies go around and through obstacles better.'},
+  {id:'d5f',t:'mc',q:'The free-space range is 40 km but the radio horizon is 15 km. What limits the link?',o:['The free-space range','The radio horizon, so the usable range is about 15 km','Neither','The battery'],a:1,ex:'The smaller of the two numbers sets the usable range.'}],
+ ch6:[
+  {id:'d6a',t:'num',q:'What is the Part 107 maximum groundspeed of 100 mph in knots? (nearest whole)',a:87,tol:0.6,u:'knots',ex:'100 mph is about 87 knots.'},
+  {id:'d6b',t:'mc',q:'What is the general altitude limit for small drones under FAA rules?',o:['400 feet above ground level','1,200 feet','100 feet','No limit'],a:0,ex:'Small drones are limited to 400 ft AGL, or within 400 ft of a structure under Part 107.'},
+  {id:'d6c',t:'mc',q:'At what weight must a drone generally be registered with the FAA?',o:['250 grams (0.55 lb) or more','5 kg','Never','55 lb only'],a:0,ex:'Registration is required at 250 g or more, and registered drones broadcast Remote ID.'},
+  {id:'d6d',t:'mc',q:'You fly FPV in goggles. What does the FAA require?',o:['A visual observer to keep the aircraft in sight','Nothing','A second drone','An antenna on the goggles'],a:0,ex:'The aircraft must stay within visual line of sight, so goggle pilots need a visual observer.'},
+  {id:'d6e',t:'mc',q:'Which drone is untouched by RF jamming of its control and video links?',o:['A fibre-optic FPV drone','A racing FPV drone','A camera drone with GPS','A drone using Wi-Fi'],a:0,ex:'Its control and video travel in the fibre, not over radio. Its weak point is the physical fibre.'},
+  {id:'d6f',t:'mc',q:'Which is the correct order for the start of a flight?',o:['Transmitter on first, then power the aircraft','Power the aircraft first, then the transmitter','Arm, then check','Take off, then check the battery'],a:0,ex:'Turning the transmitter on first means the aircraft finds a live link when it starts up.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'mc',q:'A UAS meets Group 1 limits on weight and altitude but flies at 300 knots. Which group?',o:['Group 1','Group 2 or higher, because the highest measure sets the group','Group 5','It is not classified'],a:1,ex:'Any one measure in a higher group moves it up. 300 knots is beyond the Group 1 and Group 2 limits.'},
+ {id:'k2',ch:'ch1',t:'num',q:'What is the full voltage of a 3S LiPo pack? (volts, one decimal)',a:12.6,tol:0.05,u:'V',ex:'3 \u00D7 4.2 = 12.6 V.'},
+ {id:'k3',ch:'ch2',t:'num',q:'A drone weighs 500 g and has four motors of 500 g thrust each. What is the thrust-to-weight ratio?',a:4,tol:0.05,u:': 1',ex:'2,000 \u00F7 500 = 4.'},
+ {id:'k4',ch:'ch2',t:'mc',q:'Which controls the total lift of a multirotor?',o:['Yaw','Throttle','Roll','The compass'],a:1,ex:'Throttle changes the speed of all four motors together.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'Which drone CANNOT use return-to-home?',o:['A GPS camera drone','A racing drone with no GPS','A waypoint drone with GPS','A drone with GPS and a home point set'],a:1,ex:'No GPS means no position and no way to find home.'},
+ {id:'k6',ch:'ch3',t:'mc',q:'Which mode holds position over the ground by itself?',o:['Acro','Angle','Position hold with GPS','Rate'],a:2,ex:'Position hold uses GPS and a compass to keep the drone in place.'},
+ {id:'k7',ch:'ch4',t:'num',q:'A 4S 2200 mAh pack holds how much energy? (Wh, one decimal)',a:32.6,tol:0.1,u:'Wh',ex:'14.8 V \u00D7 2.2 Ah = 32.56 Wh.'},
+ {id:'k8',ch:'ch4',t:'num',q:'A drone draws 15 A and the pack is 3 Ah, using 80%. How many minutes of flight?',a:9.6,tol:0.1,u:'min',ex:'3 \u00D7 0.8 = 2.4 Ah. 2.4 \u00F7 15 \u00D7 60 = 9.6 minutes.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'Which has more free-space path loss at the same distance?',o:['900 MHz','2.4 GHz','5.8 GHz','They are the same'],a:2,ex:'Path loss rises with frequency, so 5.8 GHz loses the most.'},
+ {id:'k10',ch:'ch5',t:'mc',q:'What does the radio horizon limit?',o:['The usable range of a link, whatever the free-space calculation says','The battery','The weight','The motor speed'],a:0,ex:'Beyond the horizon the Earth blocks the line of sight.'},
+ {id:'k11',ch:'ch6',t:'mc',q:'An autonomous waypoint drone is flying. Which effect is most likely to disturb it?',o:['Jam the control link','Jam the video link','Jam or spoof its GPS','Turn off its camera'],a:2,ex:'It follows a stored route, so it depends on navigation, not on the control link.'},
+ {id:'k12',ch:'ch6',t:'mc',q:'A passive RF detector is listening for a fibre-optic FPV drone. What does it hear?',o:['Almost nothing, because the control and video are in the fibre','A strong video signal','A GPS signal','The control link'],a:0,ex:'No radio link means almost nothing to detect, which is why defence needs layers such as radar and optical sensors.'}];
+const GLd={
+ uas:['UAS','Unmanned aircraft system: the aircraft plus its control station and data links.'],
+ fc:['Flight controller','The onboard computer that stabilizes the drone by adjusting the motor speeds from gyro and accelerometer readings.'],
+ esc:['ESC','Electronic speed controller. Drives one motor at the speed the flight controller asks for.'],
+ lipo:['LiPo','Lithium polymer battery. About 3.7 V per cell nominal and 4.2 V when full.'],
+ fpv:['FPV','First-person view. Flying by live video from a camera on the drone, usually through goggles.'],
+ throttle:['Throttle','The control for total thrust. It raises or lowers all four motors together.'],
+ pitch:['Pitch','Tilting the nose down or up, which moves the drone forward or back.'],
+ roll:['Roll','Tilting to the side, which moves the drone left or right.'],
+ yaw:['Yaw','Rotating about the vertical axis, so the nose swings left or right.'],
+ twr:['Thrust-to-weight ratio','Total maximum thrust divided by weight. A ratio above 1 is needed to lift off.'],
+ acro:['Acro mode','A flight mode where the sticks set rotation rate and the drone does not level itself.'],
+ angle:['Angle mode','A flight mode where the sticks set a tilt angle and the drone levels itself when you centre them.'],
+ poshold:['Position hold','A mode that uses GPS and a compass to keep the drone in one place over the ground.'],
+ failsafe:['Failsafe','A pre-set action the drone takes when it loses its control link, such as drop, land, hover, or return home.'],
+ rth:['Return to home','An automatic mode where the drone flies back to its take-off point using GPS.'],
+ cellS:['Cell count (S)','The number of battery cells in series. A 4S pack has four cells.'],
+ wh:['Watt-hour','A unit of energy: voltage times amp-hours.'],
+ mah:['mAh','Milliamp-hours: battery capacity. 1,000 mAh is 1 Ah.'],
+ vtx:['Video transmitter','The radio on the drone that sends camera video to the pilot.'],
+ circpol:['Circular polarization','A wave whose orientation rotates as it travels. Transmit and receive antennas must have the same hand (right or left) to link well.'],
+ fade:['Fade margin','Extra signal strength beyond the minimum, to cover fading and losses.'],
+ los:['Radio horizon','The farthest distance at which two antennas can see each other over the curve of the Earth.'],
+ vlos:['Visual line of sight','The aircraft stays in view of the pilot or a visual observer.'],
+ remoteid:['Remote ID','A broadcast from a drone that identifies it and shows its location, like a digital license plate.'],
+ fiberfpv:['Fibre-optic FPV','A drone that sends control and video through a thin optical fibre it unspools behind it, instead of by radio.']};
+const GUIDE={key:'droneguide',chapters:[["ch1","1 Parts"],["ch2","2 How it flies"],["ch3","3 Modes"],["ch4","4 Power"],["ch5","5 Links"],["ch6","6 Rules and weak points"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>Gp.calc(),ch2:()=>{Mx.calc();Tw.calc();Lt.calc();},ch3:()=>{FMd.show('angle');FL.calc();},ch4:()=>En.calc(),ch5:()=>Lk.calc(),ch6:()=>{if(!Pf.order)Pf.reset();else Pf.draw('');Dm.draw();}}};
+
+boot();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

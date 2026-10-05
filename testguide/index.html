@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Measuring &amp; Troubleshooting Electronics Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>Measuring &amp; Troubleshooting <span>Electronics</span></h1>
+  <p class="hero-sub">How to use a multimeter and an oscilloscope, read what they show, and track a fault from symptom to cause. Seven chapters with hands-on widgets and questions.</p>
+</header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>New to voltage, current, and resistance? Read <a href="../betguide/">Electricity Explained</a>. Need AC ideas such as RMS and phase? See <a href="../acguide/">AC, Transformers &amp; Machines Explained</a>.</div><div><b>Then practice in the tools</b><a href="../testbench/">Electronics Test Bench</a> &middot; <a href="../betsim/">Circuit Bench</a> &middot; <a href="../bet/">BET Components</a> &middot; <a href="../aclab/">AC &amp; Transformer Lab</a>. About 45 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<!-- ============ CHAPTER 1 ============ -->
+<section class="ch on" id="ch1">
+  <h2>1 &middot; Measuring Beats Guessing</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Explain why you compare what you expect with what you measure.</li>
+    <li>Name the three jobs of a multimeter and an oscilloscope.</li>
+    <li>List the safety rules that apply before you touch a probe to a circuit.</li></ul></div>
+
+  <p>A circuit that does not work is a puzzle with a limited number of causes: power is missing, a connection is open, two points are shorted, or a part is wrong or dead. You cannot see which by looking. You find out by <b>measuring</b>.</p>
+  <h3>The habit that matters most: expect, then measure</h3>
+  <p>Before you put a probe anywhere, decide what you expect to read there. A 9 V battery feeding a 1 k&Omega; and 2 k&Omega; divider should give 6 V at the middle. If you read 6 V, move on. If you read 9 V or 0 V, you have learned something specific: the number itself points at the fault. Measuring without an expectation just makes a pile of numbers.</p>
+  <h3>Two instruments, three jobs each</h3>
+  <table class="t"><tr><th></th><th>Multimeter</th><th>Oscilloscope</th></tr>
+   <tr><td>Shows</td><td>One number, such as volts, ohms, or amps</td><td>Voltage plotted against time</td></tr>
+   <tr><td>Best at</td><td>Is it there? How big? Is the path complete?</td><td>What shape? How fast? Does it change?</td></tr>
+   <tr><td>Blind to</td><td>Fast changes and shape. An average hides a lot.</td><td>Exact small DC values and any current without a probe.</td></tr></table>
+  <p>Together they cover almost everything. A meter tells you a supply is 5.02 V. A scope tells you it has 400 mV of 100 kHz ripple riding on it that the meter averaged away.</p>
+
+  <h3>Safety first</h3>
+  <ul>
+   <li><b>Current is what hurts.</b> Even modest voltages can be dangerous across wet skin or through the chest. Treat any mains-connected equipment as lethal.</li>
+   <li><b>Know what you are measuring.</b> Meters are rated by category (CAT I to CAT IV) for how much energy the circuit can deliver. Use a meter rated for the place you are working.</li>
+   <li><b>Check your tools.</b> Use leads with intact insulation and shrouded tips. Replace damaged ones.</li>
+   <li><b>One hand where you can.</b> When probing live circuits, keep your other hand away from grounded metal.</li>
+   <li><b>Power off to measure resistance, continuity, and components.</b> You will see why in Chapter 3.</li>
+   <li><b>Never connect an ammeter across a voltage source.</b> It is a near-short and blows the fuse, or worse.</li></ul>
+  <p>Follow your unit's safety procedures and your instructor's directions. This guide is training material, not a replacement for electrical safety training.</p>
+
+  <div class="try"><div class="th">Try it: how many numbers does a fault tell you?</div><div class="tb">
+    <div class="ctl"><label>Fault</label><div class="chips" id="m0f"></div></div>
+    <div class="read" id="m0r"></div>
+    <div class="note">The board is a 9 V battery, R1 = 1 k&Omega; and R2 = 2 k&Omega; in a divider. Pick a fault and see what each measurement would read. Notice that each fault leaves a different set of numbers.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>Radios, power supplies, and antennas fail in the field, and you rarely get a replacement unit on the spot. The person who can quickly tell &ldquo;no power&rdquo; from &ldquo;bad cable&rdquo; from &ldquo;bad radio&rdquo; keeps the net up.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Decide what you expect before you measure. The difference points at the fault.</li><li>A meter gives one number. A scope shows shape and timing. Use both.</li><li>Power off for resistance and continuity. Never put an ammeter across a source. Match the meter rating to the circuit.</li></ul></div>
+  <div class="kt"><span class="term" data-t="dmm">multimeter</span><span class="term" data-t="scope">oscilloscope</span><span class="term" data-t="cat">CAT rating</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: The multimeter &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 2 ============ -->
+<section class="ch" id="ch2">
+  <h2>2 &middot; The Multimeter: Volts, Amps, Ohms</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Connect a meter correctly for voltage, current, and resistance.</li>
+    <li>Explain what meter input resistance does to a measurement.</li>
+    <li>Say what an AC reading means and why true-RMS matters.</li></ul></div>
+
+  <h3>How it connects</h3>
+  <table class="t"><tr><th>Measure</th><th>Connect the meter&hellip;</th><th>Circuit power</th></tr>
+   <tr><td>Voltage</td><td>In <b>parallel</b>, across the part (two points)</td><td>On</td></tr>
+   <tr><td>Current</td><td>In <b>series</b>: break the circuit and put the meter in the gap</td><td>On</td></tr>
+   <tr><td>Resistance</td><td>Across the part, <b>isolated</b> from the rest of the circuit</td><td>Off</td></tr></table>
+  <p>The red lead normally goes in the V&Omega; jack and the black lead in COM. For current, many meters use a separate jack (and a fuse). If you leave the leads in the current jack and then measure voltage, you have created a short. A good habit: after any current measurement, move the lead back.</p>
+  <p>On a DC reading, a minus sign means the red lead is on the more negative point. Nothing is wrong. You just swapped the leads.</p>
+
+  <h3>The meter is part of your circuit</h3>
+  <p>A voltmeter has <span class="term" data-t="inputz">input resistance</span>. A typical digital meter has about 10 M&Omega;. When you connect it, that resistance is in parallel with the part you measure and steals a little current. For most circuits it does not matter. But across a <b>high-resistance</b> circuit it can pull the reading down noticeably.</p>
+  <div class="formula">reading = V &times; R2' &divide; (R1 + R2'),     R2' = R2 in parallel with the meter&rsquo;s input resistance</div>
+
+  <div class="try"><div class="th">Try it: does the meter disturb the circuit?</div><div class="tb">
+    <div class="ctl"><label>R1 (top)</label><input type="range" id="m1a" min="0" max="100" step="1" value="40" oninput="V1.calc()"><span class="v" id="m1av"></span></div>
+    <div class="ctl"><label>R2 (bottom)</label><input type="range" id="m1b" min="0" max="100" step="1" value="40" oninput="V1.calc()"><span class="v" id="m1bv"></span></div>
+    <div class="ctl"><label>Meter input</label><div class="chips" id="m1m"></div></div>
+    <div class="read" id="m1r"></div>
+    <div class="note">The supply is 10 V and the meter reads across R2. Try two 100 k&Omega; resistors with a 10 M&Omega; meter, then with a 1 M&Omega; meter. Then try two 10 M&Omega; resistors. A low-impedance meter on a high-resistance circuit reads low.</div></div></div>
+
+  <h3>AC readings and true RMS</h3>
+  <p>On the AC setting the meter shows an RMS value. For a pure sine wave, RMS = peak &times; 0.707. Cheap meters measure the average and then multiply by a constant that is right <i>only for sine waves</i>. A <span class="term" data-t="truerms">true-RMS</span> meter calculates the real RMS of any shape. Use true-RMS when you measure square waves, switching supplies, or anything not sinusoidal. Also check the meter's frequency range: many are only accurate up to a few hundred hertz or a few kilohertz.</p>
+  <p>The AC setting ignores DC, and the DC setting averages out AC. A signal with both, such as a ripple on a supply, needs both readings (or a scope).</p>
+
+  <div class="why"><b>Why a 17E cares</b>Battery packs and supplies in the field are measured under load, not just open circuit. A battery that reads 12.6 V with nothing connected and 9 V under load is bad, and only the second reading tells you.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Voltage: in parallel. Current: in series. Resistance: part isolated and power off.</li><li>The meter has input resistance, about 10 M&Omega; on a typical digital meter. It loads high-resistance circuits.</li><li>AC reads RMS. Use a true-RMS meter for non-sine waves.</li></ul></div>
+  <div class="kt"><span class="term" data-t="inputz">input resistance</span><span class="term" data-t="truerms">true RMS</span><span class="term" data-t="burden">burden voltage</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Measuring parts &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 3 ============ -->
+<section class="ch" id="ch3">
+  <h2>3 &middot; Testing Parts and Reading Resistors</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Read a four-band resistor.</li>
+    <li>Explain why resistance on a powered or connected circuit reads wrong.</li>
+    <li>Use continuity and the diode test to find opens, shorts, and bad diodes.</li></ul></div>
+
+  <h3>Resistor color code</h3>
+  <p>Four-band resistors use the first two bands as digits, the third as a multiplier, and the fourth as tolerance. Digits: black 0, brown 1, red 2, orange 3, yellow 4, green 5, blue 6, violet 7, gray 8, white 9. Multiplier is a power of ten. Tolerance: gold &plusmn;5%, silver &plusmn;10%, none &plusmn;20%.</p>
+  <div class="try"><div class="th">Try it: read the resistor</div><div class="tb">
+    <canvas id="m4c" width="480" height="110"></canvas>
+    <div class="ctl"><label>Band 1</label><div class="chips" id="m4a"></div></div>
+    <div class="ctl"><label>Band 2</label><div class="chips" id="m4b"></div></div>
+    <div class="ctl"><label>Multiplier</label><div class="chips" id="m4m"></div></div>
+    <div class="ctl"><label>Tolerance</label><div class="chips" id="m4t"></div></div>
+    <div class="read" id="m4r"></div></div></div>
+
+  <h3>Measuring resistance: the in-circuit trap</h3>
+  <p>The meter pushes a small current through the part and reads the voltage. If anything else is connected across the part, that current also flows through the <b>other paths</b>, so the meter reads the <b>parallel</b> combination, which is always lower than the part alone. To measure a part properly, power off, discharge capacitors, and lift one end of the part out of the circuit.</p>
+  <div class="try"><div class="th">Try it: a part in a circuit</div><div class="tb">
+    <div class="ctl"><label>Part measured</label><input type="range" id="m2a" min="0" max="100" step="1" value="50" oninput="R1.calc()"><span class="v" id="m2av"></span></div>
+    <div class="ctl"><label>Other path</label><input type="range" id="m2b" min="0" max="100" step="1" value="40" oninput="R1.calc()"><span class="v" id="m2bv"></span></div>
+    <div class="read" id="m2r"></div>
+    <div class="note">The meter reads the part in parallel with whatever else connects across it. Make the other path huge and the error vanishes. Make it small and the reading is dominated by it. If the circuit is powered, the reading is meaningless and can damage the meter.</div></div></div>
+
+  <h3>Continuity and the diode test</h3>
+  <ul>
+   <li><b>Continuity</b> beeps when the resistance is very low (typically under a few tens of ohms). It checks wires, fuses, switches, and solder joints. No beep where there should be one is an <b>open</b>. A beep where there should not be one is a <b>short</b>.</li>
+   <li><b>Diode test</b> pushes a small current through the diode and shows its forward voltage drop. It should conduct one way and block the other.</li></ul>
+  <div class="try"><div class="th">Try it: diode test</div><div class="tb">
+    <div class="ctl"><label>Part</label><div class="chips" id="m3p"></div></div>
+    <div class="ctl"><label>Red lead on</label><div class="chips" id="m3d"></div></div>
+    <div class="lcd" style="background:#9db88a;color:#13200e;border:3px solid #3a4a30;border-radius:4px;padding:8px 12px;font-family:'Courier New',monospace"><span style="font-size:34px" id="m3v">OL</span><span style="float:right;font-size:11px;text-align:right" id="m3s">DIODE</span></div>
+    <div class="read" id="m3r"></div>
+    <div class="note">Typical readings: silicon about 0.5 to 0.7 V, Schottky about 0.15 to 0.45 V, red LED about 1.7 to 2.1 V, blue or white LED about 2.6 to 3.3 V. &ldquo;OL&rdquo; means open loop, which is the correct reading in the blocking direction. A shorted diode reads about 0 V both ways, and an open one reads OL both ways.</div></div></div>
+
+  <h3>Measuring current</h3>
+  <p>To measure current you put the meter in the path, so all the current goes <i>through</i> it. The meter has a small internal resistance, which drops a little voltage, called <span class="term" data-t="burden">burden voltage</span>. On low-voltage circuits that can disturb what you are measuring. Start on the highest current range and work down. Never exceed the meter's current rating.</p>
+
+  <div class="why"><b>Why a 17E cares</b>Cables, connectors, and fuses cause a large share of field failures. A continuity check across a cable end to end takes seconds and separates a bad cable from a bad radio.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Digits, multiplier, tolerance. Brown black red gold is 1 k&Omega; &plusmn;5%.</li><li>Measure resistance with power off and the part isolated. Connected parts read low.</li><li>Continuity finds opens and shorts. The diode test shows forward drop one way and OL the other.</li></ul></div>
+  <div class="kt"><span class="term" data-t="continuity">continuity</span><span class="term" data-t="open">open</span><span class="term" data-t="short">short</span><span class="term" data-t="burden">burden voltage</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: The oscilloscope &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 4 ============ -->
+<section class="ch" id="ch4">
+  <h2>4 &middot; The Oscilloscope</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Set volts per division, time per division, and trigger to show a stable signal.</li>
+    <li>Read peak-to-peak voltage, period, and frequency off the screen.</li>
+    <li>Explain probe attenuation, coupling, and bandwidth.</li></ul></div>
+
+  <p>A scope draws voltage (up) against time (across). The screen is a grid. Each square is a <b>division</b>. Reading a scope is counting divisions and multiplying by the setting.</p>
+  <h3>The controls that matter</h3>
+  <table class="t"><tr><th>Control</th><th>What it does</th></tr>
+   <tr><td>Volts per division</td><td>Vertical scale. 2 V/div means each square up is 2 V.</td></tr>
+   <tr><td>Time per division</td><td>Horizontal scale. 1 ms/div means each square across is 1 ms.</td></tr>
+   <tr><td>Trigger</td><td>Starts each sweep at the same point on the waveform, so a repeating signal holds still. A level and an edge (rising or falling) set the start point.</td></tr>
+   <tr><td>Coupling</td><td><b>DC</b> shows everything. <b>AC</b> blocks DC so you can see a small ripple on a large DC level. <b>GND</b> shows the zero line.</td></tr>
+   <tr><td>Probe setting</td><td>The scope must be told whether the probe is x1 or x10.</td></tr></table>
+  <h3>Reading it</h3>
+  <div class="formula">peak-to-peak = divisions tall &times; volts/div<br>period = divisions per cycle &times; time/div,     frequency = 1 &divide; period</div>
+  <p>For a sine wave, peak is half of peak-to-peak and RMS is peak &times; 0.707. For a square wave, duty cycle is the high time divided by the period.</p>
+  <div class="try"><div class="th">Try it: read the scope</div><div class="tb">
+    <canvas id="s1c" width="480" height="300"></canvas>
+    <div class="read" id="s1r"></div>
+    <div class="ctl"><label>Peak-to-peak</label><input type="number" step="any" id="s1v" placeholder="volts" style="width:100px;padding:7px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary)"><span class="v" style="min-width:20px">V</span></div>
+    <div class="ctl"><label>Frequency</label><input type="number" step="any" id="s1f" placeholder="value" style="width:100px;padding:7px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary)"><div class="chips" id="s1u"></div></div>
+    <div class="chips"><button class="chip on" onclick="S1.check()">Check</button><button class="chip" onclick="S1.new()">New signal</button></div>
+    <div class="fb ok" id="s1o" style="display:none;margin-top:8px"></div>
+    <div class="note">Count the divisions, multiply by the settings shown, then enter your answers. The centre line is 0 V.</div></div></div>
+
+  <h3>Probes: the x10 setting</h3>
+  <p>A <b>x10 probe</b> divides the signal by ten before it reaches the scope. It has a much higher input resistance (about 10 M&Omega;) and much lower capacitance (about 10 to 15 pF) than a x1 probe (about 1 M&Omega; and around 100 pF, mostly the cable). Lower capacitance loads the circuit less, so a x10 probe is the default choice. You must tell the scope the probe is x10, or every reading is ten times too small. Probes also need <b>compensation</b>: adjust them on the scope's square-wave test output until the corners are square.</p>
+  <h3>Bandwidth</h3>
+  <p>A scope's <span class="term" data-t="bandwidth">bandwidth</span> is the frequency at which it reads only 70.7% of the true amplitude (&minus;3 dB). For accurate amplitude, use a scope with <b>at least five times</b> the bandwidth of your signal. The sample rate must also be high enough to catch the detail: it must be well above twice the highest frequency, and typically four to five times.</p>
+  <div class="try"><div class="th">Try it: bandwidth and probe loading</div><div class="tb">
+    <div class="ctl"><label>Signal</label><input type="range" id="s2f" min="0" max="100" step="1" value="50" oninput="B1.calc()"><span class="v" id="s2fv"></span></div>
+    <div class="ctl"><label>Scope bandwidth</label><div class="chips" id="s2b"></div></div>
+    <div class="ctl"><label>Source resistance</label><input type="range" id="s2r" min="0" max="100" step="1" value="40" oninput="B1.calc()"><span class="v" id="s2rv"></span></div>
+    <div class="ctl"><label>Probe</label><div class="chips" id="s2p"></div></div>
+    <div class="read" id="s2o"></div>
+    <div class="note">The scope itself reads a single-pole roll-off. The probe adds capacitance across the source, which forms a low-pass filter with the source resistance. A x10 probe loads a high-resistance circuit far less.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>Spectrum analyzers and SDRs show you signals in frequency. A scope shows the same signals in time, which is how you check clock lines, power supply ripple, and pulse trains. Ripple on a radio&rsquo;s supply can show up as noise on its output.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Volts/div and time/div turn grid squares into volts and seconds. Frequency = 1 &divide; period.</li><li>Trigger holds the picture still. AC coupling shows ripple on a DC level. Set the probe to x10 on the scope.</li><li>Use a scope with at least five times the signal frequency. A x10 probe loads the circuit less.</li></ul></div>
+  <div class="kt"><span class="term" data-t="trigger">trigger</span><span class="term" data-t="coupling">coupling</span><span class="term" data-t="bandwidth">bandwidth</span><span class="term" data-t="probe10">x10 probe</span><span class="term" data-t="duty">duty cycle</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Reading waveforms &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 5 ============ -->
+<section class="ch" id="ch5">
+  <h2>5 &middot; Reading Waveforms and Symptoms</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Recognize clipping, offset, ripple, noise, and a dead signal on a scope.</li>
+    <li>Match a symptom to likely causes in a power supply or filter.</li>
+    <li>Predict ripple in a simple supply.</li></ul></div>
+
+  <p>A waveform is a symptom. The shape tells you which kind of fault to look for.</p>
+  <table class="t"><tr><th>You see</th><th>Likely meaning</th></tr>
+   <tr><td>Flat line at 0 V</td><td>No signal or no power. Check the source, supply, and the path before it.</td></tr>
+   <tr><td>Flat line at a high DC level</td><td>A stuck output, or the signal is blocked and you are only seeing bias.</td></tr>
+   <tr><td>Clean shape, wrong size</td><td>Gain error, a loose probe, or a wrong probe setting.</td></tr>
+   <tr><td>Flat tops or bottoms (clipping)</td><td>The signal is too big for the supply or stage and runs out of room.</td></tr>
+   <tr><td>Shifted up or down (offset)</td><td>DC bias is wrong, or you are using DC coupling and a DC level is added.</td></tr>
+   <tr><td>Fuzz riding on the line</td><td>Noise, interference, or poor grounding. A long ground lead makes it worse.</td></tr>
+   <tr><td>Sawtooth bumps on a DC level</td><td>Ripple from a rectifier supply. Too big means a weak filter capacitor or too much load.</td></tr>
+   <tr><td>Rounded square edges</td><td>Too much capacitance or too little bandwidth. Check the probe and the circuit.</td></tr></table>
+
+  <div class="try"><div class="th">Try it: what is wrong with this waveform?</div><div class="tb">
+    <canvas id="w1c" width="480" height="240"></canvas>
+    <div class="ctl"><label>Show me</label><div class="chips" id="w1m"></div></div>
+    <div class="fb ok" id="w1o" style="display:block;font-size:14px"></div></div></div>
+
+  <h3>Ripple in a rectifier supply</h3>
+  <p>A half-wave rectifier charges the filter capacitor on each peak. Between peaks the capacitor supplies the load and sags. The size of the sag is the ripple. For a simple supply it follows from how long the capacitor has to hold the load:</p>
+  <div class="formula">ripple (peak-to-peak) &approx; I<sub>load</sub> &divide; ( f &times; C )     f = 60 Hz for half-wave, 120 Hz for full-wave</div>
+  <details class="work"><summary>Worked example</summary><div>
+   <p>A half-wave supply feeds a 1 k&Omega; load at about 10 V, so the load current is about 10 mA. The filter is 100 &micro;F and f = 60 Hz.</p>
+   <p>Ripple &approx; 0.010 &divide; (60 &times; 0.0001) = 1.7 V peak-to-peak. A full-wave bridge doubles f and halves the ripple to about 0.8 V. Doubling the capacitor also halves it.</p></div></details>
+  <div class="try"><div class="th">Try it: how much ripple?</div><div class="tb">
+    <div class="ctl"><label>Load current</label><input type="range" id="w2i" min="1" max="100" step="1" value="10" oninput="Rp.calc()"><span class="v" id="w2iv"></span></div>
+    <div class="ctl"><label>Filter capacitor</label><input type="range" id="w2c" min="0" max="100" step="1" value="37" oninput="Rp.calc()"><span class="v" id="w2cv"></span></div>
+    <div class="ctl"><label>Rectifier</label><div class="chips" id="w2r"></div></div>
+    <div class="read" id="w2o"></div>
+    <canvas id="w2k" width="480" height="150"></canvas>
+    <div class="note">The estimate is for the ripple on a lightly loaded simple supply, which is why it is a rough guide and not a specification.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>Supply ripple and noise leak into radios and receivers. If a receiver is deaf only when it is on its charger or generator, a scope on the supply line is the fastest way to see why.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Flat zero means no signal or power. Flat tops mean clipping. Fuzz means noise. Sawtooth on DC means ripple.</li><li>Ripple &approx; load current &divide; (f &times; C). Full-wave halves it by doubling f.</li><li>Use AC coupling to see small ripple on a large DC level.</li></ul></div>
+  <div class="kt"><span class="term" data-t="ripple">ripple</span><span class="term" data-t="clipping">clipping</span><span class="term" data-t="offset">DC offset</span><span class="term" data-t="rectifier">rectifier</span></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Troubleshooting &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 6 ============ -->
+<section class="ch" id="ch6">
+  <h2>6 &middot; Systematic Troubleshooting</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Follow a repeatable troubleshooting sequence.</li>
+    <li>Use the half-split method to find a fault in few measurements.</li>
+    <li>Tell the common fault types apart by their readings.</li></ul></div>
+
+  <h3>The sequence</h3>
+  <ol>
+   <li><b>Observe the symptom.</b> What exactly is wrong, and when? Is it steady or intermittent?</li>
+   <li><b>Check the easy things first.</b> Power, connections, fuses, switches, settings.</li>
+   <li><b>Know what is normal.</b> A schematic, a manual, or a working unit gives expected values.</li>
+   <li><b>Split the circuit.</b> Measure in the middle and decide which half contains the fault.</li>
+   <li><b>Repeat</b> in the faulty half until you have isolated one stage or one part.</li>
+   <li><b>Confirm the cause.</b> Do not just replace a part: show why it is bad.</li>
+   <li><b>Fix it, test it, and record it.</b></li></ol>
+  <h3>Half-split: a measurement is a question</h3>
+  <p>If a signal passes through eight stages and the output is dead, you could check each stage in order, and it could take eight measurements. A better way is to measure after stage 4. If the signal is good there, the fault is in stages 5 to 8. If not, it is in stages 1 to 4. Each measurement halves the search, so eight stages take at most three.</p>
+  <div class="formula">measurements needed &approx; log<sub>2</sub>(number of stages), rounded up</div>
+  <div class="try"><div class="th">Try it: find the dead stage</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px">The signal goes in at the left. One stage is dead. Tap a test point to see whether the signal reaches it.</p>
+    <div id="t1c"></div>
+    <div class="read" id="t1r"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="H1.new(8)">8 stages</button><button class="chip" onclick="H1.new(16)">16 stages</button><button class="chip" onclick="H1.new(5)">5 stages</button></div>
+    <div class="note">Try measuring in the middle of whatever range is still possible. Compare your count with the best possible.</div></div></div>
+
+  <h3>Common faults and what they read</h3>
+  <table class="t"><tr><th>Fault</th><th>Voltage across it</th><th>Current through it</th><th>Ohms (power off, isolated)</th></tr>
+   <tr><td>Open</td><td>Full voltage of the circuit appears across the gap</td><td>Zero</td><td>OL (very high)</td></tr>
+   <tr><td>Short</td><td>Near zero</td><td>Higher than normal</td><td>Near zero</td></tr>
+   <tr><td>Wrong value</td><td>Different from the calculation</td><td>Different</td><td>Off by more than tolerance</td></tr>
+   <tr><td>Leaky capacitor</td><td>Reduced or noisy</td><td>Extra</td><td>Lower than expected for a good one</td></tr>
+   <tr><td>Bad diode</td><td>No drop (short) or no conduction (open)</td><td></td><td>Diode test reads 0 or OL both ways</td></tr></table>
+  <p>The open case is the one that surprises people: across an open part you read the <i>full</i> supply voltage, because no current flows to drop voltage on the other parts. A reading of 9 V across a resistor that should drop 3 V is a strong clue that something in series with it is open.</p>
+
+  <div class="why"><b>Why a 17E cares</b>The same method works on a radio, an antenna feed, a network cable, or a software problem: observe, split, measure, confirm. The half-split idea is also how you narrow a problem down in a network.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Observe, check the easy things, know the normal, split, repeat, confirm, fix.</li><li>Half-split: each measurement halves the possibilities. N stages need about log<sub>2</sub>N measurements.</li><li>An open shows full voltage across the gap and no current. A short shows near zero volts and extra current.</li></ul></div>
+  <div class="kt"><span class="term" data-t="halfsplit">half-split</span><span class="term" data-t="open">open</span><span class="term" data-t="short">short</span></div>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('ch7')">Next: Put it together &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 7 ============ -->
+<section class="ch" id="ch7">
+  <h2>7 &middot; Put It Together: Predict, Then Measure</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Predict readings on a divider, a rectifier supply, an RC filter, and a 555 timer.</li>
+    <li>Decide which instrument and setting answers each question.</li>
+    <li>Walk a fault from symptom to cause.</li></ul></div>
+
+  <p>This chapter pairs with the four boards in the Electronics Test Bench. Predict first. Then go measure.</p>
+  <table class="t"><tr><th>Board</th><th>What to predict</th><th>Instrument and setting</th></tr>
+   <tr><td>Divider and LED (9 V, 1 k, 2 k, 470 &Omega;)</td><td>Midpoint voltage 9 &times; 2 &divide; 3 = 6 V. LED current &approx; (9 &minus; 2) &divide; 470 = 15 mA.</td><td>Meter, DC volts across R2. Meter in series for current.</td></tr>
+   <tr><td>Half-wave supply (12 V peak, 100 &micro;F, 1 k&Omega;)</td><td>Peak after the diode &approx; 12 &minus; 0.7 = 11.3 V. Ripple &approx; 1.7 V.</td><td>Scope with AC coupling on the output for ripple. Meter DC volts for the average.</td></tr>
+   <tr><td>RC filter (1 k&Omega;, 100 nF)</td><td>Cutoff f = 1 &divide; (2&pi;RC) &approx; 1.6 kHz. At the cutoff the output is 70.7% of the input.</td><td>Two-channel scope: input and output, to see gain and phase.</td></tr>
+   <tr><td>555 blinker (10 k, 47 k, 1 &micro;F)</td><td>f = 1.44 &divide; ((R1 + 2R2) &times; C) &approx; 13.8 Hz. High time &approx; 0.693 (R1 + R2) C &approx; 39.5 ms.</td><td>Scope on the output for the shape. A meter reads only the average.</td></tr></table>
+  <div class="try"><div class="th">Try it: predict the divider</div><div class="tb">
+    <div class="ctl"><label>R1</label><input type="range" id="p1a" min="0" max="100" step="1" value="40" oninput="Pd.calc()"><span class="v" id="p1av"></span></div>
+    <div class="ctl"><label>R2</label><input type="range" id="p1b" min="0" max="100" step="1" value="55" oninput="Pd.calc()"><span class="v" id="p1bv"></span></div>
+    <div class="ctl"><label>Your prediction</label><input type="number" step="any" id="p1g" placeholder="volts at midpoint" style="width:150px;padding:7px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary)"><button class="chip on" onclick="Pd.check()">Check</button></div>
+    <div class="fb ok" id="p1o" style="display:none;margin-top:6px"></div>
+    <div class="read" id="p1r"></div></div></div>
+
+  <h3>A fault from symptom to cause</h3>
+  <details class="work" open><summary>Divider board: the LED is dark</summary><div>
+   <p><b>Symptom.</b> The LED branch is dark. The 9 V battery is connected and the switch is on.</p>
+   <p><b>Expect.</b> VCC = 9 V, midpoint = 6 V, LED anode = about 2 V and the LED lit.</p>
+   <p><b>Measure.</b> VCC reads 9.0 V, so the supply is fine. The LED anode reads <b>9 V</b>, not 2 V.</p>
+   <p><b>Reason.</b> The anode is at the full supply voltage, so no current is flowing and nothing is dropping voltage across R3. If R3 were open, nothing would feed the anode and it would read 0 V. Because the anode sees the full 9 V, R3 is passing the voltage along, and the open must be after it: the LED.</p>
+   <p><b>Confirm.</b> Power off and use the diode test across the LED: it reads OL both ways. The LED is open.</p>
+   <p><b>Fix.</b> Replace the LED with the right polarity, and check that R3 limits the current to a safe level (about 15 mA here).</p></div></details>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch7-score"></span></div><div class="tb" id="ch7-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Predict, then measure. Pick the instrument that shows the property you care about.</li><li>Meter for exact DC values, continuity, and parts. Scope for shape, ripple, timing, and phase.</li><li>Walk from symptom, to expectation, to measurement, to reasoning, to confirmation, to fix.</li></ul></div>
+  <a class="tool" href="../testbench/"><b>Go to the Electronics Test Bench &rarr;</b>Four boards, a multimeter, and a two-channel scope. Find the faults yourself.</a>
+  <a class="tool" href="../betsim/"><b>Or build the circuits in Circuit Bench &rarr;</b>Place the parts and watch the circuit solve.</a>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch7')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>Fluke, Keysight, and Tektronix application notes on multimeter use, input impedance, true-RMS measurement, oscilloscope fundamentals, probes, and bandwidth. Probe resistance and capacitance values are typical, not exact.</li>
+   <li>IEC 61010 measurement category definitions (CAT I to CAT IV) for meter safety ratings.</li>
+   <li>Horowitz and Hill, <i>The Art of Electronics</i>. Rectifier ripple, RC filters, and the 555 timer.</li>
+   <li>Army TM and WRAVEN basic electronics material for electrical safety and test equipment use in the 17E course.</li>
+   <li><b>Notes.</b> The ripple estimate, scope bandwidth model, and half-split game are simplified teaching models. Diode readings are typical ranges. Follow your unit&rsquo;s electrical safety procedures and your instructor&rsquo;s direction. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
+</div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">Measuring &amp; Troubleshooting Electronics Explained &middot; Interactive textbook &middot; Companion to the Electronics Test Bench &middot; UNCLASSIFIED</div>
+<script>
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+const LOGV=(v,a,b)=>a*Math.pow(b/a,v/100);
+const fmtR=r=>r>=1e6?(r/1e6).toFixed(r>=1e7?0:2).replace(/\.00$/,'')+' M\u03A9':r>=1e3?(r/1e3).toFixed(r>=1e4?0:2).replace(/\.00$/,'')+' k\u03A9':r.toFixed(r<100?1:0).replace(/\.0$/,'')+' \u03A9';
+/* ---- F0: what each fault reads on the divider board ---- */
+const F0={f:'none',set(v){this.f=v;this.calc();},calc(){chips('m0f',[['none','Working'],['r1open','R1 open'],['r2open','R2 open'],['r3open','R3 open'],['ledopen','LED open']],this.f,'F0.set');
+  const F=this.f,N1=F==='r1open'?0:F==='r2open'?9:6,N2=F==='r3open'?0:F==='ledopen'?9:2,I=(F==='r3open'||F==='ledopen')?0:(9-2)/470*1000;
+  read('m0r',[['Supply (VCC)','9.00 V'],['Divider midpoint',N1.toFixed(2)+' V',N1===6?'good':'bad'],['LED anode',N2.toFixed(2)+' V',N2===2?'good':'bad'],['LED current',I.toFixed(1)+' mA',I>0?'good':'bad'],['LED',I>0?'lit':'dark',I>0?'good':'bad']]);}};
+/* ---- V1: voltmeter loading ---- */
+const V1={m:1e7,set(v){this.m=+v;this.calc();},calc(){chips('m1m',[[1e5,'100 k\u03A9 (cheap analog)'],[1e6,'1 M\u03A9'],[1e7,'10 M\u03A9 (typical digital)']],this.m,'V1.set');
+  const R1=LOGV(+$('m1a').value,1e3,1e8),R2=LOGV(+$('m1b').value,1e3,1e8);$('m1av').textContent=fmtR(R1);$('m1bv').textContent=fmtR(R2);
+  const p=R2*this.m/(R2+this.m),tv=10*R2/(R1+R2),mv=10*p/(R1+p),er=(mv-tv)/tv*100;
+  read('m1r',[['True voltage',tv.toFixed(3)+' V'],['Meter reads',mv.toFixed(3)+' V'],['Error',er.toFixed(1)+' %',Math.abs(er)>5?'bad':Math.abs(er)>1?'mid':'good']]);}};
+/* ---- CC: resistor color code ---- */
+const COL=[['black','#111',0],['brown','#7b4a1e',1],['red','#d33',2],['orange','#f08a1c',3],['yellow','#f2d21c',4],['green','#2aa84a',5],['blue','#2b6fd6',6],['violet','#8a4bd6',7],['gray','#999',8],['white','#eee',9]];
+const MULT=[['black','#111',1],['brown','#7b4a1e',10],['red','#d33',100],['orange','#f08a1c',1e3],['yellow','#f2d21c',1e4],['green','#2aa84a',1e5],['blue','#2b6fd6',1e6],['violet','#8a4bd6',1e7],['gold','#d4af37',0.1],['silver','#c0c0c0',0.01]];
+const TOL=[['gold','#d4af37',5],['silver','#c0c0c0',10],['none','#00000000',20]];
+const CC={a:1,b:0,m:2,t:0,set(k,v){this[k]=+v;this.calc();},
+ calc(){const row=(id,k,arr,lab)=>{$(id).innerHTML=arr.map((c,i)=>'<button class="chip'+(this[k]===i?' on':'')+'" onclick="CC.set(\''+k+'\','+i+')" style="border-left:8px solid '+(c[1].length>7?'transparent':c[1])+'">'+c[0]+'</button>').join('');};
+  row('m4a','a',COL);row('m4b','b',COL);row('m4m','m',MULT);row('m4t','t',TOL);
+  const val=(COL[this.a][2]*10+COL[this.b][2])*MULT[this.m][2],tol=TOL[this.t][2],lo=val*(1-tol/100),hi=val*(1+tol/100);
+  read('m4r',[['Value',fmtR(val)],['Tolerance','\u00B1'+tol+'%'],['Could measure between',fmtR(lo)+' and '+fmtR(hi)]]);
+  const [c,x]=cv('m4c');clear(c,x);x.strokeStyle='#8a8a8a';x.lineWidth=4;x.beginPath();x.moveTo(10,55);x.lineTo(110,55);x.moveTo(370,55);x.lineTo(470,55);x.stroke();
+  x.fillStyle='#c9a77c';x.beginPath();x.roundRect?x.roundRect(110,25,260,60,22):x.rect(110,25,260,60);x.fill();
+  [[COL[this.a][1],150],[COL[this.b][1],195],[MULT[this.m][1],240],[TOL[this.t][1],315]].forEach(b=>{if(b[0]==='#00000000')return;x.fillStyle=b[0];x.fillRect(b[1],25,16,60);});
+  lab(x,'1',158,104,'#9db4c8','center',10);lab(x,'2',203,104,'#9db4c8','center',10);lab(x,'mult',248,104,'#9db4c8','center',10);lab(x,'tol',323,104,'#9db4c8','center',10);}};
+/* ---- IR: in-circuit resistance ---- */
+const IR={calc(){const R=LOGV(+$('m2a').value,10,1e7),O=LOGV(+$('m2b').value,10,1e7);$('m2av').textContent=fmtR(R);$('m2bv').textContent=fmtR(O);
+  const par=R*O/(R+O),er=(par-R)/R*100;read('m2r',[['Part alone',fmtR(R)],['Other path',fmtR(O)],['Meter reads',fmtR(par),Math.abs(er)>5?'bad':Math.abs(er)>1?'mid':'good'],['Error',er.toFixed(1)+' %',Math.abs(er)>5?'bad':'good'],['Fix','Lift one end of the part']]);}};
+/* ---- DT: diode test ---- */
+const DIO={si:['Silicon diode',0.6],sch:['Schottky diode',0.3],red:['Red LED',1.9],blue:['Blue/white LED',2.9],shorted:['Shorted diode',0],open:['Open diode',null]};
+const DT={p:'si',d:'anode',setP(v){this.p=v;this.calc();},setD(v){this.d=v;this.calc();},
+ calc(){chips('m3p',Object.keys(DIO).map(k=>[k,DIO[k][0]]),this.p,'DT.setP');chips('m3d',[['anode','Anode (forward)'],['cathode','Cathode (reverse)']],this.d,'DT.setD');
+  const vf=DIO[this.p][1];let txt;if(this.p==='open')txt='OL';else if(this.p==='shorted')txt='0.00';else txt=this.d==='anode'?vf.toFixed(2):'OL';
+  $('m3v').textContent=txt;$('m3s').innerHTML='DIODE<br>'+(txt==='OL'?'':'V');
+  const verdict=this.p==='shorted'?'Shorted: reads about 0 V both ways. Replace it.':this.p==='open'?'Open: reads OL both ways. Replace it.':this.d==='anode'?'Conducting. The reading is the forward voltage drop.':'Blocking. OL is correct in this direction.';
+  read('m3r',[['Reading',txt==='OL'?'OL (open loop)':txt+' V'],['What it means',verdict,(this.p==='shorted'||this.p==='open')?'bad':'good']]);}};
+/* ---- SC: read the scope ---- */
+const SC={cur:null,unit:1,setU(v){this.unit=+v;chips('s1u',[[1,'Hz'],[1e3,'kHz'],[1e6,'MHz']],this.unit,'SC.setU');},
+ new(){const tds=[1e-4,2e-4,5e-4,1e-3,2e-3,5e-3,1e-2],vds=[0.5,1,2,5],pd=[5,4,2.5,2],vp=[2,3,4,5,6],ty=['sine','square','triangle'];
+  const pick=a=>a[Math.floor(Math.random()*a.length)];this.cur={td:pick(tds),vd:pick(vds),pd:pick(pd),vp:pick(vp),ty:pick(ty)};$('s1v').value='';$('s1f').value='';$('s1o').style.display='none';this.setU(1);this.draw();},
+ draw(){if(!this.cur)return this.new();const c0=this.cur;chips('s1u',[[1,'Hz'],[1e3,'kHz'],[1e6,'MHz']],this.unit,'SC.setU');const [c,x]=cv('s1c');clear(c,x);const W=480,H=300,gx=48,gy=H/8;
+  x.strokeStyle='#123a22';x.lineWidth=1;for(let i=0;i<=10;i++){x.beginPath();x.moveTo(i*gx,0);x.lineTo(i*gx,H);x.stroke();}for(let j=0;j<=8;j++){x.beginPath();x.moveTo(0,j*gy);x.lineTo(W,j*gy);x.stroke();}
+  x.strokeStyle='#1d6a3c';x.beginPath();x.moveTo(0,H/2);x.lineTo(W,H/2);x.moveTo(W/2,0);x.lineTo(W/2,H);x.stroke();
+  const amp=c0.vp/2*gy,per=c0.pd*gx;x.strokeStyle='#ffe14d';x.lineWidth=2.5;x.beginPath();
+  for(let px=0;px<=W;px++){const ph=((px/per)%1+1)%1;let y;if(c0.ty==='sine')y=Math.sin(TAU*ph);else if(c0.ty==='square')y=ph<0.5?1:-1;else y=ph<0.25?4*ph:ph<0.75?2-4*ph:4*ph-4;const py=H/2-y*amp;px?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+  lab(x,c0.vd+' V/div    '+(c0.td>=1e-3?(c0.td*1e3)+' ms/div':(c0.td*1e6)+' \u00B5s/div'),8,H-8,'#7dff9d','left',13);
+  read('s1r',[['Volts per division',c0.vd+' V'],['Time per division',c0.td>=1e-3?(c0.td*1e3)+' ms':(c0.td*1e6)+' \u00B5s'],['Shape',c0.ty]]);},
+ check(){const c0=this.cur,vp=c0.vp*c0.vd,f=1/(c0.pd*c0.td),vin=parseFloat($('s1v').value),fin=parseFloat($('s1f').value)*this.unit,o=$('s1o');o.style.display='block';
+  if(isNaN(vin)||isNaN(fin)){o.className='fb no';o.textContent='Enter both answers.';return;}
+  const okv=Math.abs(vin-vp)<=0.05*vp+1e-9,okf=Math.abs(fin-f)<=0.05*f;const fs=f>=1e3?(f/1e3)+' kHz':f+' Hz';
+  o.className='fb '+(okv&&okf?'ok':'no');o.innerHTML=(okv&&okf?'<b>Both correct.</b> ':'<b>Check again.</b> ')+'Peak-to-peak is '+c0.vp+' divisions \u00D7 '+c0.vd+' V = <b>'+vp+' V</b>. One cycle is '+c0.pd+' divisions \u00D7 the time setting = '+(c0.pd*c0.td*1000)+' ms, so the frequency is 1 \u00F7 period = <b>'+fs+'</b>.';}};
+/* ---- BW: scope bandwidth and probe loading ---- */
+const BW={b:1e8,p:10,setB(v){this.b=+v;this.calc();},setP(v){this.p=+v;this.calc();},
+ calc(){chips('s2b',[[2e7,'20 MHz'],[1e8,'100 MHz'],[2e8,'200 MHz']],this.b,'BW.setB');chips('s2p',[[1,'x1 probe (1 M\u03A9, ~100 pF)'],[10,'x10 probe (10 M\u03A9, ~12 pF)']],this.p,'BW.setP');
+  const f=LOGV(+$('s2f').value,1e3,1e9),Rs=LOGV(+$('s2r').value,100,1e6),Cp=this.p===1?100e-12:12e-12;$('s2fv').textContent=fmtHz(f);$('s2rv').textContent=fmtR(Rs);
+  const g=1/Math.sqrt(1+(f/this.b)**2),fc=1/(TAU*Rs*Cp),g2=1/Math.sqrt(1+(f/fc)**2),tot=g*g2;
+  read('s2o',[['Scope shows (scope only)',(g*100).toFixed(1)+' % of true',g<0.95?'bad':g<0.99?'mid':'good'],['Five-times rule',f*5<=this.b?'met':'not met',f*5<=this.b?'good':'bad'],['Probe + source corner',fmtHz(fc)],['With probe loading',(g2*100).toFixed(1)+' % of true',g2<0.95?'bad':g2<0.99?'mid':'good'],['Combined',(tot*100).toFixed(1)+' % of true']]);}};
+/* ---- WG: waveform gallery ---- */
+const WGM=[['good','Healthy sine'],['clip','Clipped'],['off','DC offset'],['noise','Noisy'],['ripple','Supply ripple'],['dead','Dead (flat)'],['round','Rounded square']];
+const WGT={good:'A clean sine of the expected size and centred on zero. Nothing to chase.',clip:'The tops and bottoms are flat. The signal is too large for the supply or stage, so it hits the limit. Reduce the input or check the supply voltage.',off:'The whole wave sits above zero. A DC level is added. In DC coupling you see it. Switch to AC coupling to see the wave alone, and check bias and coupling parts.',noise:'Fuzz rides on the wave. Look for interference, poor grounding, or a long probe ground lead.',ripple:'A DC level with a sawtooth riding on it. This is supply ripple. If it is large, check the filter capacitor and the load.',dead:'A flat line. No signal or no power. Check the source and supply and work forward with half-split.',round:'A square wave with rounded corners. Too much capacitance or too little bandwidth: check the probe, the circuit loading, and the scope bandwidth.'};
+const WG={m:'good',set(v){this.m=v;this.draw();},draw(){chips('w1m',WGM.map(m=>[m[0],m[1]]),this.m,'WG.set');const [c,x]=cv('w1c');clear(c,x);const W=480,H=240;x.strokeStyle='#123a22';for(let i=0;i<=10;i++){x.beginPath();x.moveTo(i*48,0);x.lineTo(i*48,H);x.stroke();}for(let j=0;j<=6;j++){x.beginPath();x.moveTo(0,j*H/6);x.lineTo(W,j*H/6);x.stroke();}
+  x.strokeStyle='#1d6a3c';x.beginPath();x.moveTo(0,H/2);x.lineTo(W,H/2);x.stroke();x.strokeStyle='#ffe14d';x.lineWidth=2.4;x.beginPath();
+  let seed=7;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296-0.5;};
+  for(let px=0;px<=W;px++){const ph=(px/96)%1;let y;
+   switch(this.m){case'good':y=Math.sin(TAU*ph)*70;break;case'clip':y=Math.max(-40,Math.min(40,Math.sin(TAU*ph)*110));break;case'off':y=Math.sin(TAU*ph)*50-55;break;case'noise':y=Math.sin(TAU*ph)*70+rnd()*34;break;
+    case'ripple':{const t=(px/60)%1;y=-40+(1-t)*26-13;break;}case'dead':y=0;break;case'round':{const t=(px/96)%1,e=t<0.5?1-Math.exp(-(t)*20):Math.exp(-(t-0.5)*20);y=(t<0.5?(1-Math.exp(-t*22)):(Math.exp(-(t-0.5)*22)))*140-70;break;}}
+   const py=H/2-y;px?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();$('w1o').innerHTML='<b>'+WGM.find(m=>m[0]===this.m)[1]+'.</b> '+WGT[this.m];}};
+/* ---- RP: ripple estimate ---- */
+const RP={f:60,set(v){this.f=+v;this.calc();},calc(){chips('w2r',[[60,'Half-wave (60 Hz)'],[120,'Full-wave (120 Hz)']],this.f,'RP.set');const I=+$('w2i').value/1000,C=LOGV(+$('w2c').value,10,4700)*1e-6;$('w2iv').textContent=(I*1000).toFixed(0)+' mA';$('w2cv').textContent=(C*1e6).toFixed(C<1e-4?0:0)+' \u00B5F';
+  const r=I/(this.f*C);read('w2o',[['Ripple (peak to peak)',r.toFixed(2)+' V',r>2?'bad':r>0.5?'mid':'good'],['As a share of 10 V',(r/10*100).toFixed(0)+' %'],['To halve it','double C or use full-wave']]);
+  const [c,x]=cv('w2k');clear(c,x);const pk=11.3,sc=100/12;x.strokeStyle='#26394a';x.beginPath();x.moveTo(0,130);x.lineTo(480,130);x.stroke();x.strokeStyle='#ffe14d';x.lineWidth=2.2;x.beginPath();const T=480/6;
+  for(let px=0;px<=480;px++){const t=((px%T)/T);const v=pk-r*Math.min(1,t/0.85)*(t<0.85?1:1)+ (t>=0.85?r*(t-0.85)/0.15:0);const y=130-Math.max(0,v)*sc;px?x.lineTo(px,y):x.moveTo(px,y);}x.stroke();
+  lab(x,'peak about 11.3 V',6,18,'#9db4c8','left',11);lab(x,'sag = ripple',240,18,'#e86a6a','center',11);}};
+/* ---- HS: half-split game ---- */
+const HS={N:8,f:0,tested:{},n:0,done:false,new(N){this.N=N;this.f=1+Math.floor(Math.random()*N);this.tested={};this.n=0;this.done=false;this.draw();},
+ test(k){if(this.done||k in this.tested)return;this.tested[k]=(k<this.f);this.n++;const lo=this.lo(),hi=this.hi();if(hi-lo===1)this.done=true;this.draw();},
+ lo(){let lo=0;for(const k in this.tested)if(this.tested[k]&&+k>lo)lo=+k;return lo;},hi(){let hi=this.N;for(const k in this.tested)if(!this.tested[k]&&+k<hi)hi=+k;return hi;},
+ draw(){if(!this.f)return this.new(8);const N=this.N,w=100/(N+1);let h='<div style="display:flex;align-items:center;overflow-x:auto;padding:6px 0">';
+  for(let k=0;k<=N;k++){const t=this.tested[k],st=t===undefined?'':t?'background:var(--green-dark,#d6f2e4);border-color:#2e9e5b':'background:rgba(220,90,90,.18);border-color:#d66';h+='<button onclick="HS.test('+k+')" style="flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:2px solid var(--border);font-size:11px;font-weight:700;cursor:pointer;'+st+'" title="test point '+k+'">'+(t===undefined?k:(t?'\u2713':'\u2717'))+'</button>';
+   if(k<N)h+='<div style="flex:0 0 auto;min-width:'+(N>8?30:46)+'px;height:30px;border:1.5px solid var(--border);border-radius:6px;font-size:10px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);margin:0 2px">S'+(k+1)+'</div>';}
+  $('t1c').innerHTML=h+'</div>';const best=Math.ceil(Math.log2(N));
+  read('t1r',[['Measurements so far',String(this.n)],['Best possible',String(best)],['Still possible',this.done?'found':'stages '+(this.lo()+1)+' to '+this.hi()],['Status',this.done?'Stage S'+this.f+' is dead. '+(this.n<=best?'You matched the best possible.':'You used '+(this.n-best)+' extra measurement'+(this.n-best===1?'':'s')+'.'):'Tap a test point',this.done?(this.n<=best?'good':'mid'):'']]);}};
+/* ---- PD: predict the divider ---- */
+const PD={calc(){const R1=LOGV(+$('p1a').value,1e3,1e5),R2=LOGV(+$('p1b').value,1e3,1e5);$('p1av').textContent=fmtR(R1);$('p1bv').textContent=fmtR(R2);const v=9*R2/(R1+R2),i=9/(R1+R2)*1000;this.v=v;
+  read('p1r',[['Divider current',i.toFixed(2)+' mA'],['Power in R1',(i*i*R1/1e6*1000).toFixed(2)+' mW'],['Power in R2',(i*i*R2/1e6*1000).toFixed(2)+' mW']]);},
+ check(){const g=parseFloat($('p1g').value),o=$('p1o');o.style.display='block';if(isNaN(g)){o.className='fb no';o.textContent='Type your prediction first.';return;}const ok=Math.abs(g-this.v)<=0.05*this.v+0.02;o.className='fb '+(ok?'ok':'no');o.innerHTML=(ok?'<b>Good prediction.</b> ':'<b>Not quite.</b> ')+'The midpoint is 9 \u00D7 R2 \u00F7 (R1 + R2) = <b>'+this.v.toFixed(2)+' V</b>.';}};
+/* ===================== questions ===================== */
+const Qd={
+ ch1:[
+  {id:'t1a',t:'mc',q:'What should you do before putting a probe on a circuit?',o:['Decide what reading you expect','Turn the meter to its highest range and hope','Remove all fuses','Connect the black lead to a metal case'],a:0,ex:'Compare what you expect with what you measure. The difference points at the fault.'},
+  {id:'t1b',t:'num',q:'A 9 V supply feeds a divider of R1 = 1 k\u03A9 (top) and R2 = 2 k\u03A9 (bottom). What voltage do you expect at the midpoint? (volts)',a:6,tol:0.05,u:'V',ex:'9 \u00D7 2 \u00F7 (1 + 2) = 6 V.'},
+  {id:'t1c',t:'mc',q:'Which instrument is better for seeing 100 kHz ripple on a power supply?',o:['A multimeter on DC volts','An oscilloscope','A continuity beeper','A diode test'],a:1,ex:'The meter averages the ripple away. A scope shows its size and shape.'},
+  {id:'t1d',t:'mc',q:'Why should you never put an ammeter across a voltage source?',o:['It reads backwards.','It is a near-short that can blow the fuse or worse.','It erases the display.','It only works on AC.'],a:1,ex:'An ammeter has almost no resistance, so connecting it across a source draws a huge current.'},
+  {id:'t1e',t:'mc',q:'Which of these should be done with the circuit powered off?',o:['Measuring voltage','Measuring resistance','Watching a scope trace','Measuring AC ripple'],a:1,ex:'The meter supplies its own test current to read resistance. Power in the circuit gives wrong readings and can damage the meter.'},
+  {id:'t1f',t:'mc',q:'A meter is rated CAT III. What does that tell you?',o:['It is only for batteries.','It is designed for the energy available in building distribution circuits.','It is a three-input meter.','It is waterproof.'],a:1,ex:'CAT ratings say how much transient energy a meter can safely handle in that kind of circuit. Use one rated for where you work.'}],
+ ch2:[
+  {id:'t2a',t:'num',q:'A 10 V supply feeds two 100 k\u03A9 resistors in series. A 10 M\u03A9 meter reads across the bottom one. What does it read? (volts, two decimals)',a:4.98,tol:0.01,u:'V',ex:'100 k in parallel with 10 M is about 99.0 k. Reading = 10 \u00D7 99.0 \u00F7 (100 + 99.0) \u2248 4.98 V, instead of 5.00 V.'},
+  {id:'t2b',t:'num',q:'Now the meter is a 1 M\u03A9 meter in the same circuit. What does it read? (volts, two decimals)',a:4.76,tol:0.01,u:'V',ex:'100 k in parallel with 1 M is about 90.9 k. Reading = 10 \u00D7 90.9 \u00F7 (100 + 90.9) \u2248 4.76 V. A lower-impedance meter loads the circuit more.'},
+  {id:'t2c',t:'mc',q:'How is a current meter connected?',o:['In parallel with the part','In series: break the circuit and put the meter in the gap','Across the supply','To the case only'],a:1,ex:'All the current has to flow through the meter, so it goes in series.'},
+  {id:'t2d',t:'num',q:'A sine wave has a peak of 10 V. What is its RMS value? (volts, two decimals)',a:7.07,tol:0.02,u:'V',ex:'RMS = peak \u00D7 0.707 = 7.07 V.'},
+  {id:'t2e',t:'mc',q:'Why use a true-RMS meter on a square wave?',o:['Average-responding meters assume a sine wave, so they read wrong on other shapes.','True RMS meters are faster.','Square waves have no RMS.','It is required by law.'],a:0,ex:'A cheap AC meter measures the average and scales it for a sine wave. That scaling is wrong for other waveforms.'},
+  {id:'t2f',t:'mc',q:'A DC voltage reads \u22123.30 V. What does the minus sign mean?',o:['The meter is broken.','The red lead is on the more negative point.','The voltage is AC.','The battery is dead.'],a:1,ex:'The sign only shows polarity. The leads are swapped relative to the circuit.'}],
+ ch3:[
+  {id:'t3a',t:'num',q:'A resistor is brown, black, red, gold. What is its value? (ohms)',a:1000,tol:0.5,u:'\u03A9',ex:'Brown 1, black 0, red \u00D7100: 10 \u00D7 100 = 1,000 \u03A9 (1 k\u03A9), gold \u00B15%.'},
+  {id:'t3b',t:'num',q:'A resistor is yellow, violet, orange, gold. What is its value? (ohms)',a:47000,tol:5,u:'\u03A9',ex:'Yellow 4, violet 7, orange \u00D71,000: 47 \u00D7 1,000 = 47,000 \u03A9 (47 k\u03A9).'},
+  {id:'t3c',t:'num',q:'You measure a 10 k\u03A9 resistor still soldered in a circuit, and another 10 k\u03A9 path sits across it. What does the meter read? (ohms)',a:5000,tol:5,u:'\u03A9',ex:'Two 10 k\u03A9 in parallel give 5 k\u03A9. The other path pulls the reading down.'},
+  {id:'t3d',t:'num',q:'A 10 k\u03A9 resistor has a 4.7 k\u03A9 path in parallel. What does the meter read? (ohms, nearest whole)',a:3197,tol:5,u:'\u03A9',ex:'10,000 \u00D7 4,700 \u00F7 14,700 \u2248 3,197 \u03A9.'},
+  {id:'t3e',t:'mc',q:'A silicon diode tested in the diode mode reads 0.62 V one way and OL the other. What does this mean?',o:['It is good.','It is shorted.','It is open.','It is reversed in the circuit.'],a:0,ex:'A good silicon diode shows about 0.5 to 0.7 V forward and OL in the blocking direction.'},
+  {id:'t3f',t:'mc',q:'You expect a beep across a fuse but hear none. What is it?',o:['An open fuse','A short','A good fuse','A dead battery'],a:0,ex:'No continuity where there should be some is an open: the fuse is blown.'}],
+ ch4:[
+  {id:'t4a',t:'num',q:'A waveform is 4 divisions tall at 2 V/div. What is the peak-to-peak voltage? (volts)',a:8,tol:0.05,u:'V',ex:'4 \u00D7 2 = 8 V peak to peak.'},
+  {id:'t4b',t:'num',q:'One cycle takes 4 divisions at 0.5 ms/div. What is the frequency? (hertz)',a:500,tol:2,u:'Hz',ex:'Period = 4 \u00D7 0.5 ms = 2 ms. Frequency = 1 \u00F7 0.002 = 500 Hz.'},
+  {id:'t4c',t:'num',q:'A sine wave is 12 V peak to peak. What is its RMS value? (volts, two decimals)',a:4.24,tol:0.02,u:'V',ex:'Peak = 6 V. RMS = 6 \u00D7 0.707 = 4.24 V.'},
+  {id:'t4d',t:'num',q:'You want to see a 20 MHz signal accurately. What is the minimum scope bandwidth by the five-times rule? (MHz)',a:100,tol:0.5,u:'MHz',ex:'5 \u00D7 20 MHz = 100 MHz.'},
+  {id:'t4e',t:'mc',q:'You use a x10 probe but the scope channel is set to x1. What happens?',o:['Readings are ten times too small.','Readings are ten times too large.','Nothing changes.','The scope will not trigger.'],a:0,ex:'The probe divides by ten and the scope does not multiply back, so everything reads one tenth of the true value.'},
+  {id:'t4f',t:'num',q:'At the scope\u2019s rated bandwidth, what percentage of the true amplitude does it show? (percent, one decimal)',a:70.7,tol:0.3,u:'%',ex:'Bandwidth is defined at the \u22123 dB point, which is 70.7% of the true amplitude.'}],
+ ch5:[
+  {id:'t5a',t:'num',q:'A full-wave supply feeds a 20 mA load with a 100 \u00B5F capacitor. What is the ripple? (volts, two decimals)',a:1.67,tol:0.03,u:'V',ex:'Ripple \u2248 I \u00F7 (f \u00D7 C) = 0.020 \u00F7 (120 \u00D7 0.0001) = 1.67 V.'},
+  {id:'t5b',t:'num',q:'A half-wave supply feeds a 10 mA load with a 470 \u00B5F capacitor. What is the ripple? (volts, two decimals)',a:0.35,tol:0.02,u:'V',ex:'0.010 \u00F7 (60 \u00D7 0.00047) = 0.355 V.'},
+  {id:'t5c',t:'mc',q:'The tops and bottoms of a sine wave are flat. What is this?',o:['Noise','Clipping','Ripple','Offset'],a:1,ex:'Clipping means the signal is too big for the stage or supply and runs out of room.'},
+  {id:'t5d',t:'mc',q:'Why use AC coupling to look at supply ripple?',o:['It makes the ripple bigger.','It blocks the DC level so the small ripple can be magnified.','It removes the noise.','It speeds up the trigger.'],a:1,ex:'With the large DC level blocked, you can use a sensitive volts/div setting and see the ripple clearly.'},
+  {id:'t5e',t:'mc',q:'You double the filter capacitor in a simple supply. What happens to the ripple?',o:['It doubles.','It stays the same.','It halves.','It disappears.'],a:2,ex:'Ripple \u2248 I \u00F7 (f \u00D7 C), so doubling C halves the ripple.'},
+  {id:'t5f',t:'mc',q:'A flat line at 0 V where a signal should be points to:',o:['Clipping','No signal or no power','Ripple','Noise'],a:1,ex:'A flat zero means nothing is getting there. Check the source and supply, then work forward.'}],
+ ch6:[
+  {id:'t6a',t:'num',q:'A signal passes through 8 stages and one is dead. What is the most measurements the half-split method needs?',a:3,tol:0.01,u:'measurements',ex:'log\u2082(8) = 3.'},
+  {id:'t6b',t:'num',q:'How many measurements does half-split need at most for 16 stages?',a:4,tol:0.01,u:'measurements',ex:'log\u2082(16) = 4.'},
+  {id:'t6c',t:'num',q:'How many measurements does half-split need at most for 100 stages?',a:7,tol:0.01,u:'measurements',ex:'log\u2082(100) \u2248 6.64, rounded up to 7.'},
+  {id:'t6d',t:'mc',q:'You read the full 9 V supply across a resistor that should drop 3 V. What is the likely fault?',o:['Something in series with it is open.','The resistor is shorted.','The meter is set to AC.','The battery is fine and everything is normal.'],a:0,ex:'If a series part is open, no current flows, so the remaining parts drop nothing and the full voltage shows across the gap.'},
+  {id:'t6e',t:'mc',q:'What comes first in troubleshooting after you observe the symptom?',o:['Replace the most expensive part','Check the easy things: power, connections, fuses, and settings','Rewire everything','Reset the meter'],a:1,ex:'Most faults are simple. Check them before you dig in.'},
+  {id:'t6f',t:'mc',q:'A shorted part typically shows:',o:['Near-zero voltage across it and higher current','Full supply voltage across it','No current','A flat zero on a scope for any signal'],a:0,ex:'A short drops almost no voltage and lets extra current flow.'}],
+ ch7:[
+  {id:'t7a',t:'num',q:'9 V, R1 = 1 k\u03A9 and R2 = 2 k\u03A9. What is the midpoint voltage? (volts)',a:6,tol:0.05,u:'V',ex:'9 \u00D7 2 \u00F7 3 = 6 V.'},
+  {id:'t7b',t:'num',q:'A 9 V supply feeds a 470 \u03A9 resistor and a red LED that drops about 2 V. What is the current? (mA, one decimal)',a:14.9,tol:0.2,u:'mA',ex:'(9 \u2212 2) \u00F7 470 = 0.0149 A = 14.9 mA.'},
+  {id:'t7c',t:'num',q:'An RC filter has R = 1 k\u03A9 and C = 100 nF. What is its cutoff frequency? (kHz, two decimals)',a:1.59,tol:0.02,u:'kHz',ex:'f = 1 \u00F7 (2\u03C0RC) = 1 \u00F7 (2\u03C0 \u00D7 1,000 \u00D7 100\u00D710\u207B\u2079) \u2248 1,592 Hz = 1.59 kHz.'},
+  {id:'t7d',t:'num',q:'A 555 astable has R1 = 10 k\u03A9, R2 = 47 k\u03A9, C = 1 \u00B5F. What is its frequency? (Hz, one decimal)',a:13.8,tol:0.2,u:'Hz',ex:'f = 1.44 \u00F7 ((R1 + 2\u00D7R2) \u00D7 C) = 1.44 \u00F7 (104,000 \u00D7 0.000001) \u2248 13.8 Hz.'},
+  {id:'t7e',t:'mc',q:'On the divider board the LED anode reads 9 V and the LED is dark. What is the fault?',o:['R3 is open.','The LED is open.','R1 is open.','The battery is flat.'],a:1,ex:'If R3 were open the anode would read 0 V. Reading the full 9 V means no current flows after R3, so the LED is open.'},
+  {id:'t7f',t:'mc',q:'Which setup is best for seeing ripple on a supply?',o:['Meter on DC volts','Scope, AC coupling, sensitive volts/div','Continuity beeper','Meter on resistance'],a:1,ex:'AC coupling blocks the DC level so you can magnify the small ripple.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'mc',q:'What is the habit that makes measurements useful?',o:['Measure everything you can','Decide what you expect, then compare','Always use the highest range','Measure only with the scope'],a:1,ex:'The gap between expected and measured shows where the fault is.'},
+ {id:'k2',ch:'ch2',t:'mc',q:'Which meter will disturb a high-resistance circuit least?',o:['100 k\u03A9 input','1 M\u03A9 input','10 M\u03A9 input','They are all the same'],a:2,ex:'Higher input resistance steals less current from the circuit.'},
+ {id:'k3',ch:'ch2',t:'num',q:'A sine wave peaks at 20 V. What is its RMS value? (volts, one decimal)',a:14.1,tol:0.1,u:'V',ex:'20 \u00D7 0.707 = 14.1 V.'},
+ {id:'k4',ch:'ch3',t:'num',q:'A resistor is red, red, brown, gold. What is its value? (ohms)',a:220,tol:0.5,u:'\u03A9',ex:'2, 2, \u00D710 = 220 \u03A9.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'Why must you lift one end of a part to measure its resistance accurately?',o:['To avoid the parallel paths in the rest of the circuit','To save battery','To avoid static','Meters only work on loose parts'],a:0,ex:'Other paths in parallel pull the reading down.'},
+ {id:'k6',ch:'ch4',t:'num',q:'A signal has 5 divisions per cycle at 1 ms/div. What is the frequency? (hertz)',a:200,tol:1,u:'Hz',ex:'Period 5 ms, so 1 \u00F7 0.005 = 200 Hz.'},
+ {id:'k7',ch:'ch4',t:'mc',q:'What probe setting is the best default, and what must you do?',o:['x1, and ignore the scope setting','x10, and set the scope channel to x10','x10, and leave the scope on x1','Either, they are the same'],a:1,ex:'A x10 probe loads the circuit less. Tell the scope it is x10 or readings are a tenth of true.'},
+ {id:'k8',ch:'ch5',t:'num',q:'A half-wave supply feeds a 12 mA load with a 200 \u00B5F capacitor. What is the ripple? (volts, one decimal)',a:1.0,tol:0.05,u:'V',ex:'0.012 \u00F7 (60 \u00D7 0.0002) = 1.0 V.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'Flat tops and bottoms on a sine wave mean:',o:['Clipping','Ripple','Offset','A good signal'],a:0,ex:'The signal is too large and runs out of headroom.'},
+ {id:'k10',ch:'ch6',t:'num',q:'How many measurements does half-split need at most for 32 stages?',a:5,tol:0.01,u:'measurements',ex:'log\u2082(32) = 5.'},
+ {id:'k11',ch:'ch6',t:'mc',q:'An open series part shows what across the gap?',o:['Zero volts','The full circuit voltage','Half the voltage','An AC signal'],a:1,ex:'No current flows, so the full voltage appears across the open.'},
+ {id:'k12',ch:'ch7',t:'mc',q:'Which instrument shows the true shape of a 555 timer output?',o:['A DC meter','A scope','A continuity beeper','A resistance meter'],a:1,ex:'A meter reads only the average. A scope shows the shape and the timing.'}];
+const GLd={
+ dmm:['Multimeter','An instrument that measures volts, amps, ohms, and other quantities, showing one number at a time.'],
+ scope:['Oscilloscope','An instrument that plots voltage against time so you can see a signal\u2019s shape and timing.'],
+ cat:['CAT rating','A safety category (I to IV) saying how much energy a meter can safely handle in a given kind of electrical environment.'],
+ inputz:['Input resistance','How much a meter resists current flowing into it. A typical digital voltmeter has about 10 M\u03A9.'],
+ truerms:['True RMS','A meter that calculates the real RMS value of any waveform, not just a sine wave.'],
+ burden:['Burden voltage','The small voltage a current meter drops because of its own internal resistance.'],
+ continuity:['Continuity','A complete low-resistance path. A continuity test beeps when there is one.'],
+ open:['Open','A break in a circuit. No current flows, and the full voltage appears across the break.'],
+ short:['Short','An unwanted low-resistance path. It drops almost no voltage and lets extra current flow.'],
+ bandwidth:['Bandwidth','For a scope, the frequency at which it reads 70.7% of the true amplitude. Use at least five times the signal frequency.'],
+ trigger:['Trigger','The setting that starts each scope sweep at the same point on the waveform so a repeating signal holds still.'],
+ coupling:['Coupling','How the scope input connects to the signal. DC shows everything, AC blocks the DC level, GND shows zero.'],
+ probe10:['x10 probe','A probe that divides the signal by ten, with a higher input resistance and lower capacitance than a x1 probe.'],
+ duty:['Duty cycle','For a square wave, the high time divided by the period, as a percentage.'],
+ ripple:['Ripple','The small repeating variation left on a DC supply after rectifying and filtering.'],
+ clipping:['Clipping','Flattening of a waveform\u2019s peaks because the signal is larger than the stage or supply can handle.'],
+ offset:['DC offset','A constant DC level added to a waveform, shifting it above or below zero.'],
+ rectifier:['Rectifier','A circuit that turns AC into pulsing DC, usually with one or more diodes.'],
+ halfsplit:['Half-split','A troubleshooting method that measures in the middle of a chain to decide which half contains the fault, halving the search each time.']};
+const GUIDE={key:'testguide',chapters:[["ch1","1 Measure"],["ch2","2 Multimeter"],["ch3","3 Parts"],["ch4","4 Oscilloscope"],["ch5","5 Waveforms"],["ch6","6 Troubleshoot"],["ch7","7 Predict"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>F0.calc(),ch2:()=>V1.calc(),ch3:()=>{CC.calc();IR.calc();DT.calc();},ch4:()=>{if(!SC.cur)SC.new();else SC.draw();BW.calc();},ch5:()=>{WG.draw();RP.calc();},ch6:()=>{if(!HS.f)HS.new(8);else HS.draw();},ch7:()=>PD.calc()}};
+
+boot();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

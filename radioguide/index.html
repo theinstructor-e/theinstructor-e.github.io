@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tactical Radio Basics Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>Tactical Radio Basics <span>Explained</span></h1>
+  <p class="hero-sub">How tactical radios reach, hop, and stay secure; how to set one up and talk on it; and what to do when it will not work or the enemy interferes. Seven chapters with hands-on widgets.</p>
+</header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>New to antennas and path loss? Skim <a href="../physicsguide/">Radio Waves Explained</a>. Want the EW context? Read <a href="../emconguide/">EMCON Explained</a>. Spread spectrum is in <a href="../modguide/">Modulation &amp; Noise Explained</a>.</div><div><b>Then practice in the tools</b><a href="../army/sincgars/">SINCGARS Radio Simulator</a> &middot; <a href="../fhop/">Frequency Hop</a> &middot; <a href="../emcon/">EMCON &amp; Signature Lab</a> &middot; <a href="../army/rtt/">RTT Radio station</a>. About 45 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<!-- ============ CHAPTER 1 ============ -->
+<section class="ch on" id="ch1">
+  <h2>1 &middot; The Tactical Radio Picture</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Name the main families of tactical radio and what each is good for.</li>
+    <li>Explain why VHF FM is the workhorse of the ground net.</li>
+    <li>Estimate line-of-sight range from antenna heights.</li></ul></div>
+
+  <p>A unit moves, shoots, and survives on its ability to talk. The tactical radio picture is a set of tools, each with a job. No single radio does everything, so planners combine them.</p>
+  <table class="t"><tr><th>Family</th><th>Typical band</th><th>How it travels</th><th>Good for</th></tr>
+   <tr><td>HF</td><td>about 3&ndash;30 MHz</td><td>Ground wave, or skywave bounced off the ionosphere</td><td>Long range with no infrastructure. Slower data, antenna needs room.</td></tr>
+   <tr><td>VHF FM</td><td>30&ndash;87.975 MHz (SINCGARS)</td><td>Line of sight</td><td>The everyday squad, platoon, and company net. Voice and data.</td></tr>
+   <tr><td>UHF</td><td>about 225&ndash;400 MHz (military band)</td><td>Line of sight, and up to satellites</td><td>Air-ground radios and tactical satellite links.</td></tr>
+   <tr><td>SATCOM</td><td>Several bands, many in UHF and above</td><td>Via a satellite</td><td>Beyond line of sight anywhere, at the cost of delay and a visible terminal.</td></tr></table>
+
+  <h3>Why VHF FM carries the ground net</h3>
+  <ul>
+   <li><b>Small antennas.</b> At 40 MHz the wavelength is 7.5 m, so a quarter-wave whip is under 2 m. A radio that fits on a pack can carry it.</li>
+   <li><b>Clean voice.</b> FM resists noise and fading better than AM (see Modulation &amp; Noise Explained).</li>
+   <li><b>Predictable reach.</b> Range is mostly line of sight, which suits a unit that already needs to see its neighbours.</li>
+   <li><b>Frequency hopping.</b> SINCGARS can hop across its band to resist jamming and make direction finding harder (Chapter 3).</li></ul>
+
+  <h3>Half duplex, nets, and the NCS</h3>
+  <p>Tactical radios are <b>half duplex</b>: you press the push-to-talk (PTT) key to send, release it to listen. You cannot talk and hear at once. Because of that, radio users form a <span class="term" data-t="net">net</span>: a group of radios sharing a frequency or hopping pattern. One station acts as the <span class="term" data-t="ncs">net control station (NCS)</span> and keeps order. Each station has a <span class="term" data-t="callsign">callsign</span> so calls are short and clear.</p>
+
+  <h3>PACE for communications</h3>
+  <p>No radio is reliable enough to stand alone. Units plan with <b>PACE</b>: a <b>primary</b> way to communicate, an <b>alternate</b>, a <b>contingency</b>, and an <b>emergency</b>. A common set might be VHF voice, then a data or HF link, then satellite, then runner or visual signals. Your unit's plan decides, and everyone has to know it.</p>
+
+  <h3>How far can I talk?</h3>
+  <p>Above VHF, radio waves run in straight lines and the Earth curves away. The horizon limits line of sight. A standard rule of thumb, which already allows for a little bending of the signal, is:</p>
+  <div class="formula">line-of-sight range (km) &approx; 4.12 &times; ( &radic;h1 + &radic;h2 )     heights in metres</div>
+  <div class="try"><div class="th">Try it: line-of-sight range</div><div class="tb">
+    <div class="ctl"><label>Your antenna</label><input type="range" id="r1a" min="1" max="30" step="0.5" value="2" oninput="L1.calc()"><span class="v" id="r1av"></span></div>
+    <div class="ctl"><label>Their antenna</label><input type="range" id="r1b" min="1" max="30" step="0.5" value="10" oninput="L1.calc()"><span class="v" id="r1bv"></span></div>
+    <div class="read" id="r1r"></div>
+    <canvas id="r1c" width="480" height="200"></canvas>
+    <div class="note">The shaded curve is the horizon. Raising either antenna helps, but the square root means height pays off slowly: 4 times the height gives only 2 times the reach. Hills, buildings, and trees make the real range shorter.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>The same facts that set your range also set the enemy's: a radio whose signal reaches your net also reaches any sensor with a line to it. Knowing your own horizon helps you plan both coverage and EMCON.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>HF for range, VHF FM for the ground net, UHF and SATCOM for air and beyond line of sight.</li><li>Tactical radios are half duplex. Stations form nets with an NCS and callsigns.</li><li>Plan with PACE. VHF range is line of sight, about 4.12 &times; (&radic;h1 + &radic;h2) km.</li></ul></div>
+  <div class="kt"><span class="term" data-t="net">net</span><span class="term" data-t="ncs">NCS</span><span class="term" data-t="callsign">callsign</span><span class="term" data-t="halfduplex">half duplex</span><span class="term" data-t="pace">PACE</span><span class="term" data-t="los">line of sight</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: Antennas and range &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 2 ============ -->
+<section class="ch" id="ch2">
+  <h2>2 &middot; Antennas, Power, and Range</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Work out antenna length for a given frequency.</li>
+    <li>Explain why doubling power does not double range.</li>
+    <li>Use direction, height, and terrain to your advantage.</li></ul></div>
+
+  <p>When a radio link is weak, people reach for power. But the antenna and the terrain usually matter more. A good operator fixes those first.</p>
+  <h3>Antenna length follows wavelength</h3>
+  <p>An antenna works best when its length matches the wavelength. The usual building blocks are:</p>
+  <div class="formula">wavelength &lambda; (m) = 300 &divide; frequency (MHz)<br>quarter-wave whip &approx; &lambda; &divide; 4  (practical length a few percent shorter)<br>half-wave dipole &approx; 142.5 &divide; frequency (MHz) metres</div>
+  <p>A SINCGARS radio covers 30 to 87.975 MHz, so antennas have to cope with wavelengths from about 10 m down to 3.4 m. Different antennas suit different parts of the band, and a field-expedient antenna is cut for the frequency you are using.</p>
+  <p>Also keep the <b>polarization</b> the same. Tactical VHF antennas are normally vertical, so hold the whip upright. A vertical antenna talking to a horizontal one loses on the order of 20 dB.</p>
+
+  <div class="try"><div class="th">Try it: antenna length for any frequency</div><div class="tb">
+    <div class="ctl"><label>Frequency</label><input type="range" id="r2f" min="30" max="87.975" step="0.025" value="40.5" oninput="A1.calc()"><span class="v" id="r2fv"></span></div>
+    <div class="read" id="r2r"></div>
+    <canvas id="r2c" width="480" height="150"></canvas>
+    <div class="note">The bar shows the antenna lengths side by side, drawn to scale. A longer wavelength at the low end of the band needs a longer antenna.</div></div></div>
+
+  <h3>Power: expensive and not as useful as you think</h3>
+  <p>In free space, signal weakens by 6 dB each time distance doubles. Radio power is measured the same way: 6 dB is 4 times the power. So to <b>double</b> the range you need <b>four times</b> the power. Going from 5 W to 50 W is ten times the power but only about 3.2 times the range, and it costs battery life and makes you easier to detect.</p>
+  <div class="try"><div class="th">Try it: how much does power buy?</div><div class="tb">
+    <div class="ctl"><label>Power</label><div class="chips" id="r2p"></div></div>
+    <div class="read" id="r2pr"></div>
+    <div class="note">Free space, equal antennas, same receiver. Terrain and obstacles will cut these ranges. Relative to the 5 W setting.</div></div></div>
+
+  <h3>Better ways to gain range</h3>
+  <ul>
+   <li><b>Get the antenna up and clear.</b> Height extends the horizon. Move the antenna away from vehicles, wires, and trees.</li>
+   <li><b>Aim a directional antenna.</b> It sends and hears in one direction, which lengthens the link and, as a bonus, shrinks what an enemy off to the side can hear.</li>
+   <li><b>Use terrain.</b> A ridge can block your signal from an enemy position. It can also block your friend. Plan where both are.</li>
+   <li><b>Use a remote antenna.</b> Moving the antenna away from the radio and the command post improves coverage and keeps the vehicle itself from being the thing that gets located. Army guidance suggests offset antennas more than 1 km away where possible for command post radios.</li></ul>
+
+  <div class="why"><b>Why a 17E cares</b>These are the EMCON techniques from the other guide in practical form: use the least power that works, direct the signal, and use terrain to hide it. A radio check at lower power tells you whether you really needed the extra watts.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Antenna length follows wavelength: &lambda; = 300 &divide; MHz, quarter-wave about &lambda;&divide;4, half-wave dipole about 142.5 &divide; MHz.</li><li>Doubling range needs four times the power.</li><li>Height, aiming, terrain, and a remote antenna usually beat more watts.</li></ul></div>
+  <div class="kt"><span class="term" data-t="polarization">polarization</span><span class="term" data-t="whip">whip antenna</span><span class="term" data-t="dipole">dipole</span><span class="term" data-t="directional">directional antenna</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Hopping and COMSEC &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 3 ============ -->
+<section class="ch" id="ch3">
+  <h2>3 &middot; Frequency Hopping and COMSEC</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Describe single-channel and frequency-hopping modes.</li>
+    <li>List what two radios must share to hop together.</li>
+    <li>Tell COMSEC from TRANSEC.</li></ul></div>
+
+  <h3>Two modes</h3>
+  <p>A SINCGARS radio can work two ways.</p>
+  <ul>
+   <li><b>Single channel (SC).</b> It sits on one fixed frequency, which you type in. It also works with older radios. But a fixed frequency is easy to find, listen to, and jam.</li>
+   <li><b>Frequency hopping (FH).</b> The radio jumps among many frequencies, about 100 times a second, in a pattern only the net knows. The band runs 30 to 87.975 MHz in 25 kHz steps, which is 2,320 possible channels. The hopset is a smaller selection from them. FH is the electronic protection built into the radio.</li></ul>
+
+  <h3>What two radios must share</h3>
+  <p>To hop together, every radio in the net needs the same set of data, and a clock that agrees.</p>
+  <table class="t"><tr><th>Item</th><th>What it is</th></tr>
+   <tr><td><span class="term" data-t="hopset">Hopset</span></td><td>The set of frequencies the radio hops among.</td></tr>
+   <tr><td>Lockout set</td><td>Frequencies to leave out, for example ones in use by friendly systems.</td></tr>
+   <tr><td><span class="term" data-t="netid">Net ID</span></td><td>A three-digit number that sets where in the pattern the net starts.</td></tr>
+   <tr><td><span class="term" data-t="tsk">TRANSEC key (TSK)</span></td><td>The key that sets the order in which the radio hops within the hopset.</td></tr>
+   <tr><td><span class="term" data-t="synctime">Time</span></td><td>The radios must agree on the time. SINCGARS can tolerate roughly four seconds of difference and still stay in sync.</td></tr></table>
+  <p>Opening a hopping net uses a <b>cold start</b>: the net first talks on a single-channel frequency while members load the hopping data. A radio that has been out of the net can rejoin with <b>late net entry</b>, passively by listening for traffic, or by being cued. The next chapter shows how the data gets into the radio.</p>
+
+  <h3>COMSEC and TRANSEC are different</h3>
+  <ul>
+   <li><b><span class="term" data-t="comsec">COMSEC</span></b> (communications security) protects the <i>content</i>. In cipher text (CT) mode the voice or data is encrypted. In plain text (PT) mode it is not. Both radios must agree, or the audio will be unintelligible.</li>
+   <li><b><span class="term" data-t="transec">TRANSEC</span></b> (transmission security) protects the <i>fact</i> that you are transmitting and where. Hopping is TRANSEC. It resists jamming and makes the signal harder to find.</li></ul>
+  <p>You can have either without the other. A hopping radio in plain text hides where it is but not what it says. A single-channel radio in cipher text hides what it says but not that it is there.</p>
+
+  <div class="try"><div class="th">Try it: will these radios talk?</div><div class="tb">
+    <canvas id="r3c" width="480" height="230"></canvas>
+    <div class="ctl"><label>Hopset</label><div class="chips" id="r3a"></div></div>
+    <div class="ctl"><label>Net ID</label><div class="chips" id="r3b"></div></div>
+    <div class="ctl"><label>TRANSEC key</label><div class="chips" id="r3d"></div></div>
+    <div class="ctl"><label>Clock difference</label><input type="range" id="r3t" min="0" max="10" step="0.5" value="1" oninput="H1.draw()"><span class="v" id="r3tv"></span></div>
+    <div class="ctl"><label>COMSEC</label><div class="chips" id="r3e"></div></div>
+    <div class="read" id="r3r"></div>
+    <div class="note">Each dot is one hop of radio A (green) and radio B (cyan). When all four hopping items match, every cyan ring sits around a green dot. Teaching model: real radios resynchronize and use late net entry.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>Hopping resists jamming and finding, but it is only as good as the data and the clock. A radio with the wrong net ID looks like a dead radio and a radio in the wrong COMSEC mode looks like a jammed one. Knowing what to check first saves time and keeps you off the air.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>SC uses a typed frequency. FH hops about 100 times a second over a hopset in the 2,320-channel band.</li><li>To hop together: same hopset, lockouts, net ID, TRANSEC key, and the time within a few seconds.</li><li>COMSEC protects content. TRANSEC protects the fact and place of transmission. They are independent.</li></ul></div>
+  <div class="kt"><span class="term" data-t="hopset">hopset</span><span class="term" data-t="netid">net ID</span><span class="term" data-t="tsk">TSK</span><span class="term" data-t="comsec">COMSEC</span><span class="term" data-t="transec">TRANSEC</span><span class="term" data-t="synctime">sync time</span></div>
+  <a class="tool" href="../fhop/"><b>See hopping against a jammer &rarr;</b>The Frequency Hop tool shows which hops survive a narrowband jammer.</a>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Operating the radio &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 4 ============ -->
+<section class="ch" id="ch4">
+  <h2>4 &middot; Operating the Radio</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Put a SINCGARS radio on the net in the right order.</li>
+    <li>Say what the function switch positions do.</li>
+    <li>Convert a typed frequency to MHz and check it is valid.</li></ul></div>
+
+  <p>This chapter follows the same steps as the SINCGARS Radio Simulator, using the RT-1523 family (the AN/PRC-119 series). Your radio, your signal operating instructions (SOI), and your unit's SOP decide the exact settings. The order of the steps is what you learn here.</p>
+
+  <h3>The function (FCTN) switch</h3>
+  <table class="t"><tr><th>Position</th><th>What it does</th></tr>
+   <tr><td>OFF</td><td>Turns primary power off. A backup keeps memory.</td></tr>
+   <tr><td>TST</td><td>Runs the radio&rsquo;s self-test. Wait for GOOD.</td></tr>
+   <tr><td>LD</td><td>Load mode. You enter or receive frequencies and data here.</td></tr>
+   <tr><td>SQ ON</td><td>Radio on, squelch on. The normal operating position. The speaker is silent until a signal arrives.</td></tr>
+   <tr><td>SQ OFF</td><td>Radio on, squelch off. You hear noise between signals. Useful when you must hear a very weak signal.</td></tr>
+   <tr><td>RXMT</td><td>Retransmit. The radio relays traffic between two nets.</td></tr>
+   <tr><td>Zeroize positions</td><td>Clear the loaded data. Several positions are guarded so they cannot be reached by accident.</td></tr></table>
+  <p>For <b>listening silence</b>, use <b>SQ ON</b> rather than turning the radio off. It keeps the radio ready and loaded while it transmits nothing. This is an EMCON habit.</p>
+
+  <h3>The sequence</h3>
+  <ol>
+   <li>Mate the antenna base with ANT and hand-tighten.</li>
+   <li>Plug the handset into AUD/DATA, lining up the keys.</li>
+   <li>Turn FCTN to TST and wait for GOOD.</li>
+   <li>Turn FCTN to LD.</li>
+   <li>Set CHAN, PWR, MODE, and COMSEC from your card (for a single-channel radio check that is MODE SC and COMSEC PT).</li>
+   <li>Press FREQ, then CLR, key in the frequency, and press STO within about 7 seconds.</li>
+   <li>Turn FCTN to SQ ON.</li>
+   <li>Make the radio check: callsigns, what you want, over.</li>
+   <li>Acknowledge, out.</li></ol>
+  <p><b>Frequencies are typed as five digits with no decimal.</b> 40500 means 40.500 MHz. Standard channels fall on 25 kHz steps, so the last digits are 00, 25, 50, or 75.</p>
+
+  <div class="try"><div class="th">Try it: put the steps in order</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px">Tap the steps in the order you would do them.</p>
+    <div id="r4s"></div>
+    <div class="read" id="r4r"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="S1.reset()">Start over</button></div></div></div>
+  <div class="try"><div class="th">Try it: frequency entry</div><div class="tb">
+    <div class="ctl"><label>Keypad entry</label><input type="text" inputmode="numeric" maxlength="5" id="r4f" value="40500" oninput="Fq.calc()" style="width:110px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-family:'Courier New',monospace;font-size:16px"></div>
+    <div class="read" id="r4fr"></div>
+    <div class="note">Try 40500, 38550, 87975, 88000, and 40510. The radio&rsquo;s standard channels run 30.000 to 87.975 MHz in 25 kHz steps. The channel number shown counts those steps from 30.000 MHz and is only a counting aid.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>Most failed radio checks are a skipped step or a wrong number, not a broken radio. The order also protects you: TST first proves the radio is healthy, and SQ ON last means you are not transmitting or hearing noise while you load data.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Antenna and handset first, then TST, then LD, then load, then SQ ON, then radio check.</li><li>Type frequencies as five digits. 40500 is 40.500 MHz. Standard channels are 25 kHz apart.</li><li>Use SQ ON, not OFF, for listening silence.</li></ul></div>
+  <div class="kt"><span class="term" data-t="fctn">FCTN switch</span><span class="term" data-t="squelch">squelch</span><span class="term" data-t="soi">SOI</span><span class="term" data-t="listensil">listening silence</span></div>
+  <a class="tool" href="../army/sincgars/"><b>Run it on the SINCGARS Radio Simulator &rarr;</b>Put the pieces together, load the card, and make a radio check.</a>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Voice procedure &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 5 ============ -->
+<section class="ch" id="ch5">
+  <h2>5 &middot; Voice Procedure</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Structure a call so it is short and clear.</li>
+    <li>Use prowords correctly, and avoid the common wrong ones.</li>
+    <li>Give and answer a radio check.</li></ul></div>
+
+  <p>Voice procedure is a shared set of habits so that strangers on a noisy net understand each other the first time. The allied standard is ACP 125, and Army guidance follows it. Short, standard calls also mean less time on the air, which is good EMCON.</p>
+  <h3>The shape of a call</h3>
+  <div class="formula">[who you are calling], this is [who you are], [message], [OVER or OUT]</div>
+  <p>Example: <i>&ldquo;Alpha 6, this is Alpha 1, radio check, over.&rdquo;</i> Say the station you are calling first so they know it is for them. Then say who you are. Then the message. End with a proword.</p>
+  <p>Think before you key the handset. Know what you will say. Pause a second after pressing PTT so the first word is not cut off. Speak clearly, at a steady pace, not louder.</p>
+
+  <h3>Prowords</h3>
+  <p><span class="term" data-t="proword">Prowords</span> are short words with fixed meanings. Tap any card.</p>
+  <div class="try"><div class="th">Try it: proword cards</div><div class="tb"><div id="r5c" class="chips"></div><div class="fb ok" id="r5d" style="display:block;margin-top:8px">Tap a proword to see what it means and an example.</div></div></div>
+
+  <h3>Words not to use</h3>
+  <ul>
+   <li><b>&ldquo;Over and out.&rdquo;</b> They contradict each other. OVER means I expect a reply. OUT means I do not.</li>
+   <li><b>&ldquo;Roger wilco.&rdquo;</b> WILCO already includes ROGER. Use one.</li>
+   <li><b>&ldquo;Repeat.&rdquo;</b> In some contexts it means &ldquo;fire again.&rdquo; Say <b>SAY AGAIN</b> instead.</li></ul>
+
+  <h3>The radio check</h3>
+  <p>A radio check asks how well you are heard. It reports <b>signal strength</b> (loud, weak, very weak) and <b>readability</b> (clear, readable, distorted, with interference, unreadable). If the answer is loud and clear, the shortcut is just <b>ROGER</b>. Anything else must be described.</p>
+  <div class="try"><div class="th">Try it: answer the radio check</div><div class="tb">
+    <div class="ctl"><label>Signal strength</label><div class="chips" id="r5s"></div></div>
+    <div class="ctl"><label>Readability</label><div class="chips" id="r5r2"></div></div>
+    <div class="fb ok" id="r5o" style="display:block;font-size:15px"></div>
+    <div class="note">Words like AND and BUT are chosen by whether the two descriptions agree or contrast. A numeric 1 to 5 readability scale is also common in some nets: 1 unreadable, 2 readable now and then, 3 readable with difficulty, 4 readable, 5 perfectly readable.</div></div></div>
+
+  <h3>Numbers, names, and spelling</h3>
+  <p>Use the phonetic alphabet for letters and say numbers one digit at a time. For nine, say &ldquo;niner.&rdquo; Use &ldquo;I SPELL&rdquo; before a word you are spelling out. Follow your SOP for exact pronunciation. For anything sensitive, use the unit's authentication and brevity codes, and do not say it plainly on an open net.</p>
+
+  <div class="why"><b>Why a 17E cares</b>Every second you transmit gives an enemy sensor a chance to hear you and take a bearing. Standard calls shorten transmissions and cut repeats. Doing it right is the cheapest EMCON you have.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Call shape: who you call, this is who you are, message, over or out.</li><li>OVER and OUT are opposites. ROGER and WILCO are not used together. Say SAY AGAIN, not repeat.</li><li>ROGER answers a radio check when you are loud and clear. Otherwise describe strength and readability.</li></ul></div>
+  <div class="kt"><span class="term" data-t="proword">proword</span><span class="term" data-t="radiocheck">radio check</span><span class="term" data-t="acp125">ACP 125</span><span class="term" data-t="ptt">PTT</span></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Interference and jamming &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 6 ============ -->
+<section class="ch" id="ch6">
+  <h2>6 &middot; Interference and Jamming</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Tell enemy jamming from interference and from your own equipment trouble.</li>
+    <li>Describe actions to keep communicating and to report it.</li>
+    <li>Say what not to do over the radio when you suspect jamming.</li></ul></div>
+
+  <p>Radios fail for ordinary reasons far more often than because of the enemy. The skill is working out which one you are facing, quickly, without making things worse.</p>
+  <table class="t"><tr><th>Cause</th><th>Typical sign</th></tr>
+   <tr><td>Your own equipment</td><td>Only your radio is affected. Other stations hear each other fine.</td></tr>
+   <tr><td>Interference from friendly sources</td><td>Noise that starts when a generator, vehicle, or another radio near you is running. It changes when you move.</td></tr>
+   <tr><td>Natural or unintended interference</td><td>Distance, terrain, weather, or another net on a nearby frequency.</td></tr>
+   <tr><td>Enemy jamming</td><td>Noise, tones, or odd signals on your net that affect many radios, often starting at tactically meaningful moments.</td></tr></table>
+
+  <div class="try"><div class="th">Try it: what could it be?</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px">Tick what you notice, then see what it points to. This is a thinking aid, not a diagnosis.</p>
+    <div id="r6s"></div>
+    <div class="fb ok" id="r6o" style="display:block"></div></div></div>
+
+  <h3>Keep communicating</h3>
+  <p>Army doctrine treats overcoming jamming as a skill set: recognize it, react, and report. The specific procedures are in your radio manual, your SOP, and ATP 6-02.53, Chapter 10. In general terms:</p>
+  <ul>
+   <li><b>Check yourself first.</b> Rule out your own equipment: antenna, battery, cables, settings.</li>
+   <li><b>Reposition.</b> Move the antenna or radio, or put terrain between you and the interference source. Turn a directional antenna toward your friendly station.</li>
+   <li><b>Keep transmissions short.</b> Use brevity codes and standard procedure.</li>
+   <li><b>Fall back on your PACE plan.</b> Move to the alternate: another net, a data link, a runner, or visual signals.</li>
+   <li><b>Stay in frequency-hopping mode</b> when you can. A hopper is harder to jam than a fixed channel.</li>
+   <li><b>Report it.</b> Meaconing, intrusion, jamming, and interference reports (MIJI) go through the channel your SOP names, so the staff can see the pattern.</li></ul>
+  <p><b>What not to do:</b> do not announce on an open, unsecured net that you are being jammed or how badly. That tells the enemy the jamming works. Use the reporting channel your SOP specifies.</p>
+
+  <div class="why"><b>Why a 17E cares</b>You are often the one who is asked, &ldquo;Is that jamming?&rdquo; Your answer depends on the same checks used here. If you can show it is not your equipment, and that it follows a pattern, you have given the commander something real.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Rule out your own equipment first, then local interference, then think jamming.</li><li>Reposition, shorten transmissions, stay in FH mode, and fall back on PACE.</li><li>Report MIJI through the proper channel. Never discuss the effects of jamming on an open net.</li></ul></div>
+  <div class="kt"><span class="term" data-t="miji">MIJI</span><span class="term" data-t="jamming">jamming</span><span class="term" data-t="interference">interference</span><span class="term" data-t="pace">PACE</span></div>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('ch7')">Next: Troubleshoot &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 7 ============ -->
+<section class="ch" id="ch7">
+  <h2>7 &middot; Put It Together: No Comms</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Work a no-communications problem in a sensible order.</li>
+    <li>Do the checks without needlessly transmitting.</li>
+    <li>Tie together antennas, hopping, COMSEC, procedure, and EMCON.</li></ul></div>
+
+  <p>&ldquo;Alpha 6, this is Alpha 1, radio check, over.&rdquo; Silence. Now what? Work the problem from simplest to most complex, and from your end outward. A good order is:</p>
+  <ol>
+   <li><b>Power:</b> battery installed and charged, function switch in an operating position.</li>
+   <li><b>Antenna and cables:</b> connected, tight, undamaged, and upright.</li>
+   <li><b>Handset and audio:</b> plugged in, volume up.</li>
+   <li><b>Settings:</b> function switch, squelch, channel, mode.</li>
+   <li><b>Frequency or hopping data:</b> the right frequency; the right net ID, hopset, and time.</li>
+   <li><b>COMSEC:</b> both radios in the same mode, with the right key.</li>
+   <li><b>Range and terrain:</b> are you beyond the horizon or behind a hill?</li>
+   <li><b>Then think interference or jamming</b> (Chapter 6).</li></ol>
+  <p>Do the checks that need no transmission first. You can look at a connector, read a display, and hear a squelch break without sending anything. Each transmission you avoid is one less chance for an enemy sensor to hear you.</p>
+
+  <div class="try"><div class="th">Try it: find the fault</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px" id="r7sc"></p>
+    <div id="r7b" class="chips"></div>
+    <div id="r7log" class="fb ok" style="display:block;margin-top:8px;font-size:13.5px"></div>
+    <div class="ctl"><label>I think the fault is</label><select id="r7g" style="flex:1;min-width:170px;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:13.5px"></select><button class="chip on" onclick="N1.guess()">That&rsquo;s it</button></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="N1.new()">New problem</button></div></div></div>
+
+  <h3>Putting it all together</h3>
+  <ul>
+   <li><b>Range:</b> set by antenna height, aiming, terrain, and frequency (Chapters 1 and 2).</li>
+   <li><b>Resistance:</b> hopping, COMSEC, and short calls (Chapters 3 and 5).</li>
+   <li><b>Discipline:</b> standard order of operations and standard procedure (Chapters 4 and 5).</li>
+   <li><b>Resilience:</b> PACE and calm troubleshooting (Chapters 6 and 7).</li>
+   <li><b>Signature:</b> everything here that shortens or directs a transmission also makes you harder to find. See <a href="../emconguide/" style="color:var(--accent)">EMCON Explained</a>.</li></ul>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch7-score"></span></div><div class="tb" id="ch7-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Troubleshoot in order: power, antenna, handset, settings, frequency or hopping data, COMSEC, range, then interference.</li><li>Do non-transmitting checks first.</li><li>The same habits that make comms reliable also make you harder to find.</li></ul></div>
+  <a class="tool" href="../army/sincgars/"><b>Practice on the SINCGARS Radio Simulator &rarr;</b>Set up the radio from a card and make a radio check.</a>
+  <a class="tool" href="../emcon/"><b>Try the EMCON &amp; Signature Lab &rarr;</b>See what the enemy hears when you transmit, and how to reduce it.</a>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch7')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>ATP 6-02.53, <i>Techniques for Tactical Radio Operations</i> (2020). Tactical radio procedures, antennas, and (Chapter 10) overcoming jamming.</li>
+   <li>TM 11-5820-890-10-1 and -10-3, SINCGARS operator&rsquo;s manuals, and the ICOM pocket guides. Function switch positions, hopping data, and operating steps.</li>
+   <li>Public Marine Corps TBS and Field Medical Training Battalion SINCGARS (RT-1523) training material. Load sequence, net ID, hopset, TSK, and timing tolerance.</li>
+   <li>ACP 125, <i>Communications Instructions: Radiotelephone Procedures</i>. Prowords and the radio check.</li>
+   <li>ATP 3-12.3, <i>Electromagnetic Warfare Techniques</i>, and the public Army article on emission control SOPs. EMCON habits such as lowest power, directional and offset antennas, and brevity.</li>
+   <li>The ARRL Antenna Book. Antenna length rules of thumb.</li>
+   <li><b>Notes.</b> The hopping widget is a teaching model. The range figures are free-space and ideal. The jamming checklist is a thinking aid and not a diagnosis. Your radio&rsquo;s manual, your SOI, your unit SOP, and your instructor are the authority. This is training material and not operational guidance. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
+</div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">Tactical Radio Basics Explained &middot; Interactive textbook &middot; Companion to the SINCGARS Radio Simulator &middot; UNCLASSIFIED</div>
+<script>
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+/* ===================== widgets ===================== */
+/* ---- L1: line of sight ---- */
+const L1={calc(){const a=+$('r1a').value,b=+$('r1b').value,d=4.12*(Math.sqrt(a)+Math.sqrt(b));$('r1av').textContent=a+' m';$('r1bv').textContent=b+' m';
+  read('r1r',[['Your horizon',(4.12*Math.sqrt(a)).toFixed(1)+' km'],['Their horizon',(4.12*Math.sqrt(b)).toFixed(1)+' km'],['Line-of-sight range',d.toFixed(1)+' km','good']]);
+  const [c,x]=cv('r1c');clear(c,x);const W=440,L=20,gy=150;x.fillStyle='#143a2a';x.beginPath();x.moveTo(L,gy+30);for(let i=0;i<=W;i++){const t=i/W;x.lineTo(L+i,gy+30-70*4*t*(1-t)*0.35+ -0);}x.lineTo(L+W,200);x.lineTo(L,200);x.closePath();x.fill();
+  const sag=t=>gy+30-70*4*t*(1-t)*0.35,ha=18+Math.sqrt(a)*9,hb=18+Math.sqrt(b)*9;x.strokeStyle='#ffb454';x.lineWidth=3;[[0,ha],[1,hb]].forEach(m=>{const px=L+W*m[0],py=sag(m[0]);x.beginPath();x.moveTo(px,py);x.lineTo(px,py-m[1]);x.stroke();});
+  x.strokeStyle='#7fd0e0';x.setLineDash([5,4]);x.lineWidth=1.5;x.beginPath();x.moveTo(L,sag(0)-ha);x.lineTo(L+W,sag(1)-hb);x.stroke();x.setLineDash([]);
+  lab(x,'you',L+4,sag(0)-ha-8,'#ffb454','left',11);lab(x,'them',L+W-4,sag(1)-hb-8,'#ffb454','right',11);lab(x,'line of sight about '+d.toFixed(1)+' km',240,30,'#7fd0e0','center',13);lab(x,'curve of the Earth (not to scale)',240,192,'#7e97ab','center',10);}};
+/* ---- A1: antenna length and power ---- */
+const A1={pw:5,set(v){this.pw=+v;this.calc();},calc(){const f=+$('r2f').value,lam=300/f,q=lam/4,qp=q*0.95,dp=142.5/f;$('r2fv').textContent=f.toFixed(3)+' MHz';
+  read('r2r',[['Wavelength',lam.toFixed(2)+' m'],['Quarter-wave whip',q.toFixed(2)+' m'],['Practical whip (about 5% shorter)',qp.toFixed(2)+' m'],['Half-wave dipole',dp.toFixed(2)+' m']]);
+  const [c,x]=cv('r2c');clear(c,x);const mx=142.5/30,sc=340/mx;[[30,'Quarter-wave whip',q,'#ffb454'],[75,'Half-wave dipole',dp,'#7fd0e0']].forEach(r=>{x.fillStyle='#1c2e3d';x.fillRect(130,r[0],340,26);x.fillStyle=r[3];x.fillRect(130,r[0],r[2]*sc,26);lab(x,r[1],6,r[0]+17,'#9db4c8','left',11);lab(x,r[2].toFixed(2)+' m',134+r[2]*sc,r[0]+17,'#06121c','right',11);});
+  lab(x,'bars drawn to the same scale, up to the longest dipole in the band (4.75 m at 30 MHz)',6,138,'#7e97ab','left',10);
+  chips('r2p',[[0.5,'0.5 W'],[5,'5 W'],[20,'20 W'],[50,'50 W']],this.pw,'A1.set');
+  const rp=this.pw/5,rr=Math.sqrt(rp);read('r2pr',[['Power',this.pw+' W'],['Compared with 5 W','\u00D7'+rp.toFixed(rp<1?2:1)],['Free-space range','\u00D7'+rr.toFixed(2),rr>1?'mid':'good'],['Signal change',(10*Math.log10(rp)>=0?'+':'')+(10*Math.log10(rp)).toFixed(1)+' dB']]);}};
+/* ---- H1: will they hop together ---- */
+function lcg(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+const H1={st:{hop:1,net:1,tsk:1,com:1},set(k){const [a,b]=k.split(':');this.st[a]=+b;this.draw();},
+ draw(){const s=this.st,t=+$('r3t').value;$('r3tv').textContent=t.toFixed(1)+' s';
+  const it=[['r3a','hop','Same hopset','Different hopset'],['r3b','net','Same net ID','Different net ID'],['r3d','tsk','Same TSK','Different TSK'],['r3e','com','Both plain text','One PT, one CT']];
+  it.forEach(i=>{$(i[0]).innerHTML='<button class="chip'+(s[i[1]]?' on':'')+'" onclick="H1.set(\''+i[1]+':1\')">'+i[2]+'</button><button class="chip'+(!s[i[1]]?' on':'')+'" onclick="H1.set(\''+i[1]+':0\')">'+i[3]+'</button>';});
+  const sync=s.hop&&s.net&&s.tsk&&t<=4,N=30,A=lcg(11),Bq=sync?lcg(11):lcg(777+(s.hop?0:1)+(s.net?0:2)+(s.tsk?0:4)+Math.floor(t));
+  const [c,x]=cv('r3c');clear(c,x);x.strokeStyle='#14263a';for(let i=0;i<=40;i+=10){x.beginPath();x.moveTo(30,10+i*5);x.lineTo(470,10+i*5);x.stroke();}
+  for(let i=0;i<N;i++){const a=Math.floor(A()*40),b=Math.floor(Bq()*40),px=40+i*14.4;x.fillStyle='#2edc8a';x.beginPath();x.arc(px,10+a*5,5,0,TAU);x.fill();if(sync){x.strokeStyle='#7fd0e0';x.lineWidth=2;x.beginPath();x.arc(px,10+b*5,8,0,TAU);x.stroke();}else{x.fillStyle='rgba(127,208,224,.9)';x.beginPath();x.arc(px,10+b*5,4.2,0,TAU);x.fill();}}
+  lab(x,'channel',6,16,'#9db4c8','left',10);lab(x,'time (hops) \u2192',40,222,'#9db4c8','left',10);
+  let v,cl;if(!sync){v='Cannot hop together. Radio B hops somewhere else.';cl='bad';}else if(!s.com){v='They hop together, but the audio is scrambled.';cl='mid';}else{v='They hop together and understand each other.';cl='good';}
+  const why=[];if(!s.hop)why.push('hopsets differ');if(!s.net)why.push('net IDs differ');if(!s.tsk)why.push('TRANSEC keys differ');if(t>4)why.push('clocks are more than about 4 s apart');
+  read('r3r',[['Result',v,cl],['Why',why.length?why.join(', '):(s.com?'everything matches':'COMSEC modes differ')],['Fix',!sync?'Reload the hopping data and set the time':!s.com?'Put both radios in the same COMSEC mode':'None needed']]);}};
+/* ---- S1: sequence builder ---- */
+const STEPS=['Mate the antenna base with ANT and hand-tighten.','Plug the handset into AUD/DATA.','Turn FCTN to TST and wait for GOOD.','Turn FCTN to LD.','Set CHAN, PWR, MODE, and COMSEC from the card.','Press FREQ, then CLR, key in the frequency, and press STO.','Turn FCTN to SQ ON.','Make the radio check.','Acknowledge, out.'];
+const S1={done:0,miss:0,order:null,reset(){this.done=0;this.miss=0;this.order=STEPS.map((s,i)=>i).sort(()=>Math.random()-0.5);this.draw('');},
+ pick(i){if(i===this.done){this.done++;this.draw('');}else{this.miss++;this.draw('Not yet. Think about what has to happen before that step.');}},
+ draw(msg){if(!this.order)return this.reset();$('r4s').innerHTML=STEPS.slice(0,this.done).map((s,i)=>'<div class="fb ok" style="display:block;margin:3px 0;font-size:13.5px"><b>'+(i+1)+'.</b> '+s+'</div>').join('')+
+  '<div style="margin-top:6px">'+this.order.filter(i=>i>=this.done).map(i=>'<button class="opt" style="display:block;width:100%;text-align:left;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);font-size:13.5px;cursor:pointer" onclick="S1.pick('+i+')">'+STEPS[i]+'</button>').join('')+'</div>';
+  read('r4r',[['Steps in place',this.done+' of '+STEPS.length],['Wrong taps',String(this.miss),this.miss?'mid':'good'],['Status',this.done===STEPS.length?(this.miss===0?'Perfect order':'Done, with '+this.miss+' wrong tap'+(this.miss===1?'':'s')):(msg||'Pick the next step'),this.done===STEPS.length?'good':'']]);}};
+/* ---- Fq: frequency entry ---- */
+const Fq={calc(){const t=$('r4f').value.replace(/\D/g,'');if(t.length!==5){read('r4fr',[['Keypad','enter exactly five digits','mid']]);return;}
+  const f=parseInt(t,10)/1000,inb=f>=30&&f<=87.975,st=Math.abs(((f*1000-30000)%25+25)%25)<1e-6;
+  read('r4fr',[['Frequency',f.toFixed(3)+' MHz'],['Inside 30.000 to 87.975 MHz',inb?'yes':'no',inb?'good':'bad'],['On a 25 kHz step',st?'yes':'no',st?'good':'mid'],['Counting channel',inb&&st?String(Math.round((f-30)/0.025+1))+' of 2,320':'not a standard channel',inb&&st?'':'mid']]);}};
+/* ---- prowords and radio check ---- */
+const PW=[['ROGER','I received your last transmission. It also answers a radio check with the meaning loud and clear.','\u201CAlpha 1, this is Alpha 6, roger, out.\u201D'],
+ ['WILCO','I received it, I understand, and I will do it. It already includes ROGER, so never say both.','\u201CAlpha 6, this is Alpha 1, wilco, out.\u201D'],
+ ['OVER','My transmission is ended and I expect a reply.','\u201CAlpha 6, this is Alpha 1, radio check, over.\u201D'],
+ ['OUT','My transmission is ended and I expect no reply. Never combine with OVER.','\u201CAlpha 1, this is Alpha 6, roger, out.\u201D'],
+ ['SAY AGAIN','Repeat all of your last transmission. Use this, not the word repeat.','\u201CAlpha 6, say again, over.\u201D'],
+ ['I SAY AGAIN','I am repeating what I just sent.','\u201CI say again, move to checkpoint two.\u201D'],
+ ['RADIO CHECK','What is my signal strength and readability? How do you hear me?','\u201CAlpha 6, this is Alpha 1, radio check, over.\u201D'],
+ ['READ BACK','Repeat this entire message back to me exactly as you received it.','\u201CRead back, over.\u201D'],
+ ['I SPELL','The next word is spelled with the phonetic alphabet.','\u201CI spell: Charlie, Alpha, Tango.\u201D'],
+ ['BREAK','Separates parts of a message, or categories within a line, such as in a 9-line MEDEVAC request.','\u201CLine three, two Alpha, break, one Charlie, over.\u201D'],
+ ['WAIT OUT','I must pause for longer than a few seconds, and I will call you back.','\u201CWait out.\u201D'],
+ ['VERIFY','Check this message with the person who sent it and send the correct version.','\u201CVerify grid, over.\u201D']];
+const PC={show(i){$('r5c').innerHTML=PW.map((p,j)=>'<button class="chip'+(j===i?' on':'')+'" onclick="PC.show('+j+')">'+p[0]+'</button>').join('');if(i<0)return;const p=PW[i];$('r5d').innerHTML='<b>'+p[0]+'.</b> '+p[1]+'<br><i style="color:var(--text-muted)">Example: '+p[2]+'</i>';},init(){this.show(-1);$('r5d').textContent='Tap a proword to see what it means and an example.';}};
+const RC={s:'loud',r:'clear',set(k,v){this[k]=v;this.calc();},calc(){chips('r5s',[['loud','Loud'],['weak','Weak'],['veryweak','Very weak']],this.s,'RC.setS');chips('r5r2',[['clear','Clear'],['readable','Readable'],['distorted','Distorted'],['interference','With interference'],['unreadable','Unreadable']],this.r,'RC.setR');
+  const sp={loud:'LOUD',weak:'WEAK',veryweak:'VERY WEAK'}[this.s],rp={clear:'CLEAR',readable:'READABLE',distorted:'DISTORTED',interference:'WITH INTERFERENCE',unreadable:'UNREADABLE'}[this.r];let out;
+  if(this.s==='loud'&&this.r==='clear')out='\u201CAlpha 1, this is Alpha 6, <b>ROGER</b>, out.\u201D (ROGER by itself means loud and clear. You could also say LOUD AND CLEAR.)';
+  else{const sg=this.s==='loud',rg=(this.r==='clear'||this.r==='readable');const phr=this.r==='interference'?sp+' '+rp:sp+(sg===rg?' AND ':' BUT ')+rp;out='\u201CAlpha 1, this is Alpha 6, <b>'+phr+'</b>, over.\u201D';}
+  $('r5o').innerHTML=out;},setS(v){this.set('s',v);},setR(v){this.set('r',v);}};
+/* ---- jamming or interference thinking aid ---- */
+const JS_ITEMS=[['j1','Only my radio is affected. Other stations hear each other fine.'],['j7','The radio\u2019s self-test fails, or the display shows a fault.'],['j3','The noise starts when a generator or vehicle near me runs.'],['j4','The noise changes a lot when I move the antenna or myself.'],['j2','Several radios on the net are affected at once.'],['j8','Other nets and frequencies are fine.'],['j6','A steady tone, pulses, or an odd signal sits on my net frequency.'],['j5','It starts at tactically important moments or repeats on a pattern.']];
+const JI={init(){$('r6s').innerHTML=JS_ITEMS.map(i=>'<label style="display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:14px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" id="'+i[0]+'" onchange="JI.calc()" style="margin-top:3px"> <span>'+i[1]+'</span></label>').join('');this.calc();},
+ calc(){const v={};JS_ITEMS.forEach(i=>v[i[0]]=$(i[0]).checked);const n=JS_ITEMS.filter(i=>v[i[0]]).length;let m,c;
+  if(n===0){m='Tick what you see.';c='ok';}
+  else if(v.j7||(v.j1&&!v.j2)){m='<b>Start with your own equipment.</b> If only your radio is bad, or it fails its self-test, check power, antenna, cables, and settings before you blame anyone else.';c='ok';}
+  else if(v.j3||v.j4){m='<b>Likely local interference.</b> Noise that follows a nearby generator or vehicle, or changes when you move, points to something close. Move away from it, reposition the antenna, and shut down the source if it is yours.';c='ok';}
+  else if(v.j2&&(v.j5||v.j6||v.j8)){m='<b>Possible enemy jamming.</b> Several radios, a tone or odd signal on the net, other frequencies fine, or a tactical pattern all raise the odds. Reposition and use terrain, shorten transmissions, stay in hopping mode, fall back on PACE, and send a MIJI report through the channel your SOP names. Do not discuss the effects on an open net.';c='no';}
+  else{m='<b>Not enough to tell yet.</b> Keep checking: rule out equipment first, then local sources, then look for a pattern across stations and over time.';c='ok';}
+  const el=$('r6o');el.className='fb '+(c==='no'?'no':'ok');el.style.display='block';el.innerHTML=m;}};
+/* ---- N1: find the fault ---- */
+const FAULTS=[['batt','Low or missing battery'],['ant','Antenna loose or damaged'],['frq','Wrong frequency or channel'],['com','COMSEC modes do not match (one PT, one CT)'],['fh','Hopping data or clock does not match'],['rng','Out of range or blocked by terrain']];
+const CHECKS=[['pwr','Check power and function switch'],['ant','Check antenna and cables'],['aud','Check handset and volume'],['set','Check squelch, channel, and mode'],['frq','Check frequency or hopping data and clock'],['com','Check COMSEC mode and key'],['rng','Check range and terrain on the map']];
+const OBS={batt:{pwr:'The display is dim and shows a low-battery warning.'},ant:{ant:'The antenna base is loose and the whip is bent.'},frq:{set:'Your radio is on channel 3. The net uses channel 2.',frq:'The frequency you loaded is 40.050. The net is on 40.500.'},com:{com:'Your radio is in cipher text. The other station is in plain text.'},fh:{frq:'The hopset and net ID match, but your clock is 9 seconds off the net.'},rng:{rng:'The other station is 14 km away behind a ridge, and your antenna is low.'}};
+const N1={f:null,used:[],over:false,new(){this.f=FAULTS[Math.floor(Math.random()*FAULTS.length)][0];this.used=[];this.over=false;$('r7sc').textContent='You call for a radio check and get nothing back. The radio powers on. Work the problem.';$('r7g').innerHTML='<option value="">Choose...</option>'+FAULTS.map(f=>'<option value="'+f[0]+'">'+f[1]+'</option>').join('');this.draw();},
+ chk(k){if(this.over)return;if(!this.used.includes(k))this.used.push(k);this.draw();},
+ draw(){$('r7b').innerHTML=CHECKS.map(c=>'<button class="chip'+(this.used.includes(c[0])?' on':'')+'" onclick="N1.chk(\''+c[0]+'\')">'+c[1]+'</button>').join('');
+  const lg=this.used.map(k=>'<div style="margin:3px 0"><b>'+CHECKS.find(c=>c[0]===k)[1]+':</b> '+((OBS[this.f]||{})[k]||'Looks normal.')+'</div>').join('');$('r7log').innerHTML=lg||'No checks yet. Pick one.';},
+ guess(){const g=$('r7g').value;if(!g){return;}const el=$('r7log');if(g===this.f){this.over=true;el.className='fb ok';el.innerHTML+='<div style="margin-top:6px"><b>Correct. </b>'+FAULTS.find(f=>f[0]===g)[1]+'. You used '+this.used.length+' check'+(this.used.length===1?'':'s')+' and sent nothing over the air.</div>';}
+  else{el.className='fb no';el.innerHTML+='<div style="margin-top:6px"><b>Not that one.</b> Keep checking.</div>';}}};
+/* ===================== questions ===================== */
+const Qd={
+ ch1:[
+  {id:'r1a',t:'mc',q:'Which radio family gives long range with no infrastructure by bouncing off the ionosphere?',o:['VHF FM','HF','Wi-Fi','Line-of-sight UHF'],a:1,ex:'HF can use skywave to reach hundreds or thousands of kilometres. VHF and UHF are mostly line of sight.'},
+  {id:'r1b',t:'mc',q:'What does \u201Chalf duplex\u201D mean for a tactical radio?',o:['It can only be used by two people.','You can send or receive but not at the same time.','It uses half the power.','It works in only half the band.'],a:1,ex:'You press PTT to send and release it to listen. That is why nets need order and short calls.'},
+  {id:'r1c',t:'num',q:'Your antenna is 2 m high and theirs is 10 m high. What is the line-of-sight range in km (one decimal)?',a:18.9,tol:0.3,u:'km',ex:'4.12 \u00D7 (\u221A2 + \u221A10) = 4.12 \u00D7 (1.414 + 3.162) \u2248 18.9 km.'},
+  {id:'r1d',t:'mc',q:'What does PACE stand for?',o:['Power, antenna, channel, encryption','Primary, alternate, contingency, emergency','Plan, act, check, evaluate','Position, azimuth, course, elevation'],a:1,ex:'PACE is a plan for how to communicate: a primary method, an alternate, a contingency, and an emergency fall-back.'},
+  {id:'r1e',t:'mc',q:'You make both antennas four times higher. What happens to the line-of-sight range?',o:['It becomes 4 times larger.','It doubles.','It stays the same.','It becomes 16 times larger.'],a:1,ex:'Range goes with the square root of height. \u221A4 = 2, so range doubles.'},
+  {id:'r1f',t:'mc',q:'What does the net control station (NCS) do?',o:['Transmits for every other station','Keeps order on the net','Sets the weather','Holds the encryption keys for the whole Army'],a:1,ex:'The NCS controls who talks, keeps procedure, and tracks the net.'}],
+ ch2:[
+  {id:'r2a',t:'num',q:'A radio is on 40 MHz. How long is a quarter-wave whip? (metres, one decimal)',a:1.9,tol:0.1,u:'m',ex:'\u03BB = 300 \u00F7 40 = 7.5 m. A quarter of that is 1.875 m, about 1.9 m.'},
+  {id:'r2b',t:'num',q:'About how long is a half-wave dipole for 50 MHz? (metres, two decimals)',a:2.85,tol:0.1,u:'m',ex:'142.5 \u00F7 50 = 2.85 m.'},
+  {id:'r2c',t:'num',q:'In free space, how many times more power do you need to double the range?',a:4,tol:0.01,u:'times',ex:'Doubling distance costs 6 dB, which is 4 times the power.'},
+  {id:'r2d',t:'num',q:'You go from 5 W to 45 W, in free space. By what factor does the range grow?',a:3,tol:0.05,u:'times',ex:'Power is 9 times larger. Range grows with the square root of power, \u221A9 = 3.'},
+  {id:'r2e',t:'mc',q:'A vertical whip talks to a horizontally mounted antenna. What happens?',o:['Nothing changes.','The link loses on the order of 20 dB.','The range doubles.','The signal turns into FM.'],a:1,ex:'Mismatched polarization costs on the order of 20 dB. Keep tactical VHF antennas vertical.'},
+  {id:'r2f',t:'mc',q:'A link is weak. What is usually the best first move?',o:['Go to maximum power.','Get the antenna higher and clear of vehicles and trees.','Switch to a lower frequency.','Turn the radio off and on.'],a:1,ex:'Antenna placement and terrain often beat extra watts, and they do not give you away the way more power does.'}],
+ ch3:[
+  {id:'r3a',t:'num',q:'The band runs 30.000 to 87.975 MHz in 25 kHz steps. How many channels is that?',a:2320,tol:0.5,u:'channels',ex:'(87.975 \u2212 30.000) \u00F7 0.025 + 1 = 2,320 channels.'},
+  {id:'r3b',t:'num',q:'A SINCGARS radio hops about 100 times a second. How long does it stay on each frequency? (milliseconds)',a:10,tol:0.1,u:'ms',ex:'1 s \u00F7 100 = 0.01 s = 10 ms.'},
+  {id:'r3c',t:'mc',q:'Which of these does NOT need to match for two radios to hop together?',o:['The hopset','The net ID','The callsign','The TRANSEC key'],a:2,ex:'Each station has its own callsign. Hopset, net ID, TRANSEC key, and the clock must agree.'},
+  {id:'r3d',t:'mc',q:'A radio hops but is in plain text. What does it protect?',o:['What you say but not where you are','Where you are and the fact you are transmitting, but not what you say','Both','Neither'],a:1,ex:'Hopping is TRANSEC. It hides the transmission. Plain text means the content is not encrypted.'},
+  {id:'r3e',t:'mc',q:'Radio A is in cipher text and radio B is in plain text. Everything else matches. What happens?',o:['They hop together but the audio is unintelligible.','They cannot hop together at all.','They talk normally.','They both shut down.'],a:0,ex:'COMSEC mismatch does not stop the hopping. It stops you understanding each other.'},
+  {id:'r3f',t:'mc',q:'What is the net ID in a frequency-hopping net?',o:['The name of the unit','A three-digit number that sets where in the pattern the net starts','The radio\u2019s serial number','The encryption key'],a:1,ex:'The net ID is a three-digit number that determines where a hopping net begins in its pattern.'}],
+ ch4:[
+  {id:'r4a',t:'mc',q:'Antenna and handset are connected. What do you do next?',o:['Turn FCTN to SQ ON and call.','Turn FCTN to TST and wait for GOOD.','Press STO.','Zeroize the radio.'],a:1,ex:'The self-test proves the radio is healthy before you load anything.'},
+  {id:'r4b',t:'num',q:'You key in 40500 on the keypad. What frequency is that in MHz?',a:40.5,tol:0.001,u:'MHz',ex:'The five digits are read with an implied decimal: 40.500 MHz.'},
+  {id:'r4c',t:'mc',q:'Which FCTN position do you use for listening silence?',o:['OFF','SQ ON','TST','LD'],a:1,ex:'SQ ON keeps the radio ready and loaded but transmitting nothing.'},
+  {id:'r4d',t:'mc',q:'Which of these is NOT on a standard 25 kHz channel step?',o:['40.500 MHz','38.550 MHz','40.510 MHz','87.975 MHz'],a:2,ex:'Standard channels end in 00, 25, 50, or 75 kHz. 40.510 is not on a 25 kHz step.'},
+  {id:'r4e',t:'mc',q:'In which FCTN position do you enter frequencies and data?',o:['SQ ON','TST','LD','RXMT'],a:2,ex:'LD is the load position.'},
+  {id:'r4f',t:'mc',q:'Why must you press STO soon after keying in a frequency?',o:['The entry times out if you wait too long.','The battery drains faster.','The radio overheats.','The squelch closes.'],a:0,ex:'The entry clears after about seven seconds, so you have to store it promptly.'}],
+ ch5:[
+  {id:'r5a',t:'mc',q:'Which is the correct form for a radio check?',o:['Alpha 1 to Alpha 6, check, check.','Alpha 6, this is Alpha 1, radio check, over.','Hey Alpha 6, can you hear me, over and out.','Alpha 1, Alpha 6, repeat.'],a:1,ex:'Say who you are calling, then who you are, then the message, then a proword.'},
+  {id:'r5b',t:'mc',q:'Why is \u201Cover and out\u201D wrong?',o:['It is too long.','The two words contradict: OVER expects a reply and OUT does not.','Only officers may say it.','It is only for aircraft.'],a:1,ex:'OVER invites a reply. OUT ends the exchange. Use one or the other.'},
+  {id:'r5c',t:'mc',q:'Which proword asks the other station to repeat everything they just said?',o:['ROGER','WILCO','SAY AGAIN','OUT'],a:2,ex:'SAY AGAIN means repeat your last transmission. Avoid the word repeat.'},
+  {id:'r5d',t:'mc',q:'You hear a station perfectly. What is the short answer to their radio check?',o:['Weak but readable','Roger','Say again','Wilco'],a:1,ex:'ROGER alone means loud and clear.'},
+  {id:'r5e',t:'mc',q:'What does WILCO mean?',o:['I did not hear you.','I received your message, understand it, and will comply.','Wait.','Repeat it.'],a:1,ex:'WILCO includes the meaning of ROGER, so the two are never used together.'},
+  {id:'r5f',t:'mc',q:'Why do short, standard calls help EMCON?',o:['They sound better.','They shorten time on the air, so there are fewer chances to be detected.','They change the frequency.','They use less battery only.'],a:1,ex:'Every second on the air is a chance for an enemy sensor to hear you and take a bearing.'}],
+ ch6:[
+  {id:'r6a',t:'mc',q:'Only your radio has noise, and other stations hear each other fine. What do you check first?',o:['Enemy jamming','Your own equipment','The weather forecast','The satellites'],a:1,ex:'If only your radio is affected, start with power, antenna, cables, and settings.'},
+  {id:'r6b',t:'mc',q:'Which action can help against interference or jamming?',o:['Hold the key down longer','Reposition the antenna or put terrain between you and the source','Turn the squelch off and stay put','Move to a lower power only'],a:1,ex:'Repositioning and using terrain can reduce what reaches your antenna. Also keep transmissions short and stay in hopping mode.'},
+  {id:'r6c',t:'mc',q:'What should you NOT do on an open net when you suspect jamming?',o:['Switch to the alternate method','Announce that jamming is working and how badly','Report through the proper channel','Shorten your transmissions'],a:1,ex:'Telling the enemy over an open net that the jamming works helps them. Use the reporting channel in your SOP.'},
+  {id:'r6d',t:'mc',q:'MIJI stands for:',o:['Meaconing, intrusion, jamming, interference','Message, identify, join, inform','Maximum interference jamming index','Mobile infantry job instruction'],a:0,ex:'MIJI reports cover meaconing, intrusion, jamming, and interference.'},
+  {id:'r6e',t:'mc',q:'Why stay in frequency-hopping mode when you are being jammed?',o:['It is quieter.','A hopper is harder to jam than a fixed channel.','It uses less power.','It changes the time.'],a:1,ex:'A jammer has to cover many frequencies or chase the hops. A fixed channel is easy to find and jam.'},
+  {id:'r6f',t:'mc',q:'The noise starts whenever a nearby generator runs and changes when you move. What is it most likely?',o:['Enemy jamming','Local interference','A satellite fault','Your COMSEC key'],a:1,ex:'Noise that follows a nearby source and changes with your position points to local interference.'}],
+ ch7:[
+  {id:'r7a',t:'mc',q:'You get no reply to a radio check. What is the first thing to check?',o:['COMSEC key','Power and the function switch','The enemy order of battle','The map'],a:1,ex:'Start with the simplest and nearest: battery and function switch.'},
+  {id:'r7b',t:'mc',q:'Why do the checks that need no transmission come first?',o:['They are faster.','Each avoided transmission is one less chance for an enemy sensor to hear you.','They are required by law.','They use no battery.'],a:1,ex:'Looking at a connector or a display sends nothing. That keeps your signature down.'},
+  {id:'r7c',t:'mc',q:'The net ID and hopset match, but your clock is 9 seconds off the net. What is the fault?',o:['Wrong antenna','The clock is out of sync, so the radios cannot hop together','Low battery','Wrong COMSEC'],a:1,ex:'Hopping radios must agree on time to within a few seconds. Reload or resync the time.'},
+  {id:'r7d',t:'mc',q:'You hear scrambled audio, and both radios hop together. What do you check?',o:['The battery','The COMSEC mode and key on both radios','The antenna height','The frequency'],a:1,ex:'Hopping together but unintelligible audio points to a COMSEC mismatch.'},
+  {id:'r7e',t:'mc',q:'The other station is 14 km away behind a ridge, and your antenna is low. What helps most?',o:['More power','Raise the antenna, move to better ground, or use a relay or alternate method','Switch to plain text','Change the net ID'],a:1,ex:'The problem is the path. Height, position, or a relay fix a path problem. More power helps little.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'num',q:'Antennas are 4 m and 9 m high. What is the line-of-sight range? (km, one decimal)',a:20.6,tol:0.3,u:'km',ex:'4.12 \u00D7 (2 + 3) = 20.6 km.'},
+ {id:'k2',ch:'ch1',t:'mc',q:'What does PACE give a unit?',o:['A faster radio','A planned way to keep communicating when the primary fails','A bigger antenna','Encryption'],a:1,ex:'Primary, alternate, contingency, and emergency methods.'},
+ {id:'k3',ch:'ch2',t:'num',q:'A radio is on 60 MHz. How long is a quarter-wave whip? (metres, two decimals)',a:1.25,tol:0.05,u:'m',ex:'\u03BB = 5 m. A quarter is 1.25 m.'},
+ {id:'k4',ch:'ch2',t:'num',q:'In free space, how many times more power to triple the range?',a:9,tol:0.05,u:'times',ex:'Range grows with the square root of power, so tripling it takes 9 times the power.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'Which protects the fact that you are transmitting and where?',o:['COMSEC','TRANSEC','Squelch','Callsigns'],a:1,ex:'TRANSEC, such as frequency hopping, protects the transmission. COMSEC protects the content.'},
+ {id:'k6',ch:'ch3',t:'mc',q:'Two hopping radios cannot talk. The net ID, hopset, and TSK match. What else could be wrong?',o:['Their clocks differ by more than a few seconds','The antenna color','The handset cable length','The paint'],a:0,ex:'The clock has to agree within a few seconds for the hops to line up.'},
+ {id:'k7',ch:'ch4',t:'mc',q:'Keying 38550 means what frequency?',o:['3.855 MHz','38.550 MHz','385.50 MHz','38,550 MHz'],a:1,ex:'Five digits with an implied decimal: 38.550 MHz.'},
+ {id:'k8',ch:'ch4',t:'mc',q:'Which FCTN position runs the self-test?',o:['LD','TST','SQ ON','OFF'],a:1,ex:'TST. Wait for GOOD.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'Which of these is correct?',o:['Roger wilco','Over and out','Say again','Repeat that'],a:2,ex:'SAY AGAIN is correct. The others are wrong or ambiguous.'},
+ {id:'k10',ch:'ch5',t:'mc',q:'You hear them weakly but can read them. What do you say?',o:['Weak but readable','Loud and clear','Unreadable','Roger'],a:0,ex:'WEAK BUT READABLE describes a weak signal you can still understand. ROGER alone means loud and clear.'},
+ {id:'k11',ch:'ch6',t:'mc',q:'Which is the first suspect when only your own radio is noisy?',o:['Enemy jamming','Your own equipment','A satellite','The terrain'],a:1,ex:'Rule out your own equipment first.'},
+ {id:'k12',ch:'ch7',t:'mc',q:'Why check without transmitting first?',o:['It reduces the chances of being detected','It is quicker','It saves the SOI','It changes the frequency'],a:0,ex:'Every transmission is a chance for detection.'}];
+const GLd={
+ net:['Net','A group of radios sharing a frequency or hopping pattern so they can talk to each other.'],
+ ncs:['Net control station (NCS)','The station that controls who talks on a net and keeps order.'],
+ callsign:['Callsign','A short name that identifies a radio station on the net.'],
+ halfduplex:['Half duplex','A radio that can send or receive, but not both at once. You press PTT to talk.'],
+ pace:['PACE','Primary, alternate, contingency, and emergency: a plan for how to communicate or navigate if the first method fails.'],
+ los:['Line of sight','A straight path between two antennas with nothing blocking it. VHF and UHF range is mostly limited to this.'],
+ polarization:['Polarization','The orientation of a radio wave\u2019s electric field. Tactical VHF antennas are normally vertical.'],
+ whip:['Whip antenna','A thin flexible antenna, usually a quarter wavelength long, that stands upright from the radio.'],
+ dipole:['Dipole','A basic antenna of two equal arms, about half a wavelength long in total.'],
+ directional:['Directional antenna','An antenna that sends and receives mostly in one direction, extending range that way and reducing it elsewhere.'],
+ hopset:['Hopset','The set of frequencies a frequency-hopping radio jumps among.'],
+ netid:['Net ID','A three-digit number that determines where in the hopping pattern a net begins.'],
+ tsk:['TRANSEC key (TSK)','The key that sets the order in which a radio hops within its hopset.'],
+ comsec:['COMSEC','Communications security. Protects the content of a message, for example by encryption.'],
+ transec:['TRANSEC','Transmission security. Protects the fact and place of transmission, for example by frequency hopping.'],
+ synctime:['Sync time','The time that hopping radios must share, to within a few seconds, so their hops line up.'],
+ fctn:['FCTN switch','The function switch on a SINCGARS radio. It sets modes such as TST, LD, SQ ON, SQ OFF, and RXMT.'],
+ squelch:['Squelch','A circuit that keeps the speaker quiet until a real signal arrives.'],
+ soi:['SOI','Signal operating instructions. The document that lists frequencies, callsigns, and codes for a net.'],
+ listensil:['Listening silence','A state where the radio is on and receiving but transmits nothing.'],
+ proword:['Proword','A procedure word with a fixed meaning, such as ROGER, OVER, or OUT.'],
+ radiocheck:['Radio check','A call asking how well you are heard, in strength and readability.'],
+ acp125:['ACP 125','The allied publication that sets voice radio procedure, including prowords.'],
+ ptt:['PTT','Push to talk. The key you press to transmit.'],
+ miji:['MIJI','Meaconing, intrusion, jamming, and interference. A report format for these events.'],
+ jamming:['Jamming','Deliberately transmitting to prevent a receiver from using a signal.'],
+ interference:['Interference','Unwanted signals that degrade reception, whether deliberate or not.']};
+const GUIDE={key:'radioguide',chapters:[["ch1","1 The radio picture"],["ch2","2 Antennas and range"],["ch3","3 Hopping and COMSEC"],["ch4","4 Operating the radio"],["ch5","5 Voice procedure"],["ch6","6 Interference"],["ch7","7 No comms"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>L1.calc(),ch2:()=>A1.calc(),ch3:()=>H1.draw(),ch4:()=>{if(!S1.order)S1.reset();else S1.draw('');Fq.calc();},ch5:()=>{PC.init();RC.calc();},ch6:()=>{if(!$('j1'))JI.init();},ch7:()=>{if(!N1.f)N1.new();}}};
+
+boot();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

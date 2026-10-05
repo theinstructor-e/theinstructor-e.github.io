@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GNSS Fundamentals Lab | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:170px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:660px;margin:0 auto;padding:10px 12px 20px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:26px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:3px 0 4px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px;line-height:1.5}
+.lesson{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px}
+.lt{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.lk{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}.lo{font-size:18px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px;white-space:nowrap}.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pill{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border:1px solid var(--line);color:var(--dim)}.pill.ok{background:var(--green);border-color:var(--green);color:#00180d}
+.lm{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;min-height:17px}.lm.good{color:var(--green)}.lm.err{color:var(--red)}
+.tabs{display:flex;border:1px solid var(--line);margin:10px 0}.tabs button{flex:1;font-family:'Share Tech Mono',monospace;font-size:11.5px;letter-spacing:.06em;padding:11px 3px;background:var(--panel);color:var(--dim);border:0;border-right:1px solid var(--line);cursor:pointer}.tabs button:last-child{border-right:0}.tabs button.on{background:var(--cyan-dark);color:var(--cyan)}
+.cardx{background:var(--panel);border:1px solid var(--line);margin:10px 0}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2);gap:8px;flex-wrap:wrap}
+.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 9px;cursor:pointer;min-height:34px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}.chip.red.on{background:var(--red-dark);color:var(--red);border-color:var(--red)}
+.chip.go{border-color:var(--green);color:var(--green)}
+canvas.cv{display:block;width:100%;height:auto;background:#000;touch-action:manipulation}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}.row>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:84px}
+input[type=range]{flex:1;min-width:120px;accent-color:#00ff88;height:28px}.val{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--green);min-width:70px;text-align:right}
+.stat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:12px}
+.stat>div{background:var(--panel2);border:1px solid var(--line);padding:5px 7px;line-height:1.45}.stat b{display:block;font-weight:400;color:var(--dim);font-size:9.5px;letter-spacing:.08em}
+.good{color:var(--green)}.mid{color:var(--amber)}.bad{color:var(--red)}
+.note{font-size:15.5px;color:var(--dim);padding:6px 10px 8px;line-height:1.38}
+.why2{border-left:3px solid var(--cyan);background:var(--panel2);padding:8px 10px;margin:8px;font-size:16px;line-height:1.38}
+.q{margin:8px 0}.q .k{display:block;margin-bottom:4px;color:var(--amber)}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:11px 14px;cursor:pointer;margin:8px 6px 0 0}.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:60;padding:14px}.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}.sheet p{font-size:16.5px;line-height:1.38}
+.lbtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);padding:9px 12px;margin-top:8px;cursor:pointer;color:var(--text);font-family:'Rajdhani',sans-serif}
+.lbtn b{display:block;font-size:18px;letter-spacing:.03em;text-transform:uppercase}.lbtn span{font-size:14.5px;color:var(--dim)}.lbtn.done{border-left-color:var(--cyan)}
+.acc summary{cursor:pointer;list-style:none;padding:9px 10px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--cyan);background:var(--panel2)}.acc summary::-webkit-details-marker{display:none}
+.acc .in{padding:8px 10px 10px;font-size:16px;line-height:1.4}.acc .in h4{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--amber);font-weight:400;margin:10px 0 3px}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+<style>.learn{display:block;margin:0 0 12px;padding:9px 13px;border:1px solid var(--line);border-left:3px solid #00d4ff;border-radius:8px;background:var(--panel);color:var(--text);text-decoration:none;font-size:13px;line-height:1.4}.learn b{color:#00d4ff}.learn:hover{border-color:#00d4ff}</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>GNSS Fundamentals Lab</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+<a class="learn" href="../gnssguide/"><b>&#128214; Learn first:</b> GNSS &amp; Navigation Explained &mdash; the interactive textbook for this tool</a>
+<div class="hero"><div class="eyebrow">EW / PNT &middot; HANDS-ON</div><h2>GNSS Fundamentals Lab</h2>
+<p>Find out how a receiver turns satellite signals into a position, why satellite geometry matters, and why a weak signal from space is so easy to jam.</p>
+<span class="sim">SIMPLIFIED MODELS: IDEAL SATELLITE ORBITS, NO ATMOSPHERE OR MULTIPATH DETAIL &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+
+<div class="lesson"><div class="lt"><div><div class="lk" id="lk">CHALLENGE 1</div><div class="lo" id="lo"></div></div><div style="white-space:nowrap"><button class="hbtn" onclick="hint()">HINT</button><button class="hbtn c" onclick="openLabs()">CHALLENGES</button></div></div>
+<div class="pills" id="pills"></div><div class="lm" id="lm"></div><div id="qbox"></div></div>
+
+<div class="tabs" id="tabs"><button class="on" data-t="fix">THE FIX</button><button data-t="sky">SKY AND GEOMETRY</button><button data-t="jam">WHY IT JAMS EASILY</button></div>
+
+<div id="t-fix">
+<div class="cardx"><div class="ch"><b>RANGING CIRCLES</b><span class="k">drag the receiver</span></div><canvas class="cv" id="fixC" width="480" height="400"></canvas>
+<div class="cb"><div class="row"><label>SATELLITES USED</label><div class="chips" id="fixSats"></div></div>
+<div class="row"><label>CLOCK ERROR</label><input type="range" id="bias" min="0" max="120" step="1" value="0" oninput="FX.bias(this.value)"><span class="val" id="biasV">0 units</span></div>
+<div class="chips"><button class="chip go" onclick="FX.solve()">SOLVE FOR POSITION AND CLOCK</button><button class="chip" onclick="FX.reset()">RESET</button></div></div>
+<div class="stat" id="fixStat"></div><div class="why2" id="fixWhy"></div></div>
+</div>
+
+<div id="t-sky" style="display:none">
+<div class="cardx"><div class="ch"><b>SKY VIEW</b><span class="k">tap a satellite to use or drop it</span></div><canvas class="cv" id="skyC" width="480" height="400"></canvas>
+<div class="cb"><div class="row"><label>TIME</label><input type="range" id="tm" min="0" max="12" step="0.05" value="3" oninput="SK.set('t',this.value)"><span class="val" id="tmV">03:00</span></div>
+<div class="row"><label>LOCATION</label><div class="chips" id="locC"></div></div>
+<div class="row"><label>ELEVATION MASK</label><input type="range" id="mask" min="0" max="40" step="1" value="10" oninput="SK.set('mask',this.value)"><span class="val" id="maskV">10 deg</span></div>
+<div class="row"><label>BUILDING AT</label><input type="range" id="bAz" min="0" max="359" step="1" value="0" oninput="SK.set('baz',this.value)"><span class="val" id="bAzV">0 deg</span></div>
+<div class="row"><label>BUILDING WIDTH</label><input type="range" id="bW" min="0" max="240" step="5" value="0" oninput="SK.set('bw',this.value)"><span class="val" id="bWV">0 deg</span></div>
+<div class="row"><label>RECEIVER ERROR</label><input type="range" id="uere" min="1" max="12" step="0.5" value="5" oninput="SK.set('uere',this.value)"><span class="val" id="uereV">5.0 m</span></div>
+<div class="chips"><button class="chip go" onclick="SK.all()">USE ALL VISIBLE</button><button class="chip" onclick="SK.play()" id="playB">&#9654; RUN THE DAY</button></div></div>
+<div class="stat" id="skyStat"></div><div class="why2" id="skyWhy"></div></div>
+<div class="cardx"><div class="ch"><b>200 POSITION FIXES</b><span class="k" id="scInfo"></span></div><canvas class="cv" id="scC" width="480" height="300"></canvas></div>
+</div>
+
+<div id="t-jam" style="display:none">
+<div class="cardx"><div class="ch"><b>THE JAMMING BUDGET</b></div><div class="cb">
+<div class="row"><label>JAMMER POWER</label><div class="chips" id="jPw"></div></div>
+<div class="row"><label>DISTANCE</label><input type="range" id="jD" min="0" max="100" step="1" value="40" oninput="JM.set('d',this.value)"><span class="val" id="jDV">5 km</span></div>
+<div class="row"><label>JAMMER HEIGHT</label><div class="chips" id="jH"></div></div>
+<div class="row"><label>RECEIVER</label><div class="chips" id="jR"></div></div></div>
+<canvas class="cv" id="jamC" width="480" height="300"></canvas>
+<div class="stat" id="jamStat"></div><div class="why2" id="jamWhy"></div></div>
+</div>
+
+<div class="cardx"><details class="acc"><summary>HOW IT WORKS AND WHAT IS LEFT OUT</summary><div class="in">
+<h4>HOW A FIX WORKS</h4><p>Each satellite broadcasts its position and the time it sent the signal. The receiver measures how long the signal took, which gives a range. One range puts you on a sphere around that satellite. Several ranges cross at one point.</p>
+<h4>WHY FOUR SATELLITES</h4><p>The receiver's clock is not accurate enough, so every range is off by the same unknown amount. That makes the clock error a fourth unknown on top of latitude, longitude, and height. The 2-D picture here works the same way: you need three ranges to solve for two position unknowns plus the clock error.</p>
+<h4>GEOMETRY AND DOP</h4><p>Dilution of precision (DOP) says how much the satellite layout magnifies the range errors. Satellites spread widely across the sky give a low DOP. Satellites bunched together, or hidden by buildings or terrain, give a high DOP. Horizontal error is roughly HDOP times the range error.</p>
+<h4>WHY JAMMING IS EASY</h4><p>GPS satellites are about 20,200 km up and broadcast with modest power. The minimum guaranteed signal at the ground for the civil L1 C/A signal is about -158.5 dBW, or -128.5 dBm. A small ground transmitter much closer to the receiver can easily overpower it. Typical civil receivers lose full tracking when the jammer is roughly 30 to 40 dB stronger than the satellite signal. Receivers built to resist jamming can tolerate far more.</p>
+<h4>LEFT OUT</h4><p>Ionosphere and troposphere delay, multipath, satellite and receiver clock details, ephemeris error, multiple frequencies, and spoofing. The satellite positions come from an ideal circular 24-satellite constellation, not the real one. See the GPS Spoof tool for spoofing and meaconing.</p>
+</div></details></div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<div class="ov" id="ovLabs"><div class="sheet"><div class="k">CHALLENGES</div><h2>Pick a challenge</h2><div id="labList"></div><button class="btn alt" onclick="closeOv('ovLabs')">CLOSE</button></div></div>
+<div class="ov" id="ovDone"><div class="sheet"><div class="k">CHALLENGE COMPLETE</div><h2 id="dH"></h2><p id="dP"></p><button class="btn" onclick="nextLab()">NEXT</button><button class="btn alt" onclick="closeOv('ovDone')">KEEP EXPLORING</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+const $=id=>document.getElementById(id),TAU=Math.PI*2,d2r=Math.PI/180;
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';r.setAttribute('data-theme',l?'dark':'light');$('tb').textContent=l?'LIGHT':'DARK';}
+function closeOv(i){$(i).classList.remove('on');}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+function solveN(A,b){const n=b.length,M=A.map((r,i)=>r.concat([b[i]]));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;if(Math.abs(M[p][c])<1e-12)return null;[M[c],M[p]]=[M[p],M[c]];for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c]/M[c][c];for(let k=c;k<=n;k++)M[r][k]-=f*M[c][k];}}return M.map((r,i)=>r[n]/r[i]);}
+function inv(A){const n=A.length,M=A.map((r,i)=>r.concat(Array.from({length:n},(_,j)=>i===j?1:0)));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;if(Math.abs(M[p][c])<1e-12)return null;[M[c],M[p]]=[M[p],M[c]];const d=M[c][c];for(let k=0;k<2*n;k++)M[c][k]/=d;for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c];for(let k=0;k<2*n;k++)M[r][k]-=f*M[c][k];}}return M.map(r=>r.slice(n));}
+
+/* ================= TAB 1: THE FIX ================= */
+const FX=(function(){
+  const B=[{n:'A',x:70,y:60,c:'#00d4ff'},{n:'B',x:410,y:50,c:'#ffb300'},{n:'C',x:430,y:340,c:'#bb88ff'}];
+  let R={x:230,y:215},bias=0,on=[true,true,true],sol=null,moved=false,drag=false,solved=false;
+  const cv=$('fixC'),c=cv.getContext('2d');
+  const rng=(b)=>Math.hypot(R.x-b.x,R.y-b.y);
+  function active(){return B.filter((b,i)=>on[i]);}
+  function naive(){const a=active();if(a.length<3)return null;let x=R.x+40,y=R.y-30;for(let it=0;it<30;it++){let jtj=[[0,0],[0,0]],jtr=[0,0];a.forEach(b=>{const rho=rng(b)+bias,dx=x-b.x,dy=y-b.y,d=Math.hypot(dx,dy)||1,r=d-rho,j=[dx/d,dy/d];jtj[0][0]+=j[0]*j[0];jtj[0][1]+=j[0]*j[1];jtj[1][0]+=j[1]*j[0];jtj[1][1]+=j[1]*j[1];jtr[0]+=j[0]*r;jtr[1]+=j[1]*r;});const s=solveN(jtj,jtr);if(!s)break;x-=s[0];y-=s[1];}return {x,y};}
+  function full(){const a=active();if(a.length<3)return null;let x=R.x+40,y=R.y-30,bb=0;for(let it=0;it<40;it++){const J=[],r=[];a.forEach(b=>{const rho=rng(b)+bias,dx=x-b.x,dy=y-b.y,d=Math.hypot(dx,dy)||1;J.push([dx/d,dy/d,1]);r.push(d+bb-rho);});const jtj=[0,1,2].map(i=>[0,1,2].map(j=>J.reduce((s,row)=>s+row[i]*row[j],0))),jtr=[0,1,2].map(i=>J.reduce((s,row,k)=>s+row[i]*r[k],0)),s=solveN(jtj,jtr);if(!s)return null;x-=s[0];y-=s[1];bb-=s[2];}return {x,y,b:bb};}
+  function pairX(a,b){const d=Math.hypot(b.x-a.x,b.y-a.y),ra=rng(a)+bias,rb=rng(b)+bias;if(d>ra+rb||d<Math.abs(ra-rb)||d===0)return [];const t=(ra*ra-rb*rb+d*d)/(2*d),h2=ra*ra-t*t;if(h2<0)return [];const h=Math.sqrt(h2),mx=a.x+t*(b.x-a.x)/d,my=a.y+t*(b.y-a.y)/d;return [{x:mx+h*(b.y-a.y)/d,y:my-h*(b.x-a.x)/d},{x:mx-h*(b.y-a.y)/d,y:my+h*(b.x-a.x)/d}];}
+  function draw(){c.setTransform(1,0,0,1,0,0);c.fillStyle='#05090f';c.fillRect(0,0,480,400);c.strokeStyle='#10202e';c.lineWidth=1;for(let i=0;i<=480;i+=40){c.beginPath();c.moveTo(i,0);c.lineTo(i,400);c.stroke();}for(let j=0;j<=400;j+=40){c.beginPath();c.moveTo(0,j);c.lineTo(480,j);c.stroke();}
+    B.forEach((b,i)=>{if(!on[i])return;const r=rng(b)+bias;c.strokeStyle=b.c;c.lineWidth=2;c.globalAlpha=.85;c.beginPath();c.arc(b.x,b.y,r,0,TAU);c.stroke();c.globalAlpha=1;});
+    B.forEach((b,i)=>{c.fillStyle=on[i]?b.c:'#445';c.beginPath();c.moveTo(b.x,b.y-11);c.lineTo(b.x+10,b.y+8);c.lineTo(b.x-10,b.y+8);c.closePath();c.fill();c.fillStyle='#fff';c.font='bold 11px "Share Tech Mono"';c.textAlign='center';c.fillText('SAT '+b.n,b.x,b.y+22);});
+    const a=active();if(a.length===2){pairX(a[0],a[1]).forEach(p=>{c.fillStyle='#ff4444';c.beginPath();c.arc(p.x,p.y,6,0,TAU);c.fill();});}
+    const nv=naive();if(nv&&bias>0){c.strokeStyle='#ff4444';c.lineWidth=2;c.beginPath();c.moveTo(nv.x-8,nv.y-8);c.lineTo(nv.x+8,nv.y+8);c.moveTo(nv.x+8,nv.y-8);c.lineTo(nv.x-8,nv.y+8);c.stroke();c.fillStyle='#ff4444';c.textAlign='left';c.font='10px "Share Tech Mono"';c.fillText('fix with no clock correction',nv.x+10,nv.y-10);}
+    if(sol){c.strokeStyle='#00d4ff';c.lineWidth=2;c.beginPath();c.arc(sol.x,sol.y,10,0,TAU);c.stroke();c.fillStyle='#00d4ff';c.textAlign='left';c.font='10px "Share Tech Mono"';c.fillText('solved',sol.x+13,sol.y+3);}
+    c.fillStyle='#00ff88';c.beginPath();c.arc(R.x,R.y,8,0,TAU);c.fill();c.strokeStyle='#fff';c.lineWidth=1.5;c.stroke();c.fillStyle='#00ff88';c.textAlign='left';c.font='bold 10px "Share Tech Mono"';c.fillText('RECEIVER (true position)',R.x+12,R.y+16);
+    stat();}
+  function stat(){const a=active(),nv=naive();let err=nv?Math.hypot(nv.x-R.x,nv.y-R.y):null;
+    $('fixStat').innerHTML='<div><b>RANGES</b>'+a.length+' of 3</div><div><b>CLOCK ERROR</b>'+bias+' units</div><div><b>FIX ERROR, NO CORRECTION</b><span class="'+(err===null?'':err<3?'good':err<20?'mid':'bad')+'">'+(err===null?'need 3':Math.round(err)+' units')+'</span></div>'+(sol?'<div><b>SOLVED CLOCK</b>'+sol.b.toFixed(1)+' units</div><div><b>SOLVED POSITION</b>off by '+Math.hypot(sol.x-R.x,sol.y-R.y).toFixed(1)+'</div><div><b>VERDICT</b><span class="good">fix recovered</span></div>':'');
+    $('fixWhy').textContent=a.length<=1?'With one satellite you only know you are somewhere on a ring around it.':a.length===2?'Two satellites give two crossing points (red dots). You cannot tell which is you, and the clock error moves both.':bias===0?'With three satellites and a perfect clock, the three circles meet at one point: your position.':'The receiver clock error makes every range too long by the same amount, so the circles no longer meet at one point. Ignoring that gives a wrong fix (red X). Solving for position and clock error together finds the point where the circles would all shrink to meet.';
+    if(typeof LAB!=='undefined')LAB.fixState({solved,bias,moved,nsat:a.length});}
+  function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*480,y:(e.clientY-r.top)/r.height*400};}
+  cv.addEventListener('pointerdown',e=>{const p=pos(e);if(Math.hypot(p.x-R.x,p.y-R.y)<34){drag=true;cv.setPointerCapture(e.pointerId);}});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e);R.x=Math.max(20,Math.min(460,p.x));R.y=Math.max(20,Math.min(380,p.y));moved=true;sol=null;solved=false;draw();});
+  cv.addEventListener('pointerup',()=>{drag=false;});
+  function chips(){$('fixSats').innerHTML=B.map((b,i)=>'<button class="chip'+(on[i]?' on':'')+'" onclick="FX.tog('+i+')">SAT '+b.n+'</button>').join('');}
+  return {init(){chips();draw();},draw,tog(i){on[i]=!on[i];sol=null;solved=false;chips();draw();},bias(v){bias=Number(v);$('biasV').textContent=bias+' units';sol=null;solved=false;draw();},
+    solve(){const s=full();if(!s){sol=null;$('fixWhy').textContent='You need all three satellites to solve for a position and a clock error.';return;}sol=s;solved=true;draw();},
+    reset(){R={x:230,y:215};bias=0;on=[true,true,true];sol=null;solved=false;moved=false;$('bias').value=0;$('biasV').textContent='0 units';chips();draw();}};
+})();
+
+/* ================= TAB 2: SKY AND DOP ================= */
+const SK=(function(){
+  const RE=6371,RS=26560,INC=55*d2r,WE=7.2921159e-5,PERIOD=43080;
+  const SATS=[];for(let p=0;p<6;p++)for(let k=0;k<4;k++)SATS.push({id:p*4+k+1,raan:p*Math.PI/3,m0:k*Math.PI/2+p*Math.PI/12});
+  const LOCS={ft:['Fort Gordon, GA',33.4,-82.1],eq:['Equator',0,-60],hi:['High latitude (65 N)',65,-150]};
+  let S={t:3,loc:'ft',mask:10,baz:0,bw:0,uere:5,off:{},playing:false,vis:[],used:[]},cv=$('skyC'),c=cv.getContext('2d'),sc=$('scC'),sx=sc.getContext('2d'),tm=null;
+  function satEcef(s,t){const u=s.m0+TAU*t/PERIOD,x=RS*Math.cos(u),y=RS*Math.sin(u),yi=y*Math.cos(INC),zi=y*Math.sin(INC),cr=Math.cos(s.raan),sr=Math.sin(s.raan),X=x*cr-yi*sr,Y=x*sr+yi*cr,th=WE*t;return [X*Math.cos(th)+Y*Math.sin(th),-X*Math.sin(th)+Y*Math.cos(th),zi];}
+  function azel(lat,lon,t,s){const p=satEcef(s,t),la=lat*d2r,lo=lon*d2r,o=[RE*Math.cos(la)*Math.cos(lo),RE*Math.cos(la)*Math.sin(lo),RE*Math.sin(la)],d=[p[0]-o[0],p[1]-o[1],p[2]-o[2]],e=[-Math.sin(lo),Math.cos(lo),0],n=[-Math.sin(la)*Math.cos(lo),-Math.sin(la)*Math.sin(lo),Math.cos(la)],u=[Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)],dt=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],E=dt(d,e),N=dt(d,n),U=dt(d,u),r=Math.hypot(E,N,U);return {az:(Math.atan2(E,N)/d2r+360)%360,el:Math.asin(U/r)/d2r};}
+  function blocked(az){if(S.bw<=0)return false;let d=Math.abs(((az-S.baz)%360+540)%360-180);return d<=S.bw/2;}
+  function compute(){const L=LOCS[S.loc];S.vis=[];SATS.forEach(s=>{const a=azel(L[1],L[2],S.t*3600,s);if(a.el>=S.mask&&!blocked(a.az))S.vis.push({id:s.id,az:a.az,el:a.el});});S.used=S.vis.filter(v=>!S.off[v.id]);}
+  function dopOf(list){if(list.length<4)return null;const G=list.map(v=>{const a=v.az*d2r,e=v.el*d2r;return [-Math.cos(e)*Math.sin(a),-Math.cos(e)*Math.cos(a),-Math.sin(e),1];});const GtG=[0,1,2,3].map(i=>[0,1,2,3].map(j=>G.reduce((s,r)=>s+r[i]*r[j],0))),Q=inv(GtG);if(!Q)return null;return {Q,gdop:Math.sqrt(Q[0][0]+Q[1][1]+Q[2][2]+Q[3][3]),pdop:Math.sqrt(Q[0][0]+Q[1][1]+Q[2][2]),hdop:Math.sqrt(Q[0][0]+Q[1][1]),vdop:Math.sqrt(Q[2][2]),tdop:Math.sqrt(Q[3][3])};}
+  function best4(list){let best=null;const n=list.length;for(let a=0;a<n;a++)for(let b=a+1;b<n;b++)for(let c2=b+1;c2<n;c2++)for(let d=c2+1;d<n;d++){const r=dopOf([list[a],list[b],list[c2],list[d]]);if(r&&(!best||r.pdop<best.pdop))best={pdop:r.pdop,ids:[list[a].id,list[b].id,list[c2].id,list[d].id]};}return best;}
+  const SX=(az,el)=>240+(90-el)/90*170*Math.sin(az*d2r),SY=(az,el)=>200-(90-el)/90*170*Math.cos(az*d2r);
+  function drawSky(){c.setTransform(1,0,0,1,0,0);c.fillStyle='#05090f';c.fillRect(0,0,480,400);
+    if(S.bw>0){c.fillStyle='rgba(120,70,40,.55)';c.beginPath();c.moveTo(240,200);for(let a=S.baz-S.bw/2;a<=S.baz+S.bw/2;a+=2)c.lineTo(SX(a,0),SY(a,0));c.closePath();c.fill();c.fillStyle='#d9a066';c.font='10px "Share Tech Mono"';c.textAlign='center';c.fillText('BUILDING',SX(S.baz,12),SY(S.baz,12));}
+    c.strokeStyle='#14263a';c.lineWidth=1;[0,30,60].forEach(el=>{c.beginPath();c.arc(240,200,(90-el)/90*170,0,TAU);c.stroke();});for(let a=0;a<360;a+=45){c.beginPath();c.moveTo(240,200);c.lineTo(SX(a,0),SY(a,0));c.stroke();}
+    c.strokeStyle='rgba(255,179,0,.5)';c.setLineDash([4,4]);c.beginPath();c.arc(240,200,(90-S.mask)/90*170,0,TAU);c.stroke();c.setLineDash([]);
+    c.fillStyle='#7d92a9';c.font='11px "Share Tech Mono"';c.textAlign='center';c.fillText('N',240,16);c.fillText('S',240,394);c.fillText('E',468,204);c.fillText('W',12,204);
+    S.vis.forEach(v=>{const x=SX(v.az,v.el),y=SY(v.az,v.el),on=!S.off[v.id];c.fillStyle=on?'#00ff88':'#33463c';c.beginPath();c.arc(x,y,11,0,TAU);c.fill();c.strokeStyle=on?'#fff':'#667';c.lineWidth=1.5;c.stroke();c.fillStyle=on?'#00180d':'#99a';c.font='bold 10px "Share Tech Mono"';c.textAlign='center';c.fillText(v.id,x,y+3.5);});
+    // hidden (blocked / below mask) faint
+    const L=LOCS[S.loc];SATS.forEach(s=>{const a=azel(L[1],L[2],S.t*3600,s);if(a.el>0&&!S.vis.find(v=>v.id===s.id)){c.fillStyle='rgba(120,130,140,.35)';c.beginPath();c.arc(SX(a.az,a.el),SY(a.az,a.el),7,0,TAU);c.fill();}});
+    c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='left';c.fillText('center = straight overhead, edge = horizon',8,392);}
+  function scatter(d){sx.setTransform(1,0,0,1,0,0);sx.fillStyle='#05090f';sx.fillRect(0,0,480,300);const SCALE=4,cx=240,cy=150;sx.strokeStyle='#14263a';sx.fillStyle='#7d92a9';sx.font='10px "Share Tech Mono"';sx.textAlign='center';
+    for(let m=-30;m<=30;m+=10){sx.beginPath();sx.moveTo(cx+m*SCALE*2,0);sx.lineTo(cx+m*SCALE*2,300);sx.stroke();sx.beginPath();sx.moveTo(0,cy+m*SCALE*2*0.6);sx.lineTo(480,cy+m*SCALE*2*0.6);sx.stroke();if(m)sx.fillText(m+' m',cx+m*SCALE*2,296);}
+    if(!d){sx.fillStyle='#ff6666';sx.font='13px "Share Tech Mono"';sx.fillText('Fewer than 4 satellites: no fix',cx,cy);$('scInfo').textContent='';return;}
+    const q=[[d.Q[0][0],d.Q[0][1]],[d.Q[1][0],d.Q[1][1]]],l11=Math.sqrt(q[0][0]),l21=q[0][1]/l11,l22=Math.sqrt(Math.max(1e-12,q[1][1]-l21*l21)),pts=[];
+    for(let i=0;i<200;i++){const z1=gauss(),z2=gauss(),e=S.uere*l11*z1,n=S.uere*(l21*z1+l22*z2);pts.push([e,n]);}
+    pts.sort((a,b)=>Math.hypot(a[0],a[1])-Math.hypot(b[0],b[1]));const r95=Math.hypot(pts[189][0],pts[189][1]);
+    sx.strokeStyle='rgba(255,179,0,.8)';sx.lineWidth=1.5;sx.beginPath();sx.arc(cx,cy,r95*SCALE*2,0,TAU);sx.stroke();
+    pts.forEach(p=>{sx.fillStyle='rgba(0,255,136,.7)';sx.beginPath();sx.arc(cx+p[0]*SCALE*2,cy-p[1]*SCALE*2,2.4,0,TAU);sx.fill();});
+    sx.fillStyle='#fff';sx.beginPath();sx.arc(cx,cy,3,0,TAU);sx.fill();sx.fillStyle='#ffb300';sx.textAlign='left';sx.fillText('95% of fixes inside this circle: about '+r95.toFixed(0)+' m',8,14);$('scInfo').textContent='true position = white dot';}
+  function stat(d){const col=v=>v<2?'good':v<5?'mid':'bad',n=S.used.length;
+    $('skyStat').innerHTML='<div><b>SATELLITES USED</b>'+n+' of '+S.vis.length+' visible</div><div><b>GDOP</b><span class="'+(d?col(d.gdop):'bad')+'">'+(d?d.gdop.toFixed(1):'--')+'</span></div><div><b>PDOP</b><span class="'+(d?col(d.pdop):'bad')+'">'+(d?d.pdop.toFixed(1):'--')+'</span></div><div><b>HDOP</b><span class="'+(d?col(d.hdop):'bad')+'">'+(d?d.hdop.toFixed(1):'--')+'</span></div><div><b>VDOP</b><span class="'+(d?col(d.vdop):'bad')+'">'+(d?d.vdop.toFixed(1):'--')+'</span></div><div><b>HORIZONTAL ERROR (RMS)</b>'+(d?(d.hdop*S.uere).toFixed(1)+' m':'--')+'</div>';
+    $('skyWhy').textContent=!d?'Fewer than four satellites are in use, so the receiver cannot solve for position and clock together. No fix.':d.pdop<2?'The satellites are spread widely across the sky, so a given range error moves the position only a little. Low DOP is good.':d.pdop<5?'The geometry is only fair. Errors are magnified by a noticeable amount.':'The satellites are clustered or hidden on one side. A small range error becomes a large position error. High DOP is bad.';}
+  function update(){compute();const d=dopOf(S.used);drawSky();scatter(d);stat(d);$('tmV').textContent=String(Math.floor(S.t)).padStart(2,'0')+':'+String(Math.round((S.t%1)*60)).padStart(2,'0');LAB.skyState({n:S.used.length,d,ids:S.used.map(v=>v.id),vis:S.vis,best:S.used.length>=4?best4(S.vis):null});}
+  cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*480,y=(e.clientY-r.top)/r.height*400;let b=null,bd=24;S.vis.forEach(v=>{const dd=Math.hypot(SX(v.az,v.el)-x,SY(v.az,v.el)-y);if(dd<bd){bd=dd;b=v;}});if(b){S.off[b.id]=!S.off[b.id];update();}});
+  function chips(){$('locC').innerHTML=Object.keys(LOCS).map(k=>'<button class="chip'+(S.loc===k?' on':'')+'" onclick="SK.set(\'loc\',\''+k+'\')">'+LOCS[k][0]+'</button>').join('');}
+  return {init(){chips();update();},update,
+    set(k,v){if(k==='loc'){S.loc=v;S.off={};chips();}else if(k==='t'){S.t=Number(v);}else if(k==='mask'){S.mask=Number(v);$('maskV').textContent=v+' deg';}else if(k==='baz'){S.baz=Number(v);$('bAzV').textContent=v+' deg';}else if(k==='bw'){S.bw=Number(v);$('bWV').textContent=v+' deg';}else if(k==='uere'){S.uere=Number(v);$('uereV').textContent=Number(v).toFixed(1)+' m';}update();},
+    all(){S.off={};update();},get(){return S;},
+    preset(o){Object.assign(S,o);S.off={};$('tm').value=S.t;$('mask').value=S.mask;$('bAz').value=S.baz;$('bW').value=S.bw;$('maskV').textContent=S.mask+' deg';$('bAzV').textContent=S.baz+' deg';$('bWV').textContent=S.bw+' deg';chips();update();},
+    play(){S.playing=!S.playing;$('playB').innerHTML=S.playing?'&#10074;&#10074; PAUSE':'&#9654; RUN THE DAY';clearInterval(tm);if(S.playing)tm=setInterval(()=>{S.t=(S.t+0.05)%12;$('tm').value=S.t;update();},120);}};
+})();
+
+/* ================= TAB 3: JAMMING BUDGET ================= */
+const JM=(function(){
+  const PW=[['10 mW',10],['100 mW',20],['1 W',30],['10 W',40]],HT=[['2 m',2],['10 m',10],['30 m',30]],RX=[['Typical civil receiver',35],['Anti-jam receiver (illustrative)',65]];
+  let S={pw:30,d:5,h:2,rx:35},cv=$('jamC'),c=cv.getContext('2d');const SIG=-128.5,F=1575.42;
+  const dist=v=>0.2*Math.pow(200,v/100);
+  const fspl=(d)=>32.44+20*Math.log10(F)+20*Math.log10(d);
+  function budget(){const d=S.d,los=4.12*(Math.sqrt(S.h)+Math.sqrt(2)),pl=fspl(d),pj=S.pw-pl,js=pj-SIG;const losOk=d<=los;const limitFS=Math.pow(10,(S.pw+SIG*-1-S.rx*0-0)/20);return {d,los,pl,pj,js,losOk};}
+  function rangeFor(thr){const pj=SIG+thr,pl=S.pw-pj;const dfs=Math.pow(10,(pl-32.44-20*Math.log10(F))/20);const los=4.12*(Math.sqrt(S.h)+Math.sqrt(2));return {fs:dfs,los,eff:Math.min(dfs,los)};}
+  function draw(){const b=budget(),r=rangeFor(S.rx);c.setTransform(1,0,0,1,0,0);c.fillStyle='#05090f';c.fillRect(0,0,480,300);const L0=48,T0=14,W=420,H=250;
+    const X=d=>L0+Math.log10(d/0.2)/Math.log10(200)*W,Y=js=>T0+(70-js)/110*H;
+    c.strokeStyle='#14263a';c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='right';for(let js=-40;js<=70;js+=20){c.beginPath();c.moveTo(L0,Y(js));c.lineTo(L0+W,Y(js));c.stroke();c.fillText(js+' dB',L0-4,Y(js)+3);}
+    c.textAlign='center';[0.2,1,5,20,100,500].forEach(d=>{if(d>40)return;c.beginPath();c.moveTo(X(d),T0);c.lineTo(X(d),T0+H);c.stroke();c.fillText(d+' km',X(d),T0+H+12);});c.fillText('distance from jammer to receiver',L0+W/2,T0+H+26);
+    c.strokeStyle='#ffb300';c.lineWidth=1.5;c.setLineDash([5,4]);c.beginPath();c.moveTo(L0,Y(S.rx));c.lineTo(L0+W,Y(S.rx));c.stroke();c.setLineDash([]);c.fillStyle='#ffb300';c.textAlign='left';c.fillText('receiver loses lock above '+S.rx+' dB',L0+6,Y(S.rx)-4);
+    c.strokeStyle='#00d4ff';c.lineWidth=2.5;c.beginPath();let st=false;for(let v=0;v<=100;v+=1){const d=dist(v),js=S.pw-fspl(d)-SIG,x=X(d),y=Math.max(T0,Math.min(T0+H,Y(js)));st?c.lineTo(x,y):c.moveTo(x,y);st=true;}c.stroke();
+    const x=X(b.d),y=Math.max(T0,Math.min(T0+H,Y(b.js)));c.fillStyle=b.js>S.rx?'#ff4444':'#00ff88';c.beginPath();c.arc(x,y,6,0,TAU);c.fill();
+    // line-of-sight horizon marker
+    if(b.los<40){c.strokeStyle='rgba(180,140,255,.8)';c.setLineDash([3,4]);c.beginPath();c.moveTo(X(b.los),T0);c.lineTo(X(b.los),T0+H);c.stroke();c.setLineDash([]);c.fillStyle='#bb88ff';c.textAlign='left';c.fillText('radio horizon '+b.los.toFixed(1)+' km',X(b.los)+4,T0+14);}
+    stat(b,r);}
+  function stat(b,r){const lost=b.js>S.rx&&b.losOk,dist=b.d;$('jDV').textContent=dist<10?dist.toFixed(1)+' km':Math.round(dist)+' km';
+    $('jamStat').innerHTML='<div><b>JAMMER AT RECEIVER</b>'+b.pj.toFixed(0)+' dBm</div><div><b>GPS SIGNAL</b>'+SIG+' dBm</div><div><b>JAMMER / SIGNAL</b><span class="'+(b.js>S.rx?'bad':b.js>S.rx-10?'mid':'good')+'">'+b.js.toFixed(0)+' dB</span></div><div><b>RECEIVER</b><span class="'+(lost?'bad':b.js>S.rx?'mid':'good')+'">'+(lost?'LOST LOCK':b.js>S.rx?'beyond horizon':'TRACKING')+'</span></div><div><b>DENIAL RANGE, FREE SPACE</b>'+(r.fs>=100?'>100':r.fs.toFixed(1))+' km</div><div><b>DENIAL RANGE, LINE OF SIGHT</b>'+r.eff.toFixed(1)+' km</div>';
+    $('jamWhy').textContent=lost?'The jammer arrives at the receiver far stronger than the faint satellite signal, so the receiver cannot hold lock. Few watts and a clear line of sight are enough.':b.js>S.rx?'The jammer is strong enough in free space, but the radio horizon says the receiver cannot see it at this distance, so it is not actually jammed.':'The satellite signal is still above the jammer by enough margin to track. Move closer, raise the power, or raise the antenna.';
+    if(typeof LAB!=='undefined')LAB.jamState({lost,pw:S.pw,d:b.d,rx:S.rx,js:b.js});}
+  function chips(){$('jPw').innerHTML=PW.map(p=>'<button class="chip'+(S.pw===p[1]?' on':'')+'" onclick="JM.set(\'pw\','+p[1]+')">'+p[0]+'</button>').join('');$('jH').innerHTML=HT.map(p=>'<button class="chip'+(S.h===p[1]?' on':'')+'" onclick="JM.set(\'h\','+p[1]+')">'+p[0]+'</button>').join('');$('jR').innerHTML=RX.map(p=>'<button class="chip'+(S.rx===p[1]?' on':'')+'" onclick="JM.set(\'rx\','+p[1]+')">'+p[0]+'</button>').join('');}
+  return {init(){chips();draw();},draw,set(k,v){S[k]=Number(v);if(k==='d')S.d=dist(Number(v));chips();draw();},get(){return S;},preset(o){Object.assign(S,o);if(o.dkm!==undefined){S.d=o.dkm;$('jD').value=Math.round(Math.log10(o.dkm/0.2)/Math.log10(200)*100);}chips();draw();}};
+})();
+
+/* ================= challenges ================= */
+let LD={},hintN=0,ans={},wrong={},curLab=0,curTab='fix';
+const mcq=(id,t,o,a)=>({id,t,o,a});
+const LAB=(function(){let fx={},sk={},jm={};
+  return {fixState(s){fx=s;check();},skyState(s){sk=s;check();},jamState(s){jm=s;check();},get(){return {fx,sk,jm};}};})();
+const LABS=[
+ {id:'clock',t:'Three ranges, one clock',s:'Solve for position and the receiver clock.',tab:'fix',obj:'Move the receiver, add at least 60 units of clock error, and solve for position and clock with all three satellites.',
+  setup(){FX.reset();},pills:['ALL THREE SATELLITES','CLOCK ERROR ADDED','SOLVED','HOW MANY SATELLITES IN 3-D'],
+  st(){const f=LAB.get().fx;return [f.nsat===3,f.bias>=60,!!f.solved&&f.bias>=60,!!ans.n];},
+  qs(){const f=LAB.get().fx;return f.solved&&f.bias>=60?[mcq('n','In real 3-D GPS, how many satellites does a receiver need to solve for position and time?',[['3','Three'],['4','Four'],['6','Six']],'4')]:[];},
+  done(){return !!ans.n;},hints:['Drag the green dot, set the clock error slider to 60 or more, then press SOLVE.','With the clock off, the three circles no longer meet at one point. Solve finds position and clock together.','In 3-D you have latitude, longitude, height, and the clock error: four unknowns need four ranges.'],
+  why:['The clock is the fourth unknown','The receiver clock is cheap and wrong, so every range carries the same unknown error. A receiver solves for position and clock error together. In the 2-D picture that takes three satellites. In real 3-D it takes four.']},
+ {id:'best4',t:'Best four in a canyon',s:'A building hides half the sky. Choose the best four.',tab:'sky',obj:'A cheap receiver can only track four satellites, and a building hides part of the eastern sky. Choose exactly four that give a PDOP no worse than 1.5 times the best possible four.',
+  setup(){SK.preset({loc:'ft',t:7.5,mask:10,baz:90,bw:60});},pills:['EXACTLY FOUR USED','PDOP NEAR THE BEST'],
+  st(){const s=LAB.get().sk;const ok4=s.n===4,near=ok4&&s.d&&s.best&&s.d.pdop<=s.best.pdop*1.5;return [ok4,!!near];},
+  qs(){return [];},done(){const s=LAB.get().sk;return s.n===4&&s.d&&s.best&&s.d.pdop<=s.best.pdop*1.5;},
+  hints:['Tap a satellite to drop it. Keep four. Watch the PDOP in the readout.','You want satellites spread widely around the visible sky, with one high overhead, not all in one corner.','Pick one near the zenith and three spread about 120 degrees apart at low to middle elevations. The best possible PDOP here is about 2.1.'],
+  why:['Geometry matters','Good geometry means the lines of sight spread widely, so range errors point different ways and mostly cancel. Satellites bunched together make errors add. A building or terrain that hides part of the sky removes the geometry you need.']},
+ {id:'jam',t:'Deny GPS at 5 km',s:'How little power does it take?',tab:'jam',obj:'Set up a jammer that makes a typical civil receiver lose lock 5 km away, using as little power as you can. Then answer the question.',
+  setup(){JM.preset({pw:10,dkm:5,h:2,rx:35});},pills:['RECEIVER LOSES LOCK AT 5 KM','USING 1 W OR LESS','WHY SO EASY'],
+  st(){const j=LAB.get().jm;const lost=j.lost&&Math.abs(j.d-5)<0.6&&j.rx===35;return [!!lost,!!(lost&&j.pw<=30),!!ans.why];},
+  qs(){const j=LAB.get().jm;const lost=j.lost&&Math.abs(j.d-5)<0.6&&j.rx===35&&j.pw<=30;return lost?[mcq('why','Why can such a small jammer deny GPS over kilometers?',[['weak','The satellite signal is extremely weak by the time it reaches the ground'],['loud','GPS satellites transmit very little power but on a quiet frequency'],['same','Jammers and GPS satellites use the same power']],'weak')]:[];},
+  done(){return !!ans.why;},hints:['Keep the receiver at 5 km and the typical civil receiver selected. Raise the jammer power until the receiver status says LOST LOCK.','Look at the jammer-over-signal reading. It has to rise above the amber line.','A 1 W jammer is enough at 5 km with a clear line of sight.'],
+  why:['A faint signal from 20,200 km','The GPS signal at the ground is only about -128.5 dBm. A modest jammer a few kilometers away arrives billions of times stronger. Typical civil receivers lose full tracking at roughly 30 to 40 dB of jammer-over-signal. This is why GPS is such an easy target, and why anti-jam receivers and other navigation sources matter.']},
+ {id:'free',t:'Free exploring',s:'Everything open.',tab:'fix',obj:'Use any tab and any setting.',free:true,setup(){},pills:[],st(){return [];},qs(){return [];},done(){return false;},hints:['Try the Equator and high-latitude locations and run the day.','Try dropping satellites one at a time and watch which ones matter most.','Compare the typical and anti-jam receivers.'],why:['','']}
+];
+function setTab(t){curTab=t;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));['fix','sky','jam'].forEach(k=>$('t-'+k).style.display=k===t?'':'none');if(t==='fix')FX.draw();if(t==='sky')SK.update();if(t==='jam')JM.draw();}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.t));
+function openLabs(){$('labList').innerHTML=LABS.map((l,i)=>'<button class="lbtn'+(LD[l.id]?' done':'')+'" onclick="startLab('+i+')"><b>'+(i+1)+'. '+l.t+(LD[l.id]?' \u2713':'')+'</b><span>'+l.s+'</span></button>').join('');$('ovLabs').classList.add('on');}
+function startLab(i){closeOv('ovLabs');closeOv('ovDone');curLab=i;const L=LABS[i];hintN=0;ans={};wrong={};L.setup();setTab(L.tab);$('lk').textContent=L.free?'FREE EXPLORING':'CHALLENGE '+(i+1)+' OF '+(LABS.length-1);$('lo').textContent=L.obj;$('pills').innerHTML=(L.pills||[]).map((p,k)=>'<span class="pill" id="pl'+k+'">'+p+'</span>').join('');setMsg('','');renderQ();check();}
+function setMsg(t,c){$('lm').textContent=t;$('lm').className='lm '+(c||'');}
+function renderQ(){const L=LABS[curLab];if(!L||!L.qs){$('qbox').innerHTML='';return;}const qs=L.qs();$('qbox').innerHTML=qs.map(q=>{const a=ans[q.id],w=wrong[q.id];return '<div class="q"><span class="k">'+q.t+'</span><div class="chips">'+q.o.map(o=>{let cls='chip';if(a!==undefined&&o[0]===q.a)cls+=' on';else if(w===o[0])cls+=' red on';return '<button class="'+cls+'" onclick="answer(\''+q.id+'\',\''+o[0]+'\')">'+o[1]+'</button>';}).join('')+'</div></div>';}).join('');}
+function answer(id,v){const L=LABS[curLab],q=L.qs().find(x=>x.id===id);if(!q||ans[id]!==undefined)return;if(v===q.a){ans[id]=v;delete wrong[id];setMsg('Correct.','good');}else{wrong[id]=v;setTimeout(()=>{if(wrong[id]===v){delete wrong[id];renderQ();}},900);setMsg('Not quite. Check the readings again.','err');}renderQ();check();}
+function hint(){const L=LABS[curLab];hintN=Math.min(3,hintN+1);setMsg('HINT: '+L.hints[hintN-1],'');}
+let sig='';
+function check(){const L=LABS[curLab];if(!L)return;const st=L.st();(L.pills||[]).forEach((p,k)=>{const e=$('pl'+k);if(e)e.classList.toggle('ok',!!st[k]);});
+  const s2=L.qs?L.qs().map(q=>q.id).join(','):'';if(s2!==sig){sig=s2;renderQ();}
+  if(!L.free&&!LD[L.id]&&L.done()){LD[L.id]=true;$('dH').textContent=L.why[0];$('dP').textContent=L.why[1];$('ovDone').classList.add('on');}}
+function nextLab(){closeOv('ovDone');startLab(Math.min(LABS.length-1,curLab+1));}
+FX.init();SK.init();JM.init();startLab(0);
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>

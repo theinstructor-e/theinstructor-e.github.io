@@ -872,7 +872,7 @@ SB.field = () => {
     if (!f.formed) return say(speak('DS Vance', ['Stand on the yellow box and hold still. Attention.']));
     if (!f.lnDone) return say(speak('DS Vance', ['Land navigation course is through the east gate. Cole has your card.']));
     if (!f.radioDone) return say(speak('DS Vance', ['Cole says you still owe him a radio check. Finish it.']));
-    if (!f.graduated) return say(speak('DS Vance', ['Well, look at that. Compass in hand, radio on the net.', 'You are not a civilian anymore. Basic Training complete.', 'Next stop: the Cyber School at Fort Eisenhower, Georgia. Get on that bus.']), () => { f.graduated = 1; save(); fade = 1; enter('campus', 3, 12); say(['Fort Eisenhower, Georgia. Advanced Individual Training. The Cyber School.'], null); });
+    if (!f.graduated) return say(speak('DS Vance', ['Well, look at that. Compass in hand, radio on the net.', 'You are not a civilian anymore. Basic Training complete.', 'Next stop: the Cyber School at Fort Gordon, Georgia. Get on that bus.']), () => { f.graduated = 1; save(); fade = 1; enter('campus', 3, 12); say(['Fort Gordon, Georgia. Advanced Individual Training. The Cyber School.'], null); });
     say(speak('DS Vance', ['Go. You are late for the bus.']));
   }));
   s.o.push(exit(25, 8, 1, 3, 'landnav', 2, 26, () => F().formed ? null : 'The gate is closed. Fall in for formation first.', [-1, 0]));

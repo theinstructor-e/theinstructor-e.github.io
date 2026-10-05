@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GNSS &amp; Navigation Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>GNSS &amp; Navigation <span>Explained</span></h1>
+  <p class="hero-sub">How satellites turn a travel time into your position, why geometry and a faint signal matter, how to read a grid, and what to do when GPS fails. Seven chapters with hands-on widgets and questions.</p>
+</header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>Comfortable with logs and decibels? Skim <a href="../mathguide/">Math Explained</a>. New to maps, grids, and azimuths? Read <a href="../army/land-nav-guide/">Land Navigation Explained</a>. Spread spectrum ideas are in <a href="../modguide/">Modulation &amp; Noise Explained</a>.</div><div><b>Then practice in the tools</b><a href="../gnsslab/">GNSS Fundamentals Lab</a> &middot; <a href="../dagr/">DAGR GPS Simulator</a> &middot; <a href="../GPS/">GPS Spoof</a> &middot; <a href="../army/land-nav/">Land Nav Toolkit</a> &middot; <a href="../sat/">Orbits</a>. About 50 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<!-- ============ CHAPTER 1 ============ -->
+<section class="ch on" id="ch1">
+  <h2>1 &middot; Where Am I? Position, Navigation and Timing</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Say what PNT is and name the main satellite navigation systems.</li>
+    <li>Describe the three segments of GPS and how the satellites are arranged.</li>
+    <li>Calculate how orbit height sets period and speed.</li></ul></div>
+
+  <p>Satellite navigation gives three things, known together as <span class="term" data-t="pnt">PNT</span>: <b>position</b> (where am I), <b>navigation</b> (how do I get there, and how fast am I going), and <b>timing</b> (what time is it, exactly). Most people use the first two. Much of the modern world quietly depends on the third: cell towers, power grids, banks, and many military systems take their clock from satellites.</p>
+  <p><span class="term" data-t="gnss">GNSS</span> is the general name for satellite navigation systems. <b>GPS</b> is the American one. Others are <b>GLONASS</b> (Russia), <b>Galileo</b> (European Union), and <b>BeiDou</b> (China). Many receivers listen to several at once.</p>
+
+  <h3>Three segments</h3>
+  <table class="t"><tr><th>Segment</th><th>What it is</th><th>Job</th></tr>
+   <tr><td>Space</td><td>The satellites</td><td>Broadcast their orbit and the exact time, over and over.</td></tr>
+   <tr><td>Control</td><td>Ground monitoring stations and control centers</td><td>Track the satellites, correct their clocks and orbits, upload fresh data.</td></tr>
+   <tr><td>User</td><td>Your receiver, such as a phone or a DAGR</td><td>Listen only. A GPS receiver does not transmit to anyone.</td></tr></table>
+  <p>That last point matters in EW: using GPS does not give your position away. It is the receiver's weakness, not its signature, that an enemy goes after (Chapter 6).</p>
+
+  <h3>The GPS constellation</h3>
+  <ul>
+   <li>The United States commits to keeping at least <b>24 operational satellites</b>. In practice there are usually more, around 31.</li>
+   <li>They sit in <b>six orbital planes</b>, tilted about <b>55&deg;</b> to the equator.</li>
+   <li>Altitude is about <b>20,200 km</b>. One orbit takes about <b>11 hours 58 minutes</b>, close to half a day.</li>
+   <li>Each satellite can see about 38% of the Earth at once, so from open ground you normally have six or more in view.</li></ul>
+  <p>Orbit height and speed are tied together by gravity. A higher orbit is slower and takes longer. The widget below uses the real formula.</p>
+  <div class="formula">period T = 2&pi; &times; &radic;( a&sup3; &divide; &mu; )     speed v = &radic;( &mu; &divide; a )<br>a = Earth radius (6,371 km) + altitude     &mu; = 398,600 km&sup3;/s&sup2;</div>
+
+  <div class="try"><div class="th">Try it: orbit height, period and speed</div><div class="tb">
+    <div class="ctl"><label>Altitude</label><input type="range" id="a1h" min="0" max="100" step="0.1" value="87.1" oninput="O1.calc(event)"><span class="v" id="a1hv"></span></div>
+    <div class="chips"><button class="chip" onclick="O1.set(400)">ISS</button><button class="chip" onclick="O1.set(1200)">LEO sat</button><button class="chip" onclick="O1.set(20200)">GPS</button><button class="chip" onclick="O1.set(35786)">GEO</button></div>
+    <div class="read" id="a1r"></div>
+    <canvas id="a1c" width="480" height="230"></canvas>
+    <div class="note">The green circle is the part of Earth the satellite can see. Try GEO: its period is one day, so it hovers over one spot. At 20,200 km, GPS sees 38% of the Earth.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>GPS is a target because everything leans on it, and it is easy to disturb: it is weak, public, and the same everywhere. This guide shows how it works so you can see exactly where it is strong and where it is fragile.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>PNT is position, navigation, and timing. GNSS is the family of satellite systems.</li><li>GPS has space, control, and user segments. The user segment only listens.</li><li>About 24 or more satellites in six planes at 20,200 km, with a period near 12 hours. Higher orbits are slower.</li></ul></div>
+  <div class="kt"><span class="term" data-t="pnt">PNT</span><span class="term" data-t="gnss">GNSS</span><span class="term" data-t="constellation">constellation</span><span class="term" data-t="meo">MEO</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: How a fix works &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 2 ============ -->
+<section class="ch" id="ch2">
+  <h2>2 &middot; How a Fix Works</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Explain how a travel time becomes a distance.</li>
+    <li>Say why a receiver needs four satellites, not three.</li>
+    <li>Convert a clock error into a position error.</li></ul></div>
+
+  <h3>Time is distance</h3>
+  <p>Every satellite broadcasts its position and the exact moment it sent the signal. Radio travels at the speed of light, about 299,792 km per second. The receiver notes when the signal arrived, subtracts, and multiplies.</p>
+  <div class="formula">distance = speed of light &times; travel time</div>
+  <p>From overhead, a GPS signal takes about <b>67 milliseconds</b> to arrive. From a satellite near the horizon it takes about 86 ms. Now look at the other end of the scale: <b>one microsecond</b> of timing error is about <b>300 metres</b>. One nanosecond is 30 centimetres. That is why satellites carry atomic clocks.</p>
+
+  <div class="try"><div class="th">Try it: a clock error is a distance error</div><div class="tb">
+    <div class="ctl"><label>Clock error</label><input type="range" id="b1e" min="0" max="100" step="1" value="30" oninput="T1.calc()"><span class="v" id="b1ev"></span></div>
+    <div class="read" id="b1r"></div>
+    <canvas id="b1c" width="480" height="150"></canvas>
+    <div class="note">The bar runs from 1 nanosecond to 1 millisecond. Each step along the bar is ten times bigger. Notice how soon the error stops being a few metres and becomes a wrong place on the map.</div></div></div>
+
+  <h3>Why the fourth satellite</h3>
+  <p>Your receiver does not carry an atomic clock. Its cheap clock is off by an unknown amount, so every measured distance is wrong by the <b>same</b> amount. These measurements are called <span class="term" data-t="pseudorange">pseudoranges</span>. &ldquo;Pseudo&rdquo; because they include the receiver's clock error.</p>
+  <p>That leaves four unknowns: latitude, longitude, height, and the clock error. Four unknowns need four equations, so the receiver needs <b>four satellites</b>. With a fifth it can check that its answer is consistent, which is a basic form of integrity checking.</p>
+  <p>The 2-D picture below shows it with circles. Three satellites solve for two position unknowns plus the clock error. With the clock wrong, the circles do not meet at one point. Solving for position and clock together finds the one point where all three circles would meet.</p>
+
+  <div class="try"><div class="th">Try it: circles, clock error and the solve</div><div class="tb">
+    <canvas id="b2c" width="480" height="340"></canvas>
+    <div class="ctl"><label>Satellites used</label><div class="chips" id="b2s"></div></div>
+    <div class="ctl"><label>Clock error</label><input type="range" id="b2b" min="0" max="100" step="1" value="0" oninput="F2.bias(this.value)"><span class="v" id="b2bv">0 units</span></div>
+    <div class="chips"><button class="chip" onclick="F2.solve()">Solve for position and clock</button><button class="chip" onclick="F2.reset()">Reset</button></div>
+    <div class="read" id="b2r"></div>
+    <div class="note">Drag the green dot to move the receiver. Add clock error and the circles stop meeting. The red X shows where a receiver would think it was if it ignored the clock. Press Solve to recover the true position.</div></div></div>
+
+  <h3>The message is slow</h3>
+  <p>The orbit data that tells the receiver where each satellite is arrives at only 50 bits per second. A receiver that has just been switched on, with no stored orbit data, needs roughly half a minute just to collect it. That delay is why a cold start takes longer than a hot one.</p>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Distance = speed of light &times; travel time. 1 &micro;s is about 300 m.</li><li>The receiver clock error adds the same amount to every range. Hence pseudoranges.</li><li>Four unknowns (three position and one clock) need four satellites.</li></ul></div>
+  <div class="kt"><span class="term" data-t="pseudorange">pseudorange</span><span class="term" data-t="clockbias">clock bias</span><span class="term" data-t="ephemeris">ephemeris</span><span class="term" data-t="trilat">trilateration</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Geometry and errors &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 3 ============ -->
+<section class="ch" id="ch3">
+  <h2>3 &middot; Geometry and Error Budget</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Explain dilution of precision (DOP) and tell good geometry from bad.</li>
+    <li>List the main sources of GPS error.</li>
+    <li>Estimate position error as DOP times range error.</li></ul></div>
+
+  <h3>Geometry: DOP</h3>
+  <p>Imagine locating a point by sighting along two lines. If the lines cross at right angles you get a sharp fix. If they are almost parallel, a small error swings the crossing point a long way. Satellites work the same way.</p>
+  <p><span class="term" data-t="dop">Dilution of precision</span> is the factor that says how much the satellite layout magnifies ranging errors. A low number is good.</p>
+  <table class="t"><tr><th>Name</th><th>Meaning</th></tr>
+   <tr><td>HDOP</td><td>Horizontal (position on the ground)</td></tr><tr><td>VDOP</td><td>Vertical (height). Usually worse than HDOP, because every satellite is above you.</td></tr>
+   <tr><td>PDOP</td><td>Position in three dimensions</td></tr><tr><td>TDOP</td><td>Time</td></tr><tr><td>GDOP</td><td>Everything combined</td></tr></table>
+  <p>Good geometry spreads satellites widely around the sky, with some high and some low. Bad geometry clusters them, or hides some behind terrain or buildings. A rough guide: under 2 is excellent, 2 to 5 is fair, above 5 is poor.</p>
+
+  <h3>Where the errors come from</h3>
+  <p>Each range measurement has errors. They add up, as a root sum of squares, to the <span class="term" data-t="uere">user equivalent range error (UERE)</span>.</p>
+  <table class="t"><tr><th>Source</th><th>What happens</th></tr>
+   <tr><td>Satellite clock and orbit</td><td>Small errors in where the satellite is and what time it says.</td></tr>
+   <tr><td>Ionosphere</td><td>Charged layers slow the signal. The delay depends on frequency, so a receiver listening on two frequencies can remove most of it.</td></tr>
+   <tr><td>Troposphere</td><td>Weather and humidity slow the signal a little.</td></tr>
+   <tr><td>Multipath</td><td>Signals bounce off buildings and ground and arrive late. Worst in cities and canyons.</td></tr>
+   <tr><td>Receiver</td><td>Noise inside the receiver.</td></tr></table>
+  <div class="formula">position error (DRMS) &approx; HDOP &times; UERE<br>UERE = &radic;( sum of each source squared )     95% of fixes &approx; 2 &times; DRMS</div>
+  <details class="work"><summary>Worked example</summary><div>
+   <p>Sources of 4, 5, 1, 1 and 0.5 m combine to &radic;(16 + 25 + 1 + 1 + 0.25) = &radic;43.25 &approx; 6.6 m.</p>
+   <p>With HDOP 1.2 the horizontal error is 1.2 &times; 6.6 &approx; 7.9 m (DRMS). About 95% of fixes would fall within roughly 16 m.</p>
+   <p>With HDOP 4 in a bad canyon, the same receiver is off by about 26 m.</p></div></details>
+  <p>These numbers are for teaching. Real errors vary with receiver, weather, and place. For a sense of scale, GPS.gov says a typical smartphone is accurate to within about 5 metres under open sky, and a well-designed receiver does better. Techniques such as differential GPS and real-time kinematic (RTK) use a nearby reference station and the signal's carrier wave to get down to centimetres.</p>
+
+  <div class="try"><div class="th">Try it: sky view, DOP and error budget</div><div class="tb">
+    <canvas id="c1c" width="480" height="300"></canvas>
+    <div class="ctl"><label>Sky</label><div class="chips" id="c1m"></div></div>
+    <div class="ctl"><label>Satellite clock/orbit</label><input type="range" id="c1a" min="0" max="8" step="0.5" value="4" oninput="E3.calc()"><span class="v" id="c1av"></span></div>
+    <div class="ctl"><label>Ionosphere</label><input type="range" id="c1b" min="0" max="10" step="0.5" value="5" oninput="E3.calc()"><span class="v" id="c1bv"></span></div>
+    <div class="ctl"><label>Multipath</label><input type="range" id="c1d" min="0" max="8" step="0.5" value="1" oninput="E3.calc()"><span class="v" id="c1dv"></span></div>
+    <div class="ctl"><label>Receiver frequencies</label><div class="chips" id="c1f"></div></div>
+    <div class="read" id="c1r"></div>
+    <div class="note">Defaults are illustrative teaching values, not a specification. Troposphere is fixed at 0.7 m and receiver noise at 0.5 m. Switching to two frequencies removes most of the ionosphere error. Compare the sky presets: same errors, very different results.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>You will meet &ldquo;GPS is jammed&rdquo; and &ldquo;GPS is just bad here&rdquo; as the same complaint. DOP and multipath explain the second one. Knowing the normal error lets you spot an abnormal one: a sudden jump bigger than HDOP &times; UERE can explain is a clue to something else.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>DOP measures how much the satellite layout magnifies range errors. Lower is better.</li><li>Error sources add as a root sum of squares into the UERE.</li><li>Position error &approx; DOP &times; UERE. A second frequency removes most ionosphere delay.</li></ul></div>
+  <div class="kt"><span class="term" data-t="dop">DOP</span><span class="term" data-t="uere">UERE</span><span class="term" data-t="multipath">multipath</span><span class="term" data-t="drms">DRMS</span><span class="term" data-t="iono">ionosphere</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: The signal &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 4 ============ -->
+<section class="ch" id="ch4">
+  <h2>4 &middot; The Signal: Faint, Shared, and Coded</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Name the main GPS frequencies and signals.</li>
+    <li>Explain how all the satellites share one frequency.</li>
+    <li>Explain how a receiver pulls a signal out from below the noise.</li></ul></div>
+
+  <h3>Frequencies and signals</h3>
+  <table class="t"><tr><th>Signal</th><th>Frequency</th><th>Notes</th></tr>
+   <tr><td>L1 C/A</td><td>1575.42 MHz</td><td>The original civil signal. Open to everyone.</td></tr>
+   <tr><td>L2</td><td>1227.60 MHz</td><td>Lets dual-frequency receivers remove ionosphere delay.</td></tr>
+   <tr><td>L5</td><td>1176.45 MHz</td><td>Newer civil signal for safety-of-life use.</td></tr>
+   <tr><td>P(Y)</td><td>L1 and L2</td><td>Encrypted military code. Hard to fake or read without keys.</td></tr>
+   <tr><td>M-code</td><td>Military bands</td><td>Newer military signal with added protection.</td></tr></table>
+  <p>GPS signals use right-hand circular polarization, so the receiving antenna does not need to be turned to line up with them. Other systems broadcast nearby: Galileo and BeiDou have signals at or near the GPS frequencies, and GLONASS is around 1.6 GHz.</p>
+
+  <h3>How the satellites share a frequency</h3>
+  <p>Every GPS satellite transmits on the same frequency at the same time. They stay separable because each one multiplies its data by its own fast pseudo-random pattern, called a <span class="term" data-t="prn">PRN code</span>. This is <span class="term" data-t="cdma">code division multiple access (CDMA)</span>. To the receiver, a satellite's code looks like noise unless it holds a copy of that same code.</p>
+  <ul>
+   <li>The civil C/A code is <b>1,023 chips</b> long, sent at <b>1.023 million chips per second</b>, so it repeats every <b>1 ms</b>.</li>
+   <li>The navigation data is only <b>50 bits per second</b>, so each data bit lasts 20 ms: <b>20 code repeats per bit</b>.</li></ul>
+  <p>That is a <span class="term" data-t="spread">spread spectrum</span> signal, just like Chapter 6 of the Modulation &amp; Noise guide.</p>
+
+  <h3>A signal below the noise</h3>
+  <p>The minimum signal power the GPS specification promises at the ground is &minus;158.5 dBW, or about &minus;128.5 dBm. In the roughly 2 MHz the signal occupies, receiver noise is about &minus;174 + 63 = <b>&minus;111 dBm</b>. So the signal sits about <b>18 dB below the noise</b>. You cannot see it on a spectrum analyzer.</p>
+  <p>The receiver recovers it by <b>correlating</b>: sliding its own copy of the code against what it hears and adding up how well they match. At the right delay the matches add up. At any other delay they cancel. The gain is the same processing gain you already know:</p>
+  <div class="formula">processing gain = 10 &times; log<sub>10</sub>(chips per data bit) = 10 &times; log<sub>10</sub>(1,023 &times; 20) &approx; 43 dB</div>
+  <p>The delay at which the match peaks is the travel time of the signal. That is how the receiver gets its pseudorange.</p>
+
+  <div class="try"><div class="th">Try it: dig a signal out of the noise</div><div class="tb">
+    <canvas id="d1c" width="480" height="320"></canvas>
+    <div class="ctl"><label>Signal vs noise</label><input type="range" id="d1s" min="-30" max="0" step="1" value="-20" oninput="C1.go()"><span class="v" id="d1sv"></span></div>
+    <div class="ctl"><label>Code repeats added</label><input type="range" id="d1p" min="1" max="20" step="1" value="1" oninput="C1.go()"><span class="v" id="d1pv"></span></div>
+    <div class="read" id="d1r"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="C1.go(true)">New noise and delay</button></div>
+    <div class="note">Top: what the receiver hears, mostly noise. Bottom: the correlation across every possible delay of a 1,023-chip code. Add more code repeats and the spike rises out of the noise. The code here is a single 10-stage shift-register sequence, a simplified stand-in for the real C/A Gold codes.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>This is both GPS's strength and its weakness. Processing gain lets it work when the signal is far below noise. But that gain has a limit. A jammer that is about 30 to 40 dB stronger than the signal still overwhelms a typical receiver, and a jammer a few kilometres away is billions of times stronger than a signal from 20,200 km up.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>GPS L1 is 1575.42 MHz, L2 is 1227.60 MHz, and L5 is 1176.45 MHz. Military signals are encrypted.</li><li>All satellites share a frequency using different PRN codes (CDMA). The C/A code repeats every 1 ms and the data runs at 50 b/s.</li><li>The signal is about 18 dB below noise. Correlation gives about 43 dB of processing gain and also measures the travel time.</li></ul></div>
+  <div class="kt"><span class="term" data-t="prn">PRN code</span><span class="term" data-t="cdma">CDMA</span><span class="term" data-t="chip">chip</span><span class="term" data-t="corr">correlation</span><span class="term" data-t="procgain">processing gain</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Using a receiver &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 5 ============ -->
+<section class="ch" id="ch5">
+  <h2>5 &middot; Using a Receiver: Datums, Grids, Waypoints</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Say why the datum and coordinate system must match.</li>
+    <li>Read an MGRS grid reference and truncate it to the precision you need.</li>
+    <li>Use waypoints and a navigation pointer to move to a point.</li></ul></div>
+
+  <h3>The datum: a model of the Earth</h3>
+  <p>GPS gives a position relative to a mathematical model of the Earth, called a <span class="term" data-t="datum">datum</span>. GPS itself uses <b>WGS 84</b>. Old paper maps may use a different datum. Plot the same numbers on two datums and the points can be tens or even hundreds of metres apart. So the first rule of using a receiver with a map is: <b>set the receiver to the same datum as the map</b>. For modern military maps that is WGS 84.</p>
+
+  <h3>Coordinate systems</h3>
+  <p>The same spot can be written several ways: <b>latitude and longitude</b> (degrees), <b>UTM</b> (metres east and north within a zone), or <b>MGRS</b>, the Military Grid Reference System. MGRS is UTM written compactly with letters, and it is what Soldiers use on the ground.</p>
+  <p>An MGRS reference has three parts:</p>
+  <ul>
+   <li><b>Grid zone designation</b>, such as <b>17S</b>: a 6&deg;-wide zone and an 8&deg;-tall latitude band.</li>
+   <li><b>100,000 m square identifier</b>, two letters such as <b>LS</b>.</li>
+   <li><b>Numerical location</b>: digits for <b>easting first, then northing</b>. Read right, then up.</li></ul>
+  <table class="t"><tr><th>Digits</th><th>Precision</th><th>Example</th></tr>
+   <tr><td>4-digit</td><td>1,000 m</td><td>17S LS 94 98</td></tr><tr><td>6-digit</td><td>100 m</td><td>17S LS 940 984</td></tr><tr><td>8-digit</td><td>10 m</td><td>17S LS 9401 9843</td></tr><tr><td>10-digit</td><td>1 m</td><td>17S LS 94010 98430</td></tr></table>
+  <p><b>Shorten by truncating. Never round.</b> A point at 94,012.7 m east is still in the 100 m square that starts at 94,000, so its 6-digit easting is <b>940</b>, not 941. Rounding puts you in the wrong square.</p>
+
+  <div class="try"><div class="th">Try it: latitude and longitude to MGRS</div><div class="tb">
+    <div class="ctl"><label>Place</label><div class="chips" id="e1p"></div></div>
+    <div class="ctl"><label>Latitude</label><input type="range" id="e1a" min="-800" max="840" step="1" value="334" oninput="G1.slide()"><span class="v" id="e1av"></span></div>
+    <div class="ctl"><label>Longitude</label><input type="range" id="e1o" min="-1800" max="1800" step="1" value="-821" oninput="G1.slide()"><span class="v" id="e1ov"></span></div>
+    <div class="ctl"><label>Digits kept</label><div class="chips" id="e1d"></div></div>
+    <div class="read" id="e1r"></div>
+    <canvas id="e1c" width="480" height="150"></canvas>
+    <div class="note">The boxes show how big a square each precision describes, around your point. The 10-digit grid is 1 m wide. Tap Fort Gordon, then change the digits and watch the easting and northing get cut short, not rounded.</div></div></div>
+
+  <h3>Grid, true and magnetic north</h3>
+  <p>A grid bearing on the map is measured from grid north. A compass points to magnetic north. A receiver can show bearings against true, magnetic, or grid north. Check which one it is set to, and use the declination diagram on your map (see Land Navigation Explained) to convert.</p>
+
+  <h3>Waypoints and the navigation pointer</h3>
+  <p>A <b>waypoint</b> is a stored position. A DAGR can store a number of them and string them into a route. The usual sequence is: set datum and grid, <b>mark your position as a waypoint before you move</b>, then choose a waypoint and <b>GOTO</b> it. The navigation page shows an arrow and a <b>bearing and distance to the waypoint</b>. Walk the way the arrow points, and the distance counts down.</p>
+  <p>Remember what the receiver is doing: it is telling you where you are, not where to go. Check it against the ground and the map.</p>
+
+  <div class="try"><div class="th">Try it: bearing and distance between two points</div><div class="tb">
+    <div class="ctl"><label>From (MGRS)</label><input type="text" id="e2a" value="17S LS 9401 9843" oninput="G2.calc()" style="flex:1;min-width:150px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-family:'Courier New',monospace"></div>
+    <div class="ctl"><label>To (MGRS)</label><input type="text" id="e2b" value="17S LS 9512 9902" oninput="G2.calc()" style="flex:1;min-width:150px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-family:'Courier New',monospace"></div>
+    <div class="read" id="e2r"></div>
+    <div class="note">This is the bearing and distance a navigation pointer shows. Grid azimuth is measured from the map grid. True bearing is measured from the North Pole. They differ by a small angle called grid convergence, about 0.7&deg; for the default points, and it grows with distance from the middle of the zone. Ground distance on the sphere is within about 0.1% of the true figure.</div></div></div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Match the receiver's datum and grid to the map: WGS 84 and MGRS.</li><li>MGRS is zone, 100 km square, then easting and northing. Truncate, never round.</li><li>Mark a waypoint before you move. GOTO a waypoint and follow the pointer.</li></ul></div>
+  <div class="kt"><span class="term" data-t="datum">datum</span><span class="term" data-t="wgs84">WGS 84</span><span class="term" data-t="mgrs">MGRS</span><span class="term" data-t="utm">UTM</span><span class="term" data-t="waypoint">waypoint</span><span class="term" data-t="goto">GOTO</span></div>
+  <a class="tool" href="../dagr/"><b>Practice on the DAGR simulator &rarr;</b>Power it up, set the datum and MGRS grid, mark a waypoint, and walk to a checkpoint.</a>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: When GPS fails &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 6 ============ -->
+<section class="ch" id="ch6">
+  <h2>6 &middot; When GPS Fails or Lies</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Tell jamming, spoofing, and meaconing apart.</li>
+    <li>Compute how much stronger a jammer is than the satellite signal.</li>
+    <li>Estimate how far dead reckoning drifts when GPS is gone.</li></ul></div>
+
+  <h3>Three attacks</h3>
+  <table class="t"><tr><th>Attack</th><th>What the enemy does</th><th>What you see</th></tr>
+   <tr><td>Jamming</td><td>Overpowers the faint signal with noise</td><td>Satellites vanish and the receiver says no fix. Obvious.</td></tr>
+   <tr><td>Spoofing</td><td>Sends counterfeit satellite signals</td><td>A confident but wrong position or time. Subtle.</td></tr>
+   <tr><td>Meaconing</td><td>Records real signals and rebroadcasts them later</td><td>A position that looks valid but belongs to another time and place.</td></tr></table>
+  <p>Jamming works because the signal is so weak. How much stronger than the satellite is the jammer where it reaches you? That ratio is the jammer-to-signal ratio, J/S. Free-space path loss at GPS L1 follows the same formula as before:</p>
+  <div class="formula">FSPL (dB) = 32.44 + 20&middot;log<sub>10</sub>(1575.42) + 20&middot;log<sub>10</sub>(distance in km)<br>J/S (dB) = jammer power at the receiver (dBm) &minus; (&minus;128.5 dBm)</div>
+  <p>A typical civil receiver loses full tracking when the jammer is roughly 30 to 40 dB above the signal. Receivers built to resist jamming can ride through far more. Terrain and distance help: the jammer needs a path to your antenna, and the radio horizon limits how far a low-mounted jammer can reach.</p>
+
+  <div class="try"><div class="th">Try it: how much jammer does it take?</div><div class="tb">
+    <div class="ctl"><label>Jammer power</label><input type="range" id="f1p" min="0" max="50" step="1" value="30" oninput="J1.calc()"><span class="v" id="f1pv"></span></div>
+    <div class="ctl"><label>Distance</label><input type="range" id="f1d" min="0" max="100" step="1" value="57" oninput="J1.calc()"><span class="v" id="f1dv"></span></div>
+    <div class="read" id="f1r"></div>
+    <div class="note">1 W is 30 dBm and 10 mW is 10 dBm. The line-of-sight limit is not included here. Use the GNSS Fundamentals Lab to add antenna height and the radio horizon.</div></div></div>
+
+  <h3>Spotting a lie</h3>
+  <ul>
+   <li><b>Sudden jumps:</b> your position leaps by more than normal error explains, or your time jumps.</li>
+   <li><b>Too good to be true:</b> every satellite arrives at the same strength, or you suddenly see more satellites than the sky should allow.</li>
+   <li><b>Disagreement:</b> GPS says one thing while the map, terrain, or an inertial system says another.</li>
+   <li><b>Loss of satellites</b> all at once, or lost fixes in the same place every time.</li></ul>
+
+  <h3>Defences</h3>
+  <table class="t"><tr><th>Measure</th><th>Helps against</th></tr>
+   <tr><td>Encrypted military signals</td><td>Spoofing (the enemy cannot easily copy them)</td></tr>
+   <tr><td>Anti-jam antennas that null out a direction</td><td>Jamming from the ground</td></tr>
+   <tr><td>Inertial navigation (INS) and dead reckoning</td><td>Both: they do not depend on satellites</td></tr>
+   <tr><td>Map, compass, pace count, terrain association</td><td>Everything. It is your last line.</td></tr>
+   <tr><td>Reporting it</td><td>Warns others. Jamming and interference are reported through your chain (MIJI reports).</td></tr></table>
+  <p>Notice that using several constellations helps if one system fails, but a jammer on or near their shared frequencies can hit all of them at once.</p>
+
+  <h3>Dead reckoning: how fast it drifts</h3>
+  <p>If GPS goes, you fall back on direction and distance, which is the land navigation you already know. The trouble is that every small error piles up with distance. A heading error of 1&deg; puts you about 17 m off to one side for every 1,000 m you walk. A pace count that is 5% off puts you 5% short or long.</p>
+  <div class="try"><div class="th">Try it: how far off will I be?</div><div class="tb">
+    <canvas id="f2c" width="480" height="260"></canvas>
+    <div class="ctl"><label>Distance walked</label><input type="range" id="f2d" min="100" max="5000" step="100" value="2000" oninput="D1.calc()"><span class="v" id="f2dv"></span></div>
+    <div class="ctl"><label>Heading error</label><input type="range" id="f2h" min="0" max="10" step="0.5" value="2" oninput="D1.calc()"><span class="v" id="f2hv"></span></div>
+    <div class="ctl"><label>Pace-count error</label><input type="range" id="f2p" min="0" max="15" step="1" value="5" oninput="D1.calc()"><span class="v" id="f2pv"></span></div>
+    <div class="read" id="f2r"></div>
+    <div class="note">The green dot is where you meant to end up. The red dot is where the errors put you. The circle shows the miss distance. Compare it with the 100 m a 6-digit grid describes.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>You may be the person who recognizes it first. Knowing a jammed receiver from a spoofed one, and being able to fall back on land navigation without panic, is part of the job. EMCON and EW planning also depend on timing that comes from GPS.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Jamming removes the signal. Spoofing fakes it. Meaconing replays it.</li><li>The signal is so weak that a small nearby jammer can be tens of dB stronger.</li><li>Dead reckoning drifts about 17 m per 1,000 m for each degree of heading error, plus pace-count error.</li></ul></div>
+  <div class="kt"><span class="term" data-t="jamming">jamming</span><span class="term" data-t="spoofing">spoofing</span><span class="term" data-t="meaconing">meaconing</span><span class="term" data-t="js">J/S</span><span class="term" data-t="ins">inertial navigation</span><span class="term" data-t="deadreck">dead reckoning</span></div>
+  <a class="tool" href="../gnsslab/"><b>Open the GNSS Fundamentals Lab &rarr;</b>Run the trilateration, sky and DOP, and jamming budget simulations.</a>
+  <a class="tool" href="../GPS/"><b>Open the GPS Spoof tool &rarr;</b>See jamming and spoofing side by side.</a>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('ch7')">Next: Plan it &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 7 ============ -->
+<section class="ch" id="ch7">
+  <h2>7 &middot; Put It Together: A Navigation Plan</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Build a primary, alternate, contingency, and emergency (PACE) plan for navigation.</li>
+    <li>Turn two grid references into a bearing, a distance, and a pace count.</li>
+    <li>Fall back from GPS to a compass leg correctly.</li></ul></div>
+
+  <p>A navigation plan should never rest on one system. The same <b>PACE</b> idea used for radios works for navigation: a <b>primary</b> method, an <b>alternate</b> that is ready now, a <b>contingency</b> that works without any equipment, and an <b>emergency</b> that gets you home safely.</p>
+  <div class="try"><div class="th">Try it: build a PACE plan</div><div class="tb">
+    <p style="font-size:13.5px;margin:0 0 6px">Scenario: a squad moves 6 km through wooded hills. The enemy is known to use GPS jammers. Fill in each slot.</p>
+    <div id="g1"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="P1.check()">Check my plan</button><button class="chip" onclick="P1.reset()">Reset</button></div>
+    <div class="fb ok" id="g1f" style="display:none;margin-top:8px"></div></div></div>
+
+  <h3>Worked scenario: GPS goes down at the checkpoint</h3>
+  <details class="work" open><summary>Step by step</summary><div>
+   <p><b>Situation.</b> You are at CP 2, 17S LS 9401 9843. GPS has just been jammed. The next point is OP 3 at 17S LS 9512 9902. You carry a map, a compass, and you know your pace count is 64 paces per 100 m. The map's declination diagram shows a G-M angle of 6&deg; with magnetic north to the <b>left</b> of grid north.</p>
+   <p><b>1. Leg size.</b> Easting changes by 9512 &minus; 9401 = 111 tens of metres, which is 1,110 m. Northing changes by 9902 &minus; 9843 = 59 tens, 590 m.</p>
+   <p><b>2. Distance.</b> &radic;(1,110&sup2; + 590&sup2;) = &radic;(1,232,100 + 348,100) &approx; 1,257 m.</p>
+   <p><b>3. Grid azimuth.</b> tan&supmin;&sup1;(1,110 &divide; 590) &approx; 62.0&deg;. East of north, so it is an azimuth of about 62&deg;.</p>
+   <p><b>4. Magnetic azimuth.</b> MN is left of GN and you are going grid to magnetic, so <b>add</b> the G-M angle (LARS: Left Add, Right Subtract): 62 + 6 = 68&deg;.</p>
+   <p><b>5. Paces.</b> 1,257 &divide; 100 &times; 64 &approx; 805 paces.</p>
+   <p><b>6. Move.</b> Hold 68&deg;, count 805 paces, and watch for the handrails and checkpoints you picked from the map. If the ground does not match the map, stop and find out why before you go on. The dead reckoning widget shows how much you can drift: with a 2&deg; heading error and a 5% pace-count error, 1,257 m leaves you about 77 m off: roughly 44 m to one side and 63 m long or short.</p></div></details>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch7-score"></span></div><div class="tb" id="ch7-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Plan navigation with PACE: GPS first, map and compass ready, terrain association needing nothing, and a safe fall-back.</li><li>Grid references give easting and northing changes. Distance and azimuth follow from them.</li><li>Convert grid to magnetic with the G-M angle. Check the ground at every checkpoint.</li></ul></div>
+  <a class="tool" href="../army/land-nav/"><b>Practice the legs in the Land Nav Toolkit &rarr;</b>Azimuth converter, grid practice, pace count, and leg calculator.</a>
+  <a class="tool" href="../gnsslab/"><b>Then go to the GNSS Fundamentals Lab &rarr;</b>Trilateration, geometry, and jamming budget, all simulated.</a>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch7')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>GPS.gov, official US government information on GPS accuracy, the constellation, and signals.</li>
+   <li>IS-GPS-200, GPS Interface Specification. Signal structure, C/A code rate, frequencies, and minimum received power (about &minus;158.5 dBW at L1).</li>
+   <li>GPS Directorate briefing on SPS and PPS performance (DTIC). Signal-in-space error figures used as teaching values.</li>
+   <li>Parkinson, GPS.gov advisory board presentation, 2021, and published jamming studies. Typical receiver loss of lock at roughly 30 to 40 dB jammer-to-signal ratio.</li>
+   <li>TC 3-25.26, <i>Map Reading and Land Navigation</i>. Grids, MGRS, azimuths, and declination.</li>
+   <li>GTA 07-06-003 and the AN/PSN-13 DAGR operator&rsquo;s pocket guide. Receiver operation: datum, grid, waypoints, and GOTO.</li>
+   <li>NGA reference material on datums, ellipsoids, and grid reference systems.</li>
+   <li><b>Notes.</b> The error budget values, the 2-D fix, and the correlation demo are simplified teaching models. The satellite sky layouts are made up to show geometry. Dead-reckoning figures assume steady errors in one direction. Your class slides and instructor remain the authority. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
+</div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">GNSS &amp; Navigation Explained &middot; Interactive textbook &middot; Companion to the GNSS Fundamentals Lab and DAGR simulator &middot; UNCLASSIFIED</div>
+<script>
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+const GEO=(function(){
+  const a=6378137,f=1/298.257223563,k0=0.9996,n=f/(2-f),A=a/(1+n)*(1+n*n/4+n**4/64+n**6/256);
+  const al=[n/2-2*n*n/3+5*n**3/16+41*n**4/180-127*n**5/288+7891*n**6/37800,13*n*n/48-3*n**3/5+557*n**4/1440+281*n**5/630-1983433*n**6/1935360,61*n**3/240-103*n**4/140+15061*n**5/26880+167603*n**6/181440,49561*n**4/161280-179*n**5/168+6601661*n**6/7257600,34729*n**5/80640-3418889*n**6/1995840,212378941*n**6/319334400];
+  const be=[n/2-2*n*n/3+37*n**3/96-n**4/360-81*n**5/512+96199*n**6/604800,n*n/48+n**3/15-437*n**4/1440+46*n**5/105-1118711*n**6/3870720,17*n**3/480-37*n**4/840-209*n**5/4480+5569*n**6/90720,4397*n**4/161280-11*n**5/504-830251*n**6/7257600,4583*n**5/161280-108847*n**6/3991680,20648693*n**6/638668800];
+  const d2r=Math.PI/180,r2d=180/Math.PI,e=Math.sqrt(f*(2-f));
+  const BANDS='CDEFGHJKLMNPQRSTUVWX',COLS=['ABCDEFGH','JKLMNPQR','STUVWXYZ'],ROWS='ABCDEFGHJKLMNPQRSTUV';
+  function zoneFor(lat,lon){let z=Math.floor((lon+180)/6)+1;if(lat>=56&&lat<64&&lon>=3&&lon<12)z=32;if(lat>=72&&lat<84){if(lon>=0&&lon<9)z=31;else if(lon>=9&&lon<21)z=33;else if(lon>=21&&lon<33)z=35;else if(lon>=33&&lon<42)z=37;}return Math.min(60,Math.max(1,z));}
+  function band(lat){return BANDS[Math.max(0,Math.min(19,Math.floor((lat+80)/8)))];}
+  function toUTM(lat,lon){const zone=zoneFor(lat,lon),lon0=((zone-1)*6-180+3)*d2r,phi=lat*d2r,dl=lon*d2r-lon0;
+    const t=Math.sinh(Math.atanh(Math.sin(phi))-e*Math.atanh(e*Math.sin(phi))),xi=Math.atan2(t,Math.cos(dl)),eta=Math.atanh(Math.sin(dl)/Math.sqrt(1+t*t));
+    let X=xi,Y=eta;for(let j=1;j<=6;j++){X+=al[j-1]*Math.sin(2*j*xi)*Math.cosh(2*j*eta);Y+=al[j-1]*Math.cos(2*j*xi)*Math.sinh(2*j*eta);}
+    const E=500000+k0*A*Y;let N=k0*A*X;if(lat<0)N+=10000000;return {zone,band:band(lat),hemi:lat<0?'S':'N',E,N};}
+  function fromUTM(zone,hemi,E,N){const lon0=((zone-1)*6-180+3)*d2r;const x=(E-500000)/(k0*A),y=(hemi==='S'?N-10000000:N)/(k0*A);
+    let xi=y,eta=x;for(let j=1;j<=6;j++){xi-=be[j-1]*Math.sin(2*j*y)*Math.cosh(2*j*x);eta-=be[j-1]*Math.cos(2*j*y)*Math.sinh(2*j*x);}
+    const chi=Math.asin(Math.sin(xi)/Math.cosh(eta));let phi=chi;for(let i=0;i<8;i++){const s=Math.sin(phi);phi=Math.atan(Math.sinh(Math.asinh(Math.tan(chi))+e*Math.atanh(e*Math.sin(phi))));}
+    return {lat:phi*r2d,lon:(lon0+Math.atan2(Math.sinh(eta),Math.cos(xi)))*r2d};}
+  function toMGRS(lat,lon,digits){digits=digits===undefined?5:digits;const u=toUTM(lat,lon),col=COLS[(u.zone-1)%3][Math.floor(u.E/100000)-1],rowOff=u.zone%2===0?5:0,row=ROWS[(Math.floor(u.N/100000)+rowOff)%20];
+    const e5=Math.floor(u.E%100000),n5=Math.floor(u.N%100000),s=v=>String(v).padStart(5,'0').slice(0,digits);
+    return {zone:u.zone,band:u.band,sq:col+row,e:s(e5),n:s(n5),E:u.E,N:u.N,hemi:u.hemi,text:String(u.zone).padStart(2,'0')+u.band+' '+col+row+(digits?' '+s(e5)+' '+s(n5):'')};}
+  function fromMGRS(str){const m=String(str).toUpperCase().replace(/\s+/g,'').match(/^(\d{1,2})([C-HJ-NP-X])([A-HJ-NP-Z])([A-HJ-NP-V])(\d*)$/);if(!m)return null;const z=+m[1],b=m[2],cl=m[3],rw=m[4],d=m[5];if(d.length%2||d.length>10)return null;
+    const h=d.length/2,E5=h?(+d.slice(0,h))*Math.pow(10,5-h):0,N5=h?(+d.slice(h))*Math.pow(10,5-h):0;
+    const ci=COLS[(z-1)%3].indexOf(cl);if(ci<0)return null;const Ebase=(ci+1)*100000,rowOff=z%2===0?5:0;let ri=(ROWS.indexOf(rw)-rowOff+20)%20;
+    const hemi=BANDS.indexOf(b)>=10?'N':'S',latMin=-80+8*BANDS.indexOf(b);
+    // find the northing cycle (2,000 km) that falls in the latitude band
+    let best=null;for(let cyc=0;cyc<6;cyc++){const N=cyc*2000000+ri*100000+N5;const ll=fromUTM(z,hemi,Ebase+E5,N);if(isFinite(ll.lat)&&ll.lat>=latMin-0.5&&ll.lat<=latMin+8.5+(b==='X'?4:0)){const bb=band(ll.lat);if(bb===b){best=ll;break;}}}
+    if(!best){for(let cyc=0;cyc<6;cyc++){const N=cyc*2000000+ri*100000+N5;const ll=fromUTM(z,hemi,Ebase+E5,N);if(isFinite(ll.lat)&&band(ll.lat)===b){best=ll;break;}}}
+    return best&&{lat:best.lat,lon:best.lon,digits:d.length};}
+  function gc(lat1,lon1,lat2,lon2){const R=6371008.8,p1=lat1*d2r,p2=lat2*d2r,dp=(lat2-lat1)*d2r,dl=(lon2-lon1)*d2r;const h=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;const dist=2*R*Math.asin(Math.sqrt(h));
+    const y=Math.sin(dl)*Math.cos(p2),x=Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl);return {dist,brg:(Math.atan2(y,x)*r2d+360)%360};}
+  return {toUTM,fromUTM,toMGRS,fromMGRS,gc,zoneFor,band};
+})();
+/* ===================== widgets ===================== */
+const MU=398600.4418,RE=6371,CL=299792.458;
+/* ---- O1: orbit calculator ---- */
+const O1={ex:null,alt(){return this.ex!==null?this.ex:200*Math.pow(10,2.301*(+$('a1h').value)/100);},set(h){this.ex=h;$('a1h').value=Math.max(0,Math.min(100,100*Math.log10(h/200)/2.301));this.calc();},
+ calc(ev){if(ev&&ev.type==='input')this.ex=null;const h=this.alt(),a=RE+h,T=TAU*Math.sqrt(a**3/MU),v=Math.sqrt(MU/a),share=(1-RE/a)/2*100,hh=Math.floor(T/3600),mm=Math.round((T/3600-hh)*60);
+  $('a1hv').textContent=Math.round(h).toLocaleString()+' km';const geo=Math.abs(h-35786)<500,kind=h<2000?'LEO (low)':geo?'GEO (geostationary)':h<35786?'MEO (medium)':'above GEO';
+  read('a1r',[['Orbit type',kind],['Period',T<5400?Math.round(T/60)+' min':hh+' h '+mm+' min'],['Speed',v.toFixed(2)+' km/s'],['Share of Earth it sees',share.toFixed(0)+'%']]);
+  const [c,x]=cv('a1c');clear(c,x);const cx=240,cy=115,k=100/(RE+42000),er=RE*k,or=a*k;x.fillStyle='#1d5fa8';x.beginPath();x.arc(cx,cy,er,0,TAU);x.fill();
+  x.strokeStyle='#4b6f8a';x.setLineDash([4,4]);x.beginPath();x.arc(cx,cy,or,0,TAU);x.stroke();x.setLineDash([]);
+  const th=Math.acos(RE/a);x.strokeStyle='#2edc8a';x.lineWidth=5;x.beginPath();x.arc(cx,cy,er,-th,th);x.stroke();x.lineWidth=1;
+  const sx=cx+or,sy=cy;x.fillStyle='#ffb454';x.beginPath();x.arc(sx,sy,6,0,TAU);x.fill();
+  x.strokeStyle='rgba(255,180,84,.4)';[[th],[-th]].forEach(t=>{x.beginPath();x.moveTo(sx,sy);x.lineTo(cx+er*Math.cos(t[0]),cy-er*Math.sin(t[0]));x.stroke();});
+  lab(x,'Earth',cx-20,cy+4,'#fff','left',11);lab(x,'satellite',sx+10,sy+4,'#ffb454','left',11);
+  [[20200,'GPS'],[35786,'GEO']].forEach(m=>{const r=(RE+m[0])*k;lab(x,m[1],cx-r-2,cy-4,'#9db4c8','right',10);x.strokeStyle='#2b4153';x.beginPath();x.arc(cx,cy,r,0,TAU);x.stroke();});}};
+/* ---- T1: clock error to distance ---- */
+const T1={calc(){const s=+$('b1e').value,t=Math.pow(10,-9+6*s/100),d=CL*t*1000;const ft=t<1e-6?(t*1e9).toFixed(t<1e-8?1:0)+' ns':t<1e-3?(t*1e6).toFixed(t<1e-5?1:0)+' \u00B5s':(t*1e3).toFixed(2)+' ms';
+  const fd=d<1?(d*100).toFixed(0)+' cm':d<1000?d.toFixed(d<10?1:0)+' m':(d/1000).toFixed(d<1e4?1:0)+' km';$('b1ev').textContent=ft;
+  read('b1r',[['Clock error',ft],['Range error',fd,d>100?'bad':d>5?'mid':'good'],['Receiver off by',d<5?'inside normal GPS error':d<100?'beyond a normal fix':'a wildly wrong position']]);
+  const [c,x]=cv('b1c');clear(c,x);const L=20,W=440;x.fillStyle='#1c2e3d';x.fillRect(L,60,W,26);x.fillStyle=d>100?'#e86a6a':d>5?'#ffb454':'#2edc8a';x.fillRect(L,60,W*s/100,26);
+  [[0,'1 ns'],[33.3,'10 ns'],[50,'1 \u00B5s'],[66.7,'10 \u00B5s'],[83.3,'100 \u00B5s'],[100,'1 ms']].forEach(m=>{const px=L+W*m[0]/100;x.strokeStyle='#4b6f8a';x.beginPath();x.moveTo(px,56);x.lineTo(px,92);x.stroke();lab(x,m[1],px,108,'#9db4c8','center',10);});
+  lab(x,'A cheap quartz clock 1 part per million off drifts 1 \u00B5s every second.',L,32,'#9db4c8','left',11);lab(x,'1 \u00B5s = 300 m',L+W*0.5,50,'#ffb454','center',10);}};
+/* ---- F2: 2-D fix with clock error ---- */
+const F2=(function(){const B=[{n:'A',x:70,y:60,c:'#00d4ff'},{n:'B',x:410,y:50,c:'#ffb454'},{n:'C',x:430,y:290,c:'#bb88ff'}];let Rr={x:230,y:185},bias=0,on=[true,true,true],sol=null,drag=false;
+ const rng=b=>Math.hypot(Rr.x-b.x,Rr.y-b.y),act=()=>B.filter((b,i)=>on[i]);
+ function solveN(A,b){const n=b.length,M=A.map((r,i)=>r.concat([b[i]]));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;if(Math.abs(M[p][c])<1e-12)return null;[M[c],M[p]]=[M[p],M[c]];for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c]/M[c][c];for(let k=c;k<=n;k++)M[r][k]-=f*M[c][k];}}return M.map((r,i)=>r[n]/r[i]);}
+ function naive(){const a=act();if(a.length<3)return null;let x=Rr.x+40,y=Rr.y-30;for(let it=0;it<30;it++){let j=[[0,0],[0,0]],g=[0,0];a.forEach(b=>{const rho=rng(b)+bias,dx=x-b.x,dy=y-b.y,d=Math.hypot(dx,dy)||1,r=d-rho,u=[dx/d,dy/d];j[0][0]+=u[0]*u[0];j[0][1]+=u[0]*u[1];j[1][0]+=u[1]*u[0];j[1][1]+=u[1]*u[1];g[0]+=u[0]*r;g[1]+=u[1]*r;});const s=solveN(j,g);if(!s)break;x-=s[0];y-=s[1];}return {x,y};}
+ function full(){const a=act();if(a.length<3)return null;let x=Rr.x+40,y=Rr.y-30,bb=0;for(let it=0;it<40;it++){const J=[],r=[];a.forEach(b=>{const rho=rng(b)+bias,dx=x-b.x,dy=y-b.y,d=Math.hypot(dx,dy)||1;J.push([dx/d,dy/d,1]);r.push(d+bb-rho);});const jt=[0,1,2].map(i=>[0,1,2].map(j=>J.reduce((s,row)=>s+row[i]*row[j],0))),g=[0,1,2].map(i=>J.reduce((s,row,k)=>s+row[i]*r[k],0)),s=solveN(jt,g);if(!s)return null;x-=s[0];y-=s[1];bb-=s[2];}return {x,y,b:bb};}
+ function draw(){const [c,x]=cv('b2c');clear(c,x);x.strokeStyle='#14263a';for(let i=0;i<=480;i+=40){x.beginPath();x.moveTo(i,0);x.lineTo(i,340);x.stroke();}for(let j=0;j<=340;j+=40){x.beginPath();x.moveTo(0,j);x.lineTo(480,j);x.stroke();}
+  B.forEach((b,i)=>{if(!on[i])return;x.strokeStyle=b.c;x.lineWidth=2;x.beginPath();x.arc(b.x,b.y,rng(b)+bias,0,TAU);x.stroke();});
+  B.forEach((b,i)=>{x.fillStyle=on[i]?b.c:'#445';x.beginPath();x.moveTo(b.x,b.y-11);x.lineTo(b.x+10,b.y+8);x.lineTo(b.x-10,b.y+8);x.closePath();x.fill();lab(x,'SAT '+b.n,b.x,b.y+22,'#fff','center',11);});
+  const nv=naive();if(nv&&bias>0){x.strokeStyle='#e86a6a';x.lineWidth=2;x.beginPath();x.moveTo(nv.x-8,nv.y-8);x.lineTo(nv.x+8,nv.y+8);x.moveTo(nv.x+8,nv.y-8);x.lineTo(nv.x-8,nv.y+8);x.stroke();lab(x,'fix with no clock correction',nv.x+10,nv.y-10,'#e86a6a','left',10);}
+  if(sol){x.strokeStyle='#00d4ff';x.lineWidth=2;x.beginPath();x.arc(sol.x,sol.y,10,0,TAU);x.stroke();lab(x,'solved',sol.x+13,sol.y+3,'#00d4ff','left',10);}
+  x.fillStyle='#2edc8a';x.beginPath();x.arc(Rr.x,Rr.y,8,0,TAU);x.fill();x.strokeStyle='#fff';x.lineWidth=1.5;x.stroke();lab(x,'RECEIVER',Rr.x+12,Rr.y+16,'#2edc8a','left',10);
+  const a=act();const err=nv?Math.hypot(nv.x-Rr.x,nv.y-Rr.y):null;
+  read('b2r',[['Ranges used',a.length+' of 3'],['Clock error',bias+' units'],['Error with no correction',err===null?'need 3 satellites':Math.round(err)+' units',err===null?'':err<3?'good':err<20?'mid':'bad']].concat(sol?[['Solved clock',sol.b.toFixed(1)+' units'],['Solved position off by',Math.hypot(sol.x-Rr.x,sol.y-Rr.y).toFixed(1)+' units','good']]:[]));}
+ const cvEl=$('b2c');function pos(e){const r=cvEl.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*480,y:(e.clientY-r.top)/r.height*340};}
+ cvEl.addEventListener('pointerdown',e=>{const p=pos(e);if(Math.hypot(p.x-Rr.x,p.y-Rr.y)<34){drag=true;cvEl.setPointerCapture(e.pointerId);}});
+ cvEl.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e);Rr.x=Math.max(20,Math.min(460,p.x));Rr.y=Math.max(20,Math.min(320,p.y));sol=null;draw();});
+ cvEl.addEventListener('pointerup',()=>{drag=false;});
+ function ch(){chips('b2s',B.map((b,i)=>[i,'SAT '+b.n]).map(a=>[a[0],a[1]]),'x','F2.tog');document.querySelectorAll('#b2s .chip').forEach((el,i)=>el.classList.toggle('on',on[i]));}
+ return {draw(){ch();draw();},tog(i){on[+i]=!on[+i];sol=null;this.draw();},bias(v){bias=+v;$('b2bv').textContent=bias+' units';sol=null;draw();},
+  solve(){const s=full();sol=s;if(!s){$('b2r').innerHTML='<div>Need all three satellites<b class="bad">to solve for position and clock</b></div>';return;}draw();},
+  reset(){Rr={x:230,y:185};bias=0;on=[true,true,true];sol=null;$('b2b').value=0;$('b2bv').textContent='0 units';this.draw();}};})();
+/* ---- E3: sky, DOP and error budget ---- */
+function inv(A){const n=A.length,M=A.map((r,i)=>r.concat(Array.from({length:n},(_,j)=>i===j?1:0)));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;if(Math.abs(M[p][c])<1e-12)return null;[M[c],M[p]]=[M[p],M[c]];const d=M[c][c];for(let k=0;k<2*n;k++)M[c][k]/=d;for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c];for(let k=0;k<2*n;k++)M[r][k]-=f*M[c][k];}}return M.map(r=>r.slice(n));}
+function dopOf(list){if(list.length<4)return null;const G=list.map(v=>{const a=v[0]*Math.PI/180,e=v[1]*Math.PI/180;return [-Math.cos(e)*Math.sin(a),-Math.cos(e)*Math.cos(a),-Math.sin(e),1];});const Q=inv([0,1,2,3].map(i=>[0,1,2,3].map(j=>G.reduce((s,r)=>s+r[i]*r[j],0))));if(!Q)return null;return {pdop:Math.sqrt(Q[0][0]+Q[1][1]+Q[2][2]),hdop:Math.sqrt(Q[0][0]+Q[1][1]),vdop:Math.sqrt(Q[2][2]),gdop:Math.sqrt(Q[0][0]+Q[1][1]+Q[2][2]+Q[3][3])};}
+const SKIES={open:{n:'Open sky',s:[[0,70],[50,45],[100,20],[150,55],[200,30],[250,60],[300,25],[340,50]]},
+ canyon:{n:'City street',s:[[0,18],[180,22],[20,60],[200,72],[95,82],[275,78]]},
+ clust:{n:'Clustered',s:[[20,30],[60,55],[80,20],[100,45],[40,65],[70,38]]},
+ valley:{n:'Deep valley',s:[[0,38],[90,62],[180,42],[270,75]]}};
+const E3={m:'open',dual:false,mode(v){this.m=v;this.calc();},freq(v){this.dual=v==='2';this.calc();},
+ calc(){chips('c1m',Object.keys(SKIES).map(k=>[k,SKIES[k].n]),this.m,'E3.mode');chips('c1f',[['1','One frequency (L1)'],['2','Two frequencies (L1+L2)']],this.dual?'2':'1','E3.freq');
+  const a=+$('c1a').value,b=+$('c1b').value,d=+$('c1d').value;$('c1av').textContent=a.toFixed(1)+' m';$('c1bv').textContent=b.toFixed(1)+' m';$('c1dv').textContent=d.toFixed(1)+' m';
+  const io=this.dual?b*0.1:b,uere=Math.sqrt(a*a+io*io+0.7*0.7+d*d+0.5*0.5),sat=SKIES[this.m].s,dop=dopOf(sat),drms=dop?dop.hdop*uere:null;
+  const [c,x]=cv('c1c');clear(c,x);const cx=240,cy=150,R=125;x.strokeStyle='#26394a';[0,30,60].forEach(el=>{x.beginPath();x.arc(cx,cy,(90-el)/90*R,0,TAU);x.stroke();});for(let q=0;q<360;q+=45){x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+R*Math.sin(q*Math.PI/180),cy-R*Math.cos(q*Math.PI/180));x.stroke();}
+  lab(x,'N',cx,14,'#9db4c8','center',11);sat.forEach((s,i)=>{const r=(90-s[1])/90*R,px=cx+r*Math.sin(s[0]*Math.PI/180),py=cy-r*Math.cos(s[0]*Math.PI/180);x.fillStyle='#2edc8a';x.beginPath();x.arc(px,py,9,0,TAU);x.fill();lab(x,String(i+1),px,py+4,'#00180d','center',10);});
+  lab(x,'center = overhead, edge = horizon',cx,292,'#9db4c8','center',10);
+  read('c1r',[['Satellites',String(sat.length),sat.length<4?'bad':''],['PDOP',dop?dop.pdop.toFixed(1):'no fix',dop?(dop.pdop<2?'good':dop.pdop<5?'mid':'bad'):'bad'],['HDOP',dop?dop.hdop.toFixed(1):'--'],['VDOP',dop?dop.vdop.toFixed(1):'--'],['Range error (UERE)',uere.toFixed(1)+' m'],['Horizontal error (DRMS)',drms===null?'no fix':drms.toFixed(1)+' m',drms===null?'bad':drms<10?'good':drms<25?'mid':'bad'],['95% of fixes within',drms===null?'--':(2*drms).toFixed(0)+' m']]);}};
+/* ---- C1: correlation demo ---- */
+const C1={code:null,D:300,noise:null,mk(){const s=Array(10).fill(1),out=[];for(let i=0;i<1023;i++){out.push(s[9]?1:-1);const nb=s[9]^s[2];for(let k=9;k>0;k--)s[k]=s[k-1];s[0]=nb;}this.code=out;},
+ go(re){if(!this.code)this.mk();if(re||this.noise===null){this.D=Math.floor(Math.random()*1023);this.noise=Array.from({length:20},()=>Float32Array.from({length:1023},()=>gauss()));}
+  const snr=+$('d1s').value,P=+$('d1p').value,sg=Math.pow(10,-snr/20);$('d1sv').textContent=snr+' dB';$('d1pv').textContent=P+(P>1?' repeats':' repeat');
+  const N=1023,sum=new Float32Array(N);for(let p=0;p<P;p++){for(let i=0;i<N;i++){sum[i]+=this.code[(i-this.D+N)%N]+sg*this.noise[p][i];}}
+  const corr=new Float32Array(N);for(let L=0;L<N;L++){let t=0;for(let i=0;i<N;i++)t+=sum[i]*this.code[(i-L+N)%N];corr[L]=t;}
+  const norm=sg*Math.sqrt(N*P),z=Array.from(corr,v=>v/norm);let mx=-1e9,arg=0;z.forEach((v,i)=>{if(v>mx){mx=v;arg=i;}});
+  const rest=z.filter((v,i)=>Math.abs(i-this.D)>2),mean=rest.reduce((a,b)=>a+b,0)/rest.length,sd=Math.sqrt(rest.reduce((a,b)=>a+(b-mean)*(b-mean),0)/rest.length);
+  const [c,x]=cv('d1c');clear(c,x);lab(x,'WHAT THE RECEIVER HEARS (one code repeat, first 240 samples)',6,14);const first=Array.from({length:240},(_,i)=>this.code[(i-this.D+N)%N]+sg*this.noise[0][i]);const sc=60/Math.max(3,...first.map(Math.abs));
+  x.strokeStyle='#ffb454';x.lineWidth=1.2;x.beginPath();first.forEach((v,i)=>{const px=i*2,py=75-v*sc;i?x.lineTo(px,py):x.moveTo(px,py);});x.stroke();
+  lab(x,'CORRELATION AGAINST EVERY POSSIBLE DELAY (in noise units)',6,150,'#9db4c8');const top=Math.max(8,mx*1.1),h=140,y0=305;x.strokeStyle='#26394a';x.beginPath();x.moveTo(0,y0);x.lineTo(480,y0);x.stroke();
+  const thr=5;x.strokeStyle='rgba(232,106,106,.7)';x.setLineDash([4,4]);x.beginPath();x.moveTo(0,y0-thr/top*h);x.lineTo(480,y0-thr/top*h);x.stroke();x.setLineDash([]);lab(x,'detection threshold (5)',474,y0-thr/top*h-4,'#e86a6a','right',10);
+  x.strokeStyle='#7fd0e0';x.lineWidth=1;x.beginPath();z.forEach((v,i)=>{const px=i*480/N,py=y0-Math.max(-top,v)/top*h;i?x.lineTo(px,py):x.moveTo(px,py);});x.stroke();
+  x.strokeStyle='#2edc8a';x.lineWidth=2;x.beginPath();x.moveTo(this.D*480/N,y0);x.lineTo(this.D*480/N,y0-Math.min(1,mx/top)*h);x.stroke();
+  const ok=arg===this.D&&mx>thr;read('d1r',[['Processing gain',(10*Math.log10(N*P)).toFixed(1)+' dB'],['Peak height',mx.toFixed(1)+' \u00D7 noise',mx>thr?'good':'bad'],['Delay found',ok?'yes, at the true delay':'no',ok?'good':'bad'],['True delay',this.D+' chips']]);}};
+/* ---- G1: lat/long to MGRS ---- */
+const PL=[['Fort Gordon, GA',33.42,-82.14],['Greenwich, UK',51.4779,-0.0015],['Anchorage, AK',61.2,-149.9],['Sydney, AU',-33.86,151.21]];
+const G1={dg:5,la:33.42,lo:-82.14,place(i){this.la=PL[i][1];this.lo=PL[i][2];$('e1a').value=Math.round(this.la*10);$('e1o').value=Math.round(this.lo*10);this.draw();},slide(){this.la=+$('e1a').value/10;this.lo=+$('e1o').value/10;this.draw();},dig(v){this.dg=+v;this.draw();},
+ draw(){$('e1p').innerHTML=PL.map((p,i)=>'<button class="chip" onclick="G1.place('+i+')">'+p[0]+'</button>').join('');chips('e1d',[[2,'4-digit'],[3,'6-digit'],[4,'8-digit'],[5,'10-digit']],this.dg,'G1.dig');
+  $('e1av').textContent=this.la.toFixed(this.la===Math.round(this.la*10)/10?1:4)+'\u00B0';$('e1ov').textContent=this.lo.toFixed(2)+'\u00B0';
+  const m=GEO.toMGRS(this.la,this.lo,5),k=this.dg,text=String(m.zone).padStart(2,'0')+m.band+' '+m.sq+' '+m.e.slice(0,k)+' '+m.n.slice(0,k),sz={2:'1,000 m',3:'100 m',4:'10 m',5:'1 m'}[k];
+  read('e1r',[['MGRS reference',text],['Grid zone / 100 km square',String(m.zone)+m.band+' / '+m.sq],['Easting (m)',m.E.toFixed(1)],['Northing (m)',m.N.toFixed(1)],['Digits kept (easting, northing)',m.e.slice(0,k)+', '+m.n.slice(0,k)],['Square size',sz]]);
+  const [c,x]=cv('e1c');clear(c,x);const cx=240,cy=72;[[5,'1 m',16],[4,'10 m',34],[3,'100 m',56],[2,'1,000 m',70]].reverse().forEach(b=>{const on=b[0]===k;x.strokeStyle=on?'#2edc8a':'#3a5368';x.lineWidth=on?3:1;x.strokeRect(cx-b[2],cy-b[2]*0.8,b[2]*2,b[2]*1.6);lab(x,b[1],cx+b[2]+4,cy-b[2]*0.8+10,on?'#2edc8a':'#7e97ab','left',10);});
+  x.fillStyle='#ffb454';x.beginPath();x.arc(cx,cy,4,0,TAU);x.fill();lab(x,'boxes drawn on a log scale, not to scale',240,142,'#7e97ab','center',10);}};
+/* ---- G2: bearing and distance ---- */
+const G2={calc(){const A=GEO.fromMGRS($('e2a').value),B=GEO.fromMGRS($('e2b').value);if(!A||!B){$('e2r').innerHTML='<div>Check the format<b class="bad">example: 17S LS 9401 9843</b></div>';return;}
+  const a=GEO.toMGRS(A.lat,A.lon,5),b=GEO.toMGRS(B.lat,B.lon,5),g=GEO.gc(A.lat,A.lon,B.lat,B.lon);let rows=[];
+  if(a.zone===b.zone&&a.hemi===b.hemi){const dE=b.E-a.E,dN=b.N-a.N,gd=Math.hypot(dE,dN),az=(Math.atan2(dE,dN)*180/Math.PI+360)%360;rows=[['Grid distance',gd.toFixed(0)+' m'],['Grid azimuth',az.toFixed(1)+'\u00B0'],['Back azimuth',((az+180)%360).toFixed(1)+'\u00B0'],['Paces at 64 per 100 m',Math.round(gd/100*64)+' paces']];}
+  else rows=[['Grid distance','different zones: use true bearing']];
+  rows.push(['True bearing (sphere)',g.brg.toFixed(1)+'\u00B0'],['Ground distance (sphere)',g.dist.toFixed(0)+' m']);read('e2r',rows);}};
+/* ---- J1: jamming budget ---- */
+const J1={calc(){const p=+$('f1p').value,d=0.1*Math.pow(10,3*(+$('f1d').value)/100);$('f1pv').textContent=p+' dBm ('+(Math.pow(10,p/10)/1000).toPrecision(2)+' W)';$('f1dv').textContent=d<1?Math.round(d*1000)+' m':d.toFixed(d<10?1:0)+' km';
+  const fs=32.44+20*Math.log10(1575.42)+20*Math.log10(d),pj=p-fs,js=pj+128.5;read('f1r',[['Path loss',fs.toFixed(1)+' dB'],['Jammer at receiver',pj.toFixed(1)+' dBm'],['GPS signal','\u2212128.5 dBm'],['Jammer / signal',js.toFixed(1)+' dB',js>35?'bad':js>25?'mid':'good'],['Typical civil receiver',js>35?'LOSES LOCK':js>25?'struggling':'keeps tracking',js>35?'bad':js>25?'mid':'good']]);}};
+/* ---- D1: dead reckoning drift ---- */
+const D1={calc(){const d=+$('f2d').value,h=+$('f2h').value,p=+$('f2p').value;$('f2dv').textContent=d.toLocaleString()+' m';$('f2hv').textContent=h.toFixed(1)+'\u00B0';$('f2pv').textContent=p+'%';
+  const cross=d*Math.sin(h*Math.PI/180),along=d*p/100,miss=Math.hypot(cross,along);read('f2r',[['Sideways error',cross.toFixed(0)+' m'],['Along-track error',along.toFixed(0)+' m'],['Miss distance',miss.toFixed(0)+' m',miss>100?'bad':miss>30?'mid':'good'],['vs a 6-digit square','100 m']]);
+  const [c,x]=cv('f2c');clear(c,x);const cx=240,cy=130,sc=Math.min(115/Math.max(miss,40),3.2);
+  x.strokeStyle='#26394a';x.beginPath();x.moveTo(cx,10);x.lineTo(cx,250);x.moveTo(20,cy);x.lineTo(460,cy);x.stroke();
+  x.strokeStyle='#ffb454';x.setLineDash([4,4]);x.beginPath();x.arc(cx,cy,100*sc,0,TAU);x.stroke();x.setLineDash([]);lab(x,'100 m',cx+100*sc*0.7+4,cy-100*sc*0.7,'#ffb454','left',10);
+  const ex=cx+cross*sc,ey=cy+along*sc;x.strokeStyle='#e86a6a';x.lineWidth=2;x.beginPath();x.arc(cx,cy,Math.max(2,miss*sc),0,TAU);x.stroke();
+  x.fillStyle='#2edc8a';x.beginPath();x.arc(cx,cy,7,0,TAU);x.fill();lab(x,'where you meant to be',cx+10,cy-10,'#2edc8a','left',11);
+  x.fillStyle='#e86a6a';x.beginPath();x.arc(ex,ey,7,0,TAU);x.fill();lab(x,'where the errors put you',Math.min(ex+10,300),ey+16,'#e86a6a','left',11);lab(x,'zoomed in on the end of the leg',6,252,'#7e97ab','left',10);}};
+/* ---- P1: PACE builder ---- */
+const OPTS=[['gps','GPS receiver (DAGR) with waypoints'],['mc','Map, compass, and pace count on a planned route'],['ta','Terrain association using handrails and checkpoints'],['rp','Rally point and linkup procedure if lost'],['phone','Phone map app'],['follow','Follow the unit in front, no plan']];
+const SLOTS=[['P','Primary'],['A','Alternate'],['C','Contingency'],['E','Emergency']];
+const P1={init(){$('g1').innerHTML=SLOTS.map(s=>'<div class="ctl"><label>'+s[1]+'</label><select id="g1-'+s[0]+'" style="flex:1;min-width:180px;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:13.5px"><option value="">Choose...</option>'+OPTS.map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('')+'</select></div>').join('');},
+ check(){const v=Object.fromEntries(SLOTS.map(s=>[s[0],$('g1-'+s[0]).value]));const f=$('g1f');f.style.display='block';
+  if(SLOTS.some(s=>!v[s[0]])){f.className='fb no';f.textContent='Fill in all four slots first.';return;}
+  const pa=[v.P,v.A].sort().join(),okPA=pa==='gps,mc',okC=v.C==='ta',okE=v.E==='rp',msgs=[];
+  msgs.push(okPA?'Primary and alternate: good. GPS and map-and-compass back each other up. In an area where jamming is likely, a unit might reverse them.':'Primary and alternate: one should be GPS and the other map, compass, and pace count. A phone app depends on GPS too and is another radio, and following the unit with no plan is not a method.');
+  msgs.push(okC?'Contingency: terrain association needs no equipment and no power, so it works when everything else fails.':'Contingency: pick the method that needs nothing at all, which is matching the ground to the map.');
+  msgs.push(okE?'Emergency: a rally point and linkup procedure gets you back to friendly forces if you are lost.':'Emergency: the last fall-back is a planned rally point and linkup, so being lost does not mean being alone.');
+  const all=okPA&&okC&&okE;f.className='fb '+(all?'ok':'no');f.innerHTML='<b>'+(all?'Solid plan. ':'Almost. ')+'</b>'+msgs.join(' ')+' Your unit\u2019s SOP and PACE plan remain the authority.';},
+ reset(){SLOTS.forEach(s=>$('g1-'+s[0]).value='');$('g1f').style.display='none';}};
+/* ===================== questions ===================== */
+const Qd={
+ ch1:[
+  {id:'c1a',t:'mc',q:'Which of these is NOT a satellite navigation system?',o:['GPS','Galileo','GLONASS','SINCGARS'],a:3,ex:'SINCGARS is a tactical radio system. GPS (US), GLONASS (Russia), Galileo (EU), and BeiDou (China) are satellite navigation systems.'},
+  {id:'c1b',t:'mc',q:'Why does the \u201Ctiming\u201D in PNT matter beyond navigation?',o:['Satellites only broadcast during certain hours.','Many networks, cell towers, and military systems take their clock from satellites.','Time zones change with position.','Clocks are needed to keep batteries charged.'],a:1,ex:'The satellites carry atomic clocks, and receivers get precise time as a by-product. Much infrastructure depends on that timing, so losing GPS can hurt more than navigation.'},
+  {id:'c1c',t:'mc',q:'Which GPS segment only listens and never transmits to the satellites?',o:['The space segment','The control segment','The user segment','All of them transmit'],a:2,ex:'Your receiver is the user segment. It listens only, which is why using GPS does not reveal your position.'},
+  {id:'c1d',t:'num',q:'A GPS satellite orbits 20,200 km above the surface (Earth radius 6,371 km). What is its orbital period, in hours (one decimal)?',a:12.0,tol:0.1,u:'hours',ex:'a = 6,371 + 20,200 = 26,571 km. T = 2\u03C0\u221A(a\u00B3 \u00F7 398,600) \u2248 43,100 s \u2248 11.97 h, which rounds to 12.0.'},
+  {id:'c1e',t:'num',q:'What is that satellite\u2019s orbital speed, in km/s (one decimal)?',a:3.9,tol:0.1,u:'km/s',ex:'v = \u221A(398,600 \u00F7 26,571) \u2248 3.87 km/s, about 3.9. Higher orbits move more slowly.'},
+  {id:'c1f',t:'mc',q:'A satellite in geostationary orbit appears to hang over one spot because:',o:['It has no gravity acting on it.','Its orbit period matches one turn of the Earth, about one day.','It is anchored by radio.','It is below the ionosphere.'],a:1,ex:'At about 35,786 km the period is about 24 hours, matching the Earth\u2019s spin, so the satellite stays over the same point.'}],
+ ch2:[
+  {id:'c2a',t:'num',q:'About how far does a radio signal travel in 1 microsecond? (metres)',a:300,tol:2,u:'m',ex:'Speed of light is about 299,792 km/s, so in one microsecond it travels about 300 m. That is why timing is everything in GPS.'},
+  {id:'c2b',t:'num',q:'A GPS signal takes 70 ms to arrive. How far away is the satellite? (km, nearest whole)',a:20985,tol:30,u:'km',ex:'distance = 299,792 km/s \u00D7 0.070 s \u2248 20,985 km.'},
+  {id:'c2c',t:'num',q:'A receiver clock is 5 microseconds off. About how much range error does that cause? (metres)',a:1499,tol:5,u:'m',ex:'5 \u00B5s \u00D7 299,792 km/s \u2248 1,499 m. Every range is wrong by this same amount, which is why the receiver solves for the clock error.'},
+  {id:'c2d',t:'mc',q:'Why does a receiver need four satellites for a 3-D fix?',o:['Four satellites are always overhead.','There are four unknowns: latitude, longitude, height, and the receiver clock error.','Each satellite carries only a quarter of the message.','Four is the legal minimum.'],a:1,ex:'Three unknowns are position and the fourth is the clock error. Four unknowns need four measurements.'},
+  {id:'c2e',t:'mc',q:'What is a pseudorange?',o:['A measured distance that includes the receiver\u2019s clock error','An estimated range from a map','A range that is always zero','A range measured by radar'],a:0,ex:'It is called \u201Cpseudo\u201D because the measured distance is wrong by the receiver\u2019s clock error until the receiver solves for it.'},
+  {id:'c2f',t:'mc',q:'The orbit data arrives at only 50 bits per second. What does that mean for a receiver switched on with no stored data?',o:['It gets a fix instantly.','It needs roughly half a minute just to collect the orbit data.','It cannot ever get a fix.','It needs a day.'],a:1,ex:'The navigation message repeats in 30-second frames, so a cold-start receiver needs on the order of 30 seconds just to read the orbit data.'}],
+ ch3:[
+  {id:'c3a',t:'num',q:'Two independent range errors of 3 m and 4 m combine as a root sum of squares. What is the total?',a:5,tol:0.1,u:'m',ex:'\u221A(3\u00B2 + 4\u00B2) = \u221A25 = 5 m. Independent errors do not simply add.'},
+  {id:'c3b',t:'num',q:'HDOP is 1.5 and the range error (UERE) is 6 m. What is the horizontal error (DRMS)?',a:9,tol:0.1,u:'m',ex:'position error \u2248 HDOP \u00D7 UERE = 1.5 \u00D7 6 = 9 m.'},
+  {id:'c3c',t:'num',q:'If DRMS is 9 m, about how big a circle holds 95% of fixes? (radius, metres)',a:18,tol:0.5,u:'m',ex:'95% of fixes fall within about 2 \u00D7 DRMS = 18 m.'},
+  {id:'c3d',t:'mc',q:'Which satellite layout gives the best (lowest) DOP?',o:['All satellites in one corner of the sky','Satellites spread widely around the sky, some high and some low','All satellites near the horizon','All satellites straight overhead'],a:1,ex:'Wide spread means the lines of sight cross at good angles, so range errors do not line up. Clusters give shallow crossings and a high DOP.'},
+  {id:'c3e',t:'mc',q:'Why can a dual-frequency receiver remove most ionosphere error?',o:['It has a bigger antenna.','Ionosphere delay depends on frequency, so comparing two frequencies reveals it.','It ignores the ionosphere.','It uses a better clock.'],a:1,ex:'The delay varies with frequency, so the difference between L1 and L2 measures the delay and the receiver can subtract it.'},
+  {id:'c3f',t:'mc',q:'A tall building hides half the sky. What happens to DOP?',o:['It improves.','It gets worse, because the visible satellites are no longer spread out.','It does not change.','It becomes zero.'],a:1,ex:'Losing a side of the sky removes the geometry that keeps DOP low. Position error rises even though the receiver still has a fix.'}],
+ ch4:[
+  {id:'c4a',t:'num',q:'The C/A code runs 1.023 million chips per second and carries 50 bits per second. What is the processing gain? (dB, nearest whole)',a:43,tol:0.6,u:'dB',ex:'1,023,000 \u00F7 50 = 20,460 chips per bit. 10\u00B7log\u2081\u2080(20,460) \u2248 43 dB.'},
+  {id:'c4b',t:'num',q:'How many times per second does the 1,023-chip C/A code repeat at 1.023 million chips per second?',a:1000,tol:1,u:'per second',ex:'1,023,000 \u00F7 1,023 = 1,000 repeats per second, so each repeat lasts 1 ms.'},
+  {id:'c4c',t:'num',q:'How many code repeats fit in one 50 b/s data bit?',a:20,tol:0.01,u:'repeats',ex:'A 50 b/s data bit lasts 20 ms, and the code repeats every 1 ms, so 20 repeats per bit.'},
+  {id:'c4d',t:'num',q:'The GPS signal is \u2212128.5 dBm and the receiver noise is about \u2212111 dBm. How many dB below the noise is the signal?',a:17.5,tol:0.7,u:'dB',ex:'\u2212111 \u2212 (\u2212128.5) = 17.5 dB. The signal is below the noise and is recovered only by correlation.'},
+  {id:'c4e',t:'mc',q:'All GPS satellites transmit on the same frequency. How does a receiver tell them apart?',o:['Each satellite uses a different PRN code.','Each satellite transmits at a different time of day.','Each satellite uses a different polarization.','It cannot tell them apart.'],a:0,ex:'Each satellite spreads its signal with its own pseudo-random code. The receiver correlates against each satellite\u2019s code in turn. This is code division multiple access (CDMA).'},
+  {id:'c4f',t:'mc',q:'Which GPS signal is the encrypted military code?',o:['C/A','L5','P(Y)','L2C'],a:2,ex:'P(Y) is the encrypted military code. C/A is the open civil signal.'}],
+ ch5:[
+  {id:'c5a',t:'mc',q:'A point is at easting 94,012.7 m and northing 98,430.2 m within its 100 km square. What is the correct 6-digit grid?',o:['940 984','941 984','984 940','9401 9843'],a:0,ex:'Take the first three digits of each 5-digit value and truncate. 94,012 \u2192 940 and 98,430 \u2192 984. Rounding to 941 puts you in the wrong square. 984 940 swaps easting and northing, and 9401 9843 is an 8-digit grid.'},
+  {id:'c5b',t:'num',q:'How wide is one square of a 6-digit grid? (metres)',a:100,tol:0.01,u:'m',ex:'Each digit pair adds a tenth. 4-digit is 1,000 m, 6-digit is 100 m, 8-digit is 10 m, and 10-digit is 1 m.'},
+  {id:'c5c',t:'mc',q:'What datum does GPS itself use?',o:['NAD 27','WGS 84','The datum on the map you carry','Magnetic datum'],a:1,ex:'GPS uses WGS 84. You set the receiver to match the map, which for modern military maps is also WGS 84.'},
+  {id:'c5d',t:'mc',q:'In what order do you read an MGRS grid?',o:['Northing first, then easting','Easting first (right), then northing (up)','Alphabetical','Either order'],a:1,ex:'Read right, then up. Easting comes first and northing second.'},
+  {id:'c5e',t:'mc',q:'Before you start moving, what should you do on the DAGR?',o:['Turn off the display','Mark your current position as a waypoint','Delete all waypoints','Set the clock'],a:1,ex:'Marking your start as a waypoint gives you a known point to return to and a reference if something goes wrong.'},
+  {id:'c5f',t:'num',q:'How wide is one square of an 8-digit grid? (metres)',a:10,tol:0.01,u:'m',ex:'An 8-digit grid describes a 10 m square.'}],
+ ch6:[
+  {id:'c6a',t:'num',q:'A 1 W (30 dBm) jammer is 5 km away. Free-space path loss at 1575.42 MHz is about 110.4 dB. What is the jammer-to-signal ratio (dB, nearest whole) against a \u2212128.5 dBm GPS signal?',a:48,tol:1,u:'dB',ex:'Jammer at receiver = 30 \u2212 110.4 = \u221280.4 dBm. J/S = \u221280.4 \u2212 (\u2212128.5) \u2248 48 dB, well past the 30 to 40 dB where a typical civil receiver loses lock.'},
+  {id:'c6b',t:'mc',q:'Which attack gives the receiver a confident but false position?',o:['Jamming','Spoofing','Fading','Multipath'],a:1,ex:'Spoofing sends counterfeit signals so the receiver computes a wrong position. Jamming just removes the signal.'},
+  {id:'c6c',t:'num',q:'You walk 1,000 m with a 2\u00B0 heading error. About how far to the side are you? (metres, one decimal)',a:34.9,tol:1,u:'m',ex:'1,000 \u00D7 sin(2\u00B0) = 34.9 m. Each degree is about 17 m per kilometre.'},
+  {id:'c6d',t:'mc',q:'What is meaconing?',o:['Overloading a receiver with noise','Recording real signals and rebroadcasting them later','Encrypting a signal','Measuring a satellite\u2019s speed'],a:1,ex:'Meaconing replays real signals with a delay, so a receiver computes a valid-looking but wrong position.'},
+  {id:'c6e',t:'mc',q:'Which is a warning sign of GPS spoofing?',o:['The receiver shows no satellites.','Your position jumps by more than normal error explains, or every satellite arrives at the same strength.','The battery runs down.','The map is old.'],a:1,ex:'Spoofing often shows as sudden jumps or unnaturally uniform signals. No satellites at all is more typical of jamming.'},
+  {id:'c6f',t:'num',q:'Your pace count is 5% off over a 2,000 m leg. How far off along the leg are you? (metres)',a:100,tol:0.5,u:'m',ex:'5% of 2,000 m is 100 m, which is a whole 6-digit square.'}],
+ ch7:[
+  {id:'c7a',t:'num',q:'CP 2 is 17S LS 9401 9843 and OP 3 is 17S LS 9512 9902. What is the straight-line distance? (metres)',a:1257,tol:3,u:'m',ex:'\u0394E = 1,110 m and \u0394N = 590 m. \u221A(1,110\u00B2 + 590\u00B2) \u2248 1,257 m.'},
+  {id:'c7b',t:'num',q:'What is the grid azimuth from CP 2 to OP 3? (degrees, nearest whole)',a:62,tol:0.5,u:'\u00B0',ex:'tan\u207B\u00B9(1,110 \u00F7 590) \u2248 62\u00B0.'},
+  {id:'c7c',t:'num',q:'The G-M angle is 6\u00B0 with magnetic north to the left of grid north. What magnetic azimuth do you set on the compass?',a:68,tol:0.5,u:'\u00B0',ex:'Grid to magnetic with MN on the left: add the G-M angle (Left Add). 62 + 6 = 68\u00B0.'},
+  {id:'c7d',t:'num',q:'At 64 paces per 100 m, how many paces for 1,257 m? (nearest ten)',a:800,tol:8,u:'paces',ex:'1,257 \u00F7 100 \u00D7 64 \u2248 805 paces.'},
+  {id:'c7e',t:'mc',q:'In a navigation PACE plan, which method works as the contingency because it needs no equipment or power?',o:['A phone app','Terrain association with handrails and checkpoints','A second GPS','A radio net'],a:1,ex:'Matching the ground to the map needs nothing but your eyes and a map, so it works when everything else fails.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'mc',q:'Roughly how long does one GPS satellite take to orbit the Earth?',o:['90 minutes','About 12 hours','24 hours','A week'],a:1,ex:'At 20,200 km the period is about 11 hours 58 minutes.'},
+ {id:'k2',ch:'ch2',t:'num',q:'A receiver clock is 2 microseconds fast. About how much range error is that? (metres, nearest ten)',a:600,tol:6,u:'m',ex:'2 \u00B5s \u00D7 300 m per \u00B5s = 600 m.'},
+ {id:'k3',ch:'ch2',t:'mc',q:'The fourth satellite is needed mainly to solve for:',o:['Altitude only','The receiver clock error','The satellite orbit','The datum'],a:1,ex:'The receiver has three position unknowns plus the clock error.'},
+ {id:'k4',ch:'ch3',t:'num',q:'Range error sources of 3, 4, and 12 m combine (root sum of squares). What is the total? (metres)',a:13,tol:0.1,u:'m',ex:'\u221A(9 + 16 + 144) = \u221A169 = 13 m.'},
+ {id:'k5',ch:'ch3',t:'num',q:'HDOP is 2 and UERE is 6 m. What is the horizontal error (DRMS)?',a:12,tol:0.1,u:'m',ex:'2 \u00D7 6 = 12 m.'},
+ {id:'k6',ch:'ch4',t:'mc',q:'Why can a receiver work when the GPS signal is below the noise?',o:['It amplifies the noise away.','Correlating with the satellite\u2019s code gives about 43 dB of processing gain.','It uses a stronger antenna.','It ignores the noise.'],a:1,ex:'Correlation adds up matches at the right delay, giving the processing gain that lifts the signal out of the noise.'},
+ {id:'k7',ch:'ch4',t:'mc',q:'How can every GPS satellite use the same frequency?',o:['Each uses a different PRN code (CDMA).','They take turns.','Each uses a different polarization.','They cannot.'],a:0,ex:'Each satellite spreads its signal with its own code, so the receiver can separate them.'},
+ {id:'k8',ch:'ch5',t:'mc',q:'Which is the correct way to shorten 94,012 m east to a 6-digit grid?',o:['Round to 941','Truncate to 940','Add the zone','Use 94'],a:1,ex:'Truncate. Rounding can put you in the wrong square.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'What should the datum on your receiver match?',o:['The datum on your map','The time zone','The magnetic declination','The battery type'],a:0,ex:'Receiver and map must agree. For GPS and modern military maps that is WGS 84.'},
+ {id:'k10',ch:'ch6',t:'mc',q:'Which attack makes a receiver show a believable but wrong position?',o:['Jamming','Spoofing','Weather','Low battery'],a:1,ex:'Spoofing counterfeits the satellite signals.'},
+ {id:'k11',ch:'ch6',t:'num',q:'A 3\u00B0 heading error over 2,000 m puts you about how far to the side? (metres, nearest whole)',a:105,tol:1.5,u:'m',ex:'2,000 \u00D7 sin(3\u00B0) \u2248 104.7 m.'},
+ {id:'k12',ch:'ch7',t:'mc',q:'In a navigation PACE plan, what is a good emergency method?',o:['A rally point and linkup procedure','Hoping for a fix','A second phone','Turning on all radios'],a:0,ex:'A planned rally point and linkup gets you back to friendly forces if you are lost.'}];
+const GLd={
+ pnt:['PNT','Positioning, navigation, and timing: the three services a satellite navigation system provides.'],
+ gnss:['GNSS','Global navigation satellite system. The general name for GPS, GLONASS, Galileo, BeiDou, and similar systems.'],
+ constellation:['Constellation','The whole set of satellites in a navigation system and how they are arranged in orbit.'],
+ meo:['MEO','Medium Earth orbit, roughly 2,000 to 35,000 km. GPS orbits at about 20,200 km.'],
+ pseudorange:['Pseudorange','A distance measured from signal travel time that still includes the receiver\u2019s clock error.'],
+ clockbias:['Clock bias','How far the receiver\u2019s clock is from true GPS time. It adds the same error to every pseudorange.'],
+ ephemeris:['Ephemeris','Precise orbit data for a satellite, broadcast by the satellite itself.'],
+ trilat:['Trilateration','Finding a position from distances to known points, as opposed to angles.'],
+ dop:['Dilution of precision (DOP)','A factor showing how much the satellite layout magnifies range errors. Lower is better. HDOP, VDOP, PDOP, TDOP, and GDOP cover different parts.'],
+ uere:['UERE','User equivalent range error. The combined size of the errors in a single range measurement.'],
+ multipath:['Multipath','Signals that reach the antenna by bouncing off buildings or ground, arriving late and distorting the measurement.'],
+ drms:['DRMS','Distance root mean square. A single number for horizontal error. Roughly 95% of fixes fall within 2 DRMS.'],
+ iono:['Ionosphere','A layer of charged particles high in the atmosphere that slows radio signals by an amount that depends on frequency.'],
+ prn:['PRN code','A pseudo-random code unique to each satellite, used to spread its signal and to identify it.'],
+ cdma:['CDMA','Code division multiple access. Many transmitters share a frequency and are separated by their codes.'],
+ spread:['Spread spectrum','Sending a signal over much more bandwidth than the data needs, so interference and jamming are diluted.'],
+ chip:['Chip','One bit of the fast pseudo-random code that spreads a signal.'],
+ corr:['Correlation','Sliding a copy of a known pattern against a received signal and summing how well they match. It peaks when they line up.'],
+ procgain:['Processing gain','How much correlation helps: 10 log10(spread rate \u00F7 data rate), in dB.'],
+ datum:['Datum','A mathematical model of the Earth that coordinates are measured against. GPS uses WGS 84.'],
+ wgs84:['WGS 84','World Geodetic System 1984. The datum used by GPS and by modern military maps.'],
+ mgrs:['MGRS','Military Grid Reference System. UTM written compactly: a grid zone, a 100 km square, and easting and northing digits.'],
+ utm:['UTM','Universal Transverse Mercator. A world grid made of 6\u00B0-wide zones with positions in metres east and north.'],
+ waypoint:['Waypoint','A stored position in a receiver that you can navigate to.'],
+ goto:['GOTO','The receiver function that points you at a chosen waypoint and shows the bearing and distance to it.'],
+ jamming:['Jamming','Drowning out a signal with noise so a receiver cannot use it.'],
+ spoofing:['Spoofing','Transmitting counterfeit signals so a receiver computes a false position or time.'],
+ meaconing:['Meaconing','Recording real navigation signals and rebroadcasting them later to give a receiver a wrong position.'],
+ js:['J/S','Jammer-to-signal ratio: jammer power divided by signal power at the receiver, usually in dB.'],
+ ins:['Inertial navigation (INS)','Navigation from motion sensors. It needs no outside signals but its error grows with time.'],
+ deadreck:['Dead reckoning','Estimating position from a known start, a direction, and a distance travelled.']};
+const GUIDE={key:'gnssguide',chapters:[["ch1","1 Where am I?"],["ch2","2 How a fix works"],["ch3","3 Geometry and errors"],["ch4","4 The signal"],["ch5","5 Using a receiver"],["ch6","6 When GPS fails"],["ch7","7 Plan it"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>O1.calc(),ch2:()=>{T1.calc();F2.draw();},ch3:()=>E3.calc(),ch4:()=>C1.go(),ch5:()=>{G1.draw();G2.calc();},ch6:()=>{J1.calc();D1.calc();},ch7:()=>{if(!$('g1-P'))P1.init();}}};
+
+boot();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

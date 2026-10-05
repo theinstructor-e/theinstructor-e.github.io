@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modulation and Jamming Lab | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f;--purple:#bb88ff}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede;--purple:#6b3fb5}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:170px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:660px;margin:0 auto;padding:10px 12px 20px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:26px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:3px 0 4px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px;line-height:1.5}
+.lesson{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px}
+.lt{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.lk{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.lo{font-size:18px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px;white-space:nowrap}.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pill{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border:1px solid var(--line);color:var(--dim)}.pill.ok{background:var(--green);border-color:var(--green);color:#00180d}
+.lm{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;min-height:17px}.lm.good{color:var(--green)}.lm.err{color:var(--red)}
+.cardx{background:var(--panel);border:1px solid var(--line);margin:10px 0}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2);gap:8px;flex-wrap:wrap}
+.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 9px;cursor:pointer;min-height:34px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.jam{border-color:var(--red);color:var(--red)}.chip.jam.on{background:var(--red-dark)}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}.row>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:78px}
+input[type=range]{flex:1;min-width:120px;accent-color:#00ff88;height:28px}
+.val{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--green);min-width:62px;text-align:right}
+canvas.cv{display:block;width:100%;height:auto;background:#000}
+.msgbox{font-family:'Share Tech Mono',monospace;font-size:15px;padding:6px 10px;line-height:1.7;word-break:break-all}.msgbox .l{color:var(--dim);font-size:10px;letter-spacing:.1em;display:block}.msgbox .bad{color:var(--red);background:var(--red-dark)}
+table.rd{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px}table.rd td{padding:5px 8px;border-bottom:1px solid var(--line)}table.rd td:last-child{text-align:right;color:var(--green)}table.rd td.bad{color:var(--red)}
+.q{margin:8px 0}.q .k{display:block;margin-bottom:4px;color:var(--amber)}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:11px 14px;cursor:pointer;margin:8px 6px 0 0}.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:60;padding:14px}.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}.sheet p{font-size:16.5px;line-height:1.38}
+.lbtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);padding:9px 12px;margin-top:8px;cursor:pointer;color:var(--text);font-family:'Rajdhani',sans-serif}
+.lbtn b{display:block;font-size:18px;letter-spacing:.03em;text-transform:uppercase}.lbtn span{font-size:14.5px;color:var(--dim)}.lbtn.done{border-left-color:var(--cyan)}
+.acc summary{cursor:pointer;list-style:none;padding:9px 10px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--cyan);background:var(--panel2)}.acc summary::-webkit-details-marker{display:none}
+.acc .in{padding:8px 10px 10px;font-size:16px;line-height:1.4}.acc .in h4{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--amber);font-weight:400;margin:10px 0 3px}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+
+.tabs{display:flex;border:1px solid var(--line);margin:10px 0}.tabs button{flex:1;font-family:'Share Tech Mono',monospace;font-size:11.5px;letter-spacing:.06em;padding:11px 3px;background:var(--panel);color:var(--dim);border:0;border-right:1px solid var(--line);cursor:pointer}.tabs button:last-child{border-right:0}.tabs button.on{background:var(--cyan-dark);color:var(--cyan)}
+table.mx{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:11.5px}table.mx th{font-weight:400;color:var(--dim);font-size:10px;letter-spacing:.06em;padding:5px 3px;text-align:center;border-bottom:1px solid var(--line)}table.mx td{padding:7px 3px;text-align:center;border-bottom:1px solid var(--line)}table.mx td.nm{text-align:left;color:var(--text);font-weight:700;cursor:pointer}table.mx tr.sel td.nm{color:var(--cyan)}table.mx tr.sel{background:var(--cyan-dark)}
+.good{color:var(--green)}.mid{color:var(--amber)}.badc{color:var(--red)}table.mx td.cur{box-shadow:inset 0 0 0 1px var(--cyan)}
+table.cmp{width:100%;border-collapse:collapse;font-size:14.5px}table.cmp th{font-family:'Share Tech Mono',monospace;font-weight:400;font-size:10px;letter-spacing:.06em;color:var(--dim);text-align:left;padding:4px;border-bottom:1px solid var(--line)}table.cmp td{padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}table.cmp td:first-child{font-family:'Share Tech Mono',monospace;color:var(--green);white-space:nowrap}
+.why2{border-left:3px solid var(--cyan);background:var(--panel2);padding:8px 10px;margin-top:8px;font-size:16px;line-height:1.38}
+</style>
+<style>.learn{display:block;margin:0 0 12px;padding:9px 13px;border:1px solid var(--line);border-left:3px solid #00d4ff;border-radius:8px;background:var(--panel);color:var(--text);text-decoration:none;font-size:13px;line-height:1.4}.learn b{color:#00d4ff}.learn:hover{border-color:#00d4ff}</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>Modulation &amp; Jamming Lab</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+<a class="learn" href="../modguide/"><b>&#128214; Learn first:</b> Modulation &amp; Noise Explained &mdash; the interactive textbook for this tool</a>
+<div class="hero"><div class="eyebrow">B2 PHYSICS / EW &middot; HANDS-ON</div><h2>Modulation &amp; Jamming Lab</h2>
+<p>See how AM, FM, ASK, FSK, BPSK and QPSK carry the same message, then see what noise and jamming do to each one.</p>
+<span class="sim">SIMPLIFIED MODELS: IDEAL RECEIVERS, NO CODING OR FADING &middot; TRAINING ONLY &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+
+<div class="tabs" id="mainTabs"><button class="on" data-t="cmp">MODULATIONS</button><button data-t="jam">JAMMING EFFECTS</button><button data-t="lab">DIGITAL LINK LAB</button></div>
+<div id="tab-cmp">
+<div class="cardx"><div class="ch"><b>SAME MESSAGE, SIX MODULATIONS</b><span class="k">tap a row for its spectrum</span></div>
+<div class="cb"><div class="row"><label>AM DEPTH</label><input type="range" id="cM" min="0.1" max="1.5" step="0.05" value="0.8" oninput="MC.set('m',this.value)"><span class="val" id="cMV">0.80</span></div>
+<div class="row"><label>FM INDEX</label><input type="range" id="cB" min="1" max="10" step="0.5" value="5" oninput="MC.set('b',this.value)"><span class="val" id="cBV">5.0</span></div>
+<div class="row"><label>DATA BITS</label><div class="chips" id="bitC"></div></div></div>
+<canvas class="cv" id="cmpW" width="480" height="600"></canvas></div>
+<div class="cardx"><div class="ch"><b id="spTitle">SPECTRUM</b><span class="k">dB below peak</span></div><canvas class="cv" id="cmpS" width="480" height="230"></canvas><div class="why2" id="spNote" style="margin:8px"></div></div>
+<div class="cardx"><div class="ch"><b>WHAT THE DIFFERENCES MEAN</b></div><div class="cb" style="overflow-x:auto"><table class="cmp" id="cmpT" style="min-width:560px"></table></div></div>
+</div>
+<div id="tab-jam" style="display:none">
+<div class="cardx"><div class="ch"><b>JAMMING EACH MODULATION</b></div><div class="cb">
+<div class="row"><label>SIGNAL / NOISE</label><input type="range" id="jC" min="10" max="40" step="1" value="25" oninput="MJ.set('cnr',this.value)"><span class="val" id="jCV">25 dB</span></div>
+<div class="row"><label>JAMMER / SIGNAL</label><input type="range" id="jS" min="-30" max="20" step="1" value="-12" oninput="MJ.set('js',this.value)"><span class="val" id="jSV">-12 dB</span></div>
+<div class="row"><label>JAMMER TYPE</label><div class="chips" id="jamT"></div></div>
+<div class="k" style="margin-top:6px">Same signal power and noise for every modulation. Analog rows show output signal-to-noise (15 dB or better is usable). Digital rows show bit error rate (under 0.1% is usable).</div></div></div>
+<div class="cardx"><div class="ch"><b>RESULTS NOW</b><span class="k">tap a row for detail</span></div><div class="cb"><table class="mx" id="mx"></table></div></div>
+<div class="cardx"><div class="ch"><b id="dTitle">DETAIL</b></div><canvas class="cv" id="jDet" width="480" height="210"></canvas><div class="why2" id="jWhy" style="margin:8px"></div></div>
+<div class="cardx"><div class="ch"><b>JAMMER POWER NEEDED TO BREAK EACH ONE</b><span class="k" id="brkInfo"></span></div><canvas class="cv" id="jBrk" width="480" height="260"></canvas></div>
+<div class="cardx"><details class="acc"><summary>HOW THIS COMPARISON WORKS</summary><div class="in">
+<h4>SAME BASELINE</h4><p>Every modulation gets the same signal power, the same noise density, and the same jammer. Signal-to-noise is measured in a 16 kHz reference band. Digital modulations all send 8 kilobits per second.</p>
+<h4>WHAT IS SIMULATED</h4><p>AM and FM are simulated as real waveforms: noise and the jammer are added, the signal is filtered to the receiver's bandwidth, and demodulated with an envelope detector (AM) or a frequency discriminator (FM). Digital modulations are simulated at the symbol level with ideal timing: coherent detection for BPSK and QPSK, and non-coherent detection for ASK and FSK.</p>
+<h4>JAMMER TYPES</h4><p><b>Noise</b> is wideband noise covering the signal. <b>Tone on carrier</b> is a steady tone at the carrier frequency. <b>Tone +3 kHz</b> is a steady tone 3 kHz above the carrier, inside the receiver passband of every modulation here. J/S is the jammer power over the signal power at the receiver.</p>
+<h4>LEFT OUT</h4><p>No error correction, spread spectrum, hopping, fading, or directional antennas. Real systems use all of these and gain a lot of margin. The numbers show how the bare modulations compare, not what a fielded radio would do.</p>
+</div></details></div>
+</div>
+<div id="tab-lab" style="display:none">
+<div class="lesson"><div class="lt"><div><div class="lk" id="lk">LAB 1</div><div class="lo" id="lo"></div></div><div style="white-space:nowrap"><button class="hbtn" onclick="hint()">HINT</button><button class="hbtn c" onclick="openLabs()">LABS</button></div></div>
+<div class="pills" id="pills"></div><div class="lm" id="lm"></div><div id="qbox"></div></div>
+
+<div class="cardx"><div class="ch"><b>CONSTELLATION (I / Q)</b><span class="k" id="cInfo"></span></div><canvas class="cv" id="con" width="480" height="400"></canvas>
+<div class="cb"><div class="row"><label>MODULATION</label><div class="chips" id="modC"></div></div>
+<div class="row"><label>SIGNAL / NOISE</label><input type="range" id="snr" min="0" max="35" step="0.5" value="20" oninput="setSnr(this.value)"><span class="val" id="snrV">20 dB</span></div>
+<div class="row"><label>JAMMER</label><div class="chips" id="jamC"></div></div>
+<div class="row" id="jsRow"><label>JAMMER / SIGNAL</label><input type="range" id="js" min="-25" max="25" step="0.5" value="-10" oninput="setJs(this.value)"><span class="val" id="jsV">-10 dB</span></div>
+<div class="row" id="dutyRow" style="display:none"><label>PULSE DUTY</label><div class="chips" id="dutyC"></div></div></div></div>
+
+<div class="cardx"><div class="ch"><b>MESSAGE OVER THE LINK</b></div><div class="msgbox"><span class="l">SENT</span><span id="sent"></span><span class="l" style="margin-top:4px">RECEIVED</span><span id="recv"></span></div></div>
+
+<div class="cardx"><div class="ch"><b>LINK READOUT</b></div><div class="cb"><table class="rd" id="rd"></table></div></div>
+
+<div class="cardx"><div class="ch"><b>BIT ERROR RATE vs SIGNAL-TO-NOISE</b><span class="k">dashed = your link</span></div><canvas class="cv" id="ber" width="480" height="300"></canvas></div>
+
+<div class="cardx"><details class="acc"><summary>HOW IT WORKS AND WHAT IS LEFT OUT</summary><div class="in">
+<h4>CONSTELLATION</h4><p>Each dot is one received symbol on the I (in-phase) and Q (quadrature) axes. White marks are where the transmitter meant the symbols to land. A symbol is decoded as the nearest white mark, so noise that pushes a dot across a gray boundary flips bits.</p>
+<h4>MORE BITS PER SYMBOL, LESS MARGIN</h4><p>BPSK sends 1 bit per symbol, QPSK 2, 8-PSK 3, 16-QAM 4, 64-QAM 6. Packing more points into the same power puts them closer together, so less noise or jamming is needed to cause errors.</p>
+<h4>JAMMER TYPES</h4><p><b>Noise</b> adds random noise like a wideband jammer inside the link's bandwidth. <b>Tone</b> adds a single steady signal: it does nothing until it is strong enough to cross a decision boundary, and then it does a lot. <b>Pulse</b> keeps the same average power but delivers it in short bursts, so while a burst is on the jammer is much stronger than the signal.</p>
+<h4>JAMMER / SIGNAL (J/S)</h4><p>The jammer's power divided by the signal's power at the receiver, in dB. 0 dB means equal. Jamming is only worth the effort when J/S is high enough to beat the link margin.</p>
+<h4>WHAT THIS LAB LEAVES OUT</h4><p>Real links use error correction, spread spectrum, frequency hopping, interleaving, and directional antennas. All of those buy back margin against noise and jamming, and none are modeled here, so the numbers here are the worst case for an uncoded link. There is also no fading or multipath, and the receiver is assumed perfectly synchronized. BER curves for 8-PSK and the QAM modes use standard approximations.</p>
+</div></details></div>
+</div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<div class="ov" id="ovLabs"><div class="sheet"><div class="k">LABS</div><h2>Pick a lab</h2><div id="labList"></div><button class="btn alt" onclick="closeOv('ovLabs')">CLOSE</button></div></div>
+<div class="ov" id="ovDone"><div class="sheet"><div class="k">LAB COMPLETE</div><h2 id="dH"></h2><p id="dP"></p><button class="btn" onclick="nextLab()">NEXT LAB</button><button class="btn alt" onclick="closeOv('ovDone')">KEEP EXPERIMENTING</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* =============================================================
+   MATH
+============================================================= */
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z),r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));return x>=0?r:2-r;}
+function Q(x){if(x>4)return Math.exp(-x*x/2)/(x*Math.sqrt(2*Math.PI))*(1-1/(x*x)+3/Math.pow(x,4));return 0.5*erfc(x/Math.SQRT2);}
+const dB=x=>Math.pow(10,x/10);
+/* =============================================================
+   MODULATIONS (Gray coded, unit average symbol energy)
+============================================================= */
+const MODS={
+ bpsk:{n:'BPSK',k:1,M:2},qpsk:{n:'QPSK',k:2,M:4},psk8:{n:'8-PSK',k:3,M:8},qam16:{n:'16-QAM',k:4,M:16},qam64:{n:'64-QAM',k:6,M:64}
+};
+function buildPts(key){const m=MODS[key],pts=[];
+  if(key==='bpsk'){pts.push({l:0,x:-1,y:0},{l:1,x:1,y:0});}
+  else if(key==='qpsk'){const s=Math.SQRT1_2;[[0,1,1],[1,-1,1],[3,-1,-1],[2,1,-1]].forEach(a=>pts.push({l:a[0],x:a[1]*s,y:a[2]*s}));}
+  else if(key==='psk8'){const g=[0,1,3,2,6,7,5,4];g.forEach((l,i)=>pts.push({l,x:Math.cos(i*Math.PI/4),y:Math.sin(i*Math.PI/4)}));}
+  else{const L=key==='qam16'?2:3,n=1<<L,g=L===2?[0,1,3,2]:[0,1,3,2,6,7,5,4],lev=[];for(let i=0;i<n;i++)lev.push(2*i-(n-1));
+    const norm=Math.sqrt(key==='qam16'?10:42);
+    for(let qi=0;qi<n;qi++)for(let ii=0;ii<n;ii++)pts.push({l:(g[qi]<<L)|g[ii],x:lev[ii]/norm,y:lev[qi]/norm});}
+  return pts;}
+const PTS={};Object.keys(MODS).forEach(k=>PTS[k]=buildPts(k));
+function pop(v){let c=0;while(v){c+=v&1;v>>=1;}return c;}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+/* theory: bit error rate for noise-like impairment at Es/N0 (dB) */
+function berTheory(key,sdb){const g=dB(sdb),k=MODS[key].k,M=MODS[key].M;let p;
+  if(key==='bpsk')p=Q(Math.sqrt(2*g));
+  else if(key==='qpsk')p=Q(Math.sqrt(g));
+  else if(key==='psk8')p=(2/k)*Q(Math.sqrt(2*g)*Math.sin(Math.PI/8));
+  else p=(4/k)*(1-1/Math.sqrt(M))*Q(Math.sqrt(3*g/(M-1)));
+  return Math.min(0.5,p);}
+/* =============================================================
+   STATE AND CHANNEL
+============================================================= */
+const MSG='NET CHECK 17E: ALL STATIONS OK';
+let S={mod:'qam16',snr:20,jam:'off',js:-10,duty:0.1,lab:-1};
+let ph=0,stats=[],pointsBuf=[],frameT=0,lastMsg=null;
+const $=id=>document.getElementById(id);
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';r.setAttribute('data-theme',l?'dark':'light');$('tb').textContent=l?'LIGHT':'DARK';}
+function closeOv(i){$(i).classList.remove('on');}
+function noiseAdd(){ // returns [dx,dy,jammed]
+  const n0=dB(-S.snr),sd=Math.sqrt(n0/2);let dx=gauss()*sd,dy=gauss()*sd,jammed=false;
+  if(S.jam==='noise'){const J=dB(S.js),s=Math.sqrt(J/2);dx+=gauss()*s;dy+=gauss()*s;jammed=true;}
+  else if(S.jam==='pulse'){if(Math.random()<S.duty){const J=dB(S.js)/S.duty,s=Math.sqrt(J/2);dx+=gauss()*s;dy+=gauss()*s;jammed=true;}}
+  else if(S.jam==='tone'){const A=Math.pow(10,S.js/20);ph+=2*Math.PI*0.0137;dx+=A*Math.cos(ph);dy+=A*Math.sin(ph);jammed=true;}
+  return [dx,dy,jammed];}
+function nearest(pts,x,y){let b=0,bd=1e9;for(let i=0;i<pts.length;i++){const d=(pts[i].x-x)*(pts[i].x-x)+(pts[i].y-y)*(pts[i].y-y);if(d<bd){bd=d;b=i;}}return b;}
+function runBatch(n){const pts=PTS[S.mod],k=MODS[S.mod].k;let be=0,se=0;
+  for(let i=0;i<n;i++){const ti=(Math.random()*pts.length)|0,tx=pts[ti],nz=noiseAdd(),rx=tx.x+nz[0],ry=tx.y+nz[1],ri=nearest(pts,rx,ry),e=pop(tx.l^pts[ri].l);
+    if(e){be+=e;se++;}pointsBuf.push([rx,ry,e?1:0]);}
+  if(pointsBuf.length>900)pointsBuf.splice(0,pointsBuf.length-900);
+  stats.push({n,be,se,k});if(stats.length>40)stats.shift();}
+function measured(){let n=0,be=0,se=0,k=MODS[S.mod].k;stats.forEach(s=>{n+=s.n;be+=s.be;se+=s.se;});return {n,bits:n*k,be,se,ber:n?be/(n*k):0,ser:n?se/n:0};}
+/* model BER for noise-like jammers (used for lab checks) and equivalent SNR */
+function effSnr(){const n0=dB(-S.snr);if(S.jam==='noise')return -10*Math.log10(n0+dB(S.js));if(S.jam==='pulse')return -10*Math.log10(n0+dB(S.js)/S.duty);return S.snr;}
+function berModel(key){if(S.jam==='tone')return null;
+  const n0=dB(-S.snr);
+  if(S.jam==='pulse'){const sp=-10*Math.log10(n0+dB(S.js)/S.duty);return S.duty*berTheory(key,sp)+(1-S.duty)*berTheory(key,S.snr);}
+  return berTheory(key,effSnr());}
+function bestMod(thr){let best=null;['bpsk','qpsk','psk8','qam16','qam64'].forEach(k=>{const b=berModel(k);if(b!==null&&b<thr)best=k;});return best;}
+/* message path: real bits through the modulator */
+function sendMessage(){const pts=PTS[S.mod],k=MODS[S.mod].k;let bits=[];for(const ch of MSG){const c=ch.charCodeAt(0);for(let b=7;b>=0;b--)bits.push((c>>b)&1);}
+  while(bits.length%k)bits.push(0);const byLabel={};pts.forEach((p,i)=>byLabel[p.l]=i);const out=[];
+  for(let i=0;i<bits.length;i+=k){let l=0;for(let j=0;j<k;j++)l=(l<<1)|bits[i+j];const tx=pts[byLabel[l]],nz=noiseAdd(),ri=nearest(pts,tx.x+nz[0],tx.y+nz[1]),rl=pts[ri].l;for(let j=k-1;j>=0;j--)out.push((rl>>j)&1);}
+  let txt='',h='';for(let c=0;c<MSG.length;c++){let v=0;for(let b=0;b<8;b++)v=(v<<1)|out[c*8+b];const ok=v===MSG.charCodeAt(c);const ch=(v>=32&&v<127)?String.fromCharCode(v):'\u00b7';h+=ok?ch:'<span class="bad">'+(ch===' '?'_':ch)+'</span>';}
+  $('recv').innerHTML=h;}
+/* =============================================================
+   DRAWING
+============================================================= */
+const cc=$('con'),cx=cc.getContext('2d'),bc=$('ber'),bx=bc.getContext('2d');
+const RNG=1.7;const px=x=>240+x/RNG*220,py=y=>200-y/RNG*190;
+function drawCon(){const c=cx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#05090f';c.fillRect(0,0,480,400);
+  c.strokeStyle='#14263a';c.lineWidth=1;c.beginPath();c.moveTo(240,0);c.lineTo(240,400);c.moveTo(0,200);c.lineTo(480,200);c.stroke();
+  const pts=PTS[S.mod];
+  // decision boundaries
+  c.strokeStyle='rgba(125,146,169,.35)';c.setLineDash([4,4]);c.beginPath();
+  if(S.mod==='bpsk'){c.moveTo(240,0);c.lineTo(240,400);}
+  else if(S.mod==='qpsk'){c.moveTo(240,0);c.lineTo(240,400);c.moveTo(0,200);c.lineTo(480,200);}
+  else if(S.mod==='psk8'){for(let i=0;i<8;i++){const a=(i+0.5)*Math.PI/4;c.moveTo(240,200);c.lineTo(240+Math.cos(a)*400,200-Math.sin(a)*400);}}
+  else{const n=S.mod==='qam16'?4:8,norm=Math.sqrt(S.mod==='qam16'?10:42);for(let i=1;i<n;i++){const v=(2*i-n)/norm;c.moveTo(px(v),0);c.lineTo(px(v),400);c.moveTo(0,py(v));c.lineTo(480,py(v));}}
+  c.stroke();c.setLineDash([]);
+  // received symbols
+  pointsBuf.forEach((p,i)=>{const a=0.25+0.5*i/pointsBuf.length;c.fillStyle=p[2]?'rgba(255,68,68,'+a+')':'rgba(0,255,136,'+a+')';c.beginPath();c.arc(px(Math.max(-RNG,Math.min(RNG,p[0]))),py(Math.max(-RNG,Math.min(RNG,p[1]))),2.2,0,7);c.fill();});
+  // ideal points
+  pts.forEach(p=>{c.strokeStyle='#fff';c.lineWidth=1.5;c.beginPath();c.arc(px(p.x),py(p.y),5,0,7);c.stroke();});
+  c.fillStyle='#7d92a9';c.font='11px "Share Tech Mono"';c.textAlign='left';c.fillText('Q',246,12);c.textAlign='right';c.fillText('I',474,194);}
+const BCOL={bpsk:'#00d4ff',qpsk:'#00ff88',psk8:'#bb88ff',qam16:'#ffb300',qam64:'#ff6688'};
+function drawBer(){const c=bx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#05090f';c.fillRect(0,0,480,300);const L0=44,T0=10,W=480-L0-10,H=300-T0-30;
+  const X=s=>L0+s/35*W,Y=b=>T0+(-Math.log10(Math.max(b,1e-7))/7)*H;
+  c.strokeStyle='#14263a';c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='right';
+  for(let e=0;e<=7;e++){const y=T0+e/7*H;c.beginPath();c.moveTo(L0,y);c.lineTo(480-10,y);c.stroke();if(e<7)c.fillText('1e-'+e,L0-4,y+3);}
+  c.textAlign='center';for(let s=0;s<=35;s+=5){c.beginPath();c.moveTo(X(s),T0);c.lineTo(X(s),T0+H);c.stroke();c.fillText(s,X(s),T0+H+14);}c.fillText('Es/N0 (dB)',L0+W/2,T0+H+26);
+  c.strokeStyle='rgba(255,179,0,.6)';c.setLineDash([2,3]);c.beginPath();c.moveTo(L0,Y(1e-3));c.lineTo(480-10,Y(1e-3));c.stroke();c.setLineDash([]);c.fillStyle='#ffb300';c.textAlign='left';c.fillText('0.1% (usable)',L0+4,Y(1e-3)-3);
+  Object.keys(MODS).forEach(k=>{c.strokeStyle=BCOL[k];c.lineWidth=k===S.mod?3:1.2;c.globalAlpha=k===S.mod?1:0.55;c.beginPath();let st=false;for(let s=0;s<=35;s+=0.5){const b=berTheory(k,s);if(b<1e-7){break;}const x=X(s),y=Y(b);st?c.lineTo(x,y):c.moveTo(x,y);st=true;}c.stroke();c.globalAlpha=1;
+    const sx=Math.min(34,{bpsk:3,qpsk:5.5,psk8:12.5,qam16:12,qam64:20}[k]);c.fillStyle=BCOL[k];c.font='bold 10px "Share Tech Mono"';c.textAlign='left';c.fillText(MODS[k].n,X(sx)+4,Y(berTheory(k,sx))+12);});
+  // your link
+  const es=effSnr();if(S.jam!=='tone'){const sx=X(Math.max(0,Math.min(35,es)));c.strokeStyle='#fff';c.lineWidth=1.5;c.setLineDash([5,4]);c.beginPath();c.moveTo(sx,T0);c.lineTo(sx,T0+H);c.stroke();c.setLineDash([]);const b=berModel(S.mod);c.fillStyle='#fff';c.beginPath();c.arc(sx,Y(b),5,0,7);c.fill();}
+  const m=measured();if(m.bits>3000){c.fillStyle='#ff4444';const mx=X(Math.max(0,Math.min(35,es))),my=Y(Math.max(m.ber,1e-7));c.beginPath();c.moveTo(mx-6,my-6);c.lineTo(mx+6,my+6);c.moveTo(mx+6,my-6);c.lineTo(mx-6,my+6);c.strokeStyle='#ff4444';c.lineWidth=2;c.stroke();}}
+function fmtB(b){return b<=0?'0':b<1e-6?'<1e-6':b.toExponential(1);}
+function readout(){const m=measured(),k=MODS[S.mod].k,bm=berModel(S.mod),es=effSnr();
+  const jtxt=S.jam==='off'?'none':S.jam==='tone'?'tone, J/S '+S.js+' dB':S.jam==='pulse'?'pulse '+Math.round(S.duty*100)+'% duty, avg J/S '+S.js+' dB':'noise, J/S '+S.js+' dB';
+  const low=m.bits<4000?' (collecting)':'';
+  const ber=m.ber;let bad=ber>1e-3;
+  $('rd').innerHTML='<tr><td>Modulation</td><td>'+MODS[S.mod].n+' ('+k+' bit'+(k>1?'s':'')+'/symbol)</td></tr><tr><td>Data rate at 1 Msym/s</td><td>'+k+' Mb/s</td></tr>'+
+   '<tr><td>Jammer</td><td>'+jtxt+'</td></tr>'+
+   '<tr><td>Effective signal-to-noise'+(S.jam==='tone'?' (noise only)':'')+'</td><td>'+(S.jam==='tone'?S.snr:es).toFixed(1)+' dB</td></tr>'+
+   '<tr><td>Measured bit error rate</td><td class="'+(bad?'bad':'')+'">'+fmtB(ber)+low+'</td></tr>'+
+   '<tr><td>Measured symbol error rate</td><td>'+fmtB(m.ser)+'</td></tr>'+
+   (bm!==null?'<tr><td>Predicted bit error rate</td><td>'+fmtB(bm)+'</td></tr>':'')+
+   '<tr><td>Link status</td><td class="'+(bad?'bad':'')+'">'+(m.bits<4000?'measuring':ber<1e-3?'USABLE (under 0.1%)':'DEGRADED')+'</td></tr>';
+  $('cInfo').textContent=MODS[S.mod].n+' \u00b7 '+(S.jam==='off'?'no jammer':'jammed');}
+/* =============================================================
+   CONTROLS
+============================================================= */
+function chipsRow(id,items,cur,fn,cls){$(id).innerHTML=items.map(it=>'<button class="chip '+(cls||'')+(String(it[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+it[0]+'\')">'+it[1]+'</button>').join('');}
+function build(){chipsRow('modC',Object.keys(MODS).map(k=>[k,MODS[k].n]),S.mod,'setMod');chipsRow('jamC',[['off','OFF'],['noise','NOISE'],['tone','TONE'],['pulse','PULSE']],S.jam,'setJam','jam');
+  chipsRow('dutyC',[[0.5,'50%'],[0.25,'25%'],[0.1,'10%'],[0.05,'5%']],S.duty,'setDuty');
+  $('jsRow').style.display=S.jam==='off'?'none':'';$('dutyRow').style.display=S.jam==='pulse'?'':'none';
+  $('snr').value=S.snr;$('snrV').textContent=S.snr+' dB';$('js').value=S.js;$('jsV').textContent=S.js+' dB';
+  $('sent').textContent=MSG;}
+function reset(){stats=[];pointsBuf=[];}
+function setMod(v){S.mod=v;reset();build();}
+function setJam(v){S.jam=v;reset();build();}
+function setDuty(v){S.duty=Number(v);reset();build();}
+function setSnr(v){S.snr=Number(v);$('snrV').textContent=S.snr+' dB';reset();}
+function setJs(v){S.js=Number(v);$('jsV').textContent=S.js+' dB';reset();}
+/* =============================================================
+   LABS
+============================================================= */
+let LD={},hintN=0,answered={},wrong={},holdT={};
+function hold(k,ok,dt,need){holdT[k]=ok?(holdT[k]||0)+dt:0;return holdT[k]>=need;}
+const usable=thr=>{const m=measured();return m.bits>=6000&&m.ber<(thr||1e-3);};
+const mcq=(id,title,opts,ans)=>({id,title,opts,ans});
+const labs=[
+ {id:'rate',t:'Fastest modulation that works',s:'Trade data rate against noise.',obj:'Link A has 18 dB signal-to-noise. Pick the highest data rate that stays under 0.1% bit errors.',
+  setup(){Object.assign(S,{mod:'qpsk',snr:18,jam:'off',js:-10,duty:0.1});this.step=0;},pills:['LINK A: 18 dB','LINK B: 11 dB'],
+  st(){return [this.step>=1,this.step>=2];},
+  done(dt){if(this.step===0){if(hold('a',S.mod===bestMod(1e-3)&&usable(),dt,2.5)){this.step=1;S.snr=11;reset();build();holdT.b=0;setMsg('Link B: the signal weakened to 11 dB. Pick again.','');$('lo').textContent='Link B has fallen to 11 dB (more distance). Pick the highest data rate that stays under 0.1% bit errors.';}return false;}
+    if(this.step===1){if(hold('b',S.mod===bestMod(1e-3)&&usable(),dt,2.5)){this.step=2;return true;}}return false;},
+  hints:['Watch the readout. Try each modulation and look at the bit error rate and the red (wrong) dots.','Higher-order modulation carries more bits but needs a cleaner signal. At 18 dB one of the QAM modes still works.','At 18 dB, 16-QAM works and 64-QAM does not. At 11 dB, only BPSK and QPSK work, so QPSK is the fastest.'],
+  why:['Rate versus margin','Each step up in modulation order packs more bits into every symbol but needs more signal-to-noise: roughly 7 dB for BPSK, 10 dB for QPSK, 15 dB for 8-PSK, 16.5 dB for 16-QAM, and 22.5 dB for 64-QAM at 0.1% bit errors. Real radios change modulation automatically as the signal changes. This is called adaptive modulation.']},
+ {id:'noisejam',t:'Noise jammer: fall back',s:'Survive a jammer by trading speed for robustness.',obj:'A 64-QAM link at 26 dB works fine. A noise jammer comes on. Restore the link without turning the jammer off.',
+  setup(){Object.assign(S,{mod:'qam64',snr:26,jam:'off',js:-12,duty:0.1});this.step=0;this.tm=0;this._on=false;},pills:['JAMMER ON, LINK BROKEN','LINK RESTORED','LIMIT OF A JAMMER'],
+  st(){return [this.step>=1,this.step>=2,!!answered.lim];},
+  done(dt){this.tm=(this.tm||0)+dt;
+    if(this.step===0){if(this.tm>2&&!this._on){this._on=true;this._tOn=this.tm;S.jam='noise';S.js=-12;reset();build();setMsg('The jammer is on at J/S = -12 dB. Your 64-QAM link is breaking.','err');}
+      if(S.jam==='noise'&&(hold('brk',berModel(S.mod)>1e-3,dt,1)||this.tm>this._tOn+6)){this.step=1;holdT.rest=0;}return false;}
+    if(this.step===1){if(hold('rest',S.jam==='noise'&&S.js===-12&&berModel(S.mod)<1e-3&&usable(),dt,2.5)){this.step=2;S.js=0;reset();build();$('lo').textContent='The jammer is now equal in power to your signal (J/S 0 dB). Can any modulation survive?';renderQ();}return false;}
+    return !!answered.lim;},
+  qs(){return this.step>=2?[mcq('lim','Can any of these modulations survive a jammer as strong as your signal, with no other protection?',[['no','No: none gets under 0.1% errors'],['bpsk','Yes: BPSK'],['all','Yes: all of them']],'no')]:[];},
+  hints:['The jammer starts after a couple of seconds. Then look at the red dots and the bit error rate.','Robust waveforms have points far apart. Try dropping to a lower-order modulation.','QPSK or BPSK restores the link at J/S -12 dB, at a lower data rate. At J/S 0 dB nothing works. You would need power, directional antennas, spreading, or coding.'],
+  why:['Falling back, and when it fails','A noise jammer raises the noise floor, which shrinks your effective signal-to-noise. A more robust modulation (QPSK, BPSK) buys margin at the cost of data rate. But if the jammer is as strong as your signal, no modulation helps. That is when you need other electronic protection: more power, a directional antenna, spread spectrum, hopping, or error-correcting codes.']},
+ {id:'tone',t:'Tone jammer: the threshold effect',s:'A steady tone does nothing, until it does everything.',obj:'Use a tone jammer on a clean 16-QAM link. Sweep the jammer power and find where errors start.',
+  setup(){Object.assign(S,{mod:'qam16',snr:30,jam:'tone',js:-25,duty:0.1});this.seen16=false;this.seenBpsk=false;},pills:['TONE ON, 16-QAM','TONE ON, BPSK','THRESHOLD QUESTIONS'],
+  st(){return [!!this.seen16,!!this.seenBpsk,!!(answered.t16&&answered.tb)];},
+  done(dt){if(S.jam==='tone'&&S.mod==='qam16')this.seen16=true;if(S.jam==='tone'&&S.mod==='bpsk'&&usable())this.seenBpsk=true;return !!(answered.t16&&answered.tb);},
+  qs(){return [mcq('t16','On 16-QAM with 30 dB noise-only SNR, at roughly what J/S does a tone start causing errors?',[['m10','About -10 dB'],['0','About 0 dB'],['p10','About +10 dB']],'m10'),mcq('tb','On BPSK, the tone starts causing errors at roughly:',[['m10','About -10 dB'],['0','About 0 dB'],['p10','About +10 dB']],'0')];},
+  hints:['Move the jammer slider up slowly with 16-QAM selected and watch for the first red dots and the bit error rate rising from zero.','The tone shifts every symbol by a fixed distance. Errors start when it is larger than half the gap between neighboring points.','16-QAM points are only about 0.63 apart (unit-energy), so a tone of amplitude above 0.32 (J/S about -10 dB) crosses a boundary. BPSK points are 2 apart, so it takes amplitude 1 (0 dB).'],
+  why:['Threshold effect and fragile modulations','A steady tone shifts every symbol by the same circle of offsets, so nothing is wrong until the tone is bigger than half the distance to the next point. Then errors jump. Dense constellations like 16-QAM have a much smaller distance than BPSK, so the same jammer breaks the dense link at a much lower power.']},
+ {id:'pulse',t:'Pulse jammer: same power, more damage',s:'Compare continuous noise with bursts.',obj:'Noise jamming at J/S -14 dB leaves a QPSK link usable. Switch to a 10% pulse jammer at the same average power.',
+  setup(){Object.assign(S,{mod:'qpsk',snr:24,jam:'noise',js:-14,duty:0.1});this.step=0;},pills:['NOISE: LINK USABLE','PULSE: LINK BROKEN','WHY'],
+  st(){return [this.step>=1,this.step>=2,!!answered.why];},
+  done(dt){if(this.step===0){if(hold('n',S.jam==='noise'&&S.js===-14&&usable(),dt,2)){this.step=1;holdT.p=0;}return false;}
+    if(this.step===1){if(hold('p',S.jam==='pulse'&&S.js===-14&&S.duty<=0.1&&measured().bits>=6000&&measured().ber>1e-3,dt,1.5)){this.step=2;renderQ();}return false;}
+    return !!answered.why;},
+  qs(){return this.step>=2?[mcq('why','Why did the pulse jammer do more damage at the same average power?',[['burst','During each burst it is far stronger than the signal, and those symbols are destroyed'],['more','It actually uses more average power'],['freq','It changes the signal frequency']],'burst')]:[];},
+  hints:['The setup already has a continuous noise jammer. Check the link is usable, then choose PULSE and keep the duty at 10%.','The slider is the average power. Over a 10% duty cycle, the burst power is 10 times higher.','In the bursts the jammer is much stronger than the signal. Those symbols are lost, and they add up to far more errors than the same energy spread thinly.']
+  ,why:['Pulse jamming','For an uncoded link, the damage depends on how bad errors get during the worst moments, not just the average power. A jammer that saves its energy for short bursts can make the link much worse than steady noise at the same average. Error correction with interleaving, and spread spectrum, exist largely to defeat this.']},
+ {id:'free',t:'Free lab',s:'Everything open.',obj:'Try every modulation, noise level, and jammer. Watch the message.',free:true,setup(){Object.assign(S,{mod:'qam16',snr:20,jam:'off',js:-10,duty:0.1});},pills:[],st(){return [];},done(){return false;},hints:['Lower the signal-to-noise until the message garbles, then pick a more robust modulation.','Compare tone, noise, and pulse jamming at the same J/S.','The dashed line on the lower chart is your link. The red X is what was measured.'],why:['','']}
+];
+function openLabs(){$('labList').innerHTML=labs.map((l,i)=>'<button class="lbtn'+(LD[l.id]?' done':'')+'" onclick="startLab('+i+')"><b>'+(i+1)+'. '+l.t+(LD[l.id]?' \u2713':'')+'</b><span>'+l.s+'</span></button>').join('');$('ovLabs').classList.add('on');}
+function startLab(i){closeOv('ovLabs');closeOv('ovDone');S.lab=i;const L=labs[i];hintN=0;answered={};wrong={};holdT={};L.setup();reset();build();
+  $('lk').textContent=L.free?'FREE LAB':'LAB '+(i+1)+' OF '+(labs.length-1);$('lo').textContent=L.obj;
+  $('pills').innerHTML=(L.pills||[]).map((p,k)=>'<span class="pill" id="pl'+k+'">'+p+'</span>').join('');setMsg('','');renderQ();}
+function setMsg(t,c){$('lm').textContent=t;$('lm').className='lm '+(c||'');}
+function renderQ(){const L=labs[S.lab];if(!L||!L.qs){$('qbox').innerHTML='';return;}const qs=L.qs();$('qbox').innerHTML=qs.map(q=>{const a=answered[q.id],w=wrong[q.id];return '<div class="q"><span class="k">'+q.title+'</span><div class="chips">'+q.opts.map(o=>{let cls='chip';if(a!==undefined&&o[0]===q.ans)cls+=' on';else if(w===o[0])cls+=' jam';return '<button class="'+cls+'" onclick="ans(\''+q.id+'\',\''+o[0]+'\')">'+o[1]+'</button>';}).join('')+'</div></div>';}).join('');}
+function ans(id,v){const L=labs[S.lab],q=L.qs().find(x=>x.id===id);if(!q||answered[id]!==undefined)return;
+  if(v===q.ans){answered[id]=v;delete wrong[id];setMsg('Correct.','good');}else{wrong[id]=v;setTimeout(()=>{if(wrong[id]===v){delete wrong[id];renderQ();}},900);setMsg('Not quite. Try the experiment again.','err');}renderQ();}
+function hint(){const L=labs[S.lab];hintN=Math.min(3,hintN+1);setMsg('HINT: '+L.hints[hintN-1],'');}
+function check(dt){const L=labs[S.lab];if(!L)return;const st=L.st();(L.pills||[]).forEach((p,k)=>{const e=$('pl'+k);if(e)e.classList.toggle('ok',!!st[k]);});
+  if(!L.free&&!LD[L.id]&&L.done(dt)){LD[L.id]=true;$('dH').textContent=L.why[0];$('dP').textContent=L.why[1];$('ovDone').classList.add('on');}
+  if(L.qs&&L.qs().length&&!$('qbox').innerHTML)renderQ();}
+function nextLab(){closeOv('ovDone');startLab(Math.min(labs.length-1,S.lab+1));}
+/* =============================================================
+   LOOP
+============================================================= */
+let last=0,fr=0;
+function loop(ts){const dt=Math.min(0.2,(ts-last)/1000||0);last=ts;fr++;if(window.__tab!=='lab'){requestAnimationFrame(loop);return;}
+  runBatch(250);frameT+=dt;if(frameT>0.7){frameT=0;sendMessage();}
+  drawCon();if(fr%3===0){drawBer();readout();}check(dt);requestAnimationFrame(loop);}
+startLab(0);sendMessage();requestAnimationFrame(loop);
+</script>
+<script>
+(function(){
+const dB=x=>Math.pow(10,x/10);
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function fft(re,im,inv){const n=re.length;for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t;}}
+ for(let len=2;len<=n;len<<=1){const ang=2*Math.PI/len*(inv?1:-1),wr=Math.cos(ang),wi=Math.sin(ang),h=len>>1;for(let i=0;i<n;i+=len){let cr=1,ci=0;for(let j=0;j<h;j++){const a=i+j,b=a+h,vr=re[b]*cr-im[b]*ci,vi=re[b]*ci+im[b]*cr;re[b]=re[a]-vr;im[b]=im[a]-vi;re[a]+=vr;im[a]+=vi;const t=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=t;}}}
+ if(inv)for(let i=0;i<n;i++){re[i]/=n;im[i]/=n;}}
+const NN=4096,TW=4e-3,FS=NN/TW,FC=40e3,FMSG=2e3,BREF=16e3,RB=8e3,MAM=0.8,BETA=5,KC=FC*TW;
+function genAnalog(kind){const s=new Float64Array(NN);for(let i=0;i<NN;i++){const t=i/FS;s[i]=kind==='am'?(1+MAM*Math.cos(2*Math.PI*FMSG*t))*Math.cos(2*Math.PI*FC*t):Math.cos(2*Math.PI*FC*t+BETA*Math.sin(2*Math.PI*FMSG*t));}return s;}
+function lpf(x,kmax){const re=Float64Array.from(x),im=new Float64Array(NN);fft(re,im,false);for(let k=0;k<NN;k++){const kk=k<=NN/2?k:NN-k;if(kk>kmax||kk===0){re[k]=0;im[k]=0;}}fft(re,im,true);return re;}
+function analogSim(kind,cnrDb,jsDb,jam,trace){
+  if(!analogSim.ref){analogSim.ref={};analogSim('am',400,-90,'off');analogSim('fm',400,-90,'off');}
+  const s=genAnalog(kind);let S=0;for(let i=0;i<NN;i++)S+=s[i]*s[i];S/=NN;
+  const N0=S/(dB(cnrDb)*BREF),sg=Math.sqrt(N0*FS/2),js=dB(jsDb),r=new Float64Array(NN);
+  for(let i=0;i<NN;i++)r[i]=s[i]+gauss()*sg;
+  if(jam==='noise'){const sj=Math.sqrt(js*S/BREF*FS/2);for(let i=0;i<NN;i++)r[i]+=gauss()*sj;}
+  else if(jam==='tone0'||jam==='tone3'){const f=FC+(jam==='tone3'?3e3:0),B=Math.sqrt(2*js*S),ph=Math.random()*6.283;for(let i=0;i<NN;i++)r[i]+=B*Math.cos(2*Math.PI*f*i/FS+ph);}
+  const bw=(kind==='am'?5:14)*TW*1e3,re=Float64Array.from(r),im=new Float64Array(NN);fft(re,im,false);
+  const zr=new Float64Array(NN),zi=new Float64Array(NN);for(let k=KC-bw;k<=KC+bw;k++){const idx=(k-KC+NN)%NN;zr[idx]=re[k];zi[idx]=im[k];}
+  fft(zr,zi,true);for(let i=0;i<NN;i++){zr[i]*=2;zi[i]*=2;}
+  let out=new Float64Array(NN);
+  if(kind==='am'){for(let i=0;i<NN;i++)out[i]=Math.hypot(zr[i],zi[i]);}
+  else{for(let i=0;i<NN-1;i++){const a=zr[i+1]*zr[i]+zi[i+1]*zi[i],b=zi[i+1]*zr[i]-zr[i+1]*zi[i];out[i]=Math.atan2(b,a);}out[NN-1]=out[NN-2];}
+  out=lpf(out,3*TW*1e3);
+  let cc=0,ss=0,oc=0,os=0;for(let i=0;i<NN;i++){const c=Math.cos(2*Math.PI*FMSG*i/FS),sn=Math.sin(2*Math.PI*FMSG*i/FS);cc+=c*c;ss+=sn*sn;oc+=out[i]*c;os+=out[i]*sn;}
+  const ac=oc/cc,as_=os/ss,amp=Math.hypot(ac,as_)||1e-12;
+  if(analogSim.ref&&!analogSim.ref[kind]&&cnrDb>200)analogSim.ref[kind]=amp;
+  const a0=(analogSim.ref&&analogSim.ref[kind])||amp,k=a0/amp;let ps=0,pe=0;
+  for(let i=0;i<NN;i++){const c=Math.cos(2*Math.PI*FMSG*i/FS),sn=Math.sin(2*Math.PI*FMSG*i/FS),p=(ac*c+as_*sn)*k,e=out[i]-p;ps+=p*p;pe+=e*e;}
+  const snr=10*Math.log10(Math.max(ps,1e-30)/Math.max(pe,1e-30));
+  const res={snr,amp:amp/a0};
+  if(trace){const m=[],o=[],ph=Math.atan2(-as_,ac);for(let i=0;i<NN;i+=Math.round(NN/512)){m.push(Math.cos(2*Math.PI*FMSG*i/FS+ph));o.push(out[i]/a0);}res.msg=m;res.out=o;}
+  return res;}
+function sinc(x){return Math.abs(x)<1e-9?1:Math.sin(Math.PI*x)/(Math.PI*x);}
+function digitalBER(kind,cnrDb,jsDb,jam,nb,rec){
+  const cnr=dB(cnrDb),gam=cnr*BREF/RB,js=dB(jsDb);let n0=1/gam;if(jam==='noise')n0*=(1+js*cnr);
+  const sd=Math.sqrt(n0/2),rho=Math.sqrt(js),T=1/RB,off=jam==='tone3'?3e3:0,tone=(jam==='tone0'||jam==='tone3');let ph=Math.random()*6.283,err=0,bits=0;const sent=[],got=[];
+  if(kind==='bpsk'){const re=tone?rho*sinc(off*T):0;for(let i=0;i<nb;i++){const b=Math.random()<0.5?1:0;ph+=0.7;const r=(b?1:-1)+gauss()*sd+re*Math.cos(ph);if((r>0?1:0)!==b)err++;if(rec&&sent.length<rec){sent.push(b);got.push(r>0?1:0);}bits++;}}
+  else if(kind==='qpsk'){const re=tone?rho*Math.SQRT2*sinc(off*2*T):0;for(let i=0;i<nb;i+=2){ph+=0.7;const b1=Math.random()<0.5?1:0,b2=Math.random()<0.5?1:0;const ri=(b1?1:-1)+gauss()*sd+re*Math.cos(ph),rq=(b2?1:-1)+gauss()*sd+re*Math.sin(ph);if((ri>0?1:0)!==b1)err++;if((rq>0?1:0)!==b2)err++;if(rec&&sent.length<rec){sent.push(b1,b2);got.push(ri>0?1:0,rq>0?1:0);}bits+=2;}}
+  else if(kind==='ask'){const re=tone?rho*sinc(off*T):0;for(let i=0;i<nb;i++){const b=Math.random()<0.5?1:0;ph+=0.7;const a=b?Math.SQRT2:0,x=a+gauss()*sd+re*Math.cos(ph),y=gauss()*sd+re*Math.sin(ph);const g=Math.hypot(x,y)>Math.SQRT1_2?1:0;if(g!==b)err++;if(rec&&sent.length<rec){sent.push(b);got.push(g);}bits++;}}
+  else if(kind==='fsk'){const rm=tone?rho*sinc((off-4e3)*T):0,rs=tone?rho*sinc((off+4e3)*T):0;for(let i=0;i<nb;i++){const b=Math.random()<0.5?1:0;ph+=0.7;const th=Math.random()*6.283;
+    const mx=(b?Math.cos(th):0)+gauss()*sd+rm*Math.cos(ph),my=(b?Math.sin(th):0)+gauss()*sd+rm*Math.sin(ph),sx=(b?0:Math.cos(th))+gauss()*sd+rs*Math.cos(ph),sy=(b?0:Math.sin(th))+gauss()*sd+rs*Math.sin(ph);
+    const g=Math.hypot(mx,my)>Math.hypot(sx,sy)?1:0;if(g!==b)err++;if(rec&&sent.length<rec){sent.push(b);got.push(g);}bits++;}}
+  return {ber:err/Math.max(1,bits),bits,err,sent,got};}
+
+
+/* ===== new tabs: modulation comparison + jamming effects ===== */
+const $$=id=>document.getElementById(id);
+const CT=1e-3,CN=4096,CFS=CN/CT,TAU=2*Math.PI;
+const MC=(function(){
+  let C={m:0.8,b:5,bits:[1,0,1,1,0,0,1,0],sel:'fm'};
+  const ROWS=[['msg','MESSAGE: 2 kHz tone'],['am','AM'],['fm','FM'],['bits','MESSAGE: 8 bits'],['ask','ASK (on-off)'],['fsk','FSK'],['bpsk','BPSK'],['qpsk','QPSK']];
+  const QMAP=[[0,0,45],[0,1,135],[1,1,225],[1,0,315]];
+  function qphase(b1,b2){for(const q of QMAP)if(q[0]===b1&&q[1]===b2)return q[2]*Math.PI/180;return 0;}
+  function gen(kind,Tw,bitsArr){Tw=Tw||CT;const bits=bitsArr||C.bits,fs=CN/Tw,s=new Float64Array(CN);let ph=0;
+    for(let i=0;i<CN;i++){const t=i/fs,u=t/Tw,bi=Math.min(7,Math.floor(u*8)),b=bits[bi],car=TAU*40e3*t;let v=0;
+      switch(kind){
+        case 'msg':v=Math.cos(TAU*2e3*t);break;
+        case 'am':v=(1+C.m*Math.cos(TAU*2e3*t))*Math.cos(car);break;
+        case 'fm':v=Math.cos(car+C.b*Math.sin(TAU*2e3*t));break;
+        case 'bits':v=b;break;
+        case 'ask':v=b?Math.cos(car):0;break;
+        case 'fsk':ph+=TAU*(40e3+(b?4e3:-4e3))/fs;v=Math.cos(ph);break;
+        case 'bpsk':v=Math.cos(car+(b?0:Math.PI));break;
+        case 'qpsk':{const si=Math.min(3,Math.floor(u*4));v=Math.cos(car+qphase(bits[2*si],bits[2*si+1]));break;}}
+      s[i]=v;}
+    return s;}
+  function draw(){const cv=$$('cmpW');if(!cv)return;const c=cv.getContext('2d'),W=480,H=600,RH=H/8;c.setTransform(1,0,0,1,0,0);c.fillStyle='#04080e';c.fillRect(0,0,W,H);
+    ROWS.forEach((r,i)=>{const y0=i*RH,s=gen(r[0]),mid=y0+RH/2+6,amp=RH*0.32;
+      if(r[0]===C.sel){c.fillStyle='rgba(0,212,255,.10)';c.fillRect(0,y0,W,RH);}
+      c.strokeStyle='#14263a';c.lineWidth=1;c.beginPath();c.moveTo(0,y0+RH);c.lineTo(W,y0+RH);c.stroke();
+      const dig=['bits','ask','fsk','bpsk','qpsk'].includes(r[0]);
+      if(dig){c.strokeStyle='rgba(125,146,169,.3)';c.setLineDash([3,4]);const n=r[0]==='qpsk'?4:8;for(let k=1;k<n;k++){const x=k/n*W;c.beginPath();c.moveTo(x,y0+14);c.lineTo(x,y0+RH);c.stroke();}c.setLineDash([]);}
+      c.strokeStyle=r[0]==='msg'||r[0]==='bits'?'#7d92a9':({am:'#00d4ff',fm:'#00d4ff'}[r[0]]||'#00ff88');c.lineWidth=1.6;c.beginPath();
+      for(let x=0;x<W;x++){const v=s[Math.floor(x/W*CN)],y=r[0]==='bits'?mid+amp*0.9-v*amp*1.7:mid-v*amp;x?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();
+      c.fillStyle='#e9f1f9';c.font='bold 11px "Share Tech Mono"';c.textAlign='left';c.fillText(r[1],6,y0+12);
+      if(r[0]==='bits'){c.fillStyle='#ffb300';for(let k=0;k<8;k++){c.textAlign='center';c.fillText(String(C.bits[k]),(k+0.5)/8*W,y0+RH-4);}}
+      if(r[0]==='qpsk'){c.fillStyle='#ffb300';for(let k=0;k<4;k++){c.textAlign='center';c.fillText(String(C.bits[2*k])+String(C.bits[2*k+1]),(k+0.5)/4*W,y0+RH-4);}}
+    });
+    spec();}
+  function spec(){const cv=$$('cmpS');if(!cv)return;const c=cv.getContext('2d'),W=480,H=230;c.setTransform(1,0,0,1,0,0);c.fillStyle='#04080e';c.fillRect(0,0,W,H);
+    const kind=C.sel;if(kind==='msg'||kind==='bits'){c.fillStyle='#7d92a9';c.font='13px "Share Tech Mono"';c.textAlign='center';c.fillText('Tap a modulated row to see its spectrum',W/2,H/2);$$('spTitle').textContent='SPECTRUM';$$('spNote').textContent='The message itself sits near zero frequency. Modulation moves it up around the carrier at 40 kHz.';return;}
+    const analog=(kind==='am'||kind==='fm'),Tw=analog?4e-3:CT,binK=Tw*1000;let pw=new Float64Array(CN/2);
+    const runs=analog?1:24;for(let r=0;r<runs;r++){const bits=analog?null:Array.from({length:8},()=>Math.random()<0.5?1:0),s=gen(kind,Tw,bits),re=new Float64Array(CN),im=new Float64Array(CN);for(let i=0;i<CN;i++)re[i]=s[i]*(0.5-0.5*Math.cos(TAU*i/CN));fft(re,im,false);for(let k=0;k<CN/2;k++)pw[k]+=re[k]*re[k]+im[k]*im[k];}
+    const mag=Array.from(pw,v=>Math.sqrt(v));let mx=1e-12;mag.forEach(m=>{if(m>mx)mx=m;});
+    const f0=10,f1=70,X=f=>(f-f0)/(f1-f0)*W,Y=d=>10+d/60*(H-40);
+    c.strokeStyle='#14263a';c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='center';for(let f=f0;f<=f1;f+=10){c.beginPath();c.moveTo(X(f),10);c.lineTo(X(f),H-26);c.stroke();c.fillText(f+' kHz',X(f),H-12);}
+    c.textAlign='right';for(let d=0;d<=60;d+=20){c.beginPath();c.moveTo(0,Y(d));c.lineTo(W,Y(d));c.stroke();c.fillText('-'+d,W-3,Y(d)-2);}
+    c.strokeStyle=kind==='am'||kind==='fm'?'#00d4ff':'#00ff88';c.lineWidth=1.6;c.beginPath();let st=false;
+    for(let k=Math.floor(f0*binK);k<=f1*binK;k++){const d=Math.max(-60,20*Math.log10(mag[k]/mx+1e-12)),x=X(k/binK),y=Y(-d);st?c.lineTo(x,y):c.moveTo(x,y);st=true;}c.stroke();
+    const bw={am:2*2,fm:2*(C.b+1)*2,ask:16,fsk:24,bpsk:16,qpsk:8}[kind];
+    c.strokeStyle='#ffb300';c.lineWidth=2;c.beginPath();c.moveTo(X(40-bw/2),20);c.lineTo(X(40+bw/2),20);c.moveTo(X(40-bw/2),14);c.lineTo(X(40-bw/2),26);c.moveTo(X(40+bw/2),14);c.lineTo(X(40+bw/2),26);c.stroke();c.fillStyle='#ffb300';c.textAlign='center';c.font='11px "Share Tech Mono"';c.fillText('about '+bw+' kHz',X(40),36);
+    const row=ROWS.find(r=>r[0]===kind);$$('spTitle').textContent='SPECTRUM: '+row[1].toUpperCase();
+    const N={am:'The carrier plus two sidebands, each one message frequency (2 kHz) away. Bandwidth is twice the message frequency. Deeper modulation makes the sidebands stronger; above 1.0 it overmodulates and distorts.',
+      fm:'A carrier surrounded by many sidebands spaced 2 kHz apart. The signal spreads over about 2 x (deviation + message frequency). Raise the FM index and it gets much wider but cleaner against noise.',
+      ask:'The on-off keying spreads energy on both sides of the carrier in a sinc shape, about twice the bit rate wide, with a strong carrier line.',
+      fsk:'Two energy lumps, one at each of the two tones (36 and 44 kHz), because the signal jumps between them.',
+      bpsk:'A sinc-shaped lump centered on the carrier, about twice the bit rate wide, with no separate carrier line because the phase flips instead.',
+      qpsk:'The same sinc shape as BPSK but half as wide, because each symbol carries two bits and the symbol rate is half the bit rate.'}[kind];$$('spNote').textContent=N+(analog?'':' (Averaged over random data, so the shape is the typical spectrum rather than one pattern.)');}
+  function bitChips(){$$('bitC').innerHTML=C.bits.map((b,i)=>'<button class="chip'+(b?' on':'')+'" onclick="MC.flip('+i+')">'+b+'</button>').join('');}
+  function table(){const fmt={am:'2 x message frequency = 4 kHz',fm:'2 x (deviation + message) = '+(2*(C.b+1)*2)+' kHz',ask:'about 2 x bit rate = 16 kHz',fsk:'tone spacing + 2 x bit rate = 24 kHz',bpsk:'about 2 x bit rate = 16 kHz',qpsk:'about the bit rate = 8 kHz'};
+    const rows=[['AM','Analog',fmt.am,'Poor. Noise adds straight to the audio.','A tone near the carrier makes a whistle.'],['FM','Analog',fmt.fm,'Good until a threshold. Wide bandwidth buys clean audio.','Capture effect: the stronger signal takes over.'],
+      ['ASK','Digital, 1 bit/symbol',fmt.ask,'Poor. Must tell on from off.','A tone on the carrier fills the off bits.'],['FSK','Digital, 1 bit/symbol',fmt.fsk,'Fair. Compares two frequencies.','A tone near one of the two frequencies forces that bit.'],
+      ['BPSK','Digital, 1 bit/symbol',fmt.bpsk,'Best of the simple digital types.','Needs a phase reference. A strong tone on the carrier shifts every symbol.'],['QPSK','Digital, 2 bits/symbol',fmt.qpsk,'Same bit error rate as BPSK per unit of energy per bit.','Less margin to a tone than BPSK. Needs a phase reference.']];
+    $$('cmpT').innerHTML='<tr><th>SCHEME</th><th>CARRIES</th><th>BANDWIDTH</th><th>VS NOISE</th><th>WEAK SPOT</th></tr>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td></tr>').join('');}
+  function pick(e){const cv=$$('cmpW'),r=cv.getBoundingClientRect(),y=(e.clientY-r.top)/r.height*600,i=Math.min(7,Math.floor(y/75));C.sel=ROWS[i][0];draw();}
+  function init(){bitChips();table();$$('cmpW').addEventListener('click',pick);draw();}
+  return {init,draw,flip(i){C.bits[i]=C.bits[i]?0:1;bitChips();draw();},set(k,v){C[k]=Number(v);if(k==='m')$$('cMV').textContent=Number(v).toFixed(2);else $$('cBV').textContent=Number(v).toFixed(1);table();draw();}};
+})();
+
+const MJ=(function(){
+  const JT=[['noise','NOISE'],['tone0','TONE ON CARRIER'],['tone3','TONE +3 kHz']],SC=[['am','AM'],['fm','FM'],['ask','ASK'],['fsk','FSK'],['bpsk','BPSK'],['qpsk','QPSK']];
+  let J={cnr:25,js:-12,jam:'noise',sch:'fm'},tm=null,bt=null,brk={},brkKey='';
+  const isA=k=>k==='am'||k==='fm';
+  const WHY={
+    am:{noise:'AM has no protection against noise. Noise inside its 10 kHz band goes straight into the audio, so quality falls roughly 1 dB for every 1 dB of added jamming.',tone0:'A steady tone right on the carrier barely hurts AM voice. The detector follows changes in strength, and the tone only adds a steady level. It fades when the tone nearly cancels the carrier.',tone3:'A tone off the carrier but inside the passband beats against the carrier and makes a whistle at the difference frequency. That is the classic way to jam AM voice.'},
+    fm:{noise:'Wideband FM is far cleaner than AM until the jammer gets within roughly 10 dB of the signal. Then clicks flood the audio and quality falls off a cliff. This is the FM threshold.',tone0:'Capture effect: an FM receiver follows whichever signal is stronger. A weaker tone does little. Once the tone is stronger, the receiver locks onto it and your message disappears.',tone3:'A tone inside the band adds a whistle that grows with jammer power. Near 0 dB J/S the capture effect takes over and the message is lost.'},
+    ask:{noise:'ASK must decide whether a carrier is present, so it is among the first digital types to break as noise rises.',tone0:'A tone on the carrier frequency makes the carrier look present all the time, so every off bit becomes an on bit.',tone3:'A tone close to the carrier fills in the off bits once it is strong enough to look like a signal.'},
+    fsk:{noise:'FSK compares energy at two frequencies. It needs more signal than the phase-based types, but it does not need to know the signal phase.',tone0:'Sitting between the two FSK tones, a carrier tone feeds both detectors alike, so it takes close to equal power to the signal before decisions break.',tone3:'A tone near one of the two FSK frequencies feeds that detector and forces that bit value.'},
+    bpsk:{noise:'BPSK gets the lowest bit error rate of the simple types for the same power, because its two points are as far apart as they can be.',tone0:'A tone at the carrier shifts every symbol toward one decision boundary. Errors start when the shift nears the distance to the boundary, then grow fast.',tone3:'A tone off the carrier averages out over each bit, so it takes more power to hurt BPSK than a tone right on the carrier.'},
+    qpsk:{noise:'QPSK carries twice the data in the same bandwidth and has the same bit error rate as BPSK for the same energy per bit.',tone0:'A tone on the carrier shifts both I and Q. At the same total power, QPSK has less margin to this jammer than BPSK.',tone3:'A tone off the carrier averages out over the longer QPSK symbol, so it takes more power to hurt QPSK than a tone on the carrier.'}};
+  function quality(k,jam,js,cnr,reps){if(isA(k)){let a=0;for(let i=0;i<reps;i++)a+=analogSim(k,cnr,js,jam).snr;return a/reps;}return digitalBER(k,cnr,js,jam,5000).ber;}
+  const ok=(k,v)=>isA(k)?v>=15:v<1e-3;
+  const judge=(k,v)=>isA(k)?(v>=15?'good':v>=8?'mid':'badc'):(v<1e-3?'good':v<1e-2?'mid':'badc');
+  const fmt=(k,v)=>isA(k)?Math.round(v)+' dB':(v===0?'<2e-4':v.toExponential(0));
+  function build(){$$('jamT').innerHTML=JT.map(j=>'<button class="chip jam'+(j[0]===J.jam?' on':'')+'" onclick="MJ.jam(\''+j[0]+'\')">'+j[1]+'</button>').join('');}
+  function matrix(){let h='<tr><th></th>'+JT.map(j=>'<th>'+j[1]+'</th>').join('')+'</tr>';
+    SC.forEach(s=>{h+='<tr class="'+(s[0]===J.sch?'sel':'')+'"><td class="nm" onclick="MJ.sch(\''+s[0]+'\')">'+s[1]+'</td>';
+      JT.forEach(j=>{const v=quality(s[0],j[0],J.js,J.cnr,2);h+='<td class="'+judge(s[0],v)+(j[0]===J.jam?' cur':'')+'">'+fmt(s[0],v)+'</td>';});h+='</tr>';});
+    $$('mx').innerHTML=h;}
+  function detail(){const cv=$$('jDet'),c=cv.getContext('2d'),W=480,H=210,k=J.sch;c.setTransform(1,0,0,1,0,0);c.fillStyle='#04080e';c.fillRect(0,0,W,H);
+    const name=SC.find(s=>s[0]===k)[1],jn=JT.find(j=>j[0]===J.jam)[1];$$('dTitle').textContent='DETAIL: '+name+' vs '+jn;$$('jWhy').textContent=WHY[k][J.jam];
+    c.fillStyle='#7d92a9';c.font='11px "Share Tech Mono"';c.textAlign='left';
+    if(isA(k)){const r=analogSim(k,J.cnr,J.js,J.jam,true);c.strokeStyle='#14263a';c.beginPath();c.moveTo(0,H/2);c.lineTo(W,H/2);c.stroke();
+      const draw=(arr,col,lw)=>{c.strokeStyle=col;c.lineWidth=lw;c.beginPath();arr.forEach((v,i)=>{const x=i/(arr.length-1)*W,y=H/2-Math.max(-2.2,Math.min(2.2,v))*(H*0.2);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();};
+      draw(r.msg,'#00ff88',2);draw(r.out,'#ffb300',1.4);
+      c.fillStyle='#00ff88';c.fillText('message sent',6,14);c.fillStyle='#ffb300';c.fillText('what the receiver recovers',110,14);
+      c.fillStyle=ok(k,r.snr)?'#00ff88':'#ff4444';c.textAlign='right';c.fillText('output SNR '+Math.round(r.snr)+' dB   '+(ok(k,r.snr)?'USABLE':'LOST')+'   level '+Math.round(r.amp*100)+'% of normal',W-6,14);}
+    else{const r=digitalBER(k,J.cnr,J.js,J.jam,6000,32),n=32,bw=W/n;
+      c.fillStyle='#7d92a9';c.textAlign='left';c.fillText('bits sent',6,24);c.fillText('bits decoded (wrong ones in red)',6,100);
+      for(let i=0;i<n;i++){const s=r.sent[i],g=r.got[i],x=i*bw;c.fillStyle='#143a2a';c.fillRect(x+2,34,bw-4,40);c.fillStyle='#e9f7ef';c.font='bold 16px "Share Tech Mono"';c.textAlign='center';c.fillText(String(s),x+bw/2,60);
+        c.fillStyle=g===s?'#143a2a':'#5a1a1a';c.fillRect(x+2,110,bw-4,40);c.fillStyle=g===s?'#e9f7ef':'#ff6666';c.fillText(String(g),x+bw/2,136);}
+      c.textAlign='right';c.font='11px "Share Tech Mono"';c.fillStyle=ok(k,r.ber)?'#00ff88':'#ff4444';c.fillText('bit error rate '+(r.err===0?'<2e-4':r.ber.toExponential(1))+'   '+(ok(k,r.ber)?'USABLE':'DEGRADED'),W-6,14);
+      c.fillStyle='#7d92a9';c.textAlign='left';c.fillText('(first 32 bits of a 6000-bit run)',6,190);}}
+  function breakChart(){const cv=$$('jBrk'),c=cv.getContext('2d'),W=480,H=260,key=J.cnr+'|'+J.jam;c.setTransform(1,0,0,1,0,0);c.fillStyle='#04080e';c.fillRect(0,0,W,H);
+    const L0=60,X=js=>L0+(js+30)/54*(W-L0-20);c.strokeStyle='#14263a';c.fillStyle='#7d92a9';c.font='10px "Share Tech Mono"';c.textAlign='center';
+    for(let js=-30;js<=24;js+=6){c.beginPath();c.moveTo(X(js),8);c.lineTo(X(js),H-26);c.stroke();c.fillText(js,X(js),H-12);}c.fillText('jammer / signal (dB): further right = harder to jam',L0+(W-L0)/2-10,H-1);
+    SC.forEach((s,i)=>{const y=14+i*38,v=brk[key]&&brk[key][s[0]];c.fillStyle='#e9f1f9';c.font='bold 12px "Share Tech Mono"';c.textAlign='left';c.fillText(s[1],8,y+19);
+      if(v===undefined){c.fillStyle='#7d92a9';c.font='11px "Share Tech Mono"';c.fillText('computing...',L0+6,y+19);return;}
+      const end=v===null?24:v;c.fillStyle=isA(s[0])?'#00d4ff':'#00ff88';c.fillRect(L0,y+4,Math.max(2,X(end)-L0),24);
+      c.fillStyle='#04080e';c.font='bold 11px "Share Tech Mono"';c.textAlign='right';const lbl=v===null?'> +24':v<=-30?'< -30':(v>0?'+':'')+v+' dB';c.fillText(lbl,Math.max(L0+44,X(end)-4),y+21);});
+    c.strokeStyle='#ffb300';c.lineWidth=2;c.setLineDash([4,3]);c.beginPath();c.moveTo(X(J.js),6);c.lineTo(X(J.js),H-26);c.stroke();c.setLineDash([]);c.fillStyle='#ffb300';c.textAlign='left';c.font='10px "Share Tech Mono"';c.fillText('now',X(J.js)+3,16);
+    $$('brkInfo').textContent=JT.find(j=>j[0]===J.jam)[1].toLowerCase()+' at '+J.cnr+' dB, about \u00b13 dB';}
+  function breakCalc(){const key=J.cnr+'|'+J.jam;if(brk[key]&&Object.keys(brk[key]).length===6){breakChart();return;}brk[key]=brk[key]||{};breakChart();
+    let i=0;const step=()=>{if(key!==J.cnr+'|'+J.jam||i>=SC.length)return;const k=SC[i][0];let found=null,prevFail=null;for(let js=-30;js<=24;js+=3){const v=quality(k,J.jam,js,J.cnr,2),f=!ok(k,v);if(f&&prevFail!==null){found=prevFail;break;}prevFail=f?js:null;}if(found===null&&prevFail!==null)found=prevFail;
+      brk[key][k]=found;i++;breakChart();bt=setTimeout(step,15);};clearTimeout(bt);bt=setTimeout(step,30);}
+  function all(){matrix();detail();breakChart();}
+  function later(){clearTimeout(tm);tm=setTimeout(all,90);}
+  function init(){build();all();breakCalc();}
+  return {init,refresh(){all();breakCalc();},
+    set(k,v){J[k]=Number(v);$$(k==='cnr'?'jCV':'jSV').textContent=J[k]+' dB';if(k==='cnr'){breakCalc();}breakChart();later();},
+    jam(v){J.jam=v;build();all();breakCalc();},sch(v){J.sch=v;all();}};
+})();
+
+/* tab switching */
+window.__tab='cmp';
+function showMainTab(t){window.__tab=t;document.querySelectorAll('#mainTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  ['cmp','jam','lab'].forEach(k=>$$('tab-'+k).style.display=k===t?'':'none');
+  if(t==='cmp')MC.draw();if(t==='jam')MJ.refresh();}
+document.querySelectorAll('#mainTabs button').forEach(b=>b.onclick=()=>showMainTab(b.dataset.t));
+
+window.MC=MC;window.MJ=MJ;window.showMainTab=showMainTab;
+MC.init();MJ.init();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>

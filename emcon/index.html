@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMCON and Signature Management Lab | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:170px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:660px;margin:0 auto;padding:10px 12px 20px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:26px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:3px 0 4px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px;line-height:1.5}
+.lesson{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px}
+.lt{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.lk{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}.lo{font-size:18px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px;white-space:nowrap}.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pill{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border:1px solid var(--line);color:var(--dim)}.pill.ok{background:var(--green);border-color:var(--green);color:#00180d}
+.lm{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;min-height:17px}.lm.good{color:var(--green)}.lm.err{color:var(--red)}
+.cardx{background:var(--panel);border:1px solid var(--line);margin:10px 0}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2);gap:8px;flex-wrap:wrap}
+.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 9px;cursor:pointer;min-height:34px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.off.on{background:#1a1f26;color:var(--dim);border-color:var(--dim)}
+.chip.nrm.on{background:var(--red-dark);color:var(--red);border-color:var(--red)}
+.chip.rst.on{background:var(--amber-dark);color:var(--amber);border-color:var(--amber)}
+.chip.sch.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.go{border-color:var(--green);color:var(--green)}.chip.warn{border-color:var(--amber);color:var(--amber)}
+canvas.cv{display:block;width:100%;height:auto;background:#000}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:11.5px}
+.stat>div{background:var(--panel2);border:1px solid var(--line);padding:6px 8px;line-height:1.5}.stat b{display:block;font-weight:400;color:var(--dim);font-size:9.5px;letter-spacing:.1em}
+.stat .bar{height:7px;background:#0a1018;margin-top:3px}.stat .bar i{display:block;height:100%}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}.row>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:74px}
+.em{border-bottom:1px solid var(--line);padding:6px 0}.em .nm{display:flex;justify-content:space-between;gap:6px;font-size:16px;font-weight:600}.em .nm span{font-family:'Share Tech Mono',monospace;font-size:10.5px;color:var(--dim);font-weight:400}
+table.mg{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:11.5px}table.mg th{font-weight:400;color:var(--dim);font-size:10px;padding:4px;text-align:center;border-bottom:1px solid var(--line)}table.mg td{padding:5px 4px;text-align:center;border-bottom:1px solid var(--line)}table.mg td.nm{text-align:left;color:var(--text)}
+.hot{color:var(--red)}.warm{color:var(--amber)}.cool{color:var(--green)}.off{color:var(--dim)}
+.log{max-height:210px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:11.5px;line-height:1.5;padding:6px 10px}.log div{border-bottom:1px solid var(--line);padding:3px 0}.log b{color:var(--red);font-weight:400}
+.q{margin:8px 0}.q .k{display:block;margin-bottom:4px;color:var(--amber)}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:11px 14px;cursor:pointer;margin:8px 6px 0 0}.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:60;padding:14px}.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}.sheet p{font-size:16.5px;line-height:1.38}
+.lbtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);padding:9px 12px;margin-top:8px;cursor:pointer;color:var(--text);font-family:'Rajdhani',sans-serif}
+.lbtn b{display:block;font-size:18px;letter-spacing:.03em;text-transform:uppercase}.lbtn span{font-size:14.5px;color:var(--dim)}.lbtn.done{border-left-color:var(--cyan)}
+.acc summary{cursor:pointer;list-style:none;padding:9px 10px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--cyan);background:var(--panel2)}.acc summary::-webkit-details-marker{display:none}
+.acc .in{padding:8px 10px 10px;font-size:16px;line-height:1.4}.acc .in h4{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--amber);font-weight:400;margin:10px 0 3px}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+<style>.learn{display:block;margin:0 0 12px;padding:9px 13px;border:1px solid var(--line);border-left:3px solid #00d4ff;border-radius:8px;background:var(--panel);color:var(--text);text-decoration:none;font-size:13px;line-height:1.4}.learn b{color:#00d4ff}.learn:hover{border-color:#00d4ff}</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>EMCON &amp; Signature Lab</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+<a class="learn" href="../emconguide/"><b>&#128214; Learn first:</b> EMCON Explained &mdash; the interactive textbook for this tool</a>
+<div class="hero"><div class="eyebrow">EW / OPSEC &middot; HANDS-ON</div><h2>EMCON &amp; Signature Lab</h2>
+<p>You run a command post. Everything that transmits tells the enemy something. Set what each emitter does, pick where you sit, and see how well the enemy can find you, against how well you can still command.</p>
+<span class="sim">TRAINING ABSTRACTION: SIMPLIFIED PROPAGATION AND DIRECTION FINDING, GENERIC EMITTERS AND SENSORS &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+
+<div class="lesson"><div class="lt"><div><div class="lk" id="lk">LAB 1</div><div class="lo" id="lo"></div></div><div style="white-space:nowrap"><button class="hbtn" onclick="hint()">HINT</button><button class="hbtn c" onclick="openLabs()">LABS</button></div></div>
+<div class="pills" id="pills"></div><div class="lm" id="lm"></div><div id="qbox"></div></div>
+
+<div class="cardx"><div class="ch"><b>THE MAP (&plusmn;6 km)</b><span class="k" id="clock">T+00:00</span></div>
+<canvas class="cv" id="map" width="480" height="400"></canvas>
+<div class="stat"><div><b>COMMAND AND CONTROL</b><span id="c2t">0%</span><div class="bar"><i id="c2b" style="width:0;background:var(--green)"></i></div></div><div><b>WHAT THE ENEMY HAS</b><span id="enT">nothing</span><div class="bar"><i id="enB" style="width:0;background:var(--red)"></i></div></div></div>
+<div class="cb"><div class="chips"><button class="chip go" id="runB" onclick="runToggle()">&#9654; START</button><button class="chip warn" onclick="resetRun()">RESET</button><button class="chip" id="dispB" onclick="manualDisplace()">DISPLACE (8 min silent)</button></div>
+<div class="row"><label>CLOCK SPEED</label><div class="chips" id="spd"></div></div></div></div>
+
+<div class="cardx"><div class="ch"><b>YOUR EMITTERS</b><span class="k">C2 value in brackets</span></div><div class="cb" id="posture"></div>
+<div class="cb"><div class="row"><label>WHERE YOU SIT</label><div class="chips" id="siteC"></div></div><div class="row"><label>DISPLACE</label><div class="chips" id="dispC"></div></div></div></div>
+
+<div class="cardx"><div class="ch"><b>PREDICTED RISK, NEXT 3 HOURS</b><span class="k" id="riskInfo"></span></div><div class="stat" id="risk"></div><div class="cb"><div class="k" style="line-height:1.5">From 120 simulated three-hour missions with exactly this plan. Strike risk is the share of missions in which the enemy located the command post closely enough to fire on it.</div></div></div>
+
+<div class="cardx"><div class="ch"><b>WHAT THE ENEMY SENSORS CAN HEAR</b><span class="k">dB above their detection limit</span></div><div class="cb"><table class="mg" id="mg"></table><div class="k" style="margin-top:6px;line-height:1.5"><span class="hot">red</span>: easily heard &nbsp; <span class="warm">amber</span>: marginal &nbsp; <span class="cool">green</span>: below the limit &nbsp; Sensor S1 and S2 are the enemy's two direction-finding stations.</div></div></div>
+
+<div class="cardx"><div class="ch"><b>ENEMY INTERCEPT LOG</b></div><div class="log" id="log"></div></div>
+
+<div class="cardx"><details class="acc"><summary>HOW IT WORKS AND WHAT IS LEFT OUT</summary><div class="in">
+<h4>EMCON</h4><p>Emission control is the planned, selective use of your emitters to keep command and control working while making you harder to detect. It is a trade, and the commander decides where to set it.</p>
+<h4>HOW THE ENEMY FINDS YOU</h4><p>Each enemy station listens for your transmissions. If a signal arrives above its detection limit, it takes a bearing. One station gives a line of bearing. Two stations give a fix where the lines cross. The more intercepts, the tighter the fix. Once the fix is tight enough, you can be engaged.</p>
+<h4>WHAT SETS YOUR SIGNATURE</h4><p><b>Power</b> and <b>distance</b> decide whether a signal reaches the sensor. <b>Time on the air</b> decides how many chances the enemy gets. <b>Terrain</b> between you and a sensor can block it. <b>Frequency</b> matters: HF and VHF carry far, while 2.4 and 5.8 GHz signals only reach a few kilometers and are blocked easily. <b>Direction</b> matters: a satellite terminal points up, so little of its power reaches a ground sensor.</p>
+<h4>YOUR OPTIONS</h4><p><b>Off</b> removes the emitter. <b>Scheduled</b> means a few short, planned transmissions. <b>Restricted</b> means lower power and brief, disciplined transmissions. <b>Normal</b> is unrestricted use. <b>Displacing</b> moves the command post so the enemy has to start over, but you lose communications while you move.</p>
+<h4>LEFT OUT</h4><p>This is a training abstraction. It uses simplified free-space propagation with a flat penalty for a ridge, two fixed enemy sensors, and generic emitter numbers. It does not model real equipment, real detection ranges, or real direction-finding accuracy, and it leaves out jamming, decoys, deception, and enemy sensors in the air and in space. The four posture settings are a teaching simplification, not doctrinal EMCON levels.</p>
+</div></details></div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<div class="ov" id="ovLabs"><div class="sheet"><div class="k">LABS</div><h2>Pick a lab</h2><div id="labList"></div><button class="btn alt" onclick="closeOv('ovLabs')">CLOSE</button></div></div>
+<div class="ov" id="ovDone"><div class="sheet"><div class="k">LAB COMPLETE</div><h2 id="dH"></h2><p id="dP"></p><button class="btn" onclick="nextLab()">NEXT LAB</button><button class="btn alt" onclick="closeOv('ovDone')">KEEP EXPERIMENTING</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* ============ model ============ */
+const fspl=(f,dm)=>32.44+20*Math.log10(f)+20*Math.log10(Math.max(dm,10)/1000);
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+const SENS=[{n:'S1',x:6200,y:3600},{n:'S2',x:8800,y:-4200}];
+const SITES={A:{n:'Open ground',x:0,y:0},B:{n:'Reverse slope',x:-1500,y:1200},C:{n:'Valley',x:-1200,y:-1500}};
+const HILLS=[{x:1200,y:1900,r:900},{x:1300,y:-2100,r:900}];
+const EMS=[
+ {id:'vhf',n:'VHF vehicle radio',f:50,band:'VHF 50 MHz',w:30,gs:3,sens:-105,id_:'a unit voice net, probably a command post or vehicle net',st:{normal:{p:47,tx:6},restricted:{p:37,tx:1},sched:{p:37,tx:0.1}},cap:{normal:1,restricted:0.7,sched:0.5}},
+ {id:'hf',n:'HF radio',f:8,band:'HF 8 MHz',w:10,gs:3,sens:-105,id_:'a long-range net, probably a link to a headquarters',st:{normal:{p:50,tx:5},restricted:{p:40,tx:1},sched:{p:40,tx:0.1}},cap:{normal:1,restricted:0.7,sched:0.5}},
+ {id:'sat',n:'SATCOM terminal',f:300,band:'UHF 300 MHz, points up',w:25,gs:6,sens:-100,id_:'a satellite terminal, so a command node',st:{normal:{p:25,tx:4},restricted:{p:15,tx:1},sched:{p:15,tx:0.1}},cap:{normal:1,restricted:0.7,sched:0.5}},
+ {id:'dat',n:'Data radio',f:225,band:'UHF 225 MHz',w:20,gs:6,sens:-105,id_:'a digital data node, probably a command or fires node',st:{normal:{p:40,tx:5},restricted:{p:30,tx:1},sched:{p:30,tx:0.1}},cap:{normal:1,restricted:0.7,sched:0.5}},
+ {id:'uas',n:'Drone controller',f:5800,band:'5.8 GHz',w:10,gs:15,sens:-88,id_:'a drone control link, so the operator is nearby',st:{normal:{p:27,tx:30},restricted:{p:20,tx:8},sched:{p:20,tx:1}},cap:{normal:1,restricted:0.6,sched:0.3}},
+ {id:'wifi',n:'Wi-Fi LAN',f:2400,band:'2.4 GHz',w:5,gs:15,sens:-92,id_:'a fixed network, so a command post or camp',st:{normal:{p:27,tx:20},restricted:{p:17,tx:10},sched:{p:17,tx:2}},cap:{normal:1,restricted:0.7,sched:0.4}},
+ {id:'cell',n:'Personal phones',f:1900,band:'Cellular 1.9 GHz',w:0,gs:15,sens:-95,id_:'personal phones, so people and a pattern of life',st:{normal:{p:23,tx:12},restricted:{p:23,tx:0.3},sched:{p:23,tx:0.3}},cap:{normal:1,restricted:1,sched:1}}
+];
+const STATES=[['off','OFF'],['sched','SCHEDULED'],['restricted','RESTRICTED'],['normal','NORMAL']];
+function segHill(ax,ay,bx,by,h){const dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy;let t=((h.x-ax)*dx+(h.y-ay)*dy)/L2;t=Math.max(0,Math.min(1,t));return Math.hypot(ax+dx*t-h.x,ay+dy*t-h.y)<h.r;}
+const terrain=(site,s)=>HILLS.some(h=>segHill(site.x,site.y,s.x,s.y,h))?55:0;
+function margin(e,state,site,s){const sp=e.st[state];if(!sp)return null;const d=Math.hypot(s.x-site.x,s.y-site.y);return sp.p-fspl(e.f,d)-terrain(site,s)+e.gs-e.sens;}
+const pd=m=>1/(1+Math.exp(-(m-3)/2.5));
+const sigma=m=>Math.max(2,Math.min(10,10-m*0.25));
+const DISP_MIN=8;
+function newWorld(site){return {site,t:0,samples:[[],[]],tgt:0,fix:null,lost:false,disp:0,nextSite:site,log:[],seen:{},firstEm:null,fixT:null};}
+function bearingDeg(b){return Math.round(((b*180/Math.PI)%360+360)%360);}
+function step(W,post,nolog){
+  W.t++;if(W.disp>0){W.disp--;if(W.disp===0){W.site=W.nextSite;W.samples=[[],[]];W.tgt=0;W.fix=null;W.seen={};if(!nolog)W.log.unshift({t:W.t,txt:'Command post set up at a new position. The enemy has lost your track.',k:1});}}
+  const site=SITES[W.site];W.got=[false,false];
+  if(W.disp===0)EMS.forEach(e=>{const s=post[e.id];if(!s||s==='off')return;const sp=e.st[s];SENS.forEach((sn,i)=>{const m=margin(e,s,site,sn);if(Math.random()<1-Math.exp(-sp.tx*pd(m))){if(W.got[i]){if(!nolog){const k2=e.id+sn.n;if(!W.seen[k2]){W.seen[k2]=1;if(!W.firstEm)W.firstEm=e.id;W.log.unshift({t:W.t,txt:'<b>'+sn.n+'</b> hears your '+e.n+' ('+e.band+'). Probably '+e.id_+'.'});}}return;}W.got[i]=true;const tb=Math.atan2(site.x-sn.x,site.y-sn.y),sg=sigma(m);W.samples[i].push({b:tb+gauss()*sg*Math.PI/180,sg});
+      if(!nolog){const key=e.id+sn.n;if(!W.seen[key]){W.seen[key]=1;if(!W.firstEm)W.firstEm=e.id;W.log.unshift({t:W.t,txt:'<b>'+sn.n+'</b> hears your '+e.n+' ('+e.band+'), bearing '+bearingDeg(tb+gauss()*sg*Math.PI/180)+'\u00b0. Probably '+e.id_+'.'});}}}});});
+  const NFIX=6;W.fix=null;
+  if(W.samples[0].length>=NFIX&&W.samples[1].length>=NFIX){const st=W.samples.map(a=>({b:a.reduce((x,y)=>x+y.b,0)/a.length,sg:Math.sqrt(a.reduce((x,y)=>x+y.sg*y.sg,0)/a.length)/Math.sqrt(a.length)}));
+    const d=SENS.map(s=>Math.hypot(s.x-site.x,s.y-site.y)),ang=Math.abs(Math.atan2(site.x-SENS[0].x,site.y-SENS[0].y)-Math.atan2(site.x-SENS[1].x,site.y-SENS[1].y)),sa=Math.abs(Math.sin(ang));
+    if(sa>0.17){const R=Math.sqrt(Math.pow(d[0]*st[0].sg*Math.PI/180,2)+Math.pow(d[1]*st[1].sg*Math.PI/180,2))/sa;
+      const d1=[Math.sin(st[0].b),Math.cos(st[0].b)],d2=[Math.sin(st[1].b),Math.cos(st[1].b)],cr=(a,b)=>a[0]*b[1]-a[1]*b[0],den=cr(d1,d2);let px=null,py=null;
+      if(Math.abs(den)>1e-3){const t1=cr([SENS[1].x-SENS[0].x,SENS[1].y-SENS[0].y],d2)/den;px=SENS[0].x+t1*d1[0];py=SENS[0].y+t1*d1[1];}
+      W.fix={R,x:px,y:py,b:[st[0].b,st[1].b]};
+      if(!nolog&&W.fixT===null){W.fixT=W.t;W.log.unshift({t:W.t,txt:'<b>FIX</b> The enemy locates your command post to within about '+Math.round(R)+' m.'+(R<600?' That is close enough to fire on.':'')});}}}
+  if(W.fix&&W.fix.R<600)W.tgt++;else W.tgt=Math.max(0,W.tgt-1);
+  if(W.tgt>=10&&!W.lost){W.lost=true;if(!nolog)W.log.unshift({t:W.t,txt:'<b>STRIKE</b> Fires land on your position.'});}}
+function c2(post){let c=0;EMS.forEach(e=>{const s=post[e.id];if(s&&s!=='off')c+=e.w*e.cap[s];});return c;}
+function risk(post,siteKey,disp,trials,mins){let lost=0,fixed=0;trials=trials||120;mins=mins||180;
+  for(let k=0;k<trials;k++){const W=newWorld(siteKey);let fx=false;for(let m=0;m<mins&&!W.lost;m++){if(disp&&m>0&&m%disp===0&&W.disp===0){W.nextSite=W.site;W.disp=DISP_MIN;}step(W,W.disp>0?{}:post,true);if(W.fix)fx=true;}if(W.lost)lost++;if(fx)fixed++;}
+  const down=disp?DISP_MIN/disp:0;return {strike:lost/trials,fix:fixed/trials,c2:c2(post)*(1-down)};}
+/* ============ state ============ */
+const $=id=>document.getElementById(id);
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';r.setAttribute('data-theme',l?'dark':'light');$('tb').textContent=l?'LIGHT':'DARK';}
+function closeOv(i){$(i).classList.remove('on');}
+let P={vhf:'normal',hf:'normal',sat:'normal',dat:'normal',uas:'normal',wifi:'normal',cell:'normal'},site='A',dispInt=0,W=newWorld('A'),running=false,speed=1,acc=0,lastR=null,riskT=null,lab=-1;
+/* ============ UI ============ */
+function buildPosture(){$('posture').innerHTML=EMS.map(e=>'<div class="em"><div class="nm">'+e.n+'<span>'+e.band+' ['+e.w+']</span></div><div class="chips" style="margin-top:4px">'+STATES.map(s=>'<button class="chip '+({off:'off',sched:'sch',restricted:'rst',normal:'nrm'})[s[0]]+(P[e.id]===s[0]?' on':'')+'" onclick="setP(\''+e.id+'\',\''+s[0]+'\')">'+s[1]+'</button>').join('')+'</div></div>').join('');
+  $('siteC').innerHTML=Object.keys(SITES).map(k=>'<button class="chip'+(site===k?' on':'')+'" onclick="setSite(\''+k+'\')">'+k+': '+SITES[k].n+'</button>').join('');
+  $('dispC').innerHTML=[[0,'NEVER'],[60,'EVERY 60 MIN'],[90,'EVERY 90 MIN']].map(d=>'<button class="chip'+(dispInt===d[0]?' on':'')+'" onclick="setDisp('+d[0]+')">'+d[1]+'</button>').join('');
+  $('spd').innerHTML=[[1,'1 min/s'],[3,'3 min/s'],[10,'10 min/s']].map(d=>'<button class="chip'+(speed===d[0]?' on':'')+'" onclick="setSpeed('+d[0]+')">'+d[1]+'</button>').join('');}
+function setP(id,s){P[id]=s;buildPosture();update();}
+function setSite(k){if(W.disp>0)return;site=k;W=newWorld(k);buildPosture();update();noteSite(k);}
+function setDisp(v){dispInt=v;buildPosture();update();}
+function setSpeed(v){speed=v;buildPosture();}
+function runToggle(){if(W.lost){return;}running=!running;$('runB').innerHTML=running?'&#10074;&#10074; PAUSE':'&#9654; START';}
+function resetRun(){running=false;W=newWorld(site);$('runB').innerHTML='&#9654; START';update();renderLog();draw();}
+function manualDisplace(){if(W.disp>0||W.lost)return;W.nextSite=W.site;W.disp=DISP_MIN;W.log.unshift({t:W.t,txt:'Displacing. All emitters off for '+DISP_MIN+' minutes.',k:1});renderLog();}
+function fmtT(t){return 'T+'+String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+function renderLog(){$('log').innerHTML=W.log.length?W.log.slice(0,40).map(l=>'<div>'+fmtT(l.t)+' '+l.txt+'</div>').join(''):'<div style="color:var(--dim)">Nothing heard yet. Press START to run the clock.</div>';}
+function margins(){const s=SITES[site];let h='<tr><th></th><th>S1</th><th>S2</th></tr>';EMS.forEach(e=>{const st=P[e.id];h+='<tr><td class="nm">'+e.n+'</td>';SENS.forEach(sn=>{if(st==='off'){h+='<td class="off">off</td>';return;}const m=margin(e,st,s,sn);h+='<td class="'+(m>=10?'hot':m>=3?'warm':'cool')+'">'+(m>0?'+':'')+Math.round(m)+'</td>';});h+='</tr>';});$('mg').innerHTML=h;}
+/* ============ map ============ */
+const cv=$('map'),cx=cv.getContext('2d'),SC=0.036,MX=x=>(x+3200)*SC,MY=y=>200-y*SC;
+function draw(){const c=cx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#0a1410';c.fillRect(0,0,480,400);
+  c.strokeStyle='#14281c';c.lineWidth=1;c.fillStyle='#3e5b48';c.font='9px "Share Tech Mono"';for(let k=-2;k<=10;k+=2){c.beginPath();c.moveTo(MX(k*1000),0);c.lineTo(MX(k*1000),400);c.stroke();c.fillText(k+' km',MX(k*1000)+2,10);}for(let k=-5;k<=5;k+=5){c.beginPath();c.moveTo(0,MY(k*1000));c.lineTo(480,MY(k*1000));c.stroke();}
+  HILLS.forEach(h=>{c.fillStyle='rgba(70,95,70,.5)';c.beginPath();c.arc(MX(h.x),MY(h.y),h.r*SC,0,7);c.fill();c.fillStyle='#8aa88e';c.fillText('RIDGE',MX(h.x)-14,MY(h.y)+3);});
+  // enemy lines of bearing
+  SENS.forEach((s,i)=>{const a=W.samples[i];if(!a.length)return;const b=a.reduce((x,y)=>x+y.b,0)/a.length;c.strokeStyle='rgba(255,68,68,'+Math.min(.9,.25+a.length*.08)+')';c.setLineDash([6,4]);c.lineWidth=1.5;c.beginPath();c.moveTo(MX(s.x),MY(s.y));c.lineTo(MX(s.x+Math.sin(b)*16000),MY(s.y+Math.cos(b)*16000));c.stroke();c.setLineDash([]);});
+  if(W.fix&&W.fix.x!==null){const x=MX(W.fix.x),y=MY(W.fix.y);c.strokeStyle='#ff4444';c.lineWidth=2;c.beginPath();c.arc(x,y,Math.max(6,W.fix.R*SC),0,7);c.stroke();c.beginPath();c.moveTo(x-8,y);c.lineTo(x+8,y);c.moveTo(x,y-8);c.lineTo(x,y+8);c.stroke();c.fillStyle='#ff4444';c.font='bold 10px "Share Tech Mono"';c.fillText('ENEMY FIX \u00b1'+Math.round(W.fix.R)+' m',x+10,y-10);}
+  SENS.forEach(s=>{const x=MX(s.x),y=MY(s.y);c.fillStyle='#ff4444';c.beginPath();c.moveTo(x,y-9);c.lineTo(x+8,y+7);c.lineTo(x-8,y+7);c.closePath();c.fill();c.fillStyle='#ffb3b3';c.font='bold 10px "Share Tech Mono"';c.fillText(s.n+' (enemy)',x-24,y+19);});
+  Object.keys(SITES).forEach(k=>{const s=SITES[k],x=MX(s.x),y=MY(s.y),act=W.site===k&&W.disp===0||(W.disp>0&&W.nextSite===k);c.strokeStyle=act?'#00ff88':'#4f6a58';c.lineWidth=act?3:1;c.strokeRect(x-9,y-9,18,18);c.fillStyle=act?'#00ff88':'#7d8f84';c.font='bold 11px "Share Tech Mono"';c.fillText(k,x-4,y+4);c.font='9px "Share Tech Mono"';c.fillText(s.n,x-24,y+22);});
+  const s=SITES[W.site],x=MX(s.x),y=MY(s.y);if(W.disp===0){const st=W.lost?'#ff4444':W.tgt>0?'#ff4444':W.fix?'#ffb300':W.samples[0].length||W.samples[1].length?'#ffb300':'#00ff88';c.fillStyle=st;c.beginPath();c.arc(x,y,6,0,7);c.fill();}else{c.fillStyle='#7d92a9';c.font='bold 10px "Share Tech Mono"';c.fillText('MOVING...',x-24,y-14);}
+  if(W.lost){c.fillStyle='rgba(120,0,0,.55)';c.fillRect(0,150,480,100);c.fillStyle='#fff';c.font='bold 22px "Share Tech Mono"';c.textAlign='center';c.fillText('STRIKE: COMMAND POST LOST',240,205);c.font='12px "Share Tech Mono"';c.fillText('Press RESET to try a different plan',240,228);c.textAlign='left';}}
+/* ============ status ============ */
+function update(){clearTimeout(riskT);riskT=setTimeout(()=>{lastR=risk(P,site,dispInt);renderRisk();checkLab();},90);margins();statusNow();draw();}
+function statusNow(){const cur=W.disp>0?0:c2(P);$('c2t').textContent=Math.round(cur)+'%'+(W.disp>0?' (moving)':'');$('c2b').style.width=Math.min(100,cur)+'%';
+  const n1=W.samples[0].length,n2=W.samples[1].length;let t='nothing',w=0;if(W.fix){t='FIX \u00b1'+Math.round(W.fix.R)+' m'+(W.fix.R<600?', can fire':'');w=W.fix.R<600?100:70;}else if(n1&&n2){t='two bearings, no fix yet';w=45;}else if(n1||n2){t='one line of bearing';w=25;}
+  if(W.tgt>0&&!W.lost)t+=' STRIKE IN '+(10-W.tgt)+' MIN';$('enT').textContent=t;$('enB').style.width=w+'%';$('clock').textContent=fmtT(W.t);}
+function renderRisk(){if(!lastR)return;const r=lastR,col=v=>v>0.5?'var(--red)':v>0.15?'var(--amber)':'var(--green)';
+  $('risk').innerHTML='<div><b>STRIKE RISK</b>'+Math.round(r.strike*100)+'%<div class="bar"><i style="width:'+r.strike*100+'%;background:'+col(r.strike)+'"></i></div></div><div><b>ENEMY GETS A FIX</b>'+Math.round(r.fix*100)+'%<div class="bar"><i style="width:'+r.fix*100+'%;background:'+col(r.fix)+'"></i></div></div><div><b>COMMAND AND CONTROL</b>'+Math.round(r.c2)+'%'+(dispInt?' (after move downtime)':'')+'<div class="bar"><i style="width:'+Math.min(100,r.c2)+'%;background:var(--green)"></i></div></div><div><b>PLAN</b><span style="font-size:10.5px">'+SITES[site].n+(dispInt?', move every '+dispInt+' min':', no moves')+'</span></div>';
+  $('riskInfo').textContent='120 missions';}
+/* ============ labs ============ */
+let LD={},hintN=0,ans={},wrong={},visited={},siteRisk={},qopts=null;
+const mcq=(id,t,o,a)=>({id,t,o,a});
+const LABS=[
+ {id:'hear',t:'See yourself as the enemy does',s:'Run the clock with everything on.',obj:'Everything is on at open ground. Run the clock until the enemy gets a fix, then work out what gave you away first.',
+  setup(){P={vhf:'normal',hf:'normal',sat:'normal',dat:'normal',uas:'normal',wifi:'normal',cell:'normal'};site='A';dispInt=0;speed=3;this.asked=false;},pills:['RUN THE CLOCK','THE ENEMY GETS A FIX','NAME THE FIRST GIVEAWAY'],
+  st(){return [W.t>0,W.fixT!==null,!!ans.first];},
+  qs(){if(W.fixT===null&&!W.lost)return [];if(!qopts){const ids=EMS.map(e=>e.id).filter(x=>x!==W.firstEm).sort(()=>Math.random()-0.5).slice(0,3);qopts=ids.concat([W.firstEm]).sort(()=>Math.random()-0.5);}
+    return [mcq('first','Which emitter did the enemy hear first?',qopts.map(i=>[i,EMS.find(e=>e.id===i).n]),W.firstEm)];},
+  done(){return !!ans.first;},
+  hints:['Press START. The intercept log lists the first time each enemy station hears each of your emitters.','When a FIX appears, the question shows up. Read the log from the bottom for the earliest entry.','Notice that more than one emitter is heard in the first minutes. The very first one is the answer.'],
+  why:['Everything that transmits is heard','With every emitter on, the enemy hears several of them in the first minutes, takes bearings from both stations, and has a fix inside a few minutes. HF and VHF carry far. Phones, Wi-Fi, and drone links are weaker but are heard at a few kilometers. Every one of them is a way to find you.']},
+ {id:'site',t:'Where you sit matters',s:'Same plan, three positions.',obj:'A scheduled VHF net with SATCOM and data restricted is loaded. Try each of the three positions and compare the strike risk.',
+  setup(){P={vhf:'sched',hf:'off',sat:'restricted',dat:'restricted',uas:'off',wifi:'off',cell:'off'};site='A';dispInt=0;visited={A:1};siteRisk={};},pills:['SITE A','SITE B','SITE C','WHICH IS SAFEST'],
+  st(){return [!!visited.A,!!visited.B,!!visited.C,!!ans.best];},
+  qs(){if(!(visited.A&&visited.B&&visited.C&&siteRisk.A!==undefined&&siteRisk.B!==undefined&&siteRisk.C!==undefined))return [];const best=['A','B','C'].reduce((a,b)=>siteRisk[b]<siteRisk[a]?b:a);return [mcq('best','Which position gives the lowest strike risk with this plan?',[['A','A: Open ground'],['B','B: Reverse slope'],['C','C: Valley']],best)];},
+  done(){return !!ans.best;},
+  hints:['Use the WHERE YOU SIT buttons, and look at the strike risk each time.','A ridge between you and a sensor blocks most of its view. But the enemy needs both sensors for a fix.','The ridge on the north side blocks S1, and the ridge on the south side blocks S2. Compare how far each sensor is as well.'],
+  why:['Terrain hides you from one sensor','The enemy needs bearings from both stations to get a fix. A ridge between you and either station stops most of its intercepts, so the enemy only gets a line of bearing. The valley position hides you from the farther station, which is already weaker, so it is the safest here.']},
+ {id:'plan',t:'Build a safe plan',s:'Keep command and control, deny the fix.',obj:'Make a plan with command and control of 35% or more and a strike risk under 15%.',
+  setup(){P={vhf:'normal',hf:'normal',sat:'normal',dat:'normal',uas:'normal',wifi:'normal',cell:'normal'};site='A';dispInt=0;this.hold=0;},pills:['COMMAND AND CONTROL 35% OR MORE','STRIKE RISK UNDER 15%'],
+  st(){return [!!(lastR&&lastR.c2>=35),!!(lastR&&lastR.strike<0.15)];},
+  done(dt){const ok=lastR&&lastR.c2>=35&&lastR.strike<0.15;this.hold=ok?(this.hold||0)+dt:0;return this.hold>=1.5;},
+  hints:['Cut what gives no command and control first, like the phones and Wi-Fi. Then look at what is heard even through a ridge.','HF can be heard through any ridge. Voice on VHF gets heard too, so keep it to short scheduled windows. SATCOM and the data radio are the hardest to hear.','A valley or reverse slope position, VHF scheduled, SATCOM and data restricted, HF off, and a move every 60 or 90 minutes works.'],
+  why:['EMCON is a trade','There is no setting that is both fully connected and invisible. A good plan removes the emitters that give little command and control but a big signature, keeps the hard-to-hear links, puts the loud ones on a schedule, uses terrain to blind one sensor, and moves before the enemy builds a fix.']},
+ {id:'leak',t:'What still leaks',s:'Behind the ridge, what can still be heard?',obj:'You are on the reverse slope with everything restricted. Read the table. What does sensor S1 still hear best through the ridge?',
+  setup(){P={vhf:'restricted',hf:'restricted',sat:'restricted',dat:'restricted',uas:'restricted',wifi:'restricted',cell:'restricted'};site='B';dispInt=0;},pills:['READ THE TABLE','NAME THE LEAK'],
+  st(){return [true,!!ans.leak];},
+  qs(){const s=SITES.B;let best=null,bm=-999;EMS.forEach(e=>{const m=margin(e,'restricted',s,SENS[0]);if(m>bm){bm=m;best=e.id;}});const o=['hf','wifi','uas','dat'];return [mcq('leak','Which emitter does S1 still hear best through the ridge?',o.map(i=>[i,EMS.find(e=>e.id===i).n]),best)];},
+  done(){return !!ans.leak;},
+  hints:['Look down the S1 column. The ridge blocks it by 55 dB, so check which numbers stay positive.','High frequencies are blocked by terrain, but low frequencies bend and carry.','The HF radio keeps a strong margin even behind the ridge.'],
+  why:['Low frequencies go around obstacles','A ridge cuts the 2.4 and 5.8 GHz signals to nothing, and even the UHF links. HF and VHF diffract over and around terrain and carry power, so they are still heard. If you must hide behind terrain, the radios that matter are the HF and VHF ones, and those you keep off or tightly scheduled.']},
+ {id:'free',t:'Free planning',s:'Everything open.',obj:'Set any plan, run the clock, and watch the enemy picture build.',free:true,setup(){P={vhf:'sched',hf:'off',sat:'restricted',dat:'restricted',uas:'off',wifi:'off',cell:'off'};site='C';dispInt=60;},pills:[],st(){return [];},done(){return false;},hints:['Try adding one emitter at a time and watch the risk numbers.','Move the command post and see how the enemy picture resets.','Watch the intercept log to see which emitter the enemy hears first.'],why:['','']}
+];
+function noteSite(k){visited[k]=1;}
+function openLabs(){$('labList').innerHTML=LABS.map((l,i)=>'<button class="lbtn'+(LD[l.id]?' done':'')+'" onclick="startLab('+i+')"><b>'+(i+1)+'. '+l.t+(LD[l.id]?' \u2713':'')+'</b><span>'+l.s+'</span></button>').join('');$('ovLabs').classList.add('on');}
+function startLab(i){closeOv('ovLabs');closeOv('ovDone');lab=i;const L=LABS[i];hintN=0;ans={};wrong={};qopts=null;visited={};running=false;L.setup();W=newWorld(site);$('runB').innerHTML='&#9654; START';
+  $('lk').textContent=L.free?'FREE PLANNING':'LAB '+(i+1)+' OF '+(LABS.length-1);$('lo').textContent=L.obj;$('pills').innerHTML=(L.pills||[]).map((p,k)=>'<span class="pill" id="pl'+k+'">'+p+'</span>').join('');setMsg('','');buildPosture();renderLog();update();renderQ();}
+function setMsg(t,c){$('lm').textContent=t;$('lm').className='lm '+(c||'');}
+function renderQ(){const L=LABS[lab];if(!L||!L.qs){$('qbox').innerHTML='';return;}const qs=L.qs();$('qbox').innerHTML=qs.map(q=>{const a=ans[q.id],w=wrong[q.id];return '<div class="q"><span class="k">'+q.t+'</span><div class="chips">'+q.o.map(o=>{let cls='chip';if(a!==undefined&&o[0]===q.a)cls+=' on';else if(w===o[0])cls+=' nrm on';return '<button class="'+cls+'" onclick="answer(\''+q.id+'\',\''+o[0]+'\')">'+o[1]+'</button>';}).join('')+'</div></div>';}).join('');}
+function answer(id,v){const L=LABS[lab],q=L.qs().find(x=>x.id===id);if(!q||ans[id]!==undefined)return;if(v===q.a){ans[id]=v;delete wrong[id];setMsg('Correct.','good');}else{wrong[id]=v;setTimeout(()=>{if(wrong[id]===v){delete wrong[id];renderQ();}},900);setMsg('Not quite. Look at the log and the table again.','err');}renderQ();}
+function hint(){const L=LABS[lab];hintN=Math.min(3,hintN+1);setMsg('HINT: '+L.hints[hintN-1],'');}
+function checkLab(dt){const L=LABS[lab];if(!L)return;if(L.id==='site'&&lastR)siteRisk[site]=lastR.strike+lastR.fix*0.01;
+  const st=L.st();(L.pills||[]).forEach((p,k)=>{const e=$('pl'+k);if(e)e.classList.toggle('ok',!!st[k]);});
+  const sig=L.qs?L.qs().map(q=>q.id).join(','):'';if(sig!==checkLab.sig){checkLab.sig=sig;renderQ();}
+  if(!L.free&&!LD[L.id]&&L.done(dt||0)){LD[L.id]=true;$('dH').textContent=L.why[0];$('dP').textContent=L.why[1];$('ovDone').classList.add('on');}}
+function nextLab(){closeOv('ovDone');startLab(Math.min(LABS.length-1,lab+1));}
+/* ============ loop ============ */
+let last=0,logN=0;
+function loop(ts){const dt=Math.min(0.2,(ts-last)/1000||0);last=ts;
+  if(running&&!W.lost){acc+=dt*speed;while(acc>=1&&!W.lost){acc-=1;if(dispInt&&W.t>0&&W.t%dispInt===0&&W.disp===0){W.nextSite=W.site;W.disp=DISP_MIN;W.log.unshift({t:W.t,txt:'Scheduled move. All emitters off for '+DISP_MIN+' minutes.',k:1});}step(W,W.disp>0?{}:P,false);}
+    if(W.lost){running=false;$('runB').innerHTML='&#9654; START';}renderLog();statusNow();draw();checkLab(dt);}
+  else checkLab(dt);
+  requestAnimationFrame(loop);}
+startLab(0);requestAnimationFrame(loop);
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>

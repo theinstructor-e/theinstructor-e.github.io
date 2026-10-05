@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electronics Test Bench | E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--panel:#0f1824;--panel2:#142133;--line:#1e3048;--text:#d3e2f2;--dim:#7d92a9;--green:#00ff88;--green-dark:#00331c;--amber:#ffb300;--amber-dark:#332400;--cyan:#00d4ff;--cyan-dark:#00303a;--red:#ff4444;--red-dark:#330f0f;--yellow:#ffe14d}
+:root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel2:#f1f5f9;--line:#b9c6d4;--text:#14212f;--dim:#51657a;--green:#007a45;--green-dark:#d6f2e4;--amber:#a86a00;--amber-dark:#fbefd2;--cyan:#006f94;--cyan-dark:#d4eef7;--red:#c42323;--red-dark:#fbdede;--yellow:#8a6d00}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.35;min-height:100vh;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+header{border-bottom:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mil-badge{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--green);border:1px solid var(--green);padding:2px 8px}
+header h1{font-size:19px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;flex:1;min-width:170px}
+.theme-btn{font-family:'Share Tech Mono',monospace;font-size:12px;background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:5px 10px;cursor:pointer}
+.statusbar{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-align:center;color:var(--green);background:var(--green-dark);padding:3px}
+main{max-width:660px;margin:0 auto;padding:10px 12px 20px}
+.back{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;letter-spacing:.08em}
+.eyebrow,.k{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan)}
+.hero h2{font-size:26px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--green);padding-left:12px;margin:3px 0 4px}
+.hero p{color:var(--dim)}
+.sim{display:inline-block;margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--amber);border:1px dashed var(--amber);padding:3px 8px}
+.lesson{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--green);padding:8px 10px;margin:10px 0 8px}
+.lt{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.lk{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.lo{font-size:18px;font-weight:700;line-height:1.15}
+.hbtn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;background:transparent;color:var(--amber);border:1px solid var(--amber);padding:6px 9px;cursor:pointer;margin-left:4px;white-space:nowrap}.hbtn.c{color:var(--cyan);border-color:var(--cyan)}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.pill{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border:1px solid var(--line);color:var(--dim)}.pill.ok{background:var(--green);border-color:var(--green);color:#00180d}
+.lm{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;min-height:17px}.lm.good{color:var(--green)}.lm.err{color:var(--red)}
+.cardx{background:var(--panel);border:1px solid var(--line);margin:10px 0}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel2);gap:8px;flex-wrap:wrap}
+.ch b{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;color:var(--cyan);font-weight:400}
+.cb{padding:8px 10px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-family:'Share Tech Mono',monospace;font-size:11px;background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 9px;cursor:pointer;min-height:34px}
+.chip.on{background:var(--green-dark);color:var(--green);border-color:var(--green)}
+.chip.red.on{background:var(--red-dark);color:var(--red);border-color:var(--red)}
+.chip.blk.on{background:#1a1a1a;color:#fff;border-color:#fff}
+.chip.c1.on{background:#332d00;color:var(--yellow);border-color:var(--yellow)}
+.chip.c2.on{background:var(--cyan-dark);color:var(--cyan);border-color:var(--cyan)}
+.chip.red{border-color:var(--red);color:var(--red)}.chip.c1{border-color:var(--yellow);color:var(--yellow)}.chip.c2{border-color:var(--cyan);color:var(--cyan)}.chip.blk{border-color:var(--dim)}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}.row>label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);min-width:74px}
+.scroll{display:flex;gap:4px;overflow-x:auto;padding-bottom:3px;max-width:100%}
+canvas.cv{display:block;width:100%;height:auto;background:#000;touch-action:manipulation}
+.lcd{background:#9db88a;color:#13200e;border:3px solid #3a4a30;border-radius:4px;margin:8px 10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-family:'Share Tech Mono',monospace}
+.lcd .big{font-size:42px;letter-spacing:1px;line-height:1}.lcd .u{font-size:18px;margin-left:6px}.lcd .s{font-size:11px;text-align:right;line-height:1.5}
+.beep{display:inline-block;padding:0 6px;border:1px solid #13200e;font-size:11px;opacity:.15}.beep.on{opacity:1;background:#13200e;color:#9db88a}
+.leads{font-family:'Share Tech Mono',monospace;font-size:11.5px;padding:0 10px 8px;line-height:1.6;color:var(--dim)}.leads b{font-weight:400}
+.parts{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:12px}.parts td{padding:4px 6px;border-bottom:1px solid var(--line)}.parts td:first-child{color:var(--green)}
+.q{margin:8px 0}.q .k{display:block;margin-bottom:4px;color:var(--amber)}
+.fb{padding:7px 9px;margin-top:8px;border:1px solid var(--line);font-size:15.5px;line-height:1.35}.fb.ok{border-color:var(--green);background:var(--green-dark)}.fb.no{border-color:var(--amber);background:var(--amber-dark)}
+.btn{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.08em;color:#00180d;background:var(--green);border:0;padding:11px 14px;cursor:pointer;margin:8px 6px 0 0}.btn.alt{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+input[type=range]{flex:1;min-width:120px;accent-color:#00ff88;height:28px}
+.val{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--green);min-width:56px;text-align:right}
+.ro{font-family:'Share Tech Mono',monospace;font-size:11.5px;padding:2px 10px 8px;line-height:1.6}.ro span{margin-right:12px}.ro .a{color:var(--yellow)}.ro .b{color:var(--cyan)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:60;padding:14px}.ov.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--green);max-width:440px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+.sheet h2{font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin:2px 0 6px}.sheet p{font-size:16.5px;line-height:1.38}
+.lbtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--green);padding:9px 12px;margin-top:8px;cursor:pointer;color:var(--text);font-family:'Rajdhani',sans-serif}
+.lbtn b{display:block;font-size:18px;letter-spacing:.03em;text-transform:uppercase}.lbtn span{font-size:14.5px;color:var(--dim)}.lbtn.done{border-left-color:var(--cyan)}
+footer{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);padding:16px 10px 28px}
+</style>
+<style>.learn{display:block;margin:0 0 12px;padding:9px 13px;border:1px solid var(--line);border-left:3px solid #00d4ff;border-radius:8px;background:var(--panel);color:var(--text);text-decoration:none;font-size:13px;line-height:1.4}.learn b{color:#00d4ff}.learn:hover{border-color:#00d4ff}</style>
+</head>
+<body>
+<header><span class="mil-badge">E-WIT</span><h1>Electronics Test Bench</h1><button class="theme-btn" id="tb" onclick="toggleTheme()">LIGHT</button></header>
+<div class="statusbar">UNCLASSIFIED</div>
+<main>
+<a class="back" href="/">&#9664; E-WIT HOME</a>
+<a class="learn" href="../testguide/"><b>&#128214; Learn first:</b> Measuring &amp; Troubleshooting Electronics Explained &mdash; the interactive textbook for this tool</a>
+<div class="hero"><div class="eyebrow">C BET &middot; HANDS-ON</div><h2>Electronics Test Bench</h2>
+<p>Probe real-looking circuit boards with a multimeter and a two-channel oscilloscope. Tap test points to place the leads, measure, and find the fault.</p>
+<span class="sim">SIMPLIFIED CIRCUIT MODELS &middot; TRAINING ONLY &middot; DRAFT: INSTRUCTOR REVIEW PENDING</span></div>
+
+<div class="lesson"><div class="lt"><div><div class="lk" id="lk">LESSON 1</div><div class="lo" id="lo"></div></div><div style="white-space:nowrap"><button class="hbtn" onclick="hint()">HINT</button><button class="hbtn c" onclick="openLessons()">LESSONS</button></div></div>
+<div class="pills" id="pills"></div><div class="lm" id="lm"></div><div id="qbox"></div></div>
+
+<div class="cardx"><div class="ch"><b id="bname">BOARD</b><div class="chips"><button class="chip on" id="pwr" onclick="togglePower()">BOARD POWER: ON</button></div></div>
+<canvas class="cv" id="board" width="480" height="300"></canvas>
+<div class="cb"><div class="row"><label>TAP A TEST POINT TO PLACE</label><div class="chips" id="tgts"></div></div>
+<div class="row" id="genRow" style="display:none"><label>GENERATOR</label><div class="scroll" id="genC"></div></div>
+<div class="row" id="faultRow" style="display:none"><label>FAULT</label><div class="scroll" id="faultC"></div></div></div></div>
+
+<div class="cardx"><div class="ch"><b>MULTIMETER</b><div class="chips" id="dial"></div></div>
+<div class="lcd"><div><span class="big" id="mval">----</span><span class="u" id="munit"></span></div><div class="s"><div id="mmode">DC VOLTS</div><span class="beep" id="beep">BEEP</span></div></div>
+<div class="leads" id="leads"></div></div>
+
+<div class="cardx"><div class="ch"><b>OSCILLOSCOPE</b></div>
+<canvas class="cv" id="scope" width="480" height="320"></canvas><div class="ro" id="ro"></div>
+<div class="cb"><div class="row"><label>TIME/DIV</label><div class="scroll" id="tdivC"></div></div>
+<div class="row"><label>VOLTS/DIV</label><div class="scroll" id="vdivC"></div></div>
+<div class="row"><label>COUPLING</label><div class="chips" id="coupC"></div><label style="min-width:auto;margin-left:6px">TRIGGER</label><input type="range" id="trig" min="-3" max="3" step="0.1" value="0" oninput="setTrig(this.value)"><span class="val" id="trigV">0.0 div</span></div>
+<div class="row"><label>PROBE SWITCH</label><div class="chips" id="probeC"></div><label style="min-width:auto;margin-left:6px">SCOPE SETS</label><div class="chips" id="attC"></div></div></div></div>
+
+<div class="cardx"><div class="ch"><b>PARTS ON THIS BOARD</b></div><div class="cb"><table class="parts" id="parts"></table></div></div>
+</main>
+<footer>E-WIT // UNCLASSIFIED // TRAINING AID ONLY</footer>
+
+<div class="ov" id="ovLessons"><div class="sheet"><div class="k">BENCH LESSONS</div><h2>Pick a lesson</h2><div id="lessonList"></div><button class="btn alt" onclick="closeOv('ovLessons')">CLOSE</button></div></div>
+<div class="ov" id="ovDone"><div class="sheet"><div class="k">LESSON COMPLETE</div><h2 id="dH"></h2><p id="dP"></p><button class="btn" onclick="nextLesson()">NEXT LESSON</button><button class="btn alt" onclick="closeOv('ovDone')">KEEP MEASURING</button></div></div>
+
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+/* =============================================================
+   BOARDS (simplified models)
+============================================================= */
+const FAULTS={
+ A:[['none','Working'],['r1open','R1 open'],['r2open','R2 open'],['r3open','R3 open'],['ledopen','LED burned out (open)']],
+ B:[['none','Working'],['d1open','D1 open'],['d1short','D1 shorted'],['c1open','C1 open'],['rlopen','Load RL open']],
+ C:[['none','Working'],['copen','C open'],['cshort','C shorted'],['ropen','R open']],
+ D:[['none','Working'],['copen','C open'],['r2open','R2 open'],['novcc','No supply (VCC open)']]
+};
+const NAMES={A:'BOARD A: DIVIDER + LED',B:'BOARD B: HALF-WAVE SUPPLY',C:'BOARD C: RC FILTER',D:'BOARD D: 555 BLINKER'};
+const TPS={
+ A:{VCC:[110,62],N1:[200,150],N2:[350,150],GND:[110,250]},
+ B:{SEC:[105,80],REC:[300,80],GND:[105,240]},
+ C:{IN:[105,100],OUT:[310,100],GND:[105,240]},
+ D:{VCC:[100,50],DIS:[205,110],CAP:[205,190],OUT:[395,150],GND:[100,250]}
+};
+const PARTS={
+ A:[['Battery','9 V'],['R1','1 k\u03a9 (VCC to TP N1)'],['R2','2 k\u03a9 (N1 to GND)'],['R3','470 \u03a9 (VCC to LED)'],['LED','red, about 2 V drop']],
+ B:[['Source','12 V peak, 60 Hz (transformer)'],['D1','silicon diode, 0.7 V drop'],['C1','100 \u00b5F'],['RL','1 k\u03a9 load']],
+ C:[['Generator','2 V peak (4 Vpp) sine, set below'],['R','1 k\u03a9'],['C','100 nF']],
+ D:[['Supply','9 V'],['R1','10 k\u03a9'],['R2','47 k\u03a9'],['C','1 \u00b5F'],['IC','555 timer, astable']]
+};
+let S={board:'A',power:true,fault:'none',gen:1600,sel:'red',mode:'dcv',tg:{red:null,black:'GND',ch1:null,ch2:null},
+  tdiv:0.005,vdiv:5,coup:'dc',trig:0,probe:10,att:10,lesson:-1,reveal:false};
+const TD=[0.0001,0.0002,0.0005,0.001,0.002,0.005,0.01,0.02,0.05,0.1],VD=[0.1,0.2,0.5,1,2,5,10];
+const $=id=>document.getElementById(id);
+function toggleTheme(){const r=document.documentElement,l=r.getAttribute('data-theme')==='light';r.setAttribute('data-theme',l?'dark':'light');$('tb').textContent=l?'LIGHT':'DARK';}
+function closeOv(i){$(i).classList.remove('on');}
+
+/* ---- half-wave supply: small time-step simulation, cached per fault ---- */
+let simCache={};
+function simB(f){if(simCache[f])return simCache[f];
+  const dt=2e-5,N=Math.round(0.6/dt),keep0=Math.round(0.4/dt),M=Math.round(0.2/dt);
+  const C=f==='c1open'?1e-9:100e-6,RL=f==='rlopen'?1e7:1000;let vc=0;const sec=new Float32Array(M),rec=new Float32Array(M);
+  for(let i=0;i<N;i++){const t=i*dt,vs=12*Math.sin(2*Math.PI*60*t);
+    if(f==='d1short')vc=vs;else if(f==='d1open')vc=vc*Math.exp(-dt/(RL*C));else{if(vs-0.7>vc)vc=vs-0.7;else vc=vc*Math.exp(-dt/(RL*C));}
+    if(i>=keep0){sec[i-keep0]=vs;rec[i-keep0]=vc;}}
+  return simCache[f]={sec,rec,dt};}
+const T0={A:1,B:0.2};
+function bPeriod(){const b=S.board;if(b==='A'||b==='B')return T0[b];if(b==='C')return 10/S.gen;const p=dParams();return p.stuck?1:10*p.T;}
+function dParams(){const F=S.fault,R1=1e4,R2=4.7e4;let C=1e-6;if(F==='copen')C=1e-9;
+  if(F==='r2open'||F==='novcc'||!S.power)return {stuck:true,T:1,th:1,tl:0,C,R1,R2};
+  const T=0.693*(R1+2*R2)*C,th=0.693*(R1+R2)*C;return {stuck:false,T,th,tl:T-th,C,R1,R2};}
+/* voltage at a test point at time t (volts) */
+function vAt(tp,t){
+  const b=S.board,F=S.fault;if(tp==='GND')return 0;
+  if(b==='A'){if(!S.power)return 0;const V=9;
+    if(tp==='VCC')return V;
+    if(tp==='N1')return F==='r1open'?0:F==='r2open'?V:V*2000/3000;
+    if(tp==='N2')return F==='r3open'?0:F==='ledopen'?V:2.0;}
+  if(b==='B'){if(!S.power)return 0;const sm=simB(F),i=Math.floor(((t%0.2)/sm.dt))%sm.sec.length;return tp==='SEC'?sm.sec[i]:sm.rec[i];}
+  if(b==='C'){if(!S.power)return 0;const f=S.gen,fc=1/(2*Math.PI*1000*100e-9),w=2*Math.PI*f*t;
+    if(tp==='IN')return 2*Math.sin(w);
+    if(tp==='OUT'){if(F==='copen')return 2*Math.sin(w);if(F==='cshort'||F==='ropen')return 0;const H=1/Math.sqrt(1+(f/fc)*(f/fc)),ph=Math.atan(f/fc);return 2*H*Math.sin(w-ph);}}
+  if(b==='D'){const p=dParams();if(!S.power||F==='novcc')return 0;
+    if(tp==='VCC')return 9;
+    const stuck=p.stuck;
+    if(tp==='OUT')return stuck?7.3:((t%p.T)<p.th?7.3:0.1);
+    if(tp==='CAP'||tp==='DIS'){if(stuck)return 0.05;const tt=t%p.T,tau1=(p.R1+p.R2)*p.C,tau2=p.R2*p.C;
+      const v=tt<p.th?9-(9-3)*Math.exp(-tt/tau1):6*Math.exp(-(tt-p.th)/tau2);return tp==='CAP'?v:(tt<p.th?9*0.85:0.1);}}
+  return 0;
+}
+/* resistive network for ohms/continuity (board unpowered) */
+function edges(){const b=S.board,F=S.fault,E=[];
+  if(b==='A'){if(F!=='r1open')E.push(['VCC','N1',1000]);if(F!=='r2open')E.push(['N1','GND',2000]);if(F!=='r3open')E.push(['VCC','N2',470]);}
+  if(b==='B'){E.push(['SEC','GND',3]);if(F!=='rlopen')E.push(['REC','GND',1000]);if(F==='d1short')E.push(['SEC','REC',0.01]);}
+  if(b==='C'){if(F!=='ropen')E.push(['IN','OUT',1000]);if(F==='cshort')E.push(['OUT','GND',0.01]);E.push(['IN','GND',50]);}
+  if(b==='D'){E.push(['VCC','DIS',10000]);if(F!=='r2open')E.push(['DIS','CAP',47000]);}
+  return E;}
+function resistance(a,b){
+  if(a===b)return 0;const E=edges(),nodes=[...new Set(E.flatMap(e=>[e[0],e[1]]))];if(!nodes.includes(a)||!nodes.includes(b))return Infinity;
+  const idx={};nodes.forEach((n,i)=>idx[n]=i);const n=nodes.length,G=Array.from({length:n},()=>new Array(n).fill(0));
+  E.forEach(e=>{const g=1/e[2],i=idx[e[0]],j=idx[e[1]];G[i][i]+=g;G[j][j]+=g;G[i][j]-=g;G[j][i]-=g;});
+  // ground node b, inject 1 A at a, solve for voltage at a
+  const ib=idx[b],ia=idx[a],keep=[...Array(n).keys()].filter(k=>k!==ib),m=keep.length,A=keep.map(i=>keep.map(j=>G[i][j])),r=keep.map(i=>i===ia?1:0);
+  for(let c=0;c<m;c++){let p=c;for(let k=c+1;k<m;k++)if(Math.abs(A[k][c])>Math.abs(A[p][c]))p=k;if(Math.abs(A[p][c])<1e-12)return Infinity;[A[c],A[p]]=[A[p],A[c]];[r[c],r[p]]=[r[p],r[c]];
+    for(let k=c+1;k<m;k++){const f=A[k][c]/A[c][c];for(let j=c;j<m;j++)A[k][j]-=f*A[c][j];r[k]-=f*r[c];}}
+  const x=new Array(m);for(let i=m-1;i>=0;i--){let s=r[i];for(let j=i+1;j<m;j++)s-=A[i][j]*x[j];x[i]=s/A[i][i];}
+  return x[keep.indexOf(ia)];}
+function diodePair(red,blk){const b=S.board,F=S.fault;
+  if(b==='A'&&red==='N2'&&blk==='GND')return F==='ledopen'?'OL':1.9;
+  if(b==='B'&&red==='SEC'&&blk==='REC')return F==='d1open'?'OL':F==='d1short'?0:0.65;
+  return 'OL';}
+
+/* =============================================================
+   MULTIMETER
+============================================================= */
+const MODES=[['dcv','V DC'],['acv','V AC'],['ohm','OHMS'],['cont','CONT'],['diode','DIODE']];
+function sample(fn,n){let a=[];const T=bPeriod();for(let i=0;i<n;i++)a.push(fn(i/n*T));return a;}
+function meterRead(){
+  const r=S.tg.red,k=S.tg.black,res={mode:S.mode,txt:'----',unit:'',val:null,beep:false,note:''};
+  if(!r||!k){res.note='Place both leads';return res;}
+  if(S.mode==='dcv'||S.mode==='acv'){
+    const d=sample(t=>vAt(r,t)-vAt(k,t),S.board==='B'?400:240),mean=d.reduce((x,y)=>x+y,0)/d.length;
+    if(S.mode==='dcv'){res.val=mean;res.txt=(Math.abs(mean)<0.005?0:mean).toFixed(2);res.unit='V';}
+    else{const rms=Math.sqrt(d.reduce((x,y)=>x+(y-mean)*(y-mean),0)/d.length);res.val=rms;res.txt=rms.toFixed(2);res.unit='V';}
+    return res;}
+  if(S.power){res.txt='ERR';res.note='Power the board OFF before measuring resistance, continuity, or diodes';return res;}
+  if(S.mode==='ohm'||S.mode==='cont'){const R=resistance(r,k);res.val=R;
+    if(!isFinite(R)||R>5e7){res.txt='OL';res.unit='';}else if(R<1){res.txt=R.toFixed(2);res.unit='\u03a9';}else if(R<1000){res.txt=R.toFixed(1);res.unit='\u03a9';}else{res.txt=(R/1000).toFixed(2);res.unit='k\u03a9';}
+    if(S.mode==='cont')res.beep=isFinite(R)&&R<30;return res;}
+  if(S.mode==='diode'){const v=diodePair(r,k);res.val=v;res.txt=v==='OL'?'OL':v.toFixed(2);res.unit=v==='OL'?'':'V';return res;}
+  return res;}
+let METER=null;
+function renderMeter(){METER=meterRead();$('mval').textContent=METER.txt;$('munit').textContent=METER.unit;
+  $('mmode').textContent=MODES.find(m=>m[0]===S.mode)[1];$('beep').classList.toggle('on',!!METER.beep);
+  $('leads').innerHTML='<b style="color:var(--red)">RED</b> '+(S.tg.red||'not placed')+' &nbsp; <b style="color:var(--text)">BLACK</b> '+(S.tg.black||'not placed')+(METER.note?'<br><span style="color:var(--amber)">'+METER.note+'</span>':'');}
+
+/* =============================================================
+   SCOPE
+============================================================= */
+const sc=$('scope'),sx=sc.getContext('2d');
+let SCOPE={ch1:null,ch2:null};
+function dispFactor(){return S.att/S.probe;}
+function chanFn(tp){if(!tp)return null;let mean=0;if(S.coup==='ac'){const d=sample(t=>vAt(tp,t),300);mean=d.reduce((a,b)=>a+b,0)/d.length;}
+  return t=>(vAt(tp,t)-mean)*dispFactor();}
+function renderScope(){
+  const c=sx,W=480,H=320,GX=48,GY=40;c.setTransform(1,0,0,1,0,0);c.fillStyle='#04100a';c.fillRect(0,0,W,H);
+  c.strokeStyle='#123a22';c.lineWidth=1;for(let i=0;i<=10;i++){c.beginPath();c.moveTo(i*GX,0);c.lineTo(i*GX,H);c.stroke();}for(let j=0;j<=8;j++){c.beginPath();c.moveTo(0,j*GY);c.lineTo(W,j*GY);c.stroke();}
+  c.strokeStyle='#1d6a3c';c.beginPath();c.moveTo(0,H/2);c.lineTo(W,H/2);c.moveTo(W/2,0);c.lineTo(W/2,H);c.stroke();
+  c.strokeStyle='#1d6a3c';for(let i=0;i<=50;i++){const x=i*GX/5;c.beginPath();c.moveTo(x,H/2-3);c.lineTo(x,H/2+3);c.stroke();}
+  const f1=chanFn(S.tg.ch1),f2=chanFn(S.tg.ch2),trf=f1||f2,T=bPeriod(),step=Math.min(S.tdiv/50,T/2000);
+  let t0=0;const lvl=S.trig*S.vdiv;
+  if(trf){let prev=trf(0),found=false;for(let t=step;t<Math.min(T,0.25);t+=step){const v=trf(t);if(prev<lvl&&v>=lvl){t0=t-S.tdiv;found=true;break;}prev=v;}if(!found)t0=0;}
+  SCOPE.ch1=null;SCOPE.ch2=null;
+  [[f1,'#ffe14d','ch1'],[f2,'#00d4ff','ch2']].forEach(a=>{const fn=a[0];if(!fn)return;c.strokeStyle=a[1];c.lineWidth=2;c.beginPath();const vals=[];
+    for(let x=0;x<=W;x+=1){const t=t0+x/GX*S.tdiv,v=fn(t);vals.push(v);const y=H/2-v/S.vdiv*GY;(x?c.lineTo(x,Math.max(-5,Math.min(H+5,y))):c.moveTo(x,Math.max(-5,Math.min(H+5,y))));}c.stroke();
+    SCOPE[a[2]]=measure(vals,S.tdiv/GX);});
+  c.fillStyle='#00ff88';c.beginPath();c.moveTo(0,H/2-S.trig*GY-6);c.lineTo(10,H/2-S.trig*GY);c.lineTo(0,H/2-S.trig*GY+6);c.closePath();c.fill();
+  c.fillStyle='#7dff9d';c.font='12px "Share Tech Mono"';c.textAlign='left';c.fillText(fmtT(S.tdiv)+'/div   '+S.vdiv+' V/div   '+S.coup.toUpperCase()+'   TRIG\u2191',6,H-6);
+  if(!f1&&!f2){c.fillStyle='#4f8a66';c.textAlign='center';c.font='13px "Share Tech Mono"';c.fillText('Select CH1 or CH2, then tap a test point',W/2,H/2-14);c.textAlign='left';}
+  $('ro').innerHTML=(SCOPE.ch1?'<span class="a">CH1 '+S.tg.ch1+': '+roText(SCOPE.ch1)+'</span>':'')+(SCOPE.ch2?'<span class="b">CH2 '+S.tg.ch2+': '+roText(SCOPE.ch2)+'</span>':'');}
+function measure(v,dtp){let mx=-1e9,mn=1e9;v.forEach(a=>{if(a>mx)mx=a;if(a<mn)mn=a;});const mid=(mx+mn)/2,cr=[];
+  if(mx-mn>0.02*Math.max(1,Math.abs(mx),Math.abs(mn))||mx-mn>0.05)for(let i=1;i<v.length;i++)if(v[i-1]<mid&&v[i]>=mid)cr.push(i);
+  let f=null;if(cr.length>=2)f=1/(((cr[cr.length-1]-cr[0])/(cr.length-1))*dtp);return {vpp:mx-mn,max:mx,min:mn,f};}
+function fmtT(t){return t>=1?t+' s':t>=0.001?(t*1000)+' ms':(t*1e6)+' \u00b5s';}
+function fmtF(f){return f===null?'---':f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(1)+' Hz';}
+function roText(m){return 'Vpp '+m.vpp.toFixed(2)+' V  max '+m.max.toFixed(2)+'  min '+m.min.toFixed(2)+'  f '+fmtF(m.f);}
+
+/* =============================================================
+   BOARD DRAWING
+============================================================= */
+const bc=$('board'),bx=bc.getContext('2d');
+function drawBoard(){
+  const c=bx;c.setTransform(1,0,0,1,0,0);c.fillStyle='#0c4a2e';c.fillRect(0,0,480,300);c.strokeStyle='#0f6b41';c.lineWidth=1;for(let i=0;i<480;i+=20){c.beginPath();c.moveTo(i,0);c.lineTo(i,300);c.stroke();}for(let j=0;j<300;j+=20){c.beginPath();c.moveTo(0,j);c.lineTo(480,j);c.stroke();}
+  const b=S.board,TP=TPS[b];c.lineCap='round';
+  const tr=(pts)=>{c.strokeStyle='#d9b26a';c.lineWidth=5;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();};
+  const lab=(t,x,y,col)=>{c.fillStyle=col||'#e9f7ef';c.font='bold 12px "Share Tech Mono"';c.textAlign='center';c.fillText(t,x,y);};
+  const res=(x,y,t,v,vert)=>{c.save();c.translate(x,y);if(vert)c.rotate(Math.PI/2);c.fillStyle='#c9a77c';c.fillRect(-26,-9,52,18);c.fillStyle='#7a3b12';c.fillRect(-14,-9,4,18);c.fillStyle='#222';c.fillRect(-6,-9,4,18);c.fillStyle='#b8860b';c.fillRect(2,-9,4,18);c.restore();lab(t,x+(vert?30:0),y+(vert?4:-14));lab(v,x+(vert?30:0),y+(vert?18:26),'#aee6c4');};
+  const cap=(x,y,t,v)=>{c.fillStyle='#2f6fb0';c.fillRect(x-12,y-22,24,44);c.fillStyle='#bcd7f2';c.fillRect(x-12,y-22,6,44);lab(t,x+36,y-2);lab(v,x+36,y+14,'#aee6c4');};
+  const dio=(x,y,t,led)=>{c.fillStyle=led?'#ff5a5a':'#222';if(led){c.beginPath();c.arc(x,y,17,0,7);c.fill();c.strokeStyle='#fff';c.lineWidth=1;c.stroke();}else{c.fillRect(x-30,y-8,60,16);c.fillStyle='#ddd';c.fillRect(x+14,y-8,5,16);}lab(t,x+(led?32:0),y+(led?4:-14));};
+  if(b==='A'){tr([[70,62],[430,62]]);tr([[70,250],[430,250]]);tr([[70,62],[70,250]]);tr([[200,62],[200,250]]);tr([[350,62],[350,250]]);
+    c.fillStyle='#111';c.fillRect(48,130,44,58);c.fillStyle='#ffb300';c.fillRect(48,130,44,12);lab('9 V',70,168);
+    res(200,100,'R1','1 k',true);res(200,205,'R2','2 k',true);res(350,100,'R3','470',true);dio(350,205,'LED',true);}
+  if(b==='B'){tr([[105,80],[130,80]]);tr([[230,80],[420,80]]);tr([[105,240],[420,240]]);tr([[105,80],[105,240]]);tr([[300,80],[300,240]]);tr([[400,80],[400,240]]);
+    c.strokeStyle='#e9f7ef';c.lineWidth=2;for(let i=0;i<4;i++){c.beginPath();c.arc(72,110+i*18,10,-Math.PI/2,Math.PI/2);c.stroke();}lab('12 V pk',64,205);lab('60 Hz',64,220);
+    dio(180,80,'D1',false);cap(300,160,'C1','100 \u00b5F');res(400,160,'RL','1 k',true);}
+  if(b==='C'){tr([[105,100],[130,100]]);tr([[230,100],[420,100]]);tr([[105,240],[420,240]]);tr([[310,100],[310,240]]);tr([[105,100],[105,240]]);
+    c.strokeStyle='#e9f7ef';c.lineWidth=2;c.beginPath();c.arc(70,170,24,0,7);c.stroke();c.beginPath();c.moveTo(56,170);c.quadraticCurveTo(63,152,70,170);c.quadraticCurveTo(77,188,84,170);c.stroke();lab('GEN',70,215);lab(S.gen>=1000?(S.gen/1000)+' kHz':S.gen+' Hz',70,230,'#ffe14d');
+    res(180,100,'R','1 k',false);cap(310,170,'C','100 nF');}
+  if(b==='D'){tr([[100,50],[430,50]]);tr([[100,250],[430,250]]);tr([[150,50],[150,250]]);tr([[205,110],[330,110]]);tr([[205,190],[330,190]]);
+    c.fillStyle='#111';c.fillRect(280,95,100,120);c.fillStyle='#444';c.fillRect(280,95,100,10);c.fillStyle='#e9f7ef';c.font='bold 16px "Share Tech Mono"';c.textAlign='center';c.fillText('555',330,160);c.font='10px "Share Tech Mono"';c.fillText('astable',330,176);
+    c.strokeStyle='#d9b26a';c.lineWidth=5;c.beginPath();c.moveTo(380,150);c.lineTo(395,150);c.stroke();
+    res(150,80,'R1','10 k',true);res(150,150,'R2','47 k',true);cap(150,215,'C','1 \u00b5F');}
+  c.fillStyle='#b5e8cc';c.font='11px "Share Tech Mono"';c.textAlign='left';c.fillText(NAMES[S.board],8,16);
+  // test points
+  Object.keys(TP).forEach(k=>{const p=TP[k];c.fillStyle='#e8d38a';c.beginPath();c.arc(p[0],p[1],9,0,7);c.fill();c.strokeStyle='#222';c.lineWidth=2;c.stroke();c.fillStyle='#e9f7ef';c.font='bold 11px "Share Tech Mono"';c.textAlign='center';c.fillText(k,p[0],p[1]-14);});
+  // lead markers
+  const ring=(tp,col,txt,off)=>{if(!tp||!TP[tp])return;const p=TP[tp];c.strokeStyle=col;c.lineWidth=4;c.beginPath();c.arc(p[0],p[1],14+off,0,7);c.stroke();c.fillStyle=col;c.font='bold 11px "Share Tech Mono"';c.textAlign='center';c.fillText(txt,p[0]+22+off*2,p[1]+(off?20:4));};
+  ring(S.tg.red,'#ff4444','RED',0);ring(S.tg.black,'#ffffff','BLK',3);ring(S.tg.ch1,'#ffe14d','CH1',6);ring(S.tg.ch2,'#00d4ff','CH2',9);
+  if(!S.power){c.fillStyle='rgba(0,0,0,.35)';c.fillRect(0,0,480,300);c.fillStyle='#ffb300';c.font='bold 16px "Share Tech Mono"';c.textAlign='center';c.fillText('BOARD POWER OFF',240,30);}
+}
+bc.addEventListener('click',e=>{const r=bc.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*480,y=(e.clientY-r.top)/r.height*300,TP=TPS[S.board];let best=null,bd=34;
+  Object.keys(TP).forEach(k=>{const d=Math.hypot(TP[k][0]-x,TP[k][1]-y);if(d<bd){bd=d;best=k;}});if(!best)return;
+  S.tg[S.sel]=best;if(S.sel==='red'&&!S.tg.black)S.sel='black';refreshAll();});
+
+/* =============================================================
+   CONTROLS
+============================================================= */
+function chips(id,items,cur,fn,cls){$(id).innerHTML=items.map(it=>'<button class="chip '+(cls?cls(it):'')+(String(it[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+it[0]+'\')">'+it[1]+'</button>').join('');}
+function buildControls(){
+  chips('tgts',[['red','RED LEAD'],['black','BLACK LEAD'],['ch1','SCOPE CH1'],['ch2','SCOPE CH2']],S.sel,'setSel',it=>({red:'red',black:'blk',ch1:'c1',ch2:'c2'})[it[0]]);
+  $('tgts').innerHTML+='<button class="chip" onclick="clearLeads()">CLEAR</button>';
+  chips('dial',MODES,S.mode,'setMode');
+  chips('tdivC',TD.map(t=>[t,fmtT(t)]),S.tdiv,'setTdiv');chips('vdivC',VD.map(v=>[v,v+' V']),S.vdiv,'setVdiv');
+  chips('coupC',[['dc','DC'],['ac','AC']],S.coup,'setCoup');chips('probeC',[[1,'x1'],[10,'x10']],S.probe,'setProbe');chips('attC',[[1,'x1'],[10,'x10']],S.att,'setAtt');
+  $('trigV').textContent=S.trig.toFixed(1)+' div';
+  $('pwr').textContent='BOARD POWER: '+(S.power?'ON':'OFF');$('pwr').classList.toggle('on',S.power);
+  $('bname').textContent=NAMES[S.board];
+  $('parts').innerHTML=PARTS[S.board].map(p=>'<tr><td>'+p[0]+'</td><td>'+p[1]+'</td></tr>').join('');
+  $('genRow').style.display=S.board==='C'?'':'none';chips('genC',[[100,'100 Hz'],[500,'500 Hz'],[1600,'1.6 kHz'],[5000,'5 kHz'],[20000,'20 kHz']],S.gen,'setGen');
+  const free=lessons[S.lesson]&&lessons[S.lesson].free;$('faultRow').style.display=free?'':'none';
+  if(free)chips('faultC',FAULTS[S.board],S.fault,'setFault');
+}
+function setSel(v){S.sel=v;buildControls();}
+function clearLeads(){S.tg={red:null,black:null,ch1:null,ch2:null};S.sel='red';refreshAll();}
+function setMode(v){S.mode=v;refreshAll();}
+function setTdiv(v){S.tdiv=Number(v);refreshAll();}function setVdiv(v){S.vdiv=Number(v);refreshAll();}
+function setCoup(v){S.coup=v;refreshAll();}function setProbe(v){S.probe=Number(v);refreshAll();}function setAtt(v){S.att=Number(v);refreshAll();}
+function setTrig(v){S.trig=Number(v);$('trigV').textContent=S.trig.toFixed(1)+' div';renderScope();}
+function setGen(v){S.gen=Number(v);refreshAll();}
+function togglePower(){S.power=!S.power;refreshAll();}
+function setFault(v){S.fault=v;refreshAll();}
+function refreshAll(){buildControls();drawBoard();renderMeter();renderScope();checkLesson();}
+function setBoard(b,fault){S.board=b;S.fault=fault||'none';S.power=true;S.tg={red:null,black:'GND',ch1:null,ch2:null};S.sel='red';S.mode='dcv';S.coup='dc';S.trig=0;$('trig').value=0;
+  if(b==='B'){S.tdiv=0.005;S.vdiv=5;}if(b==='A'){S.tdiv=0.005;S.vdiv=2;}if(b==='C'){S.tdiv=0.0002;S.vdiv=1;S.gen=1600;}if(b==='D'){S.tdiv=0.02;S.vdiv=2;}
+  S.probe=10;S.att=10;simCache={};}
+
+/* =============================================================
+   LESSONS
+============================================================= */
+let LD={},hintN=0,answered={},curQ={};
+const rf=(x,d)=>Math.round(x*Math.pow(10,d))/Math.pow(10,d);
+function rippleActual(){const sm=simB('none');let mx=-1e9,mn=1e9;for(let i=0;i<sm.rec.length;i++){mx=Math.max(mx,sm.rec[i]);mn=Math.min(mn,sm.rec[i]);}return mx-mn;}
+const holdT={};
+function hold(key,ok,dt,need){holdT[key]=ok?(holdT[key]||0)+dt:0;return holdT[key]>=need;}
+function mcq(id,title,opts,ans,extra){return {id,title,opts,ans,extra};}
+const lessons=[
+ {id:'dc',t:'Meter: DC volts',s:'Black on ground, red on the point.',obj:'Measure the voltage at the divider midpoint (N1) to ground.',board:'A',fault:'none',
+  pills:['BLACK ON GND','RED ON N1','V DC MODE','READS 6 V'],
+  st(){return [S.tg.black==='GND',S.tg.red==='N1',S.mode==='dcv',METER&&METER.mode==='dcv'&&S.tg.red==='N1'&&S.tg.black==='GND'&&Math.abs(METER.val-6)<0.15];},
+  done(dt){const s=this.st();return s.every(x=>x)&&hold('dc',true,dt,1.2);},
+  hints:['Tap BLACK LEAD, then tap GND. Tap RED LEAD, then tap N1.','Set the meter dial to V DC and make sure the board power is ON.','The divider is 1 k and 2 k on 9 V, so the midpoint should read 6 V.'],
+  why:['Reading voltage','Voltage is measured across two points, so a meter needs both leads. Put the black lead on ground and move the red lead around. With power on, a divider splits the supply in proportion to its resistors: 2 k out of 3 k of 9 V is 6 V.']},
+ {id:'ohm',t:'Meter: resistance (power off)',s:'Never measure ohms on a live board.',obj:'Turn the board off and measure R1 (between VCC and N1).',board:'A',fault:'none',
+  pills:['BOARD OFF','OHMS MODE','RED VCC, BLACK N1','READS 1 k\u03a9'],
+  st(){return [!S.power,S.mode==='ohm',S.tg.red==='VCC'&&S.tg.black==='N1'||S.tg.red==='N1'&&S.tg.black==='VCC',METER&&METER.mode==='ohm'&&isFinite(METER.val)&&Math.abs(METER.val-1000)<50];},
+  done(dt){return this.st().every(x=>x)&&hold('ohm',true,dt,1.2);},
+  hints:['Use BOARD POWER to switch the board off first. With power on the meter shows ERR.','Set the dial to OHMS, then place the leads on the VCC and N1 test points.','R1 is 1 k, so you should read about 1.00 k\u03a9.'],
+  why:['Ohms and power','A meter measures resistance by sending its own tiny current, so the circuit must be unpowered or the reading is wrong and the meter can be damaged. Resistance checks are how you confirm a part is open, shorted, or the right value.']},
+ {id:'dcfault',t:'Troubleshoot: divider board',s:'Find the fault with the meter.',obj:'Something is wrong with this board. Find it.',board:'A',fault:'rand',faults:['r1open','r2open','r3open','ledopen'],diag:true,
+  pills:['DIAGNOSE'],st(){return [!!answered.diag];},done(){return !!answered.diag;},
+  qs(){return [mcq('diag','What is the fault?',[['r1open','R1 open'],['r2open','R2 open'],['r3open','R3 open'],['ledopen','LED burned out (open)'],['none','No fault']],S.fault)];},
+  hints:['Working board: N1 should be 6 V and N2 (LED anode) 2 V. Compare what you measure.','N1 at 0 V or 9 V points to R1 or R2. N1 right but N2 at 0 V or 9 V points to R3 or the LED.','N2 = 9 V means no current flows in the LED branch: the LED is open. N2 = 0 V with N1 correct means R3 is open. Power the board off and use OHMS to confirm.'],
+  why:['Fault finding','Compare each measurement with what the circuit should give. A voltage that rises to the full supply usually means a part upstream of it is open and nothing is pulling it down. A node at 0 V means its feed is open.']},
+ {id:'scope',t:'Scope: the 60 Hz source',s:'Set up the scope and read it.',obj:'Put CH1 on SEC and set the scope to show about three clean cycles.',board:'B',fault:'none',
+  pills:['CH1 ON SEC','2+ CYCLES SHOWN','SIGNAL FILLS SCREEN','FREQUENCY','PEAK-TO-PEAK'],
+  st(){const m=SCOPE.ch1,ok1=S.tg.ch1==='SEC',cyc=m&&m.f&&(10*S.tdiv)*m.f>=2,fill=m&&m.vpp>=S.vdiv*3&&m.vpp<=S.vdiv*7.5&&S.coup==='dc';return [ok1,!!cyc,!!(ok1&&fill),!!answered.f,!!answered.v];},
+  done(){const s=this.st();return s.every(x=>x);},
+  qs(){return [mcq('f','What is the frequency?',[['50','50 Hz'],['60','60 Hz'],['400','400 Hz']],'60'),mcq('v','What is the peak-to-peak voltage?',[['12','12 V'],['24','24 V'],['17','17 V']],'24')];},
+  hints:['Tap SCOPE CH1, then tap the SEC test point. Try 5 ms per division and 5 V per division.','Count divisions for one cycle and convert: frequency = 1 / period. The auto readout under the screen can confirm.','The source is 12 V peak, so it swings 24 V peak to peak.'],
+  why:['Reading a scope','The scope plots voltage against time. The horizontal setting gives time per division, so one cycle\'s width gives the period and frequency. The vertical setting gives volts per division, so peak-to-peak is height times volts per division. Probe switch and scope setting must match, or every reading is off by 10.']},
+ {id:'ripple',t:'Rectifier and ripple',s:'See what the diode and capacitor do.',obj:'Put CH1 on SEC and CH2 on REC. Read the DC output and the ripple.',board:'B',fault:'none',
+  pills:['CH1 SEC, CH2 REC','DC OUTPUT','RIPPLE'],
+  st(){return [S.tg.ch1==='SEC'&&S.tg.ch2==='REC',!!answered.dc,!!answered.rip];},
+  done(){return this.st().every(x=>x);},
+  qs(){const r=rippleActual();return [mcq('dc','What does a DC voltmeter read at REC (to GND)?',[['4','About 4 V'],['10','About 10 V'],['17','About 17 V']],'10'),mcq('rip','About how big is the ripple (peak to peak)?',[['sm','Under 0.5 V'],['mid','About '+rf(r,1)+' V'],['big','About 8 V']],'mid')];},
+  hints:['Set the meter to V DC, red on REC, black on GND. For ripple, switch the scope coupling to AC and lower V/div.','The diode only conducts on the peaks, so the capacitor recharges 60 times a second and sags between peaks.','Ripple = load current / (frequency x capacitance). With about 10 mA, 60 Hz and 100 \u00b5F that is roughly 1.7 to 2 V.'],
+  why:['Rectifier and filter','The diode passes only the positive peaks. The capacitor charges to the peak, then supplies the load until the next peak, so the output sags slightly: ripple. More capacitance or less load current means less ripple. A DC meter reads the average.']},
+ {id:'supfault',t:'Troubleshoot: power supply',s:'Use the scope and the meter together.',obj:'The supply is not working right. Find the fault.',board:'B',fault:'rand',faults:['d1open','d1short','c1open','rlopen'],diag:true,
+  pills:['DIAGNOSE'],st(){return [!!answered.diag];},done(){return !!answered.diag;},
+  qs(){return [mcq('diag','What is the fault?',[['d1open','D1 open'],['d1short','D1 shorted'],['c1open','C1 open'],['rlopen','Load RL open'],['none','No fault']],S.fault)];},
+  hints:['Put CH1 on REC and compare it with the normal picture: DC about 10 V with a little ripple.','Flat 0 V: nothing is getting through. A full sine wave: the diode is not rectifying. Pulses with no smoothing: the capacitor is not working.','Almost no ripple and a high DC level means the load is not drawing current. Flat 0 V means D1 is open; check with DIODE mode (board off).'],
+  why:['Reading the symptom','Each fault leaves a different picture on the scope. No output points to an open in the path. A full AC wave means the diode is shorted. Bare pulses mean the filter capacitor is open. A smooth high level with no load current means the load is open.']},
+ {id:'filter',t:'Filter response',s:'Watch an RC filter cut high frequencies.',obj:'Compare CH1 (input) and CH2 (output) at different generator frequencies.',board:'C',fault:'none',
+  pills:['CH1 IN, CH2 OUT','GAIN AT 5 kHz','CUTOFF FREQUENCY'],
+  st(){return [S.tg.ch1==='IN'&&S.tg.ch2==='OUT',!!answered.g,!!answered.fc];},
+  done(){return this.st().every(x=>x);},
+  qs(){return [mcq('g','At 5 kHz, about what fraction of the input appears at the output?',[['01','About 0.1'],['03','About 0.3'],['07','About 0.7']],'03'),mcq('fc','At which frequency does the output fall to 0.7 of the input (the cutoff)?',[['160','160 Hz'],['1600','1.6 kHz'],['16000','16 kHz']],'1600')];},
+  hints:['Tap SCOPE CH1 then IN, and SCOPE CH2 then OUT. Set about 200 \u00b5s per division, 1 V per division.','Change the generator frequency and compare the two traces. The output shrinks and lags as frequency rises.','Cutoff = 1 / (2\u03c0RC) = 1 / (2\u03c0 x 1 k x 100 nF) = about 1.6 kHz.'],
+  why:['The RC low-pass','A capacitor passes high frequencies more easily to ground, so an RC filter lets low frequencies through and cuts high ones. At the cutoff frequency, 1 / (2\u03c0RC), the output is 0.707 of the input and lags it by 45 degrees. EW receivers use filters like this to keep out unwanted signals.']},
+ {id:'timer',t:'555 timer',s:'Read frequency and duty cycle.',obj:'Put CH1 on OUT and work out the blink frequency and duty cycle.',board:'D',fault:'none',
+  pills:['CH1 ON OUT','FREQUENCY','DUTY CYCLE','METER VS SCOPE'],
+  st(){return [S.tg.ch1==='OUT',!!answered.f,!!answered.d,!!answered.m];},
+  done(){return this.st().every(x=>x);},
+  qs(){return [mcq('f','About what frequency is the output?',[['1','About 1.4 Hz'],['14','About 14 Hz'],['140','About 140 Hz']],'14'),mcq('d','About what fraction of the time is the output high?',[['25','About 25%'],['55','About 55%'],['90','About 90%']],'55'),mcq('m','A DC voltmeter on OUT reads about 4 V though the scope shows 7 V peaks. Why?',[['avg','The meter shows the average of high and low'],['bad','The meter is broken'],['drop','The meter drops 3 V']],'avg')];},
+  hints:['Tap SCOPE CH1 then OUT. Try 20 ms per division and 2 V per division.','Count one full period across the screen and divide: frequency = 1 / period. Duty = time high / period.','f = 1.44 / ((R1 + 2 R2) C) = about 13.8 Hz. High time is 0.693 (R1 + R2) C, about 55% of the cycle.'],
+  why:['Timing and averages','A 555 sets its timing with resistors and a capacitor: bigger values mean a slower blink. A scope shows the true waveform. A DC meter shows only the average, which depends on the duty cycle. That is why a meter and a scope can seem to disagree.']},
+ {id:'timerfault',t:'Troubleshoot: 555 board',s:'Find what stopped the blinker.',obj:'The blinker is not behaving. Find the fault.',board:'D',fault:'rand',faults:['copen','r2open','novcc'],diag:true,
+  pills:['DIAGNOSE'],st(){return [!!answered.diag];},done(){return !!answered.diag;},
+  qs(){return [mcq('diag','What is the fault?',[['copen','C open (blinks far too fast)'],['r2open','R2 open (output stuck)'],['novcc','No supply (VCC open)'],['none','No fault']],S.fault)];},
+  hints:['Check VCC first with the meter. No supply means everything reads 0 V.','Put CH1 on OUT. Flat high or flat low means the timing network is not cycling.','Fast blinking means the timing capacitor is effectively missing. A stuck-high output with CAP at 0 V means the charge path through R2 is open.'],
+  why:['Start at the supply','Always check power first, then the signal path. A flat output with power present usually means the timing network is broken. A very fast output means the timing capacitor is open, so the frequency formula uses almost no capacitance.']},
+ {id:'free',t:'Free bench',s:'Any board, any fault, all the tools.',obj:'Pick a board and a fault, then measure everything.',board:'A',fault:'none',free:true,pills:[],st(){return [];},done(){return false;},hints:['Change the fault, then look at what each instrument shows.','Try the probe mismatch: set PROBE SWITCH x10 but SCOPE SETS x1 and see the amplitude drop.','Check VCC first, then follow the signal.'],why:['','']}
+];
+function openLessons(){$('lessonList').innerHTML=lessons.map((l,i)=>'<button class="lbtn'+(LD[l.id]?' done':'')+'" onclick="startLesson('+i+')"><b>'+(i+1)+'. '+l.t+(LD[l.id]?' \u2713':'')+'</b><span>'+l.s+'</span></button>').join('');$('ovLessons').classList.add('on');}
+function startLesson(i){closeOv('ovLessons');closeOv('ovDone');S.lesson=i;const L=lessons[i];hintN=0;answered={};wrong={};Object.keys(holdT).forEach(k=>holdT[k]=0);
+  let f=L.fault;if(f==='rand'){f=L.faults[Math.floor(Math.random()*L.faults.length)];}
+  setBoard(L.board,f);if(L.id==='scope'){S.tdiv=0.05;S.vdiv=10;}if(L.id==='ripple'){S.tdiv=0.01;S.vdiv=5;}
+  $('lk').textContent=L.free?'FREE BENCH':'LESSON '+(i+1)+' OF '+(lessons.length-1);$('lo').textContent=L.obj;
+  $('pills').innerHTML=(L.pills||[]).map((p,k)=>'<span class="pill" id="pl'+k+'">'+p+'</span>').join('');
+  if(L.free){$('qbox').innerHTML='<div class="chips" style="margin-top:8px">'+[['A','BOARD A'],['B','BOARD B'],['C','BOARD C'],['D','BOARD D']].map(b=>'<button class="chip" onclick="freeBoard(\''+b[0]+'\')">'+b[1]+'</button>').join('')+'</div>';}
+  else $('qbox').innerHTML='';
+  setMsg(L.id==='dc'?'Tap BLACK LEAD, tap GND on the board, then RED LEAD and tap N1.':'','');curQ={};renderQ();refreshAll();}
+function freeBoard(b){setBoard(b,'none');refreshAll();}
+function setMsg(t,c){$('lm').textContent=t;$('lm').className='lm '+(c||'');}
+let wrong={};
+function renderQ(){const L=lessons[S.lesson];if(!L||!L.qs){return;}const qs=L.qs();let h='';
+  qs.forEach(q=>{const a=answered[q.id],w=wrong[q.id];h+='<div class="q"><span class="k">'+q.title+'</span><div class="chips">'+q.opts.map(o=>{let cls='chip';if(a!==undefined&&o[0]===q.ans)cls+=' on';else if(w===o[0])cls+=' red';return '<button class="'+cls+'" onclick="ans(\''+q.id+'\',\''+o[0]+'\')">'+o[1]+'</button>';}).join('')+'</div></div>';});
+  $('qbox').innerHTML=h;}
+function ans(id,v){const L=lessons[S.lesson],q=L.qs().find(x=>x.id===id);if(answered[id]!==undefined)return;
+  if(v===q.ans){answered[id]=v;delete wrong[id];setMsg(id==='diag'?'Correct. That is the fault.':'Correct.','good');}
+  else{wrong[id]=v;setTimeout(()=>{if(wrong[id]===v){delete wrong[id];renderQ();}},900);setMsg('Not quite. Check your readings again.','err');}
+  renderQ();checkLesson();}
+function hint(){const L=lessons[S.lesson];hintN=Math.min(3,hintN+1);setMsg('HINT: '+L.hints[hintN-1],'');}
+function checkLesson(dt){const L=lessons[S.lesson];if(!L)return;const st=L.st();(L.pills||[]).forEach((p,k)=>{const e=$('pl'+k);if(e)e.classList.toggle('ok',!!st[k]);});
+  if(!L.free&&!LD[L.id]&&L.done(dt||0))completeLesson();}
+function completeLesson(){const L=lessons[S.lesson];if(LD[L.id])return;LD[L.id]=true;$('dH').textContent=L.why[0];$('dP').textContent=L.why[1];$('ovDone').classList.add('on');}
+function nextLesson(){closeOv('ovDone');startLesson(Math.min(lessons.length-1,S.lesson+1));}
+let lastT=0;
+function loop(ts){const dt=Math.min(0.2,(ts-lastT)/1000||0);lastT=ts;if(S.lesson>=0){checkLesson(dt);}requestAnimationFrame(loop);}
+startLesson(0);requestAnimationFrame(loop);
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>

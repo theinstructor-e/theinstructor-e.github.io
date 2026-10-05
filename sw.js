@@ -4,9 +4,9 @@
 // the network in the background to keep the cache fresh (stale-while-revalidate).
 //
 // To force everyone's cache to refresh after a content push, bump CACHE_NAME below
-// (e.g. 'ewit-cache-v2'). Old caches are automatically deleted on the next activate.
+// (e.g. 'ewit-cache-v3'). Old caches are automatically deleted on the next activate.
 
-const CACHE_NAME = 'ewit-cache-v1';
+const CACHE_NAME = 'ewit-cache-v3';
 const OFFLINE_URL = '/offline.html';
 
 self.addEventListener('install', (event) => {

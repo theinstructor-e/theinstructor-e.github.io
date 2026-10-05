@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modulation &amp; Noise Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook &middot; Pilot</p>
+  <h1>Modulation &amp; Noise <span>Explained</span></h1>
+  <p class="hero-sub">How a message rides a radio wave, how much room it needs, and what noise and jamming do to it. Seven short chapters, hands-on widgets, and questions after every chapter.</p>
+</header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>Comfortable with decibels? Skim <a href="../mathguide/">Math Explained</a> (Decibels tab). Know what frequency and wavelength are? See <a href="../physicsguide/">Radio Waves Explained</a>.</div><div><b>Then practice in the tools</b><a href="../modlab/">Modulation &amp; Jamming Lab</a> &middot; <a href="../rftheory/">Physics</a> &middot; <a href="../fhop/">Frequency Hop</a> &middot; <a href="../sigid/">Signal ID Trainer</a>. About 45 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<!-- ============ CHAPTER 1 ============ -->
+<section class="ch" id="ch1">
+  <h2>1 &middot; Why We Modulate</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Explain why a message cannot just be sent straight from an antenna.</li>
+    <li>Name the three things about a carrier that can carry information.</li>
+    <li>Tell analog from digital modulation.</li></ul></div>
+
+  <p>Your voice is a slow vibration, mostly between about 300 Hz and 3.4 kHz. If you wired a microphone to an antenna and hoped for the best, two things would go wrong.</p>
+  <h3>Problem 1: the antenna would be huge</h3>
+  <p>An antenna works well when it is a sizeable fraction of the <span class="term" data-t="wavelength">wavelength</span>. Wavelength is the speed of light divided by frequency.</p>
+  <div class="formula">wavelength (m) = 300,000,000 &divide; frequency (Hz)</div>
+  <p>At 3 kHz the wavelength is 100 km. A quarter-wave antenna would be 25 km tall. At 150 MHz the wavelength is 2 m, and a quarter-wave antenna is a 50 cm whip that fits on a radio.</p>
+  <h3>Problem 2: everyone would talk on top of everyone</h3>
+  <p>Every voice lives in the same few kilohertz. Send them all out directly and they pile up into noise. If each transmitter moves its signal to its own place on the dial, many signals can share the air without colliding.</p>
+  <h3>The fix: a carrier</h3>
+  <p>A <span class="term" data-t="carrier">carrier</span> is a steady, high-frequency wave that radiates well from a small antenna. To send a message, you change something about the carrier in step with the message. That is <span class="term" data-t="modulation">modulation</span>. The receiver undoes it, which is <span class="term" data-t="demodulation">demodulation</span>.</p>
+  <h3>Three knobs</h3>
+  <table class="t"><tr><th>Change the carrier's&hellip;</th><th>Analog name</th><th>Digital name</th></tr>
+   <tr><td>Amplitude (height)</td><td>AM</td><td>ASK, OOK</td></tr>
+   <tr><td>Frequency</td><td>FM</td><td>FSK</td></tr>
+   <tr><td>Phase (timing)</td><td>PM</td><td>PSK</td></tr>
+   <tr><td>Amplitude and phase together</td><td>&mdash;</td><td>QAM</td></tr></table>
+  <p><b>Analog</b> means the message is a smoothly varying signal, such as a voice waveform. <b>Digital</b> means the message is a stream of separate symbols, usually bits. Most modern links are digital, even when they carry voice.</p>
+
+  <div class="try"><div class="th">Try it: ride a message on a carrier</div><div class="tb">
+    <canvas id="w1c" width="480" height="300"></canvas>
+    <div class="ctl"><label>Method</label><div class="chips" id="w1m"></div></div>
+    <div class="ctl"><label>Message speed</label><input type="range" id="w1f" min="1" max="6" step="1" value="2" oninput="W1.draw()"><span class="v" id="w1fv"></span></div>
+    <div class="ctl"><label>Carrier speed</label><input type="range" id="w1c2" min="10" max="40" step="1" value="24" oninput="W1.draw()"><span class="v" id="w1cv"></span></div>
+    <div class="note">The top trace is the message, the middle one is the carrier, and the bottom is what the antenna actually radiates. Real carriers run thousands of times faster than the message. Here the ratio is kept small so you can see the shapes.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>The way a signal is modulated shows up in its width and shape on a waterfall. Recognize the modulation and you can often name the emitter, and that tells you how to find it, listen to it, or jam it.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Raw messages are too slow for practical antennas and would all overlap.</li><li>A carrier moves the message to a useful frequency. Modulation changes amplitude, frequency, or phase in step with the message.</li><li>Analog messages are continuous. Digital messages are symbols.</li></ul></div>
+  <div class="kt"><span class="term" data-t="carrier">carrier</span><span class="term" data-t="modulation">modulation</span><span class="term" data-t="demodulation">demodulation</span><span class="term" data-t="wavelength">wavelength</span><span class="term" data-t="baseband">baseband</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: AM and FM &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 2 ============ -->
+<section class="ch" id="ch2">
+  <h2>2 &middot; Analog: AM and FM</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Describe AM and FM and where their energy sits in the spectrum.</li>
+    <li>Calculate AM bandwidth and FM bandwidth (Carson's rule).</li>
+    <li>Explain the capture effect and the FM threshold.</li></ul></div>
+
+  <h3>AM: change the height</h3>
+  <p>In <b>amplitude modulation</b> the carrier's height follows the message. The outline of the waveform is called the envelope, and it copies the message. The <span class="term" data-t="moddepth">modulation depth</span> <i>m</i> says how strongly: <i>m</i> = 1 means the envelope swings from zero to double the carrier height.</p>
+  <p>Modulating a carrier at <i>f<sub>c</sub></i> with a tone at <i>f<sub>m</sub></i> creates new frequencies, called <span class="term" data-t="sideband">sidebands</span>, at <i>f<sub>c</sub></i> &minus; <i>f<sub>m</sub></i> and <i>f<sub>c</sub></i> + <i>f<sub>m</sub></i>. So the signal needs room on both sides of the carrier.</p>
+  <div class="formula">AM bandwidth = 2 &times; highest message frequency</div>
+  <p>A catch: the message lives only in the sidebands. At <i>m</i> = 1, two thirds of the transmitted power is the plain carrier, which carries nothing. AM is simple but wasteful. <b>Single sideband (SSB)</b> drops the carrier and one sideband, so it needs about half the bandwidth and wastes nothing. That is why HF voice uses SSB.</p>
+  <p>Push <i>m</i> above 1 and the envelope tries to go negative. That is <span class="term" data-t="overmod">overmodulation</span>: the waveform distorts and splatters across extra bandwidth.</p>
+
+  <div class="try"><div class="th">Try it: AM depth and sidebands</div><div class="tb">
+    <canvas id="w2c" width="480" height="320"></canvas>
+    <div class="ctl"><label>Depth <i>m</i></label><input type="range" id="w2m" min="0" max="1.5" step="0.05" value="0.8" oninput="W2.draw()"><span class="v" id="w2mv"></span></div>
+    <div class="ctl"><label>Message tone</label><input type="range" id="w2f" min="1" max="5" step="0.5" value="3" oninput="W2.draw()"><span class="v" id="w2fv"></span></div>
+    <div class="read" id="w2r"></div>
+    <div class="note">Drag depth past 1.0 and watch the envelope lines cross. The bars below the waveform show the carrier and the two sidebands.</div></div></div>
+
+  <h3>FM: change the speed</h3>
+  <p>In <b>frequency modulation</b> the carrier's height never changes. Its frequency swings up and down in step with the message. How far it swings is the <span class="term" data-t="deviation">deviation</span> &Delta;<i>f</i>. The <span class="term" data-t="modindex">modulation index</span> compares it to the message tone:</p>
+  <div class="formula">&beta; = &Delta;f &divide; f<sub>m</sub><br>FM bandwidth &approx; 2 &times; (&Delta;f + f<sub>m</sub>)   (Carson's rule)</div>
+  <p>FM makes a whole comb of sidebands spaced <i>f<sub>m</sub></i> apart. <span class="term" data-t="carson">Carson's rule</span> tells you where nearly all the energy sits. FM broadcast uses &Delta;<i>f</i> = 75 kHz and audio up to 15 kHz, so its bandwidth is about 180 kHz, which fits the 200 kHz channel spacing. Narrowband FM voice radios on 25 kHz channels typically use about 5 kHz deviation with 3 kHz audio, about 16 kHz, which fits the channel.</p>
+  <p>Why accept the extra bandwidth? Noise mostly changes a signal's height, not its frequency, and an FM receiver ignores height. A wider swing also spreads the message over more bandwidth, which improves the output signal-to-noise ratio. It is a direct trade of bandwidth for quality.</p>
+
+  <div class="try"><div class="th">Try it: FM deviation and Carson's rule</div><div class="tb">
+    <canvas id="w3c" width="480" height="320"></canvas>
+    <div class="ctl"><label>Deviation &Delta;f</label><input type="range" id="w3d" min="1" max="25" step="1" value="10" oninput="W3.draw()"><span class="v" id="w3dv"></span></div>
+    <div class="ctl"><label>Message tone</label><input type="range" id="w3f" min="1" max="5" step="0.5" value="3" oninput="W3.draw()"><span class="v" id="w3fv"></span></div>
+    <div class="read" id="w3r"></div>
+    <div class="note">Bars are the sideband strengths (Bessel functions). The shaded band is Carson's rule. Try &beta; &asymp; 2.4: the carrier itself disappears while the sidebands carry everything.</div></div></div>
+
+  <h3>Two effects worth knowing</h3>
+  <ul>
+    <li><span class="term" data-t="capture">Capture effect.</span> If two FM signals land on one channel, the receiver locks onto the stronger one and the weaker one disappears, even if it is only a few dB weaker. AM lets you hear both.</li>
+    <li><span class="term" data-t="threshold">Threshold effect.</span> FM stays clean as the signal gets weaker, until about 10 dB signal-to-noise. Below that, clicks flood in and quality collapses fast. AM fades gradually instead.</li></ul>
+  <table class="t"><tr><th></th><th>AM</th><th>FM</th></tr>
+   <tr><td>Bandwidth</td><td>2 &times; audio</td><td>2 &times; (&Delta;f + audio), usually wider</td></tr>
+   <tr><td>Noise</td><td>Noise adds straight to the audio</td><td>Better, until the threshold</td></tr>
+   <tr><td>Power efficiency</td><td>Poor (carrier carries nothing)</td><td>Good (constant amplitude)</td></tr>
+   <tr><td>Two on one channel</td><td>Hear both, with a whistle</td><td>Stronger one wins</td></tr>
+   <tr><td>Seen in</td><td>AM broadcast, VHF aviation voice, CB</td><td>FM broadcast, tactical VHF voice</td></tr></table>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>AM varies height. Sidebands appear on both sides of the carrier. Bandwidth = 2 &times; message frequency. At full depth, two thirds of the power is wasted carrier.</li><li>FM varies frequency. Bandwidth &approx; 2(&Delta;f + f<sub>m</sub>). It trades bandwidth for noise performance.</li><li>FM has capture and a threshold. AM degrades gradually.</li></ul></div>
+  <div class="kt"><span class="term" data-t="sideband">sideband</span><span class="term" data-t="moddepth">modulation depth</span><span class="term" data-t="overmod">overmodulation</span><span class="term" data-t="deviation">deviation</span><span class="term" data-t="modindex">modulation index</span><span class="term" data-t="carson">Carson's rule</span><span class="term" data-t="capture">capture effect</span><span class="term" data-t="threshold">threshold effect</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Digital &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 3 ============ -->
+<section class="ch" id="ch3">
+  <h2>3 &middot; Digital: Bits on a Carrier</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Tell bit rate from symbol rate and convert between them.</li>
+    <li>Describe ASK/OOK, FSK, PSK and QAM and read a constellation.</li>
+    <li>Explain why packing in more points costs noise tolerance.</li></ul></div>
+
+  <p>Digital modulation sends bits by choosing among a fixed set of carrier states. Each state is a <span class="term" data-t="symbol">symbol</span>. If there are <i>M</i> possible symbols, each one carries log<sub>2</sub><i>M</i> bits.</p>
+  <div class="formula">bit rate = symbol rate &times; log<sub>2</sub>(M)</div>
+  <p>The symbol rate (symbols per second, also called <span class="term" data-t="baud">baud</span>) sets the bandwidth. The number of bits per symbol sets how fast you actually send data.</p>
+
+  <h3>The basic families</h3>
+  <ul>
+   <li><b>ASK / OOK.</b> Amplitude shift keying changes the height. On-off keying is the extreme case: carrier on means 1, carrier off means 0. Morse code and many garage remotes work this way.</li>
+   <li><b>FSK.</b> Frequency shift keying jumps between two (or more) frequencies. Simple and rugged. DMR radios use four-level FSK.</li>
+   <li><b>PSK.</b> Phase shift keying changes the timing of the wave. Binary PSK (BPSK) flips between 0&deg; and 180&deg;. The GPS civil signal uses BPSK. Quadrature PSK (QPSK) uses four phases, so each symbol carries 2 bits.</li>
+   <li><b>QAM.</b> Quadrature amplitude modulation changes amplitude and phase together. 16-QAM carries 4 bits per symbol, 64-QAM carries 6. Wi-Fi and LTE step up and down through these as signal conditions change.</li></ul>
+
+  <div class="try"><div class="th">Try it: bits to waveform</div><div class="tb">
+    <canvas id="w4c" width="480" height="290"></canvas>
+    <div class="ctl"><label>Method</label><div class="chips" id="w4m"></div></div>
+    <div class="ctl"><label>Bits (tap to flip)</label><div class="bits" id="w4b"></div></div>
+    <div class="note">Watch where each bit starts. For ASK the height changes, for FSK the speed changes, and for BPSK the wave flips upside down.</div></div></div>
+
+  <h3>The constellation diagram</h3>
+  <p>A constellation plots every allowed symbol as a dot. Distance from the center is amplitude, and angle is phase. The horizontal axis is called I (in-phase) and the vertical axis Q (quadrature). Each dot gets a bit label. A receiver sees a noisy dot and picks the nearest allowed one.</p>
+  <p>Labels are assigned with <span class="term" data-t="gray">Gray coding</span>: neighboring dots differ by exactly one bit. The most common mistake is landing on a neighbor, and with Gray coding that wrecks only one bit.</p>
+  <div class="try"><div class="th">Try it: constellation explorer</div><div class="tb">
+    <canvas id="w5c" width="480" height="340"></canvas>
+    <div class="ctl"><label>Modulation</label><div class="chips" id="w5m"></div></div>
+    <div class="read" id="w5r"></div>
+    <div class="note">Tap a dot to see its bits and its nearest neighbors. Compare the &ldquo;closest spacing&rdquo; between BPSK and 64-QAM. All constellations here are drawn with the same average power.</div></div></div>
+
+  <table class="t"><tr><th>Scheme</th><th>Bits/symbol</th><th>Points</th><th>Where you meet it</th></tr>
+   <tr><td>BPSK</td><td>1</td><td>2</td><td>GPS civil signal, robust links</td></tr>
+   <tr><td>QPSK</td><td>2</td><td>4</td><td>Satellite links, LTE and Wi-Fi at low rates</td></tr>
+   <tr><td>8-PSK</td><td>3</td><td>8</td><td>Satellite and some data links</td></tr>
+   <tr><td>16-QAM</td><td>4</td><td>16</td><td>LTE, Wi-Fi at medium rates</td></tr>
+   <tr><td>64-QAM</td><td>6</td><td>64</td><td>LTE and Wi-Fi at high signal quality</td></tr></table>
+
+  <div class="why"><b>Why a 17E cares</b>More points means more bits per second, but the dots sit closer together. The same noise or jamming that a QPSK link ignores can flip bits on a 64-QAM link. That is why adaptive links step down when conditions get bad.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Bit rate = symbol rate &times; log<sub>2</sub>(M).</li><li>ASK/OOK varies height, FSK varies frequency, PSK varies phase, QAM varies height and phase.</li><li>A constellation shows the allowed symbols. Gray coding keeps neighbors one bit apart. More points means closer dots and less noise tolerance.</li></ul></div>
+  <div class="kt"><span class="term" data-t="symbol">symbol</span><span class="term" data-t="baud">baud</span><span class="term" data-t="ook">OOK</span><span class="term" data-t="fsk">FSK</span><span class="term" data-t="psk">PSK</span><span class="term" data-t="qam">QAM</span><span class="term" data-t="constellation">constellation</span><span class="term" data-t="gray">Gray coding</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Bandwidth &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 4 ============ -->
+<section class="ch" id="ch4">
+  <h2>4 &middot; Bandwidth and Data Rate</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Estimate the bandwidth a digital signal needs.</li>
+    <li>Calculate spectral efficiency.</li>
+    <li>Use the Shannon limit to see what a channel can carry at best.</li></ul></div>
+
+  <p>Spectrum is limited and shared, so how much room a signal needs matters as much as how fast it sends.</p>
+  <h3>Bandwidth of a digital signal</h3>
+  <p>A well-shaped digital signal takes up a little more than its symbol rate. How much more is set by the <span class="term" data-t="rolloff">roll-off</span> factor &alpha;, a filter setting between 0 and 1. Smaller &alpha; saves bandwidth but is harder to build.</p>
+  <div class="formula">bandwidth &approx; symbol rate &times; (1 + &alpha;)<br>spectral efficiency = bit rate &divide; bandwidth  (bits/s per Hz)</div>
+  <details class="work"><summary>Worked example: QPSK at 1 Mb/s</summary><div>
+   <p>QPSK carries 2 bits per symbol, so symbol rate = 1 Mb/s &divide; 2 = 0.5 Msymbols/s.</p>
+   <p>With &alpha; = 0.35, bandwidth = 0.5 &times; 1.35 = 0.675 MHz.</p>
+   <p>Spectral efficiency = 1 &divide; 0.675 &approx; 1.5 bits/s per Hz.</p></div></details>
+
+  <div class="try"><div class="th">Try it: bandwidth and the Shannon limit</div><div class="tb">
+    <div class="ctl"><label>Modulation</label><div class="chips" id="w6m"></div></div>
+    <div class="ctl"><label>Bit rate</label><input type="range" id="w6r" min="0" max="100" step="1" value="50" oninput="W6.calc()"><span class="v" id="w6rv"></span></div>
+    <div class="ctl"><label>Roll-off &alpha;</label><input type="range" id="w6a" min="0" max="1" step="0.05" value="0.35" oninput="W6.calc()"><span class="v" id="w6av"></span></div>
+    <div class="ctl"><label>Signal-to-noise</label><input type="range" id="w6s" min="0" max="40" step="1" value="20" oninput="W6.calc()"><span class="v" id="w6sv"></span></div>
+    <div class="read" id="w6o"></div>
+    <canvas id="w6c" width="480" height="150"></canvas>
+    <div class="note">The bar compares your bit rate with the absolute Shannon limit for the bandwidth you just computed. Real, uncoded links sit well below it.</div></div></div>
+
+  <h3>The Shannon limit</h3>
+  <p>In 1948 Claude Shannon showed that every channel has a maximum error-free data rate. It depends on only two things.</p>
+  <div class="formula">C = B &times; log<sub>2</sub>(1 + SNR)</div>
+  <p>Here <i>B</i> is bandwidth in hertz, and SNR is the signal-to-noise power ratio as a plain number, <b>not</b> in dB. Convert first: 20 dB is a ratio of 100.</p>
+  <details class="work"><summary>Worked example: a 1 MHz channel at 20 dB</summary><div>
+   <p>SNR = 100, so C = 1,000,000 &times; log<sub>2</sub>(101) &approx; 1,000,000 &times; 6.66 = 6.66 Mb/s.</p>
+   <p>Add 10 dB more (ratio 1,000) and C is only about 9.97 Mb/s. Each extra bit per second per Hz costs about 3 dB more signal. Doubling bandwidth, by contrast, doubles the limit.</p></div></details>
+  <p>This shows the central trade of the whole field: you can swap bandwidth for power, or power for bandwidth. FM does it, and so does spread spectrum (Chapter 6). Real systems approach the limit with error-correcting codes. Plain uncoded modulation like the examples in this guide stays several dB short.</p>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Bandwidth &approx; symbol rate &times; (1 + &alpha;). Efficiency = bit rate &divide; bandwidth.</li><li>Higher-order modulation packs more bits per hertz.</li><li>Shannon: C = B log<sub>2</sub>(1 + SNR), with SNR as a ratio. Bandwidth and power trade against each other.</li></ul></div>
+  <div class="kt"><span class="term" data-t="rolloff">roll-off</span><span class="term" data-t="specteff">spectral efficiency</span><span class="term" data-t="nyquist">Nyquist limit</span><span class="term" data-t="shannon">Shannon capacity</span><span class="term" data-t="bandwidth">bandwidth</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Noise &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 5 ============ -->
+<section class="ch" id="ch5">
+  <h2>5 &middot; Noise and Errors</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Calculate a receiver's noise floor from bandwidth and noise figure.</li>
+    <li>Compute SNR and judge whether a modulation will work.</li>
+    <li>Explain why higher-order modulation needs more SNR.</li></ul></div>
+
+  <h3>Thermal noise: the floor you cannot beat</h3>
+  <p>Any warm object makes random radio noise. Its power depends on temperature and on how wide a slice of spectrum you listen to. At room temperature (290 K) the noise power density is &minus;174 dBm per hertz. Add the receiver's own <span class="term" data-t="nf">noise figure</span> (NF) and you get the noise floor.</p>
+  <div class="formula">noise floor (dBm) = &minus;174 + 10 &times; log<sub>10</sub>(bandwidth in Hz) + NF (dB)<br>SNR (dB) = received power (dBm) &minus; noise floor (dBm)</div>
+  <details class="work"><summary>Worked example: 25 kHz voice channel, NF = 8 dB</summary><div>
+   <p>10 &times; log<sub>10</sub>(25,000) = 44 dB.</p>
+   <p>Noise floor = &minus;174 + 44 + 8 = &minus;122 dBm.</p>
+   <p>If the signal arrives at &minus;100 dBm, SNR = &minus;100 &minus; (&minus;122) = 22 dB.</p></div></details>
+  <p>Two habits follow. Wider bandwidth lets in more noise: 10&times; wider costs 10 dB. And a better (lower NF) receiver gives you dB for free.</p>
+
+  <h3>From SNR to bit errors</h3>
+  <p>A receiver decides which dot it was sent. Noise scatters the received dots into little clouds. If a cloud spills across the boundary to a neighbor, you get a bit error. The <span class="term" data-t="ber">bit error rate (BER)</span> is the fraction of bits wrong. It falls steeply as SNR rises, so each modulation has a fairly sharp &ldquo;needs at least this much&rdquo; level.</p>
+  <table class="t"><tr><th>Modulation</th><th>SNR per symbol for 0.1% BER</th></tr>
+   <tr><td>BPSK</td><td>about 6.8 dB</td></tr><tr><td>QPSK</td><td>about 9.8 dB</td></tr><tr><td>8-PSK</td><td>about 14.8 dB</td></tr><tr><td>16-QAM</td><td>about 16.6 dB</td></tr><tr><td>64-QAM</td><td>about 22.6 dB</td></tr></table>
+  <p class="note">Uncoded, ideal receiver, steady noise only. Standard textbook approximations, so treat them as teaching values. Real radios differ by a dB or two and use error-correcting codes. Here &ldquo;SNR per symbol&rdquo; is the SNR when the receiver bandwidth equals the symbol rate.</p>
+  <div class="try"><div class="th">Try it: noise floor, SNR and a cloud of dots</div><div class="tb">
+    <canvas id="w7c" width="480" height="330"></canvas>
+    <div class="ctl"><label>Modulation</label><div class="chips" id="w7m"></div></div>
+    <div class="ctl"><label>Bandwidth</label><input type="range" id="w7b" min="0" max="100" step="1" value="42" oninput="W7.calc()"><span class="v" id="w7bv"></span></div>
+    <div class="ctl"><label>Noise figure</label><input type="range" id="w7n" min="0" max="12" step="1" value="6" oninput="W7.calc()"><span class="v" id="w7nv"></span></div>
+    <div class="ctl"><label>Received power</label><input type="range" id="w7p" min="-120" max="-40" step="1" value="-100" oninput="W7.calc()"><span class="v" id="w7pv"></span></div>
+    <div class="read" id="w7r"></div>
+    <div class="note">Green dots are decoded correctly and red dots are errors. Lower the received power or widen the bandwidth and watch the clouds blur together.</div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>A jammer works by raising the noise at the victim's receiver. It does not matter whether it is noise, a tone, or a deliberate signal: the question is how far it pushes SNR below the modulation's requirement.</div>
+
+  <h3>Buying SNR back with coding</h3>
+  <p><span class="term" data-t="fec">Forward error correction</span> adds extra bits that let the receiver fix some mistakes. It costs bandwidth or data rate, and in return the link works at lower SNR for the same error rate. Coding is how modern radios work close to the Shannon limit.</p>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Noise floor = &minus;174 + 10log<sub>10</sub>(B) + NF dBm.</li><li>SNR = signal level minus noise floor, in dB.</li><li>Each modulation needs a minimum SNR. Denser constellations need more. Coding lowers the requirement.</li></ul></div>
+  <div class="kt"><span class="term" data-t="thermal">thermal noise</span><span class="term" data-t="nf">noise figure</span><span class="term" data-t="snr">SNR</span><span class="term" data-t="ber">BER</span><span class="term" data-t="fec">FEC</span></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Interference &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 6 ============ -->
+<section class="ch" id="ch6">
+  <h2>6 &middot; Interference, Jamming and Spread Spectrum</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Combine noise and a jammer into an effective SNR.</li>
+    <li>Explain how spread spectrum and frequency hopping resist jamming.</li>
+    <li>Calculate processing gain and jamming margin.</li></ul></div>
+
+  <h3>What a jammer does to a link</h3>
+  <p>A receiver cannot tell noise from interference. Whatever lands in its band adds to the noise. The ratio of jammer power to signal power at the receiver is the <span class="term" data-t="js">jammer-to-signal ratio (J/S)</span>. The effective quality of the link is the signal against everything else:</p>
+  <div class="formula">SINR = S &divide; (N + J)     (powers, not dB)</div>
+  <p>Do the addition in watts or milliwatts, then convert back to dB. If the jammer is far above the noise, the noise floor no longer matters and SINR is about 1 &divide; (J/S).</p>
+  <p>Different jammers break different modulations in different ways. Steady noise degrades everything gradually, and then sharply for FM past its threshold. A single tone does nothing until it is strong enough to push a symbol across a boundary, and then does a lot, which hits dense constellations first. Short pulses can ruin a link at the same average power as steady noise, because bits hit during the burst are destroyed. The Modulation &amp; Jamming Lab lets you see all of these.</p>
+
+  <h3>Fighting back: spread the signal</h3>
+  <p>If the problem is that a jammer can concentrate its power on your narrow signal, make your signal wide.</p>
+  <ul>
+   <li><b>Direct-sequence spread spectrum (DSSS).</b> Multiply each data bit by a fast pseudo-random pattern of <span class="term" data-t="chip">chips</span>. The signal spreads across a bandwidth many times wider, at proportionally lower power density. The receiver multiplies by the same code. That collapses your signal back to narrow while a narrowband jammer, which does not match the code, gets spread out and diluted. GPS works this way.</li>
+   <li><b>Frequency-hopping spread spectrum (FHSS).</b> Both radios jump together among many channels in an order only they know. A jammer on one channel hits only the hops that land there.</li></ul>
+  <div class="formula">processing gain = 10 &times; log<sub>10</sub>(spread bandwidth &divide; data rate)  (dB)<br>jamming margin = processing gain &minus; required Eb/N0 &minus; system losses  (dB)</div>
+  <details class="work"><summary>Worked example: GPS civil signal</summary><div>
+   <p>The C/A code runs at 1.023 million chips per second. The data rate is 50 bits per second.</p>
+   <p>Processing gain = 10 &times; log<sub>10</sub>(1,023,000 &divide; 50) = 10 &times; log<sub>10</sub>(20,460) &approx; 43 dB.</p>
+   <p>That gain is what lets a receiver dig a signal out from below the noise. It also sets how much jamming a receiver can ride through, which is why the signal is still easy to jam: it starts out so weak.</p></div></details>
+  <p><b>Hopping in the field.</b> SINCGARS tactical radios hop across 30&ndash;87.975 MHz in 25 kHz steps, which is 2,320 channels, at roughly 100 hops per second. For two radios to stay in step they must share the hopset, the net ID, the time, and the TRANSEC key. Classic Bluetooth hops across 79 channels at 1,600 hops per second.</p>
+  <p>Hopping is not magic. A &ldquo;follower&rdquo; jammer that can detect where you landed and retune faster than your dwell time can still hit the rest of each hop. At 100 hops per second the dwell is 10 ms, which is why that rate is considered slow. Hopping also makes direction finding harder, not impossible.</p>
+
+  <div class="try"><div class="th">Try it: processing gain and jamming margin</div><div class="tb">
+    <div class="ctl"><label>Data rate</label><input type="range" id="w8a" min="0" max="100" step="1" value="33" oninput="W8.pg()"><span class="v" id="w8av"></span></div>
+    <div class="ctl"><label>Chip rate</label><input type="range" id="w8b" min="0" max="100" step="1" value="45" oninput="W8.pg()"><span class="v" id="w8bv"></span></div>
+    <div class="ctl"><label>Needed Eb/N0</label><input type="range" id="w8c" min="3" max="15" step="0.5" value="10" oninput="W8.pg()"><span class="v" id="w8cv"></span></div>
+    <div class="ctl"><label>System losses</label><input type="range" id="w8d" min="0" max="6" step="0.5" value="3" oninput="W8.pg()"><span class="v" id="w8dv"></span></div>
+    <div class="read" id="w8r"></div></div></div>
+  <div class="try"><div class="th">Try it: a hopper against a jammer</div><div class="tb">
+    <canvas id="w8c2" width="480" height="260"></canvas>
+    <div class="ctl"><label>Hop channels</label><input type="range" id="w8n" min="10" max="200" step="10" value="100" oninput="W8.hop()"><span class="v" id="w8nv"></span></div>
+    <div class="ctl"><label>Jammer width</label><input type="range" id="w8w" min="1" max="60" step="1" value="5" oninput="W8.hop()"><span class="v" id="w8wv"></span></div>
+    <div class="ctl"><label>Follower delay</label><input type="range" id="w8f" min="0" max="10" step="0.5" value="10" oninput="W8.hop()"><span class="v" id="w8fv"></span></div>
+    <div class="read" id="w8hr"></div>
+    <div class="note">Each column is one hop and each row is a channel. The shaded band is the jammer. Red dots are hops it hit. Shrink the follower delay below the 10 ms dwell and a jammer that chases you starts to win.</div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="W8.hop(true)">Re-roll the hops</button></div></div></div>
+
+  <div class="why"><b>Why a 17E cares</b>Jamming is a contest of power and bandwidth against a clock. Spread spectrum and hopping make the jammer spend power over a wide area or chase a moving target. Controlling your own emissions (EMCON) makes you harder to find in the first place. See <a href="../emconguide/" style="color:var(--accent)">EMCON Explained</a>.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>SINR = S &divide; (N + J). Add powers, not dB.</li><li>Spread spectrum trades bandwidth for jam resistance. Processing gain = 10log<sub>10</sub>(spread bandwidth &divide; data rate).</li><li>Hopping makes a jammer cover many channels or chase you. A fast follower can still win against a slow hopper.</li></ul></div>
+  <div class="kt"><span class="term" data-t="js">J/S</span><span class="term" data-t="sinr">SINR</span><span class="term" data-t="spread">spread spectrum</span><span class="term" data-t="chip">chip</span><span class="term" data-t="procgain">processing gain</span><span class="term" data-t="jmargin">jamming margin</span><span class="term" data-t="fhss">frequency hopping</span></div>
+  <a class="tool" href="../fhop/"><b>Open the Frequency Hop tool &rarr;</b>Watch a hopping signal against a jammer and see which hops survive.</a>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('ch7')">Next: Put it together &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 7 ============ -->
+<section class="ch" id="ch7">
+  <h2>7 &middot; Put It Together: Design a Link</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Walk a link from transmitter to receiver in dB.</li>
+    <li>Pick the fastest modulation the link can support.</li>
+    <li>Predict how a jammer forces a link to step down.</li></ul></div>
+
+  <p>Everything in this guide comes together in one problem. A link has a transmitter, antennas, a path, a receiver, and maybe a jammer. Work it in five steps:</p>
+  <ol><li>Path loss for the distance and frequency.</li><li>Received power = transmit power + both antenna gains &minus; path loss.</li><li>Noise floor from bandwidth and noise figure.</li><li>SNR (or SINR with a jammer) = received power &minus; noise (plus jammer).</li><li>Highest modulation whose required SNR is below yours.</li></ol>
+  <p>Free-space path loss (the same formula as the Radio Waves guide) is:</p>
+  <div class="formula">FSPL (dB) = 32.44 + 20&middot;log<sub>10</sub>(f in MHz) + 20&middot;log<sub>10</sub>(d in km)</div>
+
+  <details class="work"><summary>Worked scenario: a 5.8 GHz data link over 5 km</summary><div>
+   <p><b>Given:</b> 27 dBm transmitter (0.5 W), 10 dBi antennas at each end, 5 km, 5,800 MHz, 20 MHz channel, receiver noise figure 6 dB.</p>
+   <p><b>1. Path loss:</b> 32.44 + 75.27 + 13.98 = 121.7 dB.</p>
+   <p><b>2. Received power:</b> 27 + 10 + 10 &minus; 121.7 = &minus;74.7 dBm.</p>
+   <p><b>3. Noise floor:</b> &minus;174 + 73 + 6 = &minus;95.0 dBm.</p>
+   <p><b>4. SNR:</b> &minus;74.7 &minus; (&minus;95.0) = 20.3 dB.</p>
+   <p><b>5. Modulation:</b> 16-QAM needs about 16.6 dB, so it works with 3.7 dB to spare. 64-QAM needs 22.6 dB, so it does not. With &alpha; = 0.25 the 20 MHz channel carries about 4 bits &times; 16 Msymbols/s = 64 Mb/s.</p>
+   <p><b>Now a jammer arrives</b> at &minus;90 dBm. Noise plus jammer in milliwatts: 10<sup>&minus;9.5</sup> + 10<sup>&minus;9.0</sup> &rarr; &minus;88.8 dBm. SINR = &minus;74.7 &minus; (&minus;88.8) = 14.1 dB. 16-QAM (16.6) fails, and 8-PSK (14.8) just misses. QPSK (9.8) holds, so the link steps down to about 32 Mb/s. The jammer's J/S is only &minus;15 dB, so it did real damage while weaker than the signal.</p></div></details>
+
+  <div class="try"><div class="th">Try it: link designer</div><div class="tb">
+    <div class="ctl"><label>Transmit power</label><input type="range" id="w9p" min="10" max="50" step="1" value="27" oninput="W9.calc()"><span class="v" id="w9pv"></span></div>
+    <div class="ctl"><label>Antenna gain (each)</label><input type="range" id="w9g" min="0" max="20" step="1" value="10" oninput="W9.calc()"><span class="v" id="w9gv"></span></div>
+    <div class="ctl"><label>Distance</label><input type="range" id="w9d" min="0" max="100" step="1" value="39" oninput="W9.calc()"><span class="v" id="w9dv"></span></div>
+    <div class="ctl"><label>Frequency</label><div class="chips" id="w9f"></div></div>
+    <div class="ctl"><label>Channel width</label><div class="chips" id="w9b"></div></div>
+    <div class="ctl"><label>Noise figure</label><input type="range" id="w9n" min="0" max="12" step="1" value="6" oninput="W9.calc()"><span class="v" id="w9nv"></span></div>
+    <div class="ctl"><label>Jammer at receiver</label><input type="range" id="w9j" min="-130" max="-50" step="1" value="-130" oninput="W9.calc()"><span class="v" id="w9jv"></span></div>
+    <div class="read" id="w9r"></div>
+    <div id="w9t"></div>
+    <div class="note">Free-space path only. Real links add terrain, foliage, fading, and margin. Set the jammer to its lowest value for &ldquo;off&rdquo;. The defaults are the worked scenario above.</div></div></div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch7-score"></span></div><div class="tb" id="ch7-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Walk the link in dB: path loss, received power, noise floor, SNR.</li><li>Pick the densest modulation whose requirement your SNR beats.</li><li>A jammer adds to the noise. Compute SINR, and the link steps down, or breaks.</li></ul></div>
+  <a class="tool" href="../modlab/"><b>Now practice in the Modulation &amp; Jamming Lab &rarr;</b>Compare AM, FM, ASK, FSK, BPSK and QPSK under noise and jamming, then run the digital link challenges.</a>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch7')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs">
+   <li>Sklar, <i>Digital Communications: Fundamentals and Applications</i>, and Haykin, <i>Communication Systems</i>. Modulation, bandwidth, error-rate formulas, and spread spectrum.</li>
+   <li>Shannon, &ldquo;A Mathematical Theory of Communication&rdquo; (1948). Channel capacity.</li>
+   <li>PySDR (pysdr.org), Digital Modulation chapter. Constellations and symbols.</li>
+   <li>IS-GPS-200 (GPS interface specification). C/A code rate and signal characteristics.</li>
+   <li>Public DoD and Army SINCGARS training material. Frequency range, channel spacing, 2,320 channels, hop rate, and what hopping radios share.</li>
+   <li>FCC and ITU channel plans for FM broadcast (75 kHz deviation, 200 kHz spacing).</li>
+   <li>Army ATP 3-12.3, <i>Electromagnetic Warfare Techniques</i>, for the Army context of jamming and electromagnetic protection.</li>
+   <li><b>Notes.</b> Error-rate thresholds are standard approximations for uncoded, ideal, steady-noise cases and are rounded. Real systems differ. Frequencies, hop rates, and channel plans are taken from public sources and rounded. Your class slides and instructor remain the authority. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
+</div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">Modulation &amp; Noise Explained &middot; Interactive textbook (pilot) &middot; Companion to the Modulation &amp; Jamming Lab &middot; UNCLASSIFIED</div>
+<script>
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+/* ---------- math helpers ---------- */
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z),r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));return x>=0?r:2-r;}
+function Qf(x){if(x>4)return Math.exp(-x*x/2)/(x*Math.sqrt(TAU))*(1-1/(x*x)+3/Math.pow(x,4));return 0.5*erfc(x/Math.SQRT2);}
+const MODS={bpsk:{n:'BPSK',k:1,M:2},qpsk:{n:'QPSK',k:2,M:4},psk8:{n:'8-PSK',k:3,M:8},qam16:{n:'16-QAM',k:4,M:16},qam64:{n:'64-QAM',k:6,M:64}};
+function berTheory(key,sdb){const g=dB(sdb),k=MODS[key].k,M=MODS[key].M;let p;
+  if(key==='bpsk')p=Qf(Math.sqrt(2*g));else if(key==='qpsk')p=Qf(Math.sqrt(g));
+  else if(key==='psk8')p=(2/k)*Qf(Math.sqrt(2*g)*Math.sin(Math.PI/8));
+  else p=(4/k)*(1-1/Math.sqrt(M))*Qf(Math.sqrt(3*g/(M-1)));return Math.min(0.5,p);}
+const REQ={};Object.keys(MODS).forEach(k=>{for(let s=0;s<40;s+=0.05){if(berTheory(k,s)<1e-3){REQ[k]=Math.round(s*10)/10;break;}}});
+function buildPts(key){const pts=[];
+  if(key==='bpsk'){pts.push({l:0,x:-1,y:0},{l:1,x:1,y:0});}
+  else if(key==='qpsk'){const s=Math.SQRT1_2;[[0,1,1],[1,-1,1],[3,-1,-1],[2,1,-1]].forEach(a=>pts.push({l:a[0],x:a[1]*s,y:a[2]*s}));}
+  else if(key==='psk8'){[0,1,3,2,6,7,5,4].forEach((l,i)=>pts.push({l,x:Math.cos(i*Math.PI/4),y:Math.sin(i*Math.PI/4)}));}
+  else{const L=key==='qam16'?2:3,n=1<<L,g=L===2?[0,1,3,2]:[0,1,3,2,6,7,5,4],lev=[];for(let i=0;i<n;i++)lev.push(2*i-(n-1));const norm=Math.sqrt(key==='qam16'?10:42);
+    for(let qi=0;qi<n;qi++)for(let ii=0;ii<n;ii++)pts.push({l:(g[qi]<<L)|g[ii],x:lev[ii]/norm,y:lev[qi]/norm});}
+  return pts;}
+const PTS={};Object.keys(MODS).forEach(k=>PTS[k]=buildPts(k));
+const bin=(v,k)=>v.toString(2).padStart(k,'0');
+const pop=v=>{let c=0;while(v){c+=v&1;v>>=1;}return c;};
+
+const GLd={
+ carrier:['Carrier','A steady high-frequency wave that radiates well and carries a message once it is modulated.'],
+ modulation:['Modulation','Changing the amplitude, frequency, or phase of a carrier in step with a message.'],
+ demodulation:['Demodulation','The receiver\'s job of recovering the original message from the modulated carrier.'],
+ baseband:['Baseband','The original message signal before modulation, such as the audio from a microphone or a stream of bits.'],
+ wavelength:['Wavelength','The distance one cycle of a wave travels. Speed of light divided by frequency.'],
+ sideband:['Sideband','New frequencies created on either side of the carrier by modulation. They carry the message.'],
+ moddepth:['Modulation depth (m)','How strongly AM varies the carrier. m = 1 means the envelope swings from zero to twice the carrier height.'],
+ overmod:['Overmodulation','AM with depth above 1. The envelope would go negative, so the signal distorts and splatters into neighboring frequencies.'],
+ deviation:['Deviation (\u0394f)','How far an FM carrier\'s frequency swings away from its center in step with the message.'],
+ modindex:['Modulation index (\u03B2)','For FM, deviation divided by the message frequency. Bigger \u03B2 means a wider signal and better noise performance.'],
+ carson:['Carson\'s rule','Rule of thumb that FM bandwidth is about twice the sum of deviation and highest message frequency.'],
+ capture:['Capture effect','When two FM signals share a channel, the receiver locks onto the stronger one and the weaker one disappears.'],
+ threshold:['Threshold effect','FM quality stays high as the signal weakens until about 10 dB signal-to-noise, then collapses quickly.'],
+ symbol:['Symbol','One distinct state of the carrier in a digital link. With M possible symbols, each carries log2(M) bits.'],
+ baud:['Baud','Symbols per second. Not the same as bits per second unless each symbol carries one bit.'],
+ ook:['OOK / ASK','Amplitude shift keying changes the carrier\'s height to send bits. On-off keying turns the carrier fully on and off.'],
+ fsk:['FSK','Frequency shift keying. Bits select among two or more carrier frequencies.'],
+ psk:['PSK','Phase shift keying. Bits select among carrier phases. BPSK has two phases, QPSK has four.'],
+ qam:['QAM','Quadrature amplitude modulation. Bits select among combinations of amplitude and phase, such as 16 or 64 points.'],
+ constellation:['Constellation diagram','A plot of every allowed symbol as a dot, on I (in-phase) and Q (quadrature) axes. Distance from center is amplitude and angle is phase.'],
+ gray:['Gray coding','Labeling constellation points so that neighbors differ by exactly one bit. A nearest-neighbor error then flips only one bit.'],
+ rolloff:['Roll-off (\u03B1)','Filter setting between 0 and 1 that sets how much extra bandwidth a digital signal takes beyond its symbol rate.'],
+ specteff:['Spectral efficiency','Bits per second carried per hertz of bandwidth.'],
+ nyquist:['Nyquist limit','The theoretical limit on symbol rate: a passband channel of bandwidth B can carry at most about B symbols per second without symbols smearing into each other. Roll-off pushes real signals a bit above that.'],
+ shannon:['Shannon capacity','The maximum error-free data rate of a channel: C = B log2(1 + SNR), with SNR as a ratio.'],
+ bandwidth:['Bandwidth','The width of spectrum a signal occupies, in hertz.'],
+ thermal:['Thermal noise','Random radio noise made by warm matter. About \u2212174 dBm per hertz at room temperature.'],
+ nf:['Noise figure (NF)','How many dB of extra noise a receiver adds on top of thermal noise.'],
+ snr:['SNR','Signal-to-noise ratio. Received signal power over noise power, usually in dB.'],
+ ber:['Bit error rate (BER)','The fraction of received bits that are wrong.'],
+ fec:['Forward error correction (FEC)','Extra coded bits that let a receiver fix some errors, so the link works at lower SNR.'],
+ js:['Jammer-to-signal ratio (J/S)','Jammer power divided by signal power at the receiver, usually in dB.'],
+ sinr:['SINR','Signal-to-interference-plus-noise ratio. Signal divided by noise plus jammer, with powers added before converting to dB.'],
+ spread:['Spread spectrum','Sending a signal over much more bandwidth than the data needs, so interference and jamming are diluted.'],
+ chip:['Chip','One bit of the fast pseudo-random code that spreads a direct-sequence signal.'],
+ procgain:['Processing gain','How much spreading helps the receiver: 10 log10(spread bandwidth / data rate), in dB.'],
+ jmargin:['Jamming margin','How much jamming a spread-spectrum link can tolerate: processing gain minus required Eb/N0 minus system losses, in dB.'],
+ fhss:['Frequency hopping (FHSS)','Both radios jump together among many channels in a pseudo-random order that only they know.']};
+
+/* ---------- question bank ---------- */
+const Qd={
+ ch1:[
+  {id:'c1a',t:'mc',q:'Why can\u2019t a 3 kHz voice signal simply be sent straight from an antenna?',o:['Antennas only work above 1 GHz.','Voice signals carry too much power.','Its wavelength is about 100 km, so an efficient antenna would be enormous.','The ionosphere absorbs all audio.'],a:2,ex:'Wavelength = 300,000,000 \u00F7 3,000 = 100,000 m = 100 km. An efficient antenna is a sizeable fraction of that, which is impractical.'},
+  {id:'c1b',t:'mc',q:'What is the carrier for?',o:['It amplifies the message.','It encrypts the message.','It removes noise from the message.','It is a high-frequency wave that radiates well and is changed in step with the message.'],a:3,ex:'The carrier is a steady high-frequency wave. Modulation changes one of its properties in step with the message, which moves the message to a useful frequency.'},
+  {id:'c1c',t:'mc',q:'Which three properties of a carrier can be varied to carry information?',o:['Power, voltage, and current','Amplitude, frequency, and phase','Wavelength, polarization, and distance','Bandwidth, noise, and gain'],a:1,ex:'Amplitude gives AM/ASK, frequency gives FM/FSK, and phase gives PM/PSK. QAM changes amplitude and phase together.'},
+  {id:'c1d',t:'mc',q:'A quarter-wave antenna for a 150 MHz signal is about how long?',o:['2 m','5 m','0.5 m','50 m'],a:2,ex:'Wavelength = 300 \u00F7 150 = 2 m. A quarter of that is 0.5 m. (2 m is the full wavelength.)'},
+  {id:'c1e',t:'mc',q:'Which of these is a digital message?',o:['The voltage from a microphone','A sine-wave test tone','The changing strength of a fading signal','A stream of 1s and 0s'],a:3,ex:'A digital message is made of separate symbols such as bits. The other three vary smoothly.'}],
+ ch2:[
+  {id:'c2a',t:'num',q:'A voice signal tops out at 3 kHz and is sent with AM. How much bandwidth does it need?',a:6,tol:0.01,u:'kHz',ex:'AM bandwidth = 2 \u00D7 highest message frequency = 2 \u00D7 3 kHz = 6 kHz. There is one sideband on each side of the carrier.'},
+  {id:'c2b',t:'mc',q:'At 100% modulation, what fraction of an AM signal\u2019s power is in the carrier?',o:['One third','Half','All of it','Two thirds'],a:3,ex:'Total power = carrier power \u00D7 (1 + m\u00B2/2) = 1.5 \u00D7 carrier. The carrier share is 1 \u00F7 1.5 = two thirds. The sidebands, which hold the message, share the other third.'},
+  {id:'c2c',t:'num',q:'FM broadcast uses 75 kHz deviation and audio up to 15 kHz. What bandwidth does Carson\u2019s rule give?',a:180,tol:0.5,u:'kHz',ex:'Bandwidth \u2248 2 \u00D7 (\u0394f + f\u2098) = 2 \u00D7 (75 + 15) = 180 kHz. That fits the 200 kHz FM channel spacing.'},
+  {id:'c2d',t:'mc',q:'What happens when AM is overmodulated (depth above 1)?',o:['The signal gets stronger and clearer.','It turns into FM.','It distorts and splatters onto neighboring frequencies.','The carrier disappears.'],a:2,ex:'Above 100% the envelope would need to go negative, so the waveform distorts and creates extra frequencies that interfere with neighbors.'},
+  {id:'c2e',t:'mc',q:'Two FM signals share a channel and one is 6 dB stronger. What does an FM receiver produce?',o:['Both at equal volume','Mostly the stronger one, with the weaker suppressed','Mostly the weaker one','Only static'],a:1,ex:'That is the capture effect. An FM receiver locks onto the stronger signal, even if it is only a few dB stronger.'},
+  {id:'c2f',t:'mc',q:'What is the main price of wideband FM\u2019s better noise performance?',o:['A larger antenna','More transmit power','More bandwidth','A slower message'],a:2,ex:'Wideband FM spends bandwidth to buy noise performance. Carson\u2019s rule shows how quickly the bandwidth grows with deviation.'}],
+ ch3:[
+  {id:'c3a',t:'num',q:'A 16-QAM link sends 2 million symbols per second. What is the bit rate?',a:8,tol:0.01,u:'Mb/s',ex:'16 points means log\u2082(16) = 4 bits per symbol. 2 Msymbols/s \u00D7 4 = 8 Mb/s.'},
+  {id:'c3b',t:'mc',q:'With Gray coding, neighboring constellation points differ by:',o:['Two bits','All bits','One bit','No bits'],a:2,ex:'Neighbors differ by exactly one bit. The most common error is landing on a neighbor, so a typical symbol error damages just one bit.'},
+  {id:'c3c',t:'mc',q:'Which scheme turns the carrier completely on and off to send bits?',o:['BPSK','QPSK','FM','OOK'],a:3,ex:'On-off keying: carrier on is 1, carrier off is 0. Morse code and many garage remotes work this way.'},
+  {id:'c3d',t:'mc',q:'You move from QPSK to 64-QAM at the same average power. What happens to the spacing between points?',o:['Points move closer, so less noise is tolerated.','Points move farther apart.','Spacing stays the same.','The constellation collapses to one point.'],a:0,ex:'More points have to fit in the same space, so they sit closer together. The same noise now crosses more boundaries.'},
+  {id:'c3e',t:'mc',q:'BPSK represents its two bit values using:',o:['Two amplitudes','Two frequencies','Two bandwidths','Two phases 180\u00B0 apart'],a:3,ex:'BPSK flips the carrier between 0\u00B0 and 180\u00B0, which turns the wave upside down.'}],
+ ch4:[
+  {id:'c4a',t:'num',q:'A 16-QAM link sends 4 Mb/s with roll-off 0.25. How much bandwidth does it need?',a:1.25,tol:0.02,u:'MHz',ex:'Symbol rate = 4 Mb/s \u00F7 4 bits = 1 Msymbol/s. Bandwidth \u2248 1 \u00D7 (1 + 0.25) = 1.25 MHz.'},
+  {id:'c4b',t:'num',q:'What is the Shannon limit for a 1 MHz channel at 20 dB SNR? (Mb/s, one decimal)',a:6.66,tol:0.1,u:'Mb/s',ex:'20 dB is a ratio of 100. C = 1 MHz \u00D7 log\u2082(1 + 100) = log\u2082(101) \u2248 6.66, so about 6.66 Mb/s.'},
+  {id:'c4c',t:'mc',q:'In the Shannon formula, SNR must be entered as:',o:['dB','A plain power ratio','dBm','Volts'],a:1,ex:'Convert first. 20 dB is a power ratio of 100, 30 dB is 1,000.'},
+  {id:'c4d',t:'mc',q:'At the same roll-off, which carries more bits per second per hertz?',o:['QPSK','BPSK','64-QAM','They are equal'],a:2,ex:'Efficiency is about bits per symbol \u00F7 (1 + \u03B1). 64-QAM gives 6, QPSK gives 2, BPSK gives 1 (before \u03B1).'},
+  {id:'c4e',t:'mc',q:'To keep the same data rate while halving the bandwidth, what has to change?',o:['Nothing, it is free','The wavelength','The required SNR must rise by a lot','The noise must be turned off'],a:2,ex:'C = B log\u2082(1 + SNR). Halve B and log\u2082(1 + SNR) must double. That means the SNR ratio must go up enormously: from 100 to about 10,000, for example.'}],
+ ch5:[
+  {id:'c5a',t:'num',q:'What is the noise floor for a 1 MHz channel with a 5 dB noise figure?',a:-109,tol:0.5,u:'dBm',ex:'\u2212174 + 10\u00B7log\u2081\u2080(1,000,000) + 5 = \u2212174 + 60 + 5 = \u2212109 dBm.'},
+  {id:'c5b',t:'num',q:'A signal arrives at \u221280 dBm and the noise floor is \u2212100 dBm. What is the SNR?',a:20,tol:0.1,u:'dB',ex:'SNR = signal \u2212 noise = \u221280 \u2212 (\u2212100) = 20 dB.'},
+  {id:'c5c',t:'mc',q:'You halve the receiver bandwidth. How does the noise floor change?',o:['It rises 3 dB','No change','It falls 6 dB','It falls 3 dB'],a:3,ex:'Half the bandwidth lets in half the noise power. That is a drop of 3 dB.'},
+  {id:'c5d',t:'mc',q:'Which needs the highest SNR for 0.1% bit errors?',o:['BPSK','QPSK','16-QAM','64-QAM'],a:3,ex:'Its 64 points sit the closest together, so it needs the cleanest signal: about 22.6 dB versus 6.8 dB for BPSK.'},
+  {id:'c5e',t:'mc',q:'What does forward error correction buy you?',o:['A higher carrier frequency','The link works at a lower SNR for the same error rate, at the cost of extra bits','A smaller antenna','More noise tolerance for free, with no cost'],a:1,ex:'FEC adds redundancy that lets the receiver repair errors. You pay with bandwidth or data rate and gain several dB of margin.'}],
+ ch6:[
+  {id:'c6a',t:'num',q:'A direct-sequence link spreads a 10 kb/s signal over 10 MHz. What is the processing gain?',a:30,tol:0.5,u:'dB',ex:'10 MHz \u00F7 10 kHz = 1,000. 10\u00B7log\u2081\u2080(1,000) = 30 dB.'},
+  {id:'c6b',t:'num',q:'The GPS civil signal runs 1.023 Mchip/s carrying 50 b/s. What is the processing gain? (nearest dB)',a:43,tol:0.6,u:'dB',ex:'1,023,000 \u00F7 50 = 20,460. 10\u00B7log\u2081\u2080(20,460) \u2248 43 dB.'},
+  {id:'c6c',t:'num',q:'Processing gain is 30 dB, the needed Eb/N0 is 10 dB, and system losses are 3 dB. What is the jamming margin?',a:17,tol:0.1,u:'dB',ex:'Margin = 30 \u2212 10 \u2212 3 = 17 dB. A jammer would need to be about 17 dB stronger than the signal to break the link.'},
+  {id:'c6d',t:'num',q:'A hopper uses 100 channels and a narrowband jammer covers 5 of them. On average, what percent of hops does it hit?',a:5,tol:0.1,u:'%',ex:'5 of 100 channels is 5%. A hopper loses only the hops that land in the jammed band, which error-correcting codes can repair.'},
+  {id:'c6e',t:'mc',q:'Why can a follower jammer beat a slow frequency hopper?',o:['It reads the encrypted message.','It detects the new channel and retunes before the hop ends, jamming the rest of each hop.','It makes the receiver hop faster.','Hopping radios cannot hear each other.'],a:1,ex:'If the jammer reacts faster than the dwell time, it hits the tail of every hop. At about 100 hops per second the dwell is 10 ms, which is slow enough to chase.'},
+  {id:'c6f',t:'mc',q:'To stay in step, two radios in SINCGARS frequency-hopping mode must share:',o:['Only a frequency','Only a callsign','Nothing, because hopping is random','The same hopping data and TRANSEC key, net ID, and time'],a:3,ex:'The hop pattern depends on the loaded hopping data and TRANSEC key, the net ID, and a synchronized clock. Without all of them the radios hop to different places.'}],
+ ch7:[
+  {id:'c7a',t:'num',q:'Work the scenario in the example: 27 dBm, 10 dBi antennas, 5 km at 5,800 MHz, 20 MHz channel, NF 6 dB. What is the SNR? (dB, one decimal)',a:20.3,tol:0.5,u:'dB',ex:'Path loss 121.7 dB. Received = 27 + 10 + 10 \u2212 121.7 = \u221274.7 dBm. Noise = \u2212174 + 73 + 6 = \u221295.0 dBm. SNR = 20.3 dB.'},
+  {id:'c7b',t:'mc',q:'At that SNR, which is the densest modulation that meets 0.1% bit errors?',o:['QPSK','8-PSK','64-QAM','16-QAM'],a:3,ex:'16-QAM needs about 16.6 dB, so 20.3 dB clears it. 64-QAM needs about 22.6 dB, so it does not.'},
+  {id:'c7c',t:'num',q:'A jammer arrives at \u221290 dBm. What is the SINR? (dB, nearest whole)',a:14,tol:0.7,u:'dB',ex:'Noise \u2212 95 dBm and jammer \u221290 dBm add in power: about \u221288.8 dBm. SINR = \u221274.7 \u2212 (\u221288.8) = 14.1 dB.'},
+  {id:'c7d',t:'mc',q:'With that jammer, what does the link do?',o:['Keeps running 16-QAM','Falls back to QPSK','Switches up to 64-QAM','Drops completely'],a:1,ex:'At 14.1 dB, 16-QAM (16.6) fails and 8-PSK (14.8) just misses. QPSK (9.8) holds, so the link steps down and the data rate falls by half.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch2',t:'mc',q:'Which statement about AM and FM is correct?',o:['AM resists noise better because it has a carrier.','FM keeps a constant amplitude, and noise mostly changes amplitude, so FM resists noise better.','FM always needs less bandwidth than AM.','They are identical except for the antenna.'],a:1,ex:'FM carries the message in frequency, which noise barely changes, at the price of more bandwidth.'},
+ {id:'k2',ch:'ch2',t:'num',q:'An AM signal carries audio up to 4 kHz. How much bandwidth does it need?',a:8,tol:0.01,u:'kHz',ex:'2 \u00D7 4 kHz = 8 kHz.'},
+ {id:'k3',ch:'ch2',t:'num',q:'An FM voice link uses 5 kHz deviation with 3 kHz audio. What does Carson\u2019s rule give?',a:16,tol:0.1,u:'kHz',ex:'2 \u00D7 (5 + 3) = 16 kHz.'},
+ {id:'k4',ch:'ch3',t:'num',q:'A QPSK link sends 3 million symbols per second. What is the bit rate?',a:6,tol:0.01,u:'Mb/s',ex:'QPSK is 2 bits per symbol, so 3 \u00D7 2 = 6 Mb/s.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'Which modulation is the most vulnerable to a weak tone jammer or a small SNR drop?',o:['BPSK','QPSK','64-QAM','They are equal'],a:2,ex:'64-QAM has the closest-spaced points, so it has the least margin before a symbol lands on a neighbor.'},
+ {id:'k6',ch:'ch5',t:'num',q:'What is the noise floor for a 20 MHz channel with a 7 dB noise figure?',a:-94,tol:0.6,u:'dBm',ex:'\u2212174 + 73 + 7 = \u221294 dBm.'},
+ {id:'k7',ch:'ch4',t:'num',q:'What is the Shannon limit for a 2 MHz channel at 30 dB SNR? (Mb/s, nearest whole)',a:20,tol:0.5,u:'Mb/s',ex:'30 dB is a ratio of 1,000. C = 2 MHz \u00D7 log\u2082(1,001) \u2248 2 \u00D7 9.97 = 19.9 Mb/s.'},
+ {id:'k8',ch:'ch6',t:'num',q:'A direct-sequence signal spreads 5 kb/s data over 5 MHz. What is the processing gain?',a:30,tol:0.5,u:'dB',ex:'5 MHz \u00F7 5 kHz = 1,000, which is 30 dB.'},
+ {id:'k9',ch:'ch6',t:'num',q:'A hopper uses 80 channels and a jammer covers 20 of them. What percent of hops does it hit?',a:25,tol:0.1,u:'%',ex:'20 \u00F7 80 = 25%.'},
+ {id:'k10',ch:'ch5',t:'mc',q:'A link has 12 dB SNR. Which is the densest of BPSK, QPSK, 8-PSK, 16-QAM and 64-QAM that still meets 0.1% bit errors?',o:['BPSK','QPSK','8-PSK','16-QAM'],a:1,ex:'QPSK needs about 9.8 dB, so 12 dB clears it. 8-PSK needs about 14.8 dB, which 12 dB does not reach.'}];
+
+/* ---------- W1: message on a carrier ---------- */
+const W1={m:'am',mode(v){this.m=v;this.draw();},draw(){chips('w1m',[['am','AM (height)'],['fm','FM (speed)']],this.m,'W1.mode');
+  const fm=+$('w1f').value,fc=+$('w1c2').value;$('w1fv').textContent=fm+' cycles';$('w1cv').textContent=fc+' cycles';
+  const [c,x]=cv('w1c');clear(c,x);const W=480;
+  const msg=t=>Math.sin(TAU*fm*t),car=t=>Math.sin(TAU*fc*t);
+  const out=this.m==='am'?t=>(1+0.8*msg(t))*Math.sin(TAU*fc*t)/1.8:t=>Math.sin(TAU*fc*t-(0.4*fc/fm)*Math.cos(TAU*fm*t));
+  [[50,'MESSAGE','#7fd0e0',t=>msg(t)*32],[150,'CARRIER','#9db4c8',t=>car(t)*32],[250,'WHAT THE ANTENNA RADIATES','#ffb454',t=>out(t)*40]].forEach(r=>{lab(x,r[1],6,r[0]-40,r[2]);plot(x,0,r[0],W,r[3],r[2]);x.strokeStyle='#1c2e3d';x.beginPath();x.moveTo(0,r[0]);x.lineTo(W,r[0]);x.stroke();});
+  if(this.m==='am'){x.strokeStyle='rgba(255,180,84,.55)';x.setLineDash([4,4]);[1,-1].forEach(s=>plot(x,0,250,W,t=>s*(1+0.8*msg(t))/1.8*40,'rgba(255,180,84,.55)',1));x.setLineDash([]);}}};
+/* ---------- W2: AM explorer ---------- */
+const W2={draw(){const m=+$('w2m').value,fm=+$('w2f').value;$('w2mv').textContent=m.toFixed(2)+(m>1?' (over!)':'');$('w2fv').textContent=fm+' kHz';
+  const [c,x]=cv('w2c');clear(c,x);const W=480,cx=240,S=30;
+  const env=t=>1+m*Math.cos(TAU*2*t);
+  lab(x,'WAVEFORM',6,14);plot(x,0,100,W,t=>env(t)*Math.sin(TAU*28*t)*S,'#ffb454');
+  x.setLineDash([5,4]);[1,-1].forEach(s=>plot(x,0,100,W,t=>s*env(t)*S,'rgba(127,208,224,.8)',1));x.setLineDash([]);
+  x.strokeStyle='#1c2e3d';x.beginPath();x.moveTo(0,100);x.lineTo(W,100);x.stroke();
+  lab(x,'SPECTRUM',6,200,'#9db4c8');x.strokeStyle='#2b4153';x.beginPath();x.moveTo(20,300);x.lineTo(460,300);x.stroke();
+  const px=fm*20,bars=[[cx-px,m/2,'fc \u2212 fm','#7fd0e0'],[cx,1,'carrier','#ffb454'],[cx+px,m/2,'fc + fm','#7fd0e0']];
+  bars.forEach(b=>{const h=b[1]*85;x.fillStyle=b[3];x.fillRect(b[0]-7,300-h,14,h);lab(x,b[2],b[0],314,'#9db4c8','center',10);});
+  x.strokeStyle='#e86a6a';x.lineWidth=2;x.beginPath();x.moveTo(cx-px,236);x.lineTo(cx+px,236);x.moveTo(cx-px,230);x.lineTo(cx-px,242);x.moveTo(cx+px,230);x.lineTo(cx+px,242);x.stroke();lab(x,'bandwidth '+(2*fm)+' kHz',cx,226,'#e86a6a','center',11);
+  const tot=1+m*m/2;read('w2r',[['Bandwidth',(2*fm)+' kHz'],['Power in the plain carrier',(100/tot).toFixed(0)+'%',m>=1?'mid':''],['Power in the sidebands',(100*(m*m/2)/tot).toFixed(0)+'%'],['Distortion',m>1?'OVERMODULATED':'none',m>1?'bad':'good']]);}};
+/* ---------- W3: FM explorer ---------- */
+function bessel(n,x){n=Math.abs(n);let t=1;for(let k=1;k<=n;k++)t*=(x/2)/k;let s=t,term=t;for(let k=1;k<90;k++){term*=-(x*x/4)/(k*(k+n));s+=term;if(k>x&&Math.abs(term)<1e-15)break;}return s;}
+const W3={draw(){const df=+$('w3d').value,fm=+$('w3f').value,beta=df/fm;$('w3dv').textContent=df+' kHz';$('w3fv').textContent=fm+' kHz';
+  const [c,x]=cv('w3c');clear(c,x);const W=480,cx=240;
+  const bv=Math.min(beta,8);lab(x,'WAVEFORM'+(beta>8?' (drawn at \u03B2 = 8)':''),6,14);plot(x,0,80,W,t=>Math.sin(TAU*22*t+bv*Math.sin(TAU*2*t))*34,'#ffb454');
+  lab(x,'SPECTRUM (sideband strengths)',6,170,'#9db4c8');x.strokeStyle='#2b4153';x.beginPath();x.moveTo(10,300);x.lineTo(470,300);x.stroke();
+  const span=(df+3*fm)*1.15,sc=220/span,carson=df+fm;
+  x.fillStyle='rgba(232,106,106,.18)';x.fillRect(cx-carson*sc,185,2*carson*sc,115);x.strokeStyle='#e86a6a';x.lineWidth=1.5;x.strokeRect(cx-carson*sc,185,2*carson*sc,115);lab(x,'Carson: '+(2*carson)+' kHz',cx,180,'#e86a6a','center',11);
+  const N=Math.min(40,Math.ceil(beta)+5);let sig=0;
+  for(let n=-N;n<=N;n++){const a=Math.abs(bessel(n,beta));if(a>0.02)sig++;const px=cx+n*fm*sc,h=Math.min(1,a)*105;x.fillStyle=n===0?'#ffb454':'#7fd0e0';x.fillRect(px-1.5,300-h,3,h);}
+  lab(x,'fc',cx,314,'#ffb454','center',10);
+  const j0=Math.abs(bessel(0,beta));read('w3r',[['Index \u03B2 = \u0394f \u00F7 fm',beta.toFixed(2)],['Carson bandwidth',(2*carson)+' kHz'],['Carrier strength',(j0*100).toFixed(0)+'%',j0<0.03?'bad':''],['Sidebands above 2%',String(sig-(j0>0.02?1:0))]]);}};
+/* ---------- W4: bits to waveform ---------- */
+const W4={m:'ask',b:[1,0,1,1,0,0,1,0],mode(v){this.m=v;this.draw();},flip(i){this.b[i]^=1;this.draw();},
+ draw(){chips('w4m',[['ask','OOK / ASK'],['fsk','FSK'],['bpsk','BPSK']],this.m,'W4.mode');$('w4b').innerHTML=this.b.map((v,i)=>'<button class="chip" onclick="W4.flip('+i+')">'+v+'</button>').join('');
+  const [c,x]=cv('w4c');clear(c,x);const W=480,bw=60;
+  this.b.forEach((v,i)=>{lab(x,String(v),i*bw+bw/2,16,'#ffb454','center',15);x.strokeStyle='#26394a';x.setLineDash([3,4]);x.beginPath();x.moveTo(i*bw,24);x.lineTo(i*bw,262);x.stroke();x.setLineDash([]);});
+  x.strokeStyle='#ffb454';x.lineWidth=1.8;x.beginPath();let ph=0,first=true;
+  for(let px=0;px<=W;px++){const bi=Math.min(7,Math.floor(px/bw)),v=this.b[bi];let y=0;
+   if(this.m==='ask'){y=v?Math.sin(TAU*4*px/bw):0;}else if(this.m==='bpsk'){y=Math.sin(TAU*4*px/bw+(v?0:Math.PI));}else{ph+=TAU*(v?6:3)/bw;y=Math.sin(ph);}
+   const Y=145-y*70;first?x.moveTo(px,Y):x.lineTo(px,Y);first=false;}x.stroke();
+  lab(x,{ask:'1 = carrier on, 0 = carrier off',fsk:'1 = fast wave (6 cycles), 0 = slow wave (3 cycles)',bpsk:'1 = normal, 0 = flipped 180\u00B0'}[this.m],6,282,'#9db4c8');}};
+/* ---------- W5: constellation explorer ---------- */
+const W5={m:'qpsk',sel:null,mode(v){this.m=v;this.sel=null;this.draw();},
+ dmin(k){const p=PTS[k];let d=1e9;for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++)d=Math.min(d,Math.hypot(p[i].x-p[j].x,p[i].y-p[j].y));return d;},
+ draw(){chips('w5m',Object.keys(MODS).map(k=>[k,MODS[k].n]),this.m,'W5.mode');const p=PTS[this.m],[c,x]=cv('w5c');clear(c,x);const cx=240,cy=170,S=135,dm=this.dmin(this.m);
+  x.strokeStyle='#26394a';x.lineWidth=1;x.beginPath();x.moveTo(cx,10);x.lineTo(cx,330);x.moveTo(20,cy);x.lineTo(460,cy);x.stroke();lab(x,'Q',cx+6,20);lab(x,'I',452,cy-6);
+  const nb=this.sel===null?[]:p.map((q,i)=>i).filter(i=>i!==this.sel&&Math.hypot(p[i].x-p[this.sel].x,p[i].y-p[this.sel].y)<dm*1.05);
+  p.forEach((q,i)=>{const r=p.length>16?4.5:8;x.fillStyle=i===this.sel?'#2edc8a':nb.includes(i)?'#ffb454':'#e8f1f8';x.beginPath();x.arc(cx+q.x*S,cy-q.y*S,r,0,TAU);x.fill();
+   if(p.length<=16||i===this.sel||nb.includes(i))lab(x,bin(q.l,MODS[this.m].k),cx+q.x*S,cy-q.y*S-(p.length>16?8:13),i===this.sel?'#2edc8a':nb.includes(i)?'#ffb454':'#9db4c8','center',p.length>16?10:12);});
+  const rows=[['Bits per symbol',String(MODS[this.m].k)],['Points',String(MODS[this.m].M)],['Closest spacing',dm.toFixed(2)]];
+  if(this.sel!==null){rows.push(['Selected',bin(p[this.sel].l,MODS[this.m].k)]);rows.push(['Neighbors',nb.map(i=>bin(p[i].l,MODS[this.m].k)+' ('+pop(p[i].l^p[this.sel].l)+' bit)').join(', ')||'none']);}
+  read('w5r',rows);}};
+$('w5c').addEventListener('click',e=>{const r=$('w5c').getBoundingClientRect(),X=(e.clientX-r.left)/r.width*480,Y=(e.clientY-r.top)/r.height*340,p=PTS[W5.m];let best=null,bd=26;p.forEach((q,i)=>{const d=Math.hypot(240+q.x*135-X,170-q.y*135-Y);if(d<bd){bd=d;best=i;}});W5.sel=best;W5.draw();});
+/* ---------- W6: bandwidth and Shannon ---------- */
+const W6={m:'qpsk',mode(v){this.m=v;this.calc();},calc(){chips('w6m',Object.keys(MODS).map(k=>[k,MODS[k].n]),this.m,'W6.mode');
+  const R=Math.pow(10,4+4*(+$('w6r').value)/100),a=+$('w6a').value,snr=+$('w6s').value,k=MODS[this.m].k;
+  $('w6rv').textContent=fmtBps(R);$('w6av').textContent=a.toFixed(2);$('w6sv').textContent=snr+' dB';
+  const Rs=R/k,B=Rs*(1+a),eff=R/B,C=B*Math.log2(1+dB(snr)),req=REQ[this.m];
+  read('w6o',[['Symbol rate',fmtHz(Rs).replace('Hz','sym/s')],['Bandwidth needed',fmtHz(B)],['Spectral efficiency',eff.toFixed(2)+' b/s/Hz'],['SNR this needs',req+' dB',snr>=req?'good':'bad'],['Shannon limit here',fmtBps(C)],['You use',(100*R/C).toFixed(0)+'% of the limit']]);
+  const [c,x]=cv('w6c');clear(c,x);const mx=Math.max(C,R)*1.05;
+  [[34,'Shannon limit',C,'#7fd0e0'],[92,'Your bit rate',R,R>C?'#e86a6a':'#2edc8a']].forEach(r=>{x.fillStyle='#1c2e3d';x.fillRect(10,r[0],460,30);x.fillStyle=r[3];x.fillRect(10,r[0],460*r[2]/mx,30);lab(x,r[1]+': '+fmtBps(r[2]),16,r[0]+20,'#06121c','left',12);});
+  lab(x,snr>=req?'Your SNR is enough for '+MODS[this.m].n+' at 0.1% errors.':'Your SNR is too low for '+MODS[this.m].n+'. Pick a lower-order modulation or raise SNR.',10,18,snr>=req?'#2edc8a':'#e86a6a');}};
+/* ---------- W7: noise, SNR and a cloud of dots ---------- */
+const W7={m:'qpsk',mode(v){this.m=v;this.calc();},calc(){chips('w7m',Object.keys(MODS).map(k=>[k,MODS[k].n]),this.m,'W7.mode');
+  const B=Math.pow(10,4+4*(+$('w7b').value)/100),nf=+$('w7n').value,P=+$('w7p').value;$('w7bv').textContent=fmtHz(B);$('w7nv').textContent=nf+' dB';$('w7pv').textContent=P+' dBm';
+  const N=-174+10*Math.log10(B)+nf,snr=P-N,req=REQ[this.m],ber=berTheory(this.m,snr),pts=PTS[this.m];
+  const [c,x]=cv('w7c');clear(c,x);const cx=240,cy=165,S=130,sg=Math.sqrt(dB(-snr)/2);
+  x.strokeStyle='#26394a';x.lineWidth=1;x.beginPath();x.moveTo(cx,10);x.lineTo(cx,320);x.moveTo(20,cy);x.lineTo(460,cy);x.stroke();
+  let errs=0;const NS=400;for(let i=0;i<NS;i++){const t=pts[(Math.random()*pts.length)|0],rx=t.x+gauss()*sg,ry=t.y+gauss()*sg;let bi=0,bd=1e9;pts.forEach((q,j)=>{const d=(q.x-rx)**2+(q.y-ry)**2;if(d<bd){bd=d;bi=j;}});const bad=pts[bi]!==t;if(bad)errs++;
+   x.fillStyle=bad?'rgba(232,106,106,.8)':'rgba(46,220,138,.55)';x.beginPath();x.arc(cx+Math.max(-1.7,Math.min(1.7,rx))*S,cy-Math.max(-1.2,Math.min(1.2,ry))*S,2.2,0,TAU);x.fill();}
+  pts.forEach(q=>{x.strokeStyle='#fff';x.lineWidth=1.4;x.beginPath();x.arc(cx+q.x*S,cy-q.y*S,5,0,TAU);x.stroke();});
+  read('w7r',[['Noise floor',N.toFixed(1)+' dBm'],['SNR',snr.toFixed(1)+' dB'],['Needs for 0.1%',req+' dB',snr>=req?'good':'bad'],['Predicted bit errors',ber<1e-6?'< 1e-6':ber.toExponential(1),ber<1e-3?'good':ber<1e-2?'mid':'bad'],['Symbol errors in this picture',(100*errs/NS).toFixed(0)+'%']]);}};
+/* ---------- W8: spread spectrum ---------- */
+const W8={hp:null,pg(){const R=Math.pow(10,3+3*(+$('w8a').value)/100),Cr=Math.pow(10,4+4*(+$('w8b').value)/100),eb=+$('w8c').value,L=+$('w8d').value;
+  $('w8av').textContent=fmtBps(R);$('w8bv').textContent=fmtHz(Cr).replace('Hz','chip/s');$('w8cv').textContent=eb+' dB';$('w8dv').textContent=L+' dB';
+  const gp=10*Math.log10(Cr/R),mj=gp-eb-L;read('w8r',[['Spread ratio',(Cr/R).toFixed(0)+' to 1'],['Processing gain',gp.toFixed(1)+' dB'],['Jamming margin',mj.toFixed(1)+' dB',mj>10?'good':mj>0?'mid':'bad'],['Meaning',mj>0?'Jammer must be about '+mj.toFixed(0)+' dB above your signal':'No jam resistance']]);},
+ hop(re){const N=+$('w8n').value,k=+$('w8w').value,d=+$('w8f').value;$('w8nv').textContent=N+' channels';$('w8wv').textContent=k+' channels';$('w8fv').textContent=d+' ms';
+  const T=30;if(re||!this.hp||this.hp.N!==N||this.hp.k!==k){const js=Math.floor(Math.random()*Math.max(1,N-k+1));this.hp={N,k,js,seq:Array.from({length:T},()=>Math.floor(Math.random()*N))};}
+  const h=this.hp,[c,x]=cv('w8c2');clear(c,x);const L=40,W=430,H=230,cw=W/T,rh=H/N;let hits=0;
+  x.fillStyle='rgba(232,106,106,.22)';x.fillRect(L,10+h.js*rh,W,Math.max(2,Math.min(k,N)*rh));
+  h.seq.forEach((ch,i)=>{const hit=ch>=h.js&&ch<h.js+Math.min(k,N);if(hit)hits++;x.fillStyle=hit?'#e86a6a':'#2edc8a';x.fillRect(L+i*cw+1,10+ch*rh-1,cw-2,Math.max(3,rh+1));});
+  lab(x,'channels',2,22,'#9db4c8','left',10);lab(x,'time (hops) \u2192',L,256,'#9db4c8','left',10);
+  const frac=Math.min(k,N)/N*100,fl=Math.max(0,1-d/10)*100;
+  read('w8hr',[['Hops a fixed jammer hits',frac.toFixed(0)+'%',frac>25?'bad':frac>10?'mid':'good'],['In this picture',hits+' of '+T+' hops'],['Follower jams each dwell',fl.toFixed(0)+'%',fl>50?'bad':fl>0?'mid':'good'],['Dwell at 100 hops/s','10 ms']]);}};
+/* ---------- W9: link designer ---------- */
+const W9={f:5800,b:20,fs:[[150,'150 MHz'],[900,'900 MHz'],[2400,'2.4 GHz'],[5800,'5.8 GHz']],bs:[[0.025,'25 kHz'],[1,'1 MHz'],[5,'5 MHz'],[20,'20 MHz']],
+ setF(v){this.f=+v;this.calc();},setB(v){this.b=+v;this.calc();},
+ calc(){chips('w9f',this.fs,this.f,'W9.setF');chips('w9b',this.bs,this.b,'W9.setB');
+  const P=+$('w9p').value,g=+$('w9g').value,d=0.5*Math.pow(10,2*(+$('w9d').value)/100),nf=+$('w9n').value,J=+$('w9j').value,jOn=J>-130;
+  $('w9pv').textContent=P+' dBm';$('w9gv').textContent=g+' dBi';$('w9dv').textContent=d<10?d.toFixed(1)+' km':Math.round(d)+' km';$('w9nv').textContent=nf+' dB';$('w9jv').textContent=jOn?J+' dBm':'off';
+  const fspl=32.44+20*Math.log10(this.f)+20*Math.log10(d),rx=P+2*g-fspl,N=-174+10*Math.log10(this.b*1e6)+nf,snr=rx-N;
+  let sinr=snr;if(jOn){sinr=rx-10*Math.log10(Math.pow(10,N/10)+Math.pow(10,J/10));}
+  read('w9r',[['Path loss',fspl.toFixed(1)+' dB'],['Received',rx.toFixed(1)+' dBm'],['Noise floor',N.toFixed(1)+' dBm'],['SNR',snr.toFixed(1)+' dB'],['J/S',jOn?(J-rx).toFixed(1)+' dB':'no jammer'],['SINR',sinr.toFixed(1)+' dB',sinr>=REQ.qpsk?'good':'bad']]);
+  let best=null,h='<table class="t"><tr><th>Modulation</th><th>Needs</th><th>Margin</th><th>Rate</th></tr>';
+  Object.keys(MODS).forEach(k=>{const m=sinr-REQ[k],rate=MODS[k].k*this.b/1.25,ok=m>=0;if(ok)best=k;h+='<tr><td>'+MODS[k].n+'</td><td>'+REQ[k]+' dB</td><td style="color:'+(ok?'#1f8f4f':'#c44')+'">'+(m>=0?'+':'')+m.toFixed(1)+' dB '+(ok?'\u2713':'\u2717')+'</td><td>'+(rate>=1?rate.toFixed(0)+' Mb/s':(rate*1000).toFixed(0)+' kb/s')+'</td></tr>';});
+  h+='</table><p class="note" style="font-size:13px;color:var(--text-primary)"><b>'+(best?'Densest modulation that works: '+MODS[best].n+', about '+(MODS[best].k*this.b/1.25>=1?(MODS[best].k*this.b/1.25).toFixed(0)+' Mb/s':(MODS[best].k*this.b/1.25*1000).toFixed(0)+' kb/s'):'No modulation works. The link is lost.')+'</b> (0.1% bit errors, roll-off 0.25)</p>';
+  $('w9t').innerHTML=h;}};
+
+const GUIDE={key:'modguide',chapters:[["ch1", "1 Why modulate"], ["ch2", "2 AM and FM"], ["ch3", "3 Digital"], ["ch4", "4 Bandwidth"], ["ch5", "5 Noise"], ["ch6", "6 Spread spectrum"], ["ch7", "7 Put it together"]],Q:Qd,CKQ:CKQd,GL:GLd,WI:{ch1:()=>W1.draw(),ch2:()=>{W2.draw();W3.draw();},ch3:()=>{W4.draw();W5.draw();},ch4:()=>W6.calc(),ch5:()=>W7.calc(),ch6:()=>{W8.pg();W8.hop();},ch7:()=>W9.calc()}};
+
+boot();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

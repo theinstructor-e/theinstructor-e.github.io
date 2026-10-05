@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMCON Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Simple Tech</p>
+  <h1>EMCON <span>Explained</span></h1>
+  <p class="hero-sub">Everything that transmits tells the enemy something. Emission control is how you decide what to say, when, how loudly, and from where.</p>
+</header>
+
+<div class="section-wrap">
+
+  <h2>What EMCON Is</h2>
+  <p class="lede">EMCON is short for emission control. It is the planned, selective use of your own emitters so that command and control keeps working while you limit what the enemy can learn from your signals.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#128214;</div><div class="fact-card-text"><strong>The definition, in plain words.</strong> The DoD Dictionary describes it as the selective and controlled use of electromagnetic, acoustic, or other emitters to get the best command and control while limiting, for operations security: detection by enemy sensors, interference among your own systems, and enemy interference with a deception plan.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#127899;&#65039;</div><div class="fact-card-text"><strong>It is a dial, not an off switch.</strong> Leaders set how restricted the unit is based on the threat and the mission. Total radio silence is the strictest end of that range, not the whole idea.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#128737;&#65039;</div><div class="fact-card-text"><strong>It is a form of electromagnetic protection.</strong> Army doctrine (ATP 3-12.3) groups emission control with spectrum management operations, electromagnetic hardening, electromagnetic masking, and electromagnetic compatibility.</div></div>
+
+  <h2>Why It Matters</h2>
+  <p class="lede">For two decades Army units rarely had to think about their electromagnetic signature. Against an enemy with direction finding and jamming, that has changed.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#127919;</div><div class="fact-card-text"><strong>Direction finding leads to targeting.</strong> Enemy radio-frequency direction finding that supports lethal targeting is described as the most acute EW threat to ground maneuver. Command posts, field trains, and maintenance collection points are the most exposed, because they sit still and emit in the same way for hours.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#128752;&#65039;</div><div class="fact-card-text"><strong>Ukraine made it concrete.</strong> Reporting from the war describes jamming of drone control links and of GPS receivers on munitions, and direction finding used to locate drone control stations so they could be hit with indirect fire.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#128225;</div><div class="fact-card-text"><strong>Once they know your frequencies, they can attack them.</strong> An enemy that detects which frequencies you use can jam or spoof them, especially at the moments you most need them, such as a breach.</div></div>
+
+  <h2>How the Enemy Finds You</h2>
+  <p class="lede">The enemy does not need to understand your messages. It only needs to hear you.</p>
+  <div class="fact-card"><div class="fact-card-emoji">1&#65039;&#8419;</div><div class="fact-card-text"><strong>Detect.</strong> A sensor hears your signal above its detection limit. Stronger signals, longer transmissions, and clear paths to the sensor all help it.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">2&#65039;&#8419;</div><div class="fact-card-text"><strong>Bearing.</strong> Each sensor measures the direction the signal came from. One sensor gives a line of bearing.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">3&#65039;&#8419;</div><div class="fact-card-text"><strong>Fix.</strong> Two or more sensors give lines that cross at your position. More intercepts tighten the fix. A tight fix can be fired on.</div></div>
+
+  <h2>The Five Habits: E-M-C-O-N</h2>
+  <p class="lede">A public Army article on writing EMCON standing operating procedures uses the letters of EMCON as a memory aid for the techniques in ATP 3-12.3. They need no special equipment or training on radio electronics.</p>
+  <div class="cat-grid">
+    <div class="cat-chip"><b>E: Emit on the least vulnerable frequencies</b><span>Use the part of the spectrum the enemy is least able to direction-find, intercept, or jam. Always use frequency-hopping modes.</span></div>
+    <div class="cat-chip"><b>M: Mask wave propagation</b><span>Shortest-range antennas, directional antennas, terrain between you and the enemy, and netting around antennas with a gap toward your own side.</span></div>
+    <div class="cat-chip"><b>C: Communicate concisely</b><span>Send only necessary transmissions. Plan messages first, be brief, use brevity codes, and use wire or physical messages when you can.</span></div>
+    <div class="cat-chip"><b>O: Only the power you need</b><span>Use the lowest power setting that still gets the message through.</span></div>
+    <div class="cat-chip"><b>N: No predictable patterns</b><span>Avoid repeating the same place, frequency, interval, and duration. Vary net calls and reports, and use offset antennas for command post radios.</span></div>
+  </div>
+  <div class="fact-card"><div class="fact-card-emoji">&#9878;&#65039;</div><div class="fact-card-text"><strong>Frequency choice is a trade.</strong> The article notes that HF is the least affected by jamming, but its long reach means it can be detected from farther away than VHF or UHF. Low-power UHF links such as GPS and the Joint Battle Command Platform are more vulnerable to jamming.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#127956;&#65039;</div><div class="fact-card-text"><strong>Terrain and the neighborhood help.</strong> A ridge can block line-of-sight signals. In built-up areas, the heavy civilian use of cell networks can hide military traffic on similar bands, though using unprotected commercial phones carries its own operations security risk.</div></div>
+
+  <h2>The Trade-Off</h2>
+  <p class="lede">Every step down in emissions costs you something. The skill is in picking the setting the mission can live with.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#128683;</div><div class="fact-card-text"><strong>Less emitting, less control.</strong> As EMCON gets stricter, leaders and command posts are less able to direct maneuver, pass guidance, coordinate changes, and receive frequent updates. Systems that emit continuously, such as JBC-P, also give real-time situational awareness and help prevent fratricide when they run unrestricted.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#128737;</div><div class="fact-card-text"><strong>Match the setting to the mission.</strong> Stricter levels suit operations with less frequent decisions and a static posture, such as defense, area security, and logistics, where sitting still raises the direction-finding threat. During offensive combined-arms operations, resilient command and control across many systems may be worth the added risk.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#129517;</div><div class="fact-card-text"><strong>Shrink the cost.</strong> Units can operate at stricter levels by relying more on mission-type orders, using prowords, and looking hard at their reporting requirements. A primary, alternate, contingency, and emergency (PACE) plan, plus extra systems such as tactical satellite radios, gives options when the main net goes quiet.</div></div>
+
+  <h2>It Takes More Than Radio Discipline</h2>
+  <p class="lede">The enemy has other ways to see you. EMCON only works as part of a wider concealment plan.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#128065;&#65039;</div><div class="fact-card-text"><strong>Look, listen, and light.</strong> Units have large visual signatures, and satellite imagery and drone cameras are widely available. Visual camouflage, noise discipline, and light discipline have to go with EMCON.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#127891;</div><div class="fact-card-text"><strong>Skills decide whether it works.</strong> Soldiers must be able to lower power, set up directional antennas, and transmit only in set windows, from dispersed positions without help. Limited skill with HF radios can stop a unit from moving to a stricter level.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#128295;</div><div class="fact-card-text"><strong>Plan for the specific enemy.</strong> Different enemy EW systems listen on different parts of the spectrum with different ranges. Signal and intelligence officers refine the EMCON SOP against what the enemy actually fields.</div></div>
+
+  <h2>EMCON Can Also Help You Attack</h2>
+  <p class="lede">Controlling your signature is not only defensive.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#127917;</div><div class="fact-card-text"><strong>Deception.</strong> A commander can have some units go quiet while others stay loud to make a feint more convincing, or change signatures to make the enemy less sure of what you intend.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#127911;</div><div class="fact-card-text"><strong>Better listening.</strong> When friendly units emit less, there is less clutter on the spectrum, which makes it easier for your own collectors to find and focus on enemy emitters.</div></div>
+
+  <h2>It Has Been Done</h2>
+  <p class="lede">Moving a large formation without talking is not new.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#128507;&#65039;</div><div class="fact-card-text"><strong>REFORGER 1988, exercise Certain Strike.</strong> The 1st Cavalry Division moved two brigades and support units, 4,534 vehicles over about 150 kilometers in 42 hours, under radio listening silence. Military police and staff teams at refuel and maintenance halts controlled movement and passed only necessary reports. A pre-move exercise built the shared understanding the plan depended on.</div></div>
+  <div class="fact-card"><div class="fact-card-emoji">&#9875;</div><div class="fact-card-text"><strong>Marine Corps, 2019.</strong> During a division-level exercise at Twenty-nine Palms, the 2nd Marine Division practiced moving under restrictive EMCON levels and learned firsthand the command-and-control costs.</div></div>
+
+  <h2>Where to Read More</h2>
+  <p class="lede">Your unit's EMCON levels and procedures come from your command and the current publications. These are the sources behind this guide.</p>
+  <div class="fact-card"><div class="fact-card-emoji">&#128218;</div><div class="fact-card-text">
+    <strong>ATP 3-12.3</strong>, Electromagnetic Warfare Techniques (2023). The source of the EMCON techniques and the EMCON status table.<br>
+    <strong>ATP 6-02.53</strong>, Techniques for Tactical Radio Operations (2020). Radio propagation and directional antenna setup.<br>
+    <strong>FM 3-98</strong>, Reconnaissance and Security Operations, and <strong>ATP 3-90.5</strong>, Combined Arms Battalion.<br>
+    <strong>FM 3-13.4</strong>, Army Support to Military Deception.<br>
+    <strong>ATP 1-02.1</strong>, Multi-Service Brevity Codes.<br>
+    <strong>DoD Dictionary of Military and Associated Terms</strong>, "emission control."<br>
+    <a href="https://www.army.mil/article/284546/adapting_to_multi_domain_battlefield_developing_emissions_control_sop" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">CPT Ryan McGovern, "Adapting to Multi-Domain Battlefield: Developing Emissions Control SOP," Army.mil, April 2025</a>, the public article behind the E-M-C-O-N habits above.
+  </div></div>
+
+  <div class="cta">
+    <p><strong>Reading about it only gets you so far.</strong> The EMCON &amp; Signature Lab puts you in charge of a command post. Set what each emitter does, choose where you sit, and watch an enemy direction-finding team build a fix on you. The settings map straight onto the habits above.</p>
+    <a href="../emcon/">Open the EMCON &amp; Signature Lab &rarr;</a>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
+<div class="footer">EMCON Explained &middot; Companion guide to the EMCON &amp; Signature Lab &middot; UNCLASSIFIED</div>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement, d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme', d?'light':'dark');
+  document.getElementById('t-icon').textContent = d?'🌙':'☀️';
+  document.getElementById('t-label').textContent = d?'Dark mode':'Light mode';
+}
+</script>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px;max-width:1500px;margin:0 auto">
+  <span style="color:var(--text-muted)">Related:</span>
+  <a href="../emcon/" style="color:var(--accent);text-decoration:none">&#128225; EMCON &amp; Signature Lab</a>
+  <a href="../ewguide/" style="color:var(--accent);text-decoration:none">&#9889; Electromagnetic Warfare Explained</a>
+  <a href="../sigidguide/" style="color:var(--accent);text-decoration:none">&#128225; Signal Identification Explained</a>
+</div>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
