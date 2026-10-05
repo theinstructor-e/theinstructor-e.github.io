@@ -91,13 +91,99 @@ input[type=range]{-webkit-appearance:none;flex:1;height:5px;border-radius:5px;ba
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg-card)}
 .slider-row .val{font-family:'Courier New',monospace;font-weight:700;min-width:64px;text-align:right;color:var(--text-primary)}
 .verdict{text-align:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.1rem;padding:.7rem;border-radius:10px;margin-top:.8rem}
+
+/* interactive textbook overlay */
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+
+.tab-btn.done::after{content:" \2713";color:#2e9e5b;font-weight:800}.prog-wrap .prog{margin:0}.tab-content .obj{margin:12px 0}.tab-content .chk,.tab-content .sumbox{margin:16px 0}.tab-content .kt{margin:8px 0 14px}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
   <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
+  <p class="hero-eyebrow">Interactive Textbook</p>
   <h1>What is <span>Electromagnetic Warfare</span>?<br>The spectrum fight, made simple.</h1>
   <p class="hero-sub">Everything from radios to radar to GPS rides on invisible radio waves. Electromagnetic warfare is the fight to <em>use</em> that spectrum for yourself — and deny it to the enemy.</p>
   <div class="tab-nav">
@@ -106,28 +192,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab-btn" onclick="switchTab('jam',this)">📶 Jamming</button>
     <button class="tab-btn" onclick="switchTab('df',this)">🧭 Finding Signals</button>
     <button class="tab-btn" onclick="switchTab('gps',this)">🛰️ GPS Attacks</button>
-  </div>
+  <button class="tab-btn" onclick="switchTab('more',this)">📚 Jamming, Finding &amp; Protecting</button><button class="tab-btn" onclick="switchTab('chk',this)">✅ Checkpoint</button><button class="tab-btn" onclick="switchTab('gl',this)">📖 Glossary</button></div>
 </header>
 
+<div class="prog-wrap" style="max-width:820px;margin:14px auto 0;padding:0 16px"><div class="prog"><div class="bar"><i id="barfill"></i></div><div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div></div></div>
 <div class="section-wrap">
   <!-- ============ WHAT ============ -->
   <div class="tab-content active" id="tab-what">
     <h2>The invisible battlefield</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Say what electromagnetic warfare is and why the spectrum is a vulnerability.</li><li>Say what spectrum management and EMSO are.</li></ul></div>
     <p class="lede">The electromagnetic spectrum is the range of all radio waves — the same invisible highway used by radios, phones, Wi-Fi, radar, and GPS. Whoever controls it has a huge advantage.</p>
 
-    <div class="analogy">🌊 <strong>Think of the spectrum like the ocean.</strong> Every signal is a boat on the water. Electromagnetic warfare is naval strategy for that ocean: you want to <strong>sail freely yourself</strong> (use your radios and radar), <strong>listen for enemy boats</strong> (find their signals), and when needed, <strong>make waves that swamp their boats</strong> (jam them) — all while keeping your own vessel steady.</p></div>
+    <div class="analogy">🌊 <strong>Think of the spectrum like the ocean.</strong> Every signal is a boat on the water. <span class="term" data-t="emw">Electromagnetic warfare</span> is naval strategy for that ocean: you want to <strong>sail freely yourself</strong> (use your radios and radar), <strong>listen for enemy boats</strong> (find their signals), and when needed, <strong>make waves that swamp their boats</strong> (jam them) — all while keeping your own vessel steady.</p></div>
 
     <div class="card"><div class="card-head"><span class="card-emoji">📻</span><div><div class="card-title">Everything modern runs on the spectrum</div><div class="card-sub">and that's the vulnerability</div></div></div>
       <p>Command radios, GPS navigation, drone control links, cell phones, radar — all of it depends on radio waves traveling through the air. That dependence is a strength <em>and</em> a weakness: anything that transmits can be <strong>heard</strong>, and anything that receives can be <strong>overwhelmed</strong>.</p>
       <p style="margin-bottom:0"><strong>Electromagnetic Warfare</strong> (older Army documents call it Electronic Warfare) is all about exploiting that fact — for you and against the enemy.</p>
     </div>
 
-    <div class="fact-card"><span class="fact-card-emoji">🔇</span><span class="fact-card-text"><strong>The best signal is often no signal.</strong> If you transmit, you can be located. Good EW discipline (EMCON) means knowing when to stay silent so you don't hand the enemy your position.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🔇</span><span class="fact-card-text"><strong>The best signal is often no signal.</strong> If you transmit, you can be located. Good EW discipline, called <span class="term" data-t="emcon">EMCON</span> (emission control), means knowing when to stay silent so you don't hand the enemy your position.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">⚡</span><span class="fact-card-text"><strong>It's non-kinetic.</strong> EW can stop a drone or blind a radar without firing a shot — using energy and information instead of bullets.</span></div>
     <h3>Spectrum management: your own side is crowded too</h3>
-    <p>The spectrum isn't just contested with the enemy — it's crowded with your own side's radios, radars, drones, and jammers all trying to use it at once. <strong>Electromagnetic spectrum management</strong> is the deconfliction process that assigns frequencies so friendly systems don't interfere with each other — one function inside the broader <strong>EMSO</strong> (Electromagnetic Spectrum Operations) framework, which is the umbrella term covering both EW and spectrum management together. A jammer that isn't coordinated with friendly radio nets can knock out your own communications just as easily as the enemy's — which is exactly why EW planning always happens alongside spectrum management, not separately from it.</p>
+    <p>The spectrum isn't just contested with the enemy — it's crowded with your own side's radios, radars, drones, and jammers all trying to use it at once. <strong>Electromagnetic spectrum management</strong> is the deconfliction process that assigns frequencies so friendly systems don't interfere with each other — one function inside the broader <strong><span class="term" data-t="emso">EMSO</span></strong> (Electromagnetic Spectrum Operations) framework, which is the umbrella term covering both EW and spectrum management together. A jammer that isn't coordinated with friendly radio nets can knock out your own communications just as easily as the enemy's — which is exactly why EW planning always happens alongside spectrum management, not separately from it.</p>
 
     <div class="fact-card"><span class="fact-card-emoji">📖</span><span class="fact-card-text"><strong>Doctrine:</strong> the core references are JP 3-85 (Joint Electromagnetic Spectrum Operations) and FM 3-12 (Cyberspace Operations and Electromagnetic Warfare). Always confirm the current version.</span></div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="what-score"></span></div><div class="tb" id="what-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>The best signal is often no signal</li><li>It's non-kinetic</li><li>Doctrine</li></ul></div>
+    <div class="kt"><span class="term" data-t="emw">Electromagnetic warfare</span><span class="term" data-t="emcon">EMCON</span><span class="term" data-t="emso">EMSO</span></div>
     <div class="tab-jump">
     <button class="tab-jump-btn next" onclick="goToTab('triad')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⚔️ ES · EA · EP</span></button>
   </div>
@@ -136,14 +228,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <!-- ============ TRIAD ============ -->
   <div class="tab-content" id="tab-triad">
     <h2>The three jobs of EW</h2>
-    <p class="lede">Everything in electromagnetic warfare falls into one of three buckets. Learn these three and the whole field organizes itself.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Name ES, EA, and EP and give an example of each.</li><li>Say how the three work together.</li></ul></div>
+    <p class="lede">Everything in <span class="term" data-t="emw">electromagnetic warfare</span> falls into one of three buckets. Learn these three and the whole field organizes itself.</p>
 
     <div class="triad">
-      <div class="card es" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">👂</span><div><div class="card-title">ES</div><div class="card-sub">Electromagnetic Support</div></div></div>
+      <div class="card es" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">👂</span><div><div class="card-title"><span class="term" data-t="es">ES</span></div><div class="card-sub">Electromagnetic Support</div></div></div>
         <p style="margin-bottom:0"><strong>Sense &amp; listen.</strong> Search for, intercept, and locate enemy signals. This is where you gather the picture — who's transmitting, on what frequency, and from where.</p></div>
-      <div class="card ea" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">💥</span><div><div class="card-title">EA</div><div class="card-sub">Electromagnetic Attack</div></div></div>
-        <p style="margin-bottom:0"><strong>Deny &amp; disrupt.</strong> Use energy to attack the enemy's use of the spectrum — jamming their radios, spoofing their GPS, or overloading their sensors.</p></div>
-      <div class="card ep" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">🛡️</span><div><div class="card-title">EP</div><div class="card-sub">Electromagnetic Protection</div></div></div>
+      <div class="card ea" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">💥</span><div><div class="card-title"><span class="term" data-t="ea">EA</span></div><div class="card-sub">Electromagnetic Attack</div></div></div>
+        <p style="margin-bottom:0"><strong>Deny &amp; disrupt.</strong> Use energy to attack the enemy's use of the spectrum — jamming their radios, <span class="term" data-t="spoof">spoofing</span> their GPS, or overloading their sensors.</p></div>
+      <div class="card ep" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">🛡️</span><div><div class="card-title"><span class="term" data-t="ep">EP</span></div><div class="card-sub">Electromagnetic Protection</div></div></div>
         <p style="margin-bottom:0"><strong>Defend &amp; survive.</strong> Protect your own systems from enemy EA <em>and</em> from your own jamming — frequency hopping, encryption, emission control.</p></div>
     </div>
 
@@ -153,7 +246,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <tr><th>Division</th><th>Goal</th><th>Examples</th></tr>
       <tr><td><strong style="color:var(--es-color)">ES — Support</strong></td><td>Find &amp; understand signals</td><td>Signal search, direction finding, threat warning</td></tr>
       <tr><td><strong style="color:var(--ea-color)">EA — Attack</strong></td><td>Deny the enemy the spectrum</td><td>Jamming, GPS spoofing, deception</td></tr>
-      <tr><td><strong style="color:var(--ep-color)">EP — Protect</strong></td><td>Keep your own systems working</td><td>Frequency hopping, encryption, EMCON</td></tr>
+      <tr><td><strong style="color:var(--ep-color)">EP — Protect</strong></td><td>Keep your own systems working</td><td>Frequency hopping, encryption, <span class="term" data-t="emcon">EMCON</span></td></tr>
     </table>
 
     <h3>Worked scenario: a convoy under threat</h3>
@@ -162,6 +255,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="fact-card"><span class="fact-card-emoji">🔄</span><span class="fact-card-text"><strong>They work together.</strong> ES finds the target and hands it to EA to attack — while EP keeps your own gear running through the whole fight. It's a loop, not three separate boxes.</span></div>
 
     <div class="tryit"><strong>▶ Go deeper:</strong> the <em>EW Principles</em> interactive walks through ES/EA/EP, antennas, and electromagnetic attack with a live spectrum analyzer.</div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="triad-score"></span></div><div class="tb" id="triad-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="emw">Electromagnetic warfare</span><span class="term" data-t="es">ES</span><span class="term" data-t="ea">EA</span><span class="term" data-t="spoof">Spoofing</span><span class="term" data-t="ep">EP</span><span class="term" data-t="emcon">EMCON</span></div>
     <div class="tab-jump">
     <button class="tab-jump-btn prev" onclick="goToTab('what')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📡 The Big Idea</span></button>
     <button class="tab-jump-btn next" onclick="goToTab('jam')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📶 Jamming</span></button>
@@ -171,6 +268,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <!-- ============ JAMMING ============ -->
   <div class="tab-content" id="tab-jam">
     <h2>Jamming — drowning out the signal</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Compare spot and barrage jamming.</li><li>Explain burn-through.</li></ul></div>
     <p class="lede">Jamming is the classic form of electromagnetic attack: transmit enough noise on the enemy's frequency that their receiver can't pick out the real message underneath.</p>
 
     <div class="analogy">🗣️ <strong>The crowded-room analogy:</strong> you're trying to hear a friend across a noisy room. If someone stands next to you and <strong>shouts louder than your friend</strong>, you can't make out the words. Jamming is exactly that — shouting on the enemy's channel until their message is lost in the noise.</p></div>
@@ -189,15 +287,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <h3>Two flavors of jamming</h3>
     <table class="compare">
       <tr><th>Type</th><th>What it does</th><th>Trade-off</th></tr>
-      <tr><td><strong>Spot</strong></td><td>All power on one narrow frequency</td><td>Very effective on that channel — but useless if they hop away</td></tr>
-      <tr><td><strong>Barrage</strong></td><td>Spreads power across a wide band</td><td>Covers many channels at once — but weaker on each one</td></tr>
+      <tr><td><strong><span class="term" data-t="spot">Spot</span></strong></td><td>All power on one narrow frequency</td><td>Very effective on that channel — but useless if they hop away</td></tr>
+      <tr><td><strong><span class="term" data-t="barrage">Barrage</span></strong></td><td>Spreads power across a wide band</td><td>Covers many channels at once — but weaker on each one</td></tr>
     </table>
 
     <h3>Worked example: will the signal burn through?</h3>
     <p>A friendly radio transmits at a strength the enemy jammer can't overcome as long as the friendly transmitter stays close enough. As the friendly unit closes distance with its own base station, its signal gets stronger relative to the jammer (path loss favors whoever is closer) — at some point the wanted signal "burns through" the jamming even though the jammer's power never changed. This is exactly why jamming range and communication range are a moving target, not a fixed one: closing distance to your own station is itself a counter-jamming tactic.</p>
 
-    <div class="fact-card"><span class="fact-card-emoji">🎯</span><span class="fact-card-text"><strong>Jamming cuts both ways.</strong> A jammer is a very loud transmitter — which makes it easy to detect and locate. Using EA can expose your own position, so it's a deliberate trade-off.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🎯</span><span class="fact-card-text"><strong>Jamming cuts both ways.</strong> A jammer is a very loud transmitter — which makes it easy to detect and locate. Using <span class="term" data-t="ea">EA</span> can expose your own position, so it's a deliberate trade-off.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">🚁</span><span class="fact-card-text"><strong>Counter-drone:</strong> jamming a drone's control link makes it lose contact with its pilot — then it falls back to its failsafe (return home, hover, or land). Jam its GPS too and it can't navigate at all.</span></div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="jam-score"></span></div><div class="tb" id="jam-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Jamming cuts both ways</li><li>Counter-drone</li></ul></div>
+    <div class="kt"><span class="term" data-t="spot">Spot jamming</span><span class="term" data-t="barrage">Barrage jamming</span><span class="term" data-t="ea">EA</span></div>
     <div class="tab-jump">
     <button class="tab-jump-btn prev" onclick="goToTab('triad')"><span class="tj-label">&larr; Previous</span><span class="tj-title">⚔️ ES · EA · EP</span></button>
     <button class="tab-jump-btn next" onclick="goToTab('df')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧭 Finding Signals</span></button>
@@ -207,12 +309,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <!-- ============ DF ============ -->
   <div class="tab-content" id="tab-df">
     <h2>Finding signals — direction finding</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Say how two or more bearings locate an emitter.</li><li>Say why sensor geometry matters.</li></ul></div>
     <p class="lede">Before you can jam or exploit a signal, you have to find it. Direction finding (DF) figures out <em>where</em> a transmitter is by measuring the direction its signal comes from.</p>
 
     <div class="analogy">👂 <strong>The two-ears analogy:</strong> you can tell roughly where a sound comes from because it hits your two ears at slightly different times. DF antennas do the same with radio waves — comparing what several antennas hear to work out the bearing to the transmitter.</p></div>
 
     <h3>One bearing gives a line. Two give a point.</h3>
-    <p>A single DF site can tell you the <strong>direction</strong> to a transmitter — a line of bearing (LOB) — but not how far. Take a bearing from a <strong>second location</strong> and the two lines cross. That crossing point is the transmitter. Add a third and you get a tight "cut" that pins it down.</p>
+    <p>A single DF site can tell you the <strong>direction</strong> to a transmitter — a <span class="term" data-t="lob">line of bearing</span> (LOB) — but not how far. Take a bearing from a <strong>second location</strong> and the two lines cross. That crossing point is the transmitter. Add a third and you get a tight "cut" that pins it down.</p>
 
     <div class="viz">
       <h4>Watch two bearings cross</h4>
@@ -223,11 +326,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <div class="fact-card"><span class="fact-card-emoji">📐</span><span class="fact-card-text"><strong>Geometry matters.</strong> If your sensors are almost in line with the target, the bearings cross at a shallow angle and the fix is fuzzy. Spread the sensors out and the intersection sharpens.</span></div>
     <h3>Why geometry quality matters so much</h3>
-    <p>Two bearings crossing at close to 90° pin down a location tightly — a small bearing error only shifts the fix a little. But if both sensors sit almost on the same line from the target, the bearings cross at a very shallow angle, and that same small bearing error swings the fix wildly along the length of that shallow intersection. This is exactly why DF sensor placement is planned, not arbitrary — spreading sensors out to get closer to a 90° cut is worth more than adding a third sensor in a bad spot.</p>
+    <p>Two bearings crossing at close to 90° pin down a location tightly — a small bearing error only shifts the fix a little. But if both sensors sit almost on the same line from the target, the bearings cross at a very shallow angle, and that same small bearing error swings the fix wildly along the length of that shallow intersection. This is exactly why DF sensor placement is planned, not arbitrary — spreading sensors out to get closer to a 90° cut is worth more than adding a third sensor in a bad <span class="term" data-t="spot">spot</span>.</p>
 
-    <div class="fact-card"><span class="fact-card-emoji">⏱️</span><span class="fact-card-text"><strong>Modern DF adds timing.</strong> Systems compare the tiny differences in <em>when</em> and <em>at what frequency</em> a signal arrives at each sensor (TDOA/FDOA) to pin a location to a precise grid.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">⏱️</span><span class="fact-card-text"><strong>Modern DF adds timing.</strong> Systems compare the tiny differences in <em>when</em> and <em>at what frequency</em> a signal arrives at each sensor (<span class="term" data-t="tdoa">TDOA</span>/FDOA) to pin a location to a precise grid.</span></div>
 
     <div class="tryit"><strong>▶ Practice it:</strong> the <em>DF Trainer</em> lets you place sensors and intersect bearings to locate an emitter yourself.</div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="df-score"></span></div><div class="tb" id="df-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Geometry matters</li><li>Modern DF adds timing</li></ul></div>
+    <div class="kt"><span class="term" data-t="lob">Line of bearing</span><span class="term" data-t="spot">Spot jamming</span><span class="term" data-t="tdoa">TDOA</span></div>
     <div class="tab-jump">
     <button class="tab-jump-btn prev" onclick="goToTab('jam')"><span class="tj-label">&larr; Previous</span><span class="tj-title">📶 Jamming</span></button>
     <button class="tab-jump-btn next" onclick="goToTab('gps')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🛰️ GPS Attacks</span></button>
@@ -237,12 +344,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <!-- ============ GPS ============ -->
   <div class="tab-content" id="tab-gps">
     <h2>GPS attacks — jamming vs. spoofing</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Tell GPS jamming from spoofing.</li><li>Say how GPS receivers defend themselves.</li></ul></div>
     <p class="lede">GPS is a receive-only signal, and it's extremely faint by the time it reaches the ground from space. That weakness makes it a prime target — in two very different ways.</p>
 
     <div class="triad" style="grid-template-columns:1fr 1fr">
       <div class="card ea" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">🔇</span><div><div class="card-title">Jamming</div><div class="card-sub">deny the signal</div></div></div>
         <p style="margin-bottom:0">Blast noise on the GPS frequency so the receiver can't hear the faint satellites at all. Result: <strong>"no fix"</strong> — the device knows it's lost, but it can't navigate.</p></div>
-      <div class="card es" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">🎭</span><div><div class="card-title">Spoofing</div><div class="card-sub">fake the signal</div></div></div>
+      <div class="card es" style="margin-bottom:0"><div class="card-head"><span class="card-emoji">🎭</span><div><div class="card-title"><span class="term" data-t="spoof">Spoofing</span></div><div class="card-sub">fake the signal</div></div></div>
         <p style="margin-bottom:0">Transmit <strong>counterfeit</strong> GPS signals so the receiver computes a <em>false</em> position. The device thinks it knows where it is — but it's wrong. That's far sneakier than jamming.</p></div>
     </div>
 
@@ -259,13 +367,58 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <h3>Defending against both</h3>
     <p>Because jamming and spoofing exploit the same underlying weakness (a very faint, predictable signal), the countermeasures overlap too: military GPS receivers use encrypted signal formats that are far harder to convincingly fake, directional/null-steering antennas that can reject signals arriving from an unexpected direction (like a spoofer on the ground instead of satellites overhead), and cross-checking GPS position against inertial navigation or other sensors — so a receiver can flag "this doesn't match what my other instruments say" rather than blindly trusting a spoofed fix.</p>
-    <div class="fact-card"><span class="fact-card-emoji">🛡️</span><span class="fact-card-text"><strong>Protection (EP):</strong> anti-jam antennas, inertial navigation as a backup, and signal-authentication techniques help systems resist GPS attacks.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">🛡️</span><span class="fact-card-text"><strong>Protection (<span class="term" data-t="ep">EP</span>):</strong> anti-jam antennas, inertial navigation as a backup, and signal-authentication techniques help systems resist GPS attacks.</span></div>
 
     <div class="tryit"><strong>▶ See the difference:</strong> the <em>GPS Jamming vs Spoofing</em> trainer shows both attacks side by side.</div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="gps-score"></span></div><div class="tb" id="gps-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Why GPS is so easy to overpower</li><li>Protection (EP)</li></ul></div>
+    <div class="kt"><span class="term" data-t="spoof">Spoofing</span><span class="term" data-t="ep">EP</span></div>
     <div class="tab-jump">
     <button class="tab-jump-btn prev" onclick="goToTab('df')"><span class="tj-label">&larr; Previous</span><span class="tj-title">🧭 Finding Signals</span></button>
-  </div>
+  <button class="tab-jump-btn next" onclick="goToTab('more')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📚 Jamming, Finding &amp; Protecting</span></button></div>
 </div>
+  <div class="tab-content" id="tab-more">
+
+    <h2>More on jamming, finding, and protecting</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Name the main jamming types and calculate J/S.</li><li>Say how interferometry and TDOA work and name the EP toolkit.</li></ul></div>
+    <p class="lede">The first tabs gave you the big picture. This one fills in the types of jamming, the number that decides whether it works, how direction finders really measure a bearing, and the main ways to protect your own links.</p>
+    <h3>Types of jamming</h3>
+    <table class="compare"><thead><tr><th>Type</th><th>What it does</th><th>Good against</th></tr></thead><tbody>
+      <tr><td>Noise</td><td>Random noise on the channel</td><td>Almost any receiver</td></tr>
+      <tr><td><span class="term" data-t="spot">Spot</span></td><td>All power on one narrow frequency</td><td>A fixed-frequency link</td></tr>
+      <tr><td><span class="term" data-t="barrage">Barrage</span></td><td>Power spread over a wide band</td><td>Many channels at once, each weakly</td></tr>
+      <tr><td>Sweep</td><td>A jamming signal that slides across a band</td><td>Searching a band, or a hopper over time</td></tr>
+      <tr><td>Deceptive</td><td>False signals that look real, such as false radar targets</td><td>Radars and sensors that trust what they hear</td></tr>
+      <tr><td>Meaconing</td><td>Records real navigation signals and replays them</td><td>Receivers that trust satellite time</td></tr></tbody></table>
+    <h3>J/S: the number that decides it</h3>
+    <p>What matters is the <strong>jammer-to-signal ratio (<span class="term" data-t="js">J/S</span>)</strong> at the victim receiver: how strong the jamming is compared with the wanted signal there, in dB.</p>
+    <div class="fact-card"><span class="fact-card-emoji">&#128290;</span><span class="fact-card-text"><strong>J/S (dB) = jammer power at the receiver (dBm) &minus; signal power at the receiver (dBm).</strong> If the jammer arrives at &minus;70 dBm and the signal at &minus;85 dBm, J/S is 15 dB. The jammer needs a J/S of at least around 0 dB or more to hurt a plain link, and more against a link with spread spectrum or hopping.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">&#128293;</span><span class="fact-card-text"><strong><span class="term" data-t="burn">Burn-through</span>.</strong> If the friendly transmitter gets closer to its receiver, halving the distance adds about 6 dB to the signal. A J/S of +3 dB becomes &minus;3 dB, and the signal burns through. Distance changes the jammer&rsquo;s result without any change in its power.</span></div>
+    <h3>How a direction finder really measures</h3>
+    <div class="fact-card"><span class="fact-card-emoji">&#128225;</span><span class="fact-card-text"><strong><span class="term" data-t="interf">Interferometry</span>.</strong> Two antennas a known distance d apart hear the same wave at slightly different phase. The phase difference gives the angle: sin&theta; = (&Delta;&phi; &times; &lambda;) &divide; (2&pi; &times; d). With d = &lambda;/2, a 90 degree phase difference means sin&theta; = 0.5, so the bearing is 30 degrees from broadside.</span></div>
+    <div class="fact-card"><span class="fact-card-emoji">&#9201;&#65039;</span><span class="fact-card-text"><strong><span class="term" data-t="tdoa">TDOA</span>.</strong> Several widely spaced sensors time when the same signal arrives. Each time difference, multiplied by the speed of light, gives a path difference. A 10 microsecond difference is about 3 km. Each difference puts the emitter on a curve called a hyperbola, and two curves cross at the emitter.</span></div>
+    <h3>Electromagnetic protection: the toolkit</h3>
+    <div class="fact-card"><span class="fact-card-emoji">&#128737;&#65039;</span><span class="fact-card-text"><strong>Make it hard to find and hard to jam.</strong> Frequency hopping and spread spectrum make a link hard to jam. Directional antennas and low power shrink the area where a signal can be heard. Encryption protects content. A PACE plan keeps you talking when one method fails. And <span class="term" data-t="emcon">EMCON</span>, emission control, decides when and how you transmit at all. See <a href="../emconguide/" style="color:inherit"><strong>EMCON Explained</strong></a>.</span></div>
+    <div class="tryit"><strong>&#9654; Go deeper:</strong> <a href="../modguide/" style="color:inherit"><em>Modulation &amp; Noise Explained</em></a> covers jamming margin and spread spectrum, <a href="../radioguide/" style="color:inherit"><em>Tactical Radio Basics</em></a> covers the radio side, and the <a href="../gnssguide/" style="color:inherit"><em>GNSS &amp; Navigation Explained</em></a> guide covers GPS attacks in depth.</div>
+
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="more-score"></span></div><div class="tb" id="more-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>J/S (dB) = jammer power at the receiver (dBm) − signal power at the receiver (dBm)</li><li>Burn-through</li><li>Interferometry</li></ul></div>
+    <div class="kt"><span class="term" data-t="spot">Spot jamming</span><span class="term" data-t="barrage">Barrage jamming</span><span class="term" data-t="js">J/S</span><span class="term" data-t="burn">Burn-through</span><span class="term" data-t="interf">Interferometry</span><span class="term" data-t="tdoa">TDOA</span><span class="term" data-t="emcon">EMCON</span></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('gps')"><span class="tj-label">&larr; Back</span><span class="tj-title">🛰️ GPS Attacks</span></button><button class="tab-jump-btn next" onclick="goToTab('chk')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Checkpoint</span></button></div></div>
+  <div class="tab-content" id="tab-chk">
+    <h2>Checkpoint</h2>
+    <p class="lede">Mixed questions from the whole guide. One try each. You see what you missed and where to review. Your best score is saved on this device.</p>
+    <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+    <div class="pn"><button class="pri" onclick="Check.start()">Start / retake</button></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('more')"><span class="tj-label">&larr; Back</span><span class="tj-title">📚 Jamming, Finding & Protecting</span></button><button class="tab-jump-btn next" onclick="goToTab('gl')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📖 Glossary</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-gl">
+    <h2>Glossary</h2>
+    <div class="gl"><input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()"><div id="gllist"></div></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('chk')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Checkpoint</span></button></div>
+  </div>
 </div>
 
 <div class="card" style="max-width:820px;margin:24px auto 0;padding:18px 20px">
@@ -350,6 +503,55 @@ window.addEventListener('load',()=>{calcJam();drawDF();});
   <a href="../sigidguide/" style="color:#ff4444;text-decoration:none">&#128225; Signal Identification Explained</a>
   <a href="../sigid/" style="color:#ff4444;text-decoration:none">&#128225; Signal ID Trainer</a>
 </div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<script>
+(function(){
+/* E-WIT retrofit overlay: adds objectives, check questions, checkpoint, glossary and progress to an existing tab guide */
+const $=id=>document.getElementById(id);
+let KEY,SAVE,Q,CKQ,GL,TABS;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function tabBtn(id){return document.querySelector('.tab-btn[onclick*="\''+id+'\'"]');}
+function go(id){goToTab(id);}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();TABS.forEach(t=>renderQs(t));updateProgress();}
+function chapDone(t){return Q[t].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){let n=0;TABS.forEach(t=>{const d=chapDone(t);if(d)n++;const b=tabBtn(t);if(b)b.classList.toggle('done',d);const s=$(t+'-score');if(s){const T=Q[t].length,k=Q[t].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+T+' answered correctly';}});
+ const cb=tabBtn('chk');if(cb)cb.classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/TABS.length*100)+'%';$('progtxt').textContent=n+' of '+TABS.length+' sections complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));$('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+ if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+ else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+ return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(t){const box=$(t+'-q');if(!box)return;box.innerHTML=Q[t].map(q=>qHtml(q,'q-','ch')).join('');Q[t].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+ if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+ else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+ fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+ const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v))return;const ok=Math.abs(v-q.a)<=q.tol;
+ if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+ if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in this section, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+ if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();const chs={};miss.forEach(q=>chs[q.ch]=1);
+ $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+(TABNAMES[c]||c)+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+let TABNAMES={};
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+ Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;TABS=Object.keys(Q);TABNAMES=GUIDE.names||{};Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+ TABS.forEach(t=>renderQs(t));Gloss.render();updateProgress();}
+
+const GUIDE={"key": "ew", "Q": {"what": [{"t": "mc", "q": "Why is dependence on the spectrum a vulnerability?", "o": ["Anything that transmits can be heard and anything that receives can be overwhelmed", "It costs money", "It is slow", "Radios are heavy"], "a": 0, "ex": "That is the fact EW exploits for you and against the enemy.", "id": "ew-what-1"}, {"t": "mc", "q": "What is EW often called in older Army documents?", "o": ["Electronic warfare", "Radio war", "Signal war", "Spectrum fight"], "a": 0, "ex": "Today the Army says electromagnetic warfare.", "id": "ew-what-2"}, {"t": "mc", "q": "What does spectrum management do?", "o": ["Assigns frequencies so friendly systems do not interfere with each other", "Jams the enemy", "Finds enemy emitters", "Encrypts traffic"], "a": 0, "ex": "A jammer that is not coordinated can knock out your own radios.", "id": "ew-what-3"}, {"t": "mc", "q": "EMSO is:", "o": ["The umbrella term for electromagnetic warfare and spectrum management together", "Only jamming", "Only spectrum management", "A radio"], "a": 0, "ex": "Electromagnetic Spectrum Operations.", "id": "ew-what-4"}], "triad": [{"t": "mc", "q": "Which division searches for and intercepts enemy signals?", "o": ["ES, Electromagnetic Support", "EA", "EP", "EMSO"], "a": 0, "ex": "It gathers the picture of who is transmitting, where, and on what.", "id": "ew-triad-1"}, {"t": "mc", "q": "Jamming and GPS spoofing belong to:", "o": ["EA, Electromagnetic Attack", "ES", "EP", "Spectrum management"], "a": 0, "ex": "EA denies or disrupts the enemy’s use of the spectrum.", "id": "ew-triad-2"}, {"t": "mc", "q": "Frequency hopping, encryption, and EMCON belong to:", "o": ["EP, Electromagnetic Protection", "ES", "EA", "DF"], "a": 0, "ex": "They keep your own systems working.", "id": "ew-triad-3"}, {"t": "mc", "q": "In the convoy example, what stops friendly jamming from knocking out friendly radios?", "o": ["EP: the radios frequency hop and are encrypted", "More jamming", "Silence", "A bigger antenna"], "a": 0, "ex": "Miss any one leg and the plan breaks.", "id": "ew-triad-4"}], "jam": [{"t": "mc", "q": "Spot jamming puts all its power:", "o": ["On one narrow frequency", "Across a wide band", "On GPS only", "On the enemy tower"], "a": 0, "ex": "It is very effective on that channel but useless if they hop away.", "id": "ew-jam-1"}, {"t": "mc", "q": "Barrage jamming:", "o": ["Spreads power across a wide band, so it is weaker on each channel", "Targets one channel", "Is stronger on each channel", "Cannot be detected"], "a": 0, "ex": "It covers many channels at once.", "id": "ew-jam-2"}, {"t": "mc", "q": "What is burn-through?", "o": ["The wanted signal rising above the jamming as the transmitter gets closer", "A jammer overheating", "A radio failing", "A cable fire"], "a": 0, "ex": "The jammer’s power never changed.", "id": "ew-jam-3"}, {"t": "mc", "q": "Why is a jammer easy to find?", "o": ["It is a very loud transmitter", "It is slow", "It is large", "It is quiet"], "a": 0, "ex": "Using EA can expose your own position.", "id": "ew-jam-4"}], "df": [{"t": "mc", "q": "What does a single DF site give you?", "o": ["A line of bearing", "A point", "A distance", "A frequency plan"], "a": 0, "ex": "A second site makes the lines cross at the transmitter.", "id": "ew-df-1"}, {"t": "mc", "q": "Which gives a tighter fix?", "o": ["Bearings crossing near 90 degrees", "Sensors almost in line with the target", "A single sensor", "Bearings crossing near 0 degrees"], "a": 0, "ex": "Shallow crossings let a small error swing the fix a long way.", "id": "ew-df-2"}, {"t": "mc", "q": "What do TDOA and FDOA compare?", "o": ["When and at what frequency a signal arrives at each sensor", "Antenna sizes", "Battery levels", "Codes"], "a": 0, "ex": "Modern DF adds timing to pin a location.", "id": "ew-df-3"}, {"t": "mc", "q": "Which is better value?", "o": ["Spreading sensors out for a cleaner cut", "Adding a third sensor in a bad spot", "Moving sensors together", "Using one sensor"], "a": 0, "ex": "Planned placement beats extra sensors.", "id": "ew-df-4"}], "gps": [{"t": "mc", "q": "What does GPS jamming produce?", "o": ["No fix: the device knows it is lost", "A false position", "A better fix", "A new satellite"], "a": 0, "ex": "Spoofing gives a false position that the device trusts.", "id": "ew-gps-1"}, {"t": "mc", "q": "Why is GPS so easy to overpower?", "o": ["The satellites are about 20,000 km away so the signal arrives very weak", "It is encrypted", "It is strong", "It is on HF"], "a": 0, "ex": "It is below the background noise.", "id": "ew-gps-2"}, {"t": "mc", "q": "Which is harder to do?", "o": ["Spoofing, because it must mimic real signals", "Jamming", "Both are equal", "Neither"], "a": 0, "ex": "Jamming is just noise.", "id": "ew-gps-3"}, {"t": "mc", "q": "Which is NOT a GPS defense?", "o": ["Turning the receiver up to maximum gain", "Encrypted military signals", "Null-steering antennas", "Cross-checking with inertial navigation"], "a": 0, "ex": "The defenses make a spoofed signal unconvincing or flag a mismatch.", "id": "ew-gps-4"}], "more": [{"t": "num", "q": "A jammer arrives at −70 dBm and the wanted signal at −85 dBm. What is J/S? (dB)", "a": 15, "tol": 0.1, "u": "dB", "ex": "J/S = −70 − (−85) = 15 dB.", "id": "ew-more-1"}, {"t": "num", "q": "A friendly radio halves its distance to its receiver. By how many dB does the signal rise?", "a": 6, "tol": 0.1, "u": "dB", "ex": "Halving distance adds about 6 dB, so a J/S of +3 dB becomes −3 dB.", "id": "ew-more-2"}, {"t": "num", "q": "Two antennas are half a wavelength apart and measure a 90 degree phase difference. What is the bearing from broadside? (degrees)", "a": 30, "tol": 0.3, "u": "°", "ex": "sinθ = (Δφ × λ) ÷ (2π × d) = (π/2 × λ) ÷ (2π × λ/2) = 0.5, so θ = 30 degrees.", "id": "ew-more-3"}, {"t": "num", "q": "A TDOA difference of 10 microseconds is about how many kilometers of path difference? (nearest whole)", "a": 3, "tol": 0.1, "u": "km", "ex": "10 µs × 299,792 km/s = 3.0 km.", "id": "ew-more-4"}, {"t": "mc", "q": "Which jamming type sends false signals that look real?", "o": ["Deceptive", "Barrage", "Spot", "Sweep"], "a": 0, "ex": "Used against radars and sensors that trust what they hear.", "id": "ew-more-5"}]}, "CKQ": [{"t": "mc", "q": "Which publication is the joint reference for spectrum operations?", "o": ["JP 3-85", "ATP 3-21.8", "TC 3-25.26", "FM 6-02"], "a": 0, "ex": "Always confirm the current version.", "id": "ew-ck-1", "ch": "what"}, {"t": "mc", "q": "Which division is the “guard and footwork”?", "o": ["EP", "ES", "EA", "DF"], "a": 0, "ex": "ES watches, EA punches, EP protects.", "id": "ew-ck-2", "ch": "triad"}, {"t": "mc", "q": "ES hands what to EA?", "o": ["The target to attack", "A radio", "A battery", "A map"], "a": 0, "ex": "It is a loop, not three separate boxes.", "id": "ew-ck-3", "ch": "triad"}, {"t": "mc", "q": "Jamming is a contest of:", "o": ["Signal versus jamming at the receiver", "Power only", "Frequency only", "Antennas only"], "a": 0, "ex": "The ratio decides.", "id": "ew-ck-4", "ch": "jam"}, {"t": "mc", "q": "A hopping radio is best attacked by:", "o": ["A wideband or sweep approach, not spot", "Spot jamming alone", "Nothing", "A battery"], "a": 0, "ex": "Spot is useless if they hop away.", "id": "ew-ck-5", "ch": "jam"}, {"t": "mc", "q": "Two bearings from two sites give:", "o": ["A point where the lines cross", "A line only", "A distance", "A frequency"], "a": 0, "ex": "Add a third for a tight cut.", "id": "ew-ck-6", "ch": "df"}, {"t": "mc", "q": "GPS spoofing differs from jamming because it:", "o": ["Gives a false position the device may trust", "Gives no fix", "Is easier", "Needs no transmitter"], "a": 0, "ex": "Jamming gives no fix.", "id": "ew-ck-7", "ch": "gps"}, {"t": "mc", "q": "Inertial navigation helps against spoofing because:", "o": ["It lets the receiver cross-check the position", "It is faster", "It is encrypted", "It is a radio"], "a": 0, "ex": "A mismatch flags a spoofed fix.", "id": "ew-ck-8", "ch": "gps"}, {"t": "num", "q": "J/S where the jammer is −60 dBm and the signal −75 dBm? (dB)", "a": 15, "tol": 0.1, "u": "dB", "ex": "−60 − (−75) = 15 dB.", "id": "ew-ck-9", "ch": "more"}, {"t": "mc", "q": "Meaconing is:", "o": ["Recording real navigation signals and replaying them", "Overloading with noise", "Encrypting", "Hopping"], "a": 0, "ex": "It gives a valid-looking but wrong position.", "id": "ew-ck-10", "ch": "more"}, {"t": "mc", "q": "Which is part of the EP toolkit?", "o": ["Frequency hopping, directional antennas, low power, encryption, and EMCON", "Higher power only", "Open channels", "Plain text"], "a": 0, "ex": "Plus a PACE plan.", "id": "ew-ck-11", "ch": "more"}, {"t": "mc", "q": "A 90 degree phase difference at half-wavelength spacing gives:", "o": ["30 degrees from broadside", "0 degrees", "60 degrees", "90 degrees"], "a": 0, "ex": "sinθ = 0.5.", "id": "ew-ck-12", "ch": "more"}], "GL": {"emw": ["Electromagnetic warfare", "Using the spectrum for yourself and denying it to the enemy. Older Army documents call it electronic warfare."], "emso": ["EMSO", "Electromagnetic Spectrum Operations: EW and spectrum management together."], "es": ["ES", "Electromagnetic Support: searching for, intercepting, and locating signals."], "ea": ["EA", "Electromagnetic Attack: using energy to attack the enemy’s use of the spectrum."], "ep": ["EP", "Electromagnetic Protection: keeping your own systems working through enemy attack."], "emcon": ["EMCON", "Emission control: controlling when and how you transmit."], "spot": ["Spot jamming", "All the jamming power on one narrow frequency."], "barrage": ["Barrage jamming", "Jamming power spread across a wide band."], "burn": ["Burn-through", "The wanted signal rising above the jamming as the transmitter gets closer."], "js": ["J/S", "Jammer-to-signal ratio at the receiver, in dB."], "lob": ["Line of bearing", "The direction from a DF site toward a transmitter."], "tdoa": ["TDOA", "Time difference of arrival: using arrival times at several sensors to locate an emitter."], "spoof": ["Spoofing", "Sending counterfeit signals so a receiver computes a false position or time."], "interf": ["Interferometry", "Finding a bearing from the phase difference of a wave at two antennas."]}, "names": {"what": "📡 The Big Idea", "triad": "⚔️ ES · EA · EP", "jam": "📶 Jamming", "df": "🧭 Finding Signals", "gps": "🛰️ GPS Attacks", "more": "📚 Jamming, Finding & Protecting"}};
+window.Qz=Qz;window.Check=Check;window.Sheet=Sheet;window.Gloss=Gloss;window.go=go;window.resetProgress=resetProgress;
+boot();
+})();
+</script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

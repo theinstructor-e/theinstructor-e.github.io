@@ -87,29 +87,117 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
   .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
   .section-wrap{padding-top:1rem}
 }
+
+/* interactive textbook overlay */
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+
+.tab-btn.done::after{content:" \2713";color:#2e9e5b;font-weight:800}.prog-wrap .prog{margin:0}.tab-content .obj{margin:12px 0}.tab-content .chk,.tab-content .sumbox{margin:16px 0}.tab-content .kt{margin:8px 0 14px}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
   <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
+  <p class="hero-eyebrow">Interactive Textbook</p>
   <h1>Land <span>Navigation</span><br>Know where you are and where you are going.</h1>
   <p class="hero-sub">Read the map, measure a direction, walk a distance, and check the ground. Six short tabs take you from the grid to a full route.</p>
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('maps',this)">🗺️ Maps &amp; Grids</button><button class="tab-btn" onclick="switchTab('dir',this)">🧭 Direction</button><button class="tab-btn" onclick="switchTab('tools',this)">🎯 Compass &amp; Protractor</button><button class="tab-btn" onclick="switchTab('dist',this)">👣 Distance</button><button class="tab-btn" onclick="switchTab('terrain',this)">⛰️ Terrain</button><button class="tab-btn" onclick="switchTab('together',this)">🚶 Putting It Together</button>
-  </div>
+  <button class="tab-btn" onclick="switchTab('chk',this)">✅ Checkpoint</button><button class="tab-btn" onclick="switchTab('gl',this)">📖 Glossary</button></div>
 </header>
 
+<div class="prog-wrap" style="max-width:820px;margin:14px auto 0;padding:0 16px"><div class="prog"><div class="bar"><i id="barfill"></i></div><div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div></div></div>
 <div class="section-wrap">
   <div class="tab-content active" id="tab-maps">
 
     <h2>Maps and grids — the picture and the address system</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Read the margin items and the color code of a military map.</li><li>Read and give a 6-digit grid coordinate, right then up.</li></ul></div>
     <p class="lede">A military map is a scaled picture of the ground with a grid laid over it. The grid gives every spot an address, so you can tell someone exactly where something is without describing it.</p>
     <div class="analogy">🏙️ <strong>Like a city street map, but for everywhere:</strong> instead of "Main Street and 5th," you give a short number that points to one 100-meter square.</div>
     <h3>What the margin tells you</h3>
     <p>Before you use any map, read the margin. It is where the map explains itself.</p>
-    <div class="mnem"><span class="k">Scale</span><span>How much ground one map unit covers (the representative fraction, like 1:50,000). Bar scales in the lower margin are rulers in different units.</span><span class="k">Contour note</span><span>The contour interval: the elevation change between neighboring contour lines. It sits below the bar scales.</span><span class="k">Declination diagram</span><span>Shows how true north, grid north, and magnetic north relate. It is in the lower margin.</span><span class="k">Legend</span><span>What the symbols and colors mean on this sheet.</span></div>
+    <div class="mnem"><span class="k">Scale</span><span>How much ground one map unit covers (the representative fraction, like 1:50,000). Bar scales in the lower margin are rulers in different units.</span><span class="k">Contour note</span><span>The contour interval: the elevation change between neighboring <span class="term" data-t="contour">contour lines</span>. It sits below the bar scales.</span><span class="k"><span class="term" data-t="declination">Declination diagram</span></span><span>Shows how true north, grid north, and magnetic north relate. It is in the lower margin.</span><span class="k">Legend</span><span>What the symbols and colors mean on this sheet.</span></div>
     <h3>What the colors mean</h3>
     <div class="tbl-wrap"><table class="compare"><thead><tr><th>Color</th><th>What it shows</th></tr></thead><tbody><tr><td>Black</td><td>Man-made (cultural) features like buildings and roads, spot elevations, and all labels</td></tr><tr><td>Blue</td><td>Water: lakes, swamps, rivers, and drainage</td></tr><tr><td>Green</td><td>Vegetation that matters militarily, such as woods and orchards</td></tr><tr><td>Brown</td><td>Relief and elevation, such as contour lines on standard maps</td></tr><tr><td>Red-brown</td><td>Some cultural features and relief features, and contours on red-light readable maps</td></tr></tbody></table></div>
     <h3>Scale: turning map distance into ground distance</h3>
@@ -123,21 +211,26 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
     <p>Contour lines connect points of equal elevation. Lines close together mean a steep slope. Lines far apart mean gentle ground. The heavy <strong>index contours</strong> carry elevation numbers, the lighter <strong>intermediate contours</strong> fill in between, and dashed <strong>supplementary contours</strong> show extra detail on very flat ground.</p>
     <div class="tryit"><strong>▶ Practice it:</strong> the <em><a href="../land-nav/" style="color:inherit">Land Nav Toolkit</a></em> has a Grid Coordinates tab where you read and plot 6-digit grids.</div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="maps-score"></span></div><div class="tb" id="maps-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Worked example</li><li>MGRS</li></ul></div>
+    <div class="kt"><span class="term" data-t="contour">Contour line</span><span class="term" data-t="declination">Declination diagram</span></div>
     <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('dir')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧭 Direction</span></button></div>
   </div>
   <div class="tab-content" id="tab-dir">
 
     <h2>Direction and azimuths</h2>
-    <p class="lede">An azimuth is a horizontal angle measured clockwise from a north base line. It is the standard way Soldiers give direction.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Give an azimuth, a back azimuth, and convert between degrees and mils.</li><li>Convert between grid and magnetic azimuths using the G-M angle.</li></ul></div>
+    <p class="lede">An <span class="term" data-t="azimuth">azimuth</span> is a horizontal angle measured clockwise from a north base line. It is the standard way Soldiers give direction.</p>
     <div class="analogy">🕛 <strong>Like a clock face you read in degrees:</strong> straight ahead north is 0°, east is 90°, south is 180°, west is 270°, and you always count clockwise.</div>
     <h3>Degrees and mils</h3>
-    <p>A circle is <strong>360 degrees</strong> or <strong>6,400 mils</strong>. One degree is about 17.8 mils. Your compass shows both. Always check which unit you are working in before you read or set anything.</p>
+    <p>A circle is <strong>360 degrees</strong> or <strong>6,400 <span class="term" data-t="mil">mils</span></strong>. One degree is about 17.8 mils. Your compass shows both. Always check which unit you are working in before you read or set anything.</p>
     <h3>Back azimuth</h3>
     <p>A back azimuth is the opposite direction. If the azimuth is <strong>less than 180°, add 180°</strong>. If it is <strong>180° or more, subtract 180°</strong>. In mils, use 3,200.</p>
     <div class="tbl-wrap"><table class="compare"><thead><tr><th>Azimuth</th><th>Back azimuth</th></tr></thead><tbody><tr><td>90°</td><td>270°</td></tr><tr><td>45°</td><td>225°</td></tr><tr><td>300°</td><td>120°</td></tr><tr><td>1,600 mils</td><td>4,800 mils</td></tr></tbody></table></div>
     <h3>Three norths</h3>
     <div class="mnem"><span class="k">TN</span><span><strong>True north</strong>: the direction to the North Pole.</span><span class="k">GN</span><span><strong>Grid north</strong>: the direction the vertical grid lines on your map point.</span><span class="k">MN</span><span><strong>Magnetic north</strong>: where your compass needle points.</span></div>
-    <p>Your map uses grid north. Your compass uses magnetic north. The angle between them is the <strong>G-M angle</strong>, and the declination diagram in the map margin shows it. If you ignore it, your map azimuth and your compass azimuth will not match.</p>
+    <p>Your map uses grid north. Your compass uses magnetic north. The angle between them is the <strong><span class="term" data-t="gm">G-M angle</span></strong>, and the <span class="term" data-t="declination">declination diagram</span> in the map margin shows it. If you ignore it, your map azimuth and your compass azimuth will not match.</p>
     <h3>Converting between grid and magnetic</h3>
     <p>Look at the declination diagram. Is magnetic north to the <strong>left (west)</strong> or the <strong>right (east)</strong> of grid north?</p>
     <div class="tbl-wrap"><table class="compare"><thead><tr><th>Converting</th><th>MN is left of GN</th><th>MN is right of GN</th></tr></thead><tbody><tr><td>Grid → magnetic</td><td><strong>Add</strong> the G-M angle</td><td><strong>Subtract</strong> the G-M angle</td></tr><tr><td>Magnetic → grid</td><td><strong>Subtract</strong> the G-M angle</td><td><strong>Add</strong> the G-M angle</td></tr></tbody></table></div>
@@ -146,14 +239,19 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
     <div class="fact-card"><span class="fact-card-emoji">📏</span><span class="fact-card-text"><strong>Why it matters.</strong> A 1° error is about 17 m off target for every 1,000 m you walk. An 8° miss over 1 km puts you about 140 m away.</span></div>
     <div class="tryit"><strong>▶ Practice it:</strong> the <em><a href="../land-nav/" style="color:inherit">Land Nav Toolkit</a></em> Azimuth Converter draws grid north, magnetic north, and your line so you can see what the conversion does.</div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="dir-score"></span></div><div class="tb" id="dir-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Memory aid: LARS</li><li>Worked example</li><li>Why it matters</li></ul></div>
+    <div class="kt"><span class="term" data-t="azimuth">Azimuth</span><span class="term" data-t="mil">Mil</span><span class="term" data-t="gm">G-M angle</span><span class="term" data-t="declination">Declination diagram</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('maps')"><span class="tj-label">&larr; Back</span><span class="tj-title">🗺️ Maps &amp; Grids</span></button><button class="tab-jump-btn next" onclick="goToTab('tools')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🎯 Compass &amp; Protractor</span></button></div>
   </div>
   <div class="tab-content" id="tab-tools">
 
     <h2>Compass and protractor</h2>
-    <p class="lede">The map gives you a grid azimuth. The compass turns it into a direction you can walk. The protractor is how you measure that grid azimuth on the map in the first place.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Name the parts of the lensatic compass and how to hold it.</li><li>Measure a grid azimuth with a protractor.</li></ul></div>
+    <p class="lede">The map gives you a grid <span class="term" data-t="azimuth">azimuth</span>. The compass turns it into a direction you can walk. The protractor is how you measure that grid azimuth on the map in the first place.</p>
     <h3>The lensatic compass</h3>
-    <div class="card-row"><div class="card"><div class="card-head"><span class="card-emoji">🎯</span><div><div class="card-title">Sighting wire and lens</div><div class="card-sub">Line up</div></div></div><p style="margin:0">The wire in the cover and the slot in the lens work like the front and rear sight on a rifle. Sight on an object to get an exact azimuth.</p></div><div class="card"><div class="card-head"><span class="card-emoji">🧭</span><div><div class="card-title">Floating dial</div><div class="card-sub">The scales</div></div></div><p style="margin:0">The dial floats free when the lens is open past 45°. It has two scales: the outer scale is in mils and the inner (usually red) scale is in degrees.</p></div><div class="card"><div class="card-head"><span class="card-emoji">⚙️</span><div><div class="card-title">Bezel ring</div><div class="card-sub">Presets a direction</div></div></div><p style="margin:0">It clicks as you turn it: 120 clicks per full turn, 3° per click. The short luminous line lines up with the north-seeking arrow for night navigation.</p></div><div class="card"><div class="card-head"><span class="card-emoji">📍</span><div><div class="card-title">Black index line</div><div class="card-sub">Reference</div></div></div><p style="margin:0">When you hold the compass correctly, the number under the fixed black index line is the direction the compass is pointing.</p></div></div>
+    <div class="card-row"><div class="card"><div class="card-head"><span class="card-emoji">🎯</span><div><div class="card-title">Sighting wire and lens</div><div class="card-sub">Line up</div></div></div><p style="margin:0">The wire in the cover and the slot in the lens work like the front and rear sight on a rifle. Sight on an object to get an exact azimuth.</p></div><div class="card"><div class="card-head"><span class="card-emoji">🧭</span><div><div class="card-title">Floating dial</div><div class="card-sub">The scales</div></div></div><p style="margin:0">The dial floats free when the lens is open past 45°. It has two scales: the outer scale is in <span class="term" data-t="mil">mils</span> and the inner (usually red) scale is in degrees.</p></div><div class="card"><div class="card-head"><span class="card-emoji">⚙️</span><div><div class="card-title">Bezel ring</div><div class="card-sub">Presets a direction</div></div></div><p style="margin:0">It clicks as you turn it: 120 clicks per full turn, 3° per click. The short luminous line lines up with the north-seeking arrow for night navigation.</p></div><div class="card"><div class="card-head"><span class="card-emoji">📍</span><div><div class="card-title">Black index line</div><div class="card-sub">Reference</div></div></div><p style="margin:0">When you hold the compass correctly, the number under the fixed black index line is the direction the compass is pointing.</p></div></div>
     <h3>Two ways to hold it</h3>
     <div class="tbl-wrap"><table class="compare"><thead><tr><th>Technique</th><th>How it works</th><th>Best for</th></tr></thead><tbody><tr><td>Center-hold</td><td>Open the compass flat, hold it at chest level with elbows tight to your sides, and turn your <strong>whole body</strong> toward the object. Read the dial by looking down.</td><td>Moving. Keeping a general direction. Works in any visibility.</td></tr><tr><td>Compass-to-cheek</td><td>Hold the compass up to your cheek and sight through the slot and the wire at a distant object, reading the azimuth through the lens.</td><td>A more precise azimuth to a specific point.</td></tr></tbody></table></div>
     <div class="fact-card"><span class="fact-card-emoji">⚠️</span><span class="fact-card-text"><strong>Keep it clean.</strong> Metal, vehicles, power lines, and electronics can pull the needle. Take readings away from them, and check your azimuth again if the needle looks off.</span></div>
@@ -162,12 +260,17 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
     <p>Then convert it to a magnetic azimuth (see the Direction tab) before you set it on your compass.</p>
     <div class="tryit"><strong>▶ Try it:</strong> in the <em><a href="../land-nav/" style="color:inherit">Land Nav Toolkit</a></em>, the Leg Practice tab gives you two points and asks for the grid azimuth and the distance.</div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="tools-score"></span></div><div class="tb" id="tools-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="azimuth">Azimuth</span><span class="term" data-t="mil">Mil</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('dir')"><span class="tj-label">&larr; Back</span><span class="tj-title">🧭 Direction</span></button><button class="tab-jump-btn next" onclick="goToTab('dist')"><span class="tj-label">Next &rarr;</span><span class="tj-title">👣 Distance</span></button></div>
   </div>
   <div class="tab-content" id="tab-dist">
 
     <h2>Distance and pace count</h2>
-    <p class="lede">The map tells you how far it is. Your pace count tells you when you have walked that far.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Convert paces to meters and meters to paces.</li><li>Name what changes a pace count and how ranger beads work.</li></ul></div>
+    <p class="lede">The map tells you how far it is. Your <span class="term" data-t="pace">pace count</span> tells you when you have walked that far.</p>
     <h3>Distance on the map</h3>
     <p>Measure the straight-line distance with the bar scale or a ruler, then convert with the scale. For a winding road or trail, lay a strip of paper along it, mark the bends, and measure the strip. Remember that the map shows distance on a flat plane. On steep ground you walk farther than the map says.</p>
     <h3>Pace count</h3>
@@ -181,45 +284,70 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
     <p>If you can, measure your pace count on terrain like your route, and re-check it during a long movement.</p>
     <div class="tryit"><strong>▶ Calculate it:</strong> the <em><a href="../land-nav/" style="color:inherit">Land Nav Toolkit</a></em> Distance &amp; Pace tab converts map distance, meters, and paces for you, and shows the bead count.</div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="dist-score"></span></div><div class="tb" id="dist-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Paces to meters</li><li>Meters to paces</li></ul></div>
+    <div class="kt"><span class="term" data-t="pace">Pace count</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('tools')"><span class="tj-label">&larr; Back</span><span class="tj-title">🎯 Compass &amp; Protractor</span></button><button class="tab-jump-btn next" onclick="goToTab('terrain')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⛰️ Terrain</span></button></div>
   </div>
   <div class="tab-content" id="tab-terrain">
 
     <h2>Terrain association</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Identify the ten terrain features on the map and ground.</li><li>Use handrails, attack points, catching features, and checkpoints.</li></ul></div>
     <p class="lede">Terrain association is matching what you see on the ground to what the map shows. It keeps you from trusting a number when the ground is telling you something different.</p>
     <div class="analogy">👀 <strong>Like matching a photo to a place:</strong> you look at the hill in front of you, find the same hill on the map, and know where you are.</div>
     <h3>The ten terrain features</h3>
-    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Feature</th><th>On the ground</th><th>On the map</th></tr></thead><tbody><tr><td><strong>Hill</strong> (major)</td><td>A point or small area of high ground</td><td>Closed contour circles, the smallest one at the top</td></tr><tr><td><strong>Ridge</strong> (major)</td><td>A line of high ground with minor crests</td><td>Contour U or V shapes pointing <em>away</em> from higher ground</td></tr><tr><td><strong>Valley</strong> (major)</td><td>Fairly level ground with higher ground on the sides, usually with a stream</td><td>Contour U or V shapes pointing <em>toward</em> higher ground</td></tr><tr><td><strong>Saddle</strong> (major)</td><td>A low point between two areas of higher ground</td><td>An hourglass shape between two hills</td></tr><tr><td><strong>Depression</strong> (major)</td><td>A low point surrounded by higher ground on all sides</td><td>Closed contour lines with tick marks pointing downhill</td></tr><tr><td><strong>Draw</strong> (minor)</td><td>A small stream course with little or no level ground</td><td>Contour V shapes pointing toward higher ground</td></tr><tr><td><strong>Spur</strong> (minor)</td><td>A short line of higher ground jutting out from a ridge</td><td>Contour shapes pointing away from higher ground</td></tr><tr><td><strong>Cliff</strong> (minor)</td><td>A very steep or vertical face</td><td>Contour lines pressed together, sometimes merged</td></tr><tr><td><strong>Cut</strong> (supplementary)</td><td>Ground removed for a road or railroad</td><td>A man-made notch shown with special symbols</td></tr><tr><td><strong>Fill</strong> (supplementary)</td><td>An embankment built up for a road or railroad</td><td>A man-made ridge shown with special symbols</td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Feature</th><th>On the ground</th><th>On the map</th></tr></thead><tbody><tr><td><strong>Hill</strong> (major)</td><td>A point or small area of high ground</td><td>Closed contour circles, the smallest one at the top</td></tr><tr><td><strong>Ridge</strong> (major)</td><td>A line of high ground with minor crests</td><td>Contour U or V shapes pointing <em>away</em> from higher ground</td></tr><tr><td><strong>Valley</strong> (major)</td><td>Fairly level ground with higher ground on the sides, usually with a stream</td><td>Contour U or V shapes pointing <em>toward</em> higher ground</td></tr><tr><td><strong>Saddle</strong> (major)</td><td>A low point between two areas of higher ground</td><td>An hourglass shape between two hills</td></tr><tr><td><strong>Depression</strong> (major)</td><td>A low point surrounded by higher ground on all sides</td><td>Closed <span class="term" data-t="contour">contour lines</span> with tick marks pointing downhill</td></tr><tr><td><strong>Draw</strong> (minor)</td><td>A small stream course with little or no level ground</td><td>Contour V shapes pointing toward higher ground</td></tr><tr><td><strong>Spur</strong> (minor)</td><td>A short line of higher ground jutting out from a ridge</td><td>Contour shapes pointing away from higher ground</td></tr><tr><td><strong>Cliff</strong> (minor)</td><td>A very steep or vertical face</td><td>Contour lines pressed together, sometimes merged</td></tr><tr><td><strong>Cut</strong> (supplementary)</td><td>Ground removed for a road or railroad</td><td>A man-made notch shown with special symbols</td></tr><tr><td><strong>Fill</strong> (supplementary)</td><td>An embankment built up for a road or railroad</td><td>A man-made ridge shown with special symbols</td></tr></tbody></table></div>
     <div class="fact-card"><span class="fact-card-emoji">💧</span><span class="fact-card-text"><strong>Quick tell.</strong> Water runs down valleys and draws, so their contour V’s point uphill. Ridges and spurs shed water, so their V’s point downhill, away from the high ground.</span></div>
     <h3>Tools for staying on line</h3>
-    <div class="mnem"><span class="k">Handrail</span><span>A long feature you can follow: a stream, a road, a ridge line.</span><span class="k">Catching feature</span><span>Something big beyond your objective that tells you that you have gone too far.</span><span class="k">Attack point</span><span>An easy-to-find spot near your objective. Navigate to it first, then make the last short leg carefully.</span><span class="k">Checkpoint</span><span>A point along the way where you confirm that map and ground still agree.</span></div>
+    <div class="mnem"><span class="k"><span class="term" data-t="handrail">Handrail</span></span><span>A long feature you can follow: a stream, a road, a ridge line.</span><span class="k">Catching feature</span><span>Something big beyond your objective that tells you that you have gone too far.</span><span class="k"><span class="term" data-t="attack">Attack point</span></span><span>An easy-to-find spot near your objective. Navigate to it first, then make the last short leg carefully.</span><span class="k">Checkpoint</span><span>A point along the way where you confirm that map and ground still agree.</span></div>
     <h3>The military view: OAKOC</h3>
     <p>Leaders also read terrain for its tactical value: <strong>O</strong>bservation and fields of fire, <strong>A</strong>venues of approach, <strong>K</strong>ey terrain, <strong>O</strong>bstacles, and <strong>C</strong>over and concealment. This is the "T" in METT-TC when planning.</p>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="terrain-score"></span></div><div class="tb" id="terrain-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="contour">Contour line</span><span class="term" data-t="handrail">Handrail</span><span class="term" data-t="attack">Attack point</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('dist')"><span class="tj-label">&larr; Back</span><span class="tj-title">👣 Distance</span></button><button class="tab-jump-btn next" onclick="goToTab('together')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🚶 Putting It Together</span></button></div>
   </div>
   <div class="tab-content" id="tab-together">
 
     <h2>Putting it together</h2>
-    <p class="lede">Real land navigation combines everything: the map, the grid, the azimuth, the distance, and the terrain.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Plan a dead reckoning leg from A to B.</li><li>Say how resection and intersection work and name the common mistakes.</li></ul></div>
+    <p class="lede">Real land navigation combines everything: the map, the grid, the <span class="term" data-t="azimuth">azimuth</span>, the distance, and the terrain.</p>
     <h3>Moving from A to B (dead reckoning)</h3>
     <div class="steps">
       <div class="step"><div><div class="st">Orient and plot</div><div class="sd">Orient the map to north. Plot your start point and your objective using their grid coordinates.</div></div></div>
       <div class="step"><div><div class="st">Measure the leg</div><div class="sd">Use the protractor for the grid azimuth and the scale for the distance.</div></div></div>
-      <div class="step"><div><div class="st">Convert</div><div class="sd">Change the grid azimuth to a magnetic azimuth with the G-M angle. Do not skip this.</div></div></div>
-      <div class="step"><div><div class="st">Pick your aids</div><div class="sd">Choose handrails, checkpoints, an attack point, and a catching feature. Break a long leg into short ones.</div></div></div>
+      <div class="step"><div><div class="st">Convert</div><div class="sd">Change the grid azimuth to a magnetic azimuth with the <span class="term" data-t="gm">G-M angle</span>. Do not skip this.</div></div></div>
+      <div class="step"><div><div class="st">Pick your aids</div><div class="sd">Choose <span class="term" data-t="handrail">handrails</span>, checkpoints, an <span class="term" data-t="attack">attack point</span>, and a catching feature. Break a long leg into short ones.</div></div></div>
       <div class="step"><div><div class="st">Move</div><div class="sd">Hold your azimuth, count your paces, and keep looking for your checkpoints.</div></div></div>
       <div class="step"><div><div class="st">Check</div><div class="sd">At each checkpoint, does the ground match the map? If not, stop and find out why before you go on.</div></div></div>
     </div>
     <h3>Where am I? Resection</h3>
-    <p><strong>Resection</strong> finds your own position on the map. Shoot magnetic azimuths to at least two well-defined points you can find on the map, convert them to grid, take the back azimuths, and draw those lines from each point. Where the lines cross is where you are.</p>
-    <p><strong>Intersection</strong> is the opposite: you find an unknown point (say, a target) by shooting azimuths to it from at least two known positions.</p>
+    <p><strong><span class="term" data-t="resection">Resection</span></strong> finds your own position on the map. Shoot magnetic azimuths to at least two well-defined points you can find on the map, convert them to grid, take the back azimuths, and draw those lines from each point. Where the lines cross is where you are.</p>
+    <p><strong><span class="term" data-t="intersection">Intersection</span></strong> is the opposite: you find an unknown point (say, a target) by shooting azimuths to it from at least two known positions.</p>
     <h3>Common mistakes</h3>
-    <div class="mnem"><span class="k">Skipped</span><span>Forgetting to convert grid to magnetic.</span><span class="k">Flipped</span><span>Adding when you should subtract because you misread which side magnetic north is on.</span><span class="k">Mixed</span><span>Mixing degrees and mils.</span><span class="k">Reversed</span><span>Reading the grid "up, then right" instead of "right, then up."</span><span class="k">Stale</span><span>Using an old pace count on new terrain, or never re-checking it.</span><span class="k">Blind</span><span>Trusting the compass when the ground clearly disagrees.</span></div>
+    <div class="mnem"><span class="k">Skipped</span><span>Forgetting to convert grid to magnetic.</span><span class="k">Flipped</span><span>Adding when you should subtract because you misread which side magnetic north is on.</span><span class="k">Mixed</span><span>Mixing degrees and <span class="term" data-t="mil">mils</span>.</span><span class="k">Reversed</span><span>Reading the grid "up, then right" instead of "right, then up."</span><span class="k">Stale</span><span>Using an old <span class="term" data-t="pace">pace count</span> on new terrain, or never re-checking it.</span><span class="k">Blind</span><span>Trusting the compass when the ground clearly disagrees.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> TC 3-25.26, <em>Map Reading and Land Navigation</em> (15 November 2013). Your unit and course may add local standards.</span></div>
     <div class="tryit"><strong>▶ Practice it:</strong> open the <em><a href="../land-nav/" style="color:inherit">Land Nav Toolkit</a></em> and work through all four tabs, then try the <a href="../rank/" style="color:inherit">flashcards</a> to lock in the terms.</div>
 
-    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('terrain')"><span class="tj-label">&larr; Back</span><span class="tj-title">⛰️ Terrain</span></button></div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="together-score"></span></div><div class="tb" id="together-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="azimuth">Azimuth</span><span class="term" data-t="gm">G-M angle</span><span class="term" data-t="handrail">Handrail</span><span class="term" data-t="attack">Attack point</span><span class="term" data-t="resection">Resection</span><span class="term" data-t="intersection">Intersection</span><span class="term" data-t="mil">Mil</span><span class="term" data-t="pace">Pace count</span></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('terrain')"><span class="tj-label">&larr; Back</span><span class="tj-title">⛰️ Terrain</span></button><button class="tab-jump-btn next" onclick="goToTab('chk')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Checkpoint</span></button></div></div>
+  <div class="tab-content" id="tab-chk">
+    <h2>Checkpoint</h2>
+    <p class="lede">Mixed questions from the whole guide. One try each. You see what you missed and where to review. Your best score is saved on this device.</p>
+    <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+    <div class="pn"><button class="pri" onclick="Check.start()">Start / retake</button></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('together')"><span class="tj-label">&larr; Back</span><span class="tj-title">🚶 Putting It Together</span></button><button class="tab-jump-btn next" onclick="goToTab('gl')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📖 Glossary</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-gl">
+    <h2>Glossary</h2>
+    <div class="gl"><input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()"><div id="gllist"></div></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('chk')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Checkpoint</span></button></div>
   </div>
 </div>
 
@@ -235,6 +363,55 @@ function goToTab(id){
   document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<script>
+(function(){
+/* E-WIT retrofit overlay: adds objectives, check questions, checkpoint, glossary and progress to an existing tab guide */
+const $=id=>document.getElementById(id);
+let KEY,SAVE,Q,CKQ,GL,TABS;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function tabBtn(id){return document.querySelector('.tab-btn[onclick*="\''+id+'\'"]');}
+function go(id){goToTab(id);}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();TABS.forEach(t=>renderQs(t));updateProgress();}
+function chapDone(t){return Q[t].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){let n=0;TABS.forEach(t=>{const d=chapDone(t);if(d)n++;const b=tabBtn(t);if(b)b.classList.toggle('done',d);const s=$(t+'-score');if(s){const T=Q[t].length,k=Q[t].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+T+' answered correctly';}});
+ const cb=tabBtn('chk');if(cb)cb.classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/TABS.length*100)+'%';$('progtxt').textContent=n+' of '+TABS.length+' sections complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));$('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+ if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+ else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+ return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(t){const box=$(t+'-q');if(!box)return;box.innerHTML=Q[t].map(q=>qHtml(q,'q-','ch')).join('');Q[t].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+ if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+ else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+ fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+ const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v))return;const ok=Math.abs(v-q.a)<=q.tol;
+ if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+ if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in this section, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+ if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();const chs={};miss.forEach(q=>chs[q.ch]=1);
+ $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+(TABNAMES[c]||c)+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+let TABNAMES={};
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+ Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;TABS=Object.keys(Q);TABNAMES=GUIDE.names||{};Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+ TABS.forEach(t=>renderQs(t));Gloss.render();updateProgress();}
+
+const GUIDE={"key": "landnav", "Q": {"maps": [{"t": "num", "q": "On a 1:50,000 map, how many meters does 1 cm cover on the ground?", "a": 500, "tol": 0.5, "u": "m", "ex": "At 1:50,000, 1 cm is 500 m. At 1:25,000 it is 250 m, and at 1:100,000 it is 1 km.", "id": "landnav-maps-1"}, {"t": "mc", "q": "Which color shows water on a military map?", "o": ["Blue", "Green", "Brown", "Black"], "a": 0, "ex": "Blue is water. Green is vegetation, brown is relief, and black is man-made features and labels.", "id": "landnav-maps-2"}, {"t": "mc", "q": "A point is past vertical line 41 and 3 tenths across, and above line 22 and 7 tenths up. What is the 6-digit grid?", "o": ["413 227", "227 413", "4137 2237", "413 722"], "a": 0, "ex": "Easting first (41 and 3 tenths = 413), then northing (22 and 7 tenths = 227).", "id": "landnav-maps-3"}, {"t": "mc", "q": "In which order do you read a grid?", "o": ["Right, then up", "Up, then right", "Either way", "Diagonally"], "a": 0, "ex": "Read the vertical line to the left of the point first (easting), then the horizontal line below it (northing).", "id": "landnav-maps-4"}, {"t": "num", "q": "How many meters does one 6-digit grid square describe on a side?", "a": 100, "tol": 0.5, "u": "m", "ex": "A 6-digit grid points to a 100 m square. A 4-digit grid is 1,000 m, an 8-digit grid is 10 m.", "id": "landnav-maps-5"}], "dir": [{"t": "num", "q": "How many mils are in a full circle?", "a": 6400, "tol": 1, "u": "mils", "ex": "A circle is 360 degrees or 6,400 mils.", "id": "landnav-dir-1"}, {"t": "num", "q": "What is the back azimuth of 300 degrees?", "a": 120, "tol": 0.5, "u": "°", "ex": "300 is 180 or more, so subtract 180: 120 degrees.", "id": "landnav-dir-2"}, {"t": "num", "q": "What is the back azimuth of 1,600 mils?", "a": 4800, "tol": 1, "u": "mils", "ex": "In mils, add 3,200 when the azimuth is less than 3,200: 1,600 + 3,200 = 4,800.", "id": "landnav-dir-3"}, {"t": "num", "q": "The G-M angle is 8 degrees with magnetic north to the left of grid north. A grid azimuth is 90 degrees. What is the magnetic azimuth?", "a": 98, "tol": 0.5, "u": "°", "ex": "MN is left of GN, so going grid to magnetic you add: 90 + 8 = 98 degrees (Left Add, Right Subtract).", "id": "landnav-dir-4"}, {"t": "num", "q": "About how many meters off target is a 1 degree error over 1,000 m?", "a": 17, "tol": 0.6, "u": "m", "ex": "A 1 degree error is about 17 m for every 1,000 m. An 8 degree error is about 140 m.", "id": "landnav-dir-5"}], "tools": [{"t": "num", "q": "How many degrees does the bezel ring turn with each click?", "a": 3, "tol": 0.05, "u": "°", "ex": "The bezel clicks 120 times per full turn, 3 degrees per click.", "id": "landnav-tools-1"}, {"t": "mc", "q": "Which technique gives a more precise azimuth to a specific point?", "o": ["Compass-to-cheek", "Center-hold", "Either, they are the same", "Neither"], "a": 0, "ex": "Center-hold is for moving and keeping a general direction. Compass-to-cheek is for precise sighting.", "id": "landnav-tools-2"}, {"t": "mc", "q": "Which scale on the floating dial is in degrees?", "o": ["The inner (usually red) scale", "The outer scale", "Neither", "Both"], "a": 0, "ex": "The outer scale is mils and the inner red scale is degrees.", "id": "landnav-tools-3"}, {"t": "mc", "q": "What can pull the compass needle off?", "o": ["Metal, vehicles, power lines, and electronics", "Wind", "Rain", "Altitude only"], "a": 0, "ex": "Take readings away from them and check again if the needle looks off.", "id": "landnav-tools-4"}], "dist": [{"t": "num", "q": "Your pace count is 64 per 100 m. You counted 192 paces. How many meters did you walk?", "a": 300, "tol": 1, "u": "m", "ex": "192 ÷ 64 × 100 = 300 m.", "id": "landnav-dist-1"}, {"t": "num", "q": "At 64 paces per 100 m, how many paces to walk 450 m?", "a": 288, "tol": 1, "u": "paces", "ex": "(450 ÷ 100) × 64 = 288 paces.", "id": "landnav-dist-2"}, {"t": "mc", "q": "What does each lower ranger bead stand for?", "o": ["100 m", "1,000 m", "10 m", "1 pace"], "a": 0, "ex": "The nine lower beads are 100 m each. The four upper beads are 1,000 m each.", "id": "landnav-dist-3"}, {"t": "mc", "q": "Which of these changes your pace count?", "o": ["Slope, surface, load, fatigue, and weather", "Only the time of day", "Nothing", "Only the map scale"], "a": 0, "ex": "Measure it on terrain like your route and re-check during a long movement.", "id": "landnav-dist-4"}], "terrain": [{"t": "mc", "q": "What do the contour V shapes of a ridge point?", "o": ["Away from higher ground", "Toward higher ground", "Up the page", "They are closed circles"], "a": 0, "ex": "Ridges shed water, so their V shapes point downhill, away from the high ground. Valley V shapes point toward higher ground.", "id": "landnav-terrain-1"}, {"t": "mc", "q": "Which terrain feature shows as an hourglass shape between two hills?", "o": ["Saddle", "Draw", "Spur", "Cliff"], "a": 0, "ex": "A saddle is a low point between two areas of higher ground.", "id": "landnav-terrain-2"}, {"t": "mc", "q": "What is a catching feature?", "o": ["Something big beyond the objective that tells you you have gone too far", "A feature that stops the enemy", "A handrail", "A start point"], "a": 0, "ex": "A handrail is a long feature you follow. An attack point is an easy-to-find spot near the objective.", "id": "landnav-terrain-3"}, {"t": "mc", "q": "What does OAKOC stand for?", "o": ["Observation and fields of fire, Avenues of approach, Key terrain, Obstacles, Cover and concealment", "Order, Azimuth, Key, Orient, Compass", "Observe, Aim, Know, Operate, Command", "Objective, Approach, Key, Open, Cover"], "a": 0, "ex": "Leaders read terrain for its tactical value. It is the T in METT-TC.", "id": "landnav-terrain-4"}], "together": [{"t": "mc", "q": "Which step is easiest to forget on a dead reckoning leg?", "o": ["Converting the grid azimuth to magnetic", "Counting paces", "Looking at the map", "Plotting the start"], "a": 0, "ex": "Skipping the grid to magnetic conversion is the most common mistake.", "id": "landnav-together-1"}, {"t": "mc", "q": "What do you do if the ground does not match the map at a checkpoint?", "o": ["Stop and find out why before going on", "Keep going", "Turn back at once", "Change the azimuth"], "a": 0, "ex": "The map and the ground must agree before you continue.", "id": "landnav-together-2"}, {"t": "mc", "q": "Resection finds:", "o": ["Your own position on the map", "An unknown target", "The grid azimuth", "The pace count"], "a": 0, "ex": "You shoot azimuths to at least two known points and draw back azimuths. Intersection finds an unknown point from known positions.", "id": "landnav-together-3"}, {"t": "mc", "q": "Which is a common mistake?", "o": ["Mixing degrees and mils", "Counting paces", "Orienting the map", "Plotting the start"], "a": 0, "ex": "Check which unit you are working in before you read or set anything.", "id": "landnav-together-4"}]}, "CKQ": [{"t": "num", "q": "On a 1:25,000 map, 1 cm is how many meters?", "a": 250, "tol": 0.5, "u": "m", "ex": "At 1:25,000, 1 cm is 250 m.", "id": "landnav-ck-1", "ch": "maps"}, {"t": "mc", "q": "The 6-digit grid 413 227 gives a position to within:", "o": ["100 m", "1,000 m", "10 m", "1 m"], "a": 0, "ex": "Six digits means 100 m.", "id": "landnav-ck-2", "ch": "maps"}, {"t": "num", "q": "What is the back azimuth of 45 degrees?", "a": 225, "tol": 0.5, "u": "°", "ex": "45 is less than 180, so add 180: 225.", "id": "landnav-ck-3", "ch": "dir"}, {"t": "mc", "q": "LARS stands for:", "o": ["Left Add, Right Subtract (grid to magnetic)", "Look, Aim, Read, Shoot", "Left Away, Right Stay", "Lower Angle, Raise Scale"], "a": 0, "ex": "Use it when going from grid to magnetic.", "id": "landnav-ck-4", "ch": "dir"}, {"t": "num", "q": "A magnetic azimuth reads 98 and the G-M angle is 8 degrees, MN left of GN. What is the grid azimuth?", "a": 90, "tol": 0.5, "u": "°", "ex": "Going magnetic to grid, subtract: 98 − 8 = 90.", "id": "landnav-ck-5", "ch": "dir"}, {"t": "mc", "q": "Center-hold is best for:", "o": ["Moving and keeping a general direction", "Precise sighting", "Plotting", "Measuring distance"], "a": 0, "ex": "Compass-to-cheek is for precise azimuths.", "id": "landnav-ck-6", "ch": "tools"}, {"t": "mc", "q": "The protractor index mark goes on:", "o": ["Where the line crosses a vertical grid line", "The legend", "The scale bar", "The objective only"], "a": 0, "ex": "The base line follows the grid line, with 0 degrees toward grid north.", "id": "landnav-ck-7", "ch": "tools"}, {"t": "num", "q": "64 paces per 100 m. How many paces for 300 m?", "a": 192, "tol": 1, "u": "paces", "ex": "3 × 64 = 192.", "id": "landnav-ck-8", "ch": "dist"}, {"t": "mc", "q": "On steep ground you walk:", "o": ["Farther than the map says", "Exactly the map distance", "Less", "It never changes"], "a": 0, "ex": "The map shows distance on a flat plane.", "id": "landnav-ck-9", "ch": "dist"}, {"t": "mc", "q": "A closed contour with tick marks pointing downhill is a:", "o": ["Depression", "Hill", "Saddle", "Draw"], "a": 0, "ex": "It is a low point surrounded by higher ground.", "id": "landnav-ck-10", "ch": "terrain"}, {"t": "mc", "q": "Which is a major terrain feature?", "o": ["Ridge", "Spur", "Draw", "Cut"], "a": 0, "ex": "The five major features are hill, ridge, valley, saddle, and depression.", "id": "landnav-ck-11", "ch": "terrain"}, {"t": "mc", "q": "What is the first step of the dead reckoning method?", "o": ["Orient the map and plot start and objective", "Move", "Count paces", "Convert"], "a": 0, "ex": "Then measure the leg, convert, pick aids, move, and check.", "id": "landnav-ck-12", "ch": "together"}], "GL": {"azimuth": ["Azimuth", "A horizontal angle measured clockwise from a north base line."], "mil": ["Mil", "A unit of angle: 6,400 mils in a circle."], "gm": ["G-M angle", "The angle between grid north and magnetic north."], "declination": ["Declination diagram", "A diagram in the map margin showing how true, grid, and magnetic north relate."], "contour": ["Contour line", "A line connecting points of equal elevation."], "pace": ["Pace count", "How many paces it takes you to cover 100 m."], "handrail": ["Handrail", "A long feature you can follow, such as a stream or a road."], "attack": ["Attack point", "An easy-to-find spot near the objective that you navigate to first."], "resection": ["Resection", "Finding your own position by taking azimuths to known points."], "intersection": ["Intersection", "Finding an unknown point by shooting azimuths to it from known positions."], "oakoc": ["OAKOC", "Observation, Avenues of approach, Key terrain, Obstacles, Cover and concealment."]}, "names": {"maps": "🗺️ Maps & Grids", "dir": "🧭 Direction", "tools": "🎯 Compass & Protractor", "dist": "👣 Distance", "terrain": "⛰️ Terrain", "together": "🚶 Putting It Together"}};
+window.Qz=Qz;window.Check=Check;window.Sheet=Sheet;window.Gloss=Gloss;window.go=go;window.resetProgress=resetProgress;
+boot();
+})();
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>

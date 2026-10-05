@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,29 +10,29 @@
   --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
   --border:#E8E6DF;--border-hover:#B4B2A9;
   --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
-  --hero-bg:#12492b;--hero-eyebrow:#7fd6a0;--hero-sub:#b3e9c8;
-  --table-head-bg:#F1EFE8;--table-border:#E8E6DF;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
   --toggle-bg:rgba(255,255,255,0.15);
-  --accent:#1f8a4c;--accent-soft:#dcf6e6;
+  --accent:#1499b8;--accent-soft:#dcf1f6;
 }
 [data-theme="dark"]{
   --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
   --border:#3a3830;--border-hover:#5a5850;
   --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
-  --hero-bg:#0a2818;--hero-eyebrow:#5cd68a;--hero-sub:#8fbfa0;
-  --table-head-bg:#222119;--table-border:#3a3830;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
   --toggle-bg:rgba(255,255,255,0.08);
-  --accent:#2ad678;--accent-soft:#0a2a18;
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
 .hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
-.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
 .hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
 .hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
 .hero h1 span{color:var(--hero-eyebrow)}
 .hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
 .theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
 
 .section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
 h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
@@ -44,10 +44,10 @@ h2:first-child{margin-top:0}
 .fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
 .fact-card-text strong{color:var(--text-primary)}
 
-.hw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:.5rem}
-.hw-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.7rem .8rem}
-.hw-chip b{display:block;color:var(--text-primary);font-size:13px;margin-bottom:2px}
-.hw-chip span{color:var(--text-muted);font-size:11.5px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
 
 .cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
 .cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
@@ -56,90 +56,446 @@ h2:first-child{margin-top:0}
 .cta a:hover{opacity:.9}
 
 .footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
-  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
-  <h1>Software-Defined <span>Radio</span> Explained</h1>
-  <p class="hero-sub">Same antenna, same airwaves — but almost everything a traditional radio does in hardware, an SDR does in software instead. Here's what that actually means, and how to get started.</p>
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>Software-Defined Radio <span>Explained</span></h1>
+  <p class="hero-sub">What an SDR does in hardware and in software, how to pick one, tune it, set gain, choose a mode, read the waterfall, and stay within the law. Seven chapters with hands-on widgets.</p>
 </header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>Comfortable with decibels? Skim <a href="../mathguide/">Math Explained</a>. Know what a signal&rsquo;s traits are? See <a href="../sigidguide/">Signal Identification Explained</a>.</div><div><b>Then practice in the tools</b><a href="../sdrsim/">SDR Console Simulator</a> &middot; <a href="../sigid/">Signal ID Trainer</a> &middot; <a href="../rftheory/">Physics</a>. About 40 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<section class="ch on" id="ch1">
+  <h2>1 &middot; What &ldquo;Software-Defined&rdquo; Means</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Describe what an SDR does in hardware and what it leaves to software.</li><li>Explain I and Q samples and why two numbers are needed.</li><li>Say how ADC bits set the receiver&rsquo;s dynamic range.</li></ul></div>
+  <p>A traditional radio has circuits wired for one job: a filter, a mixer, a demodulator, each built for one kind of signal. A <span class="term" data-t="sdr">software-defined radio</span> keeps the hardware simple. It turns radio waves into a stream of numbers, and a computer does everything else.</p>
+  <table class="t"><tr><th>Stage</th><th>Job</th><th>Where</th></tr>
+   <tr><td>Antenna</td><td>Catches the signal</td><td>Outside</td></tr>
+   <tr><td>RF front end</td><td>Filter, amplify, and shift the chosen slice down to a low frequency</td><td>Hardware</td></tr>
+   <tr><td>ADC</td><td>Turns the voltage into numbers</td><td>Hardware</td></tr>
+   <tr><td>Demodulation, filtering, decoding, display</td><td>Everything after that</td><td><b>Software</b></td></tr></table>
+  <p>That is why the same $30 dongle can play an FM station, decode aircraft position reports, or listen to a ham repeater: only the program changes.</p>
+  <h3>I and Q</h3>
+  <p>One number per sample is not enough to describe a radio wave. A wave has a strength and a phase, so each sample is stored as two numbers, <b>I</b> (in-phase) and <b>Q</b> (quadrature). Together they place a point on a circle: its distance from the centre is the amplitude, and its angle is the phase. With both you can rebuild AM (amplitude), FM (how the angle changes), and digital modes after the fact.</p>
+  <div class="formula">I = A &times; cos(&phi;)     Q = A &times; sin(&phi;)     A = &radic;(I&sup2; + Q&sup2;)     &phi; = atan2(Q, I)</div><div class="try"><div class="th">Try it: IQ phasor</div><div class="tb"><canvas id="a1c" width="480" height="230"></canvas>
+    <div class="ctl"><label>Amplitude</label><input type="range" id="a1a" min="0" max="100" value="70" oninput="IQ.calc()"><span class="v" id="a1av"></span></div>
+    <div class="ctl"><label>Phase</label><input type="range" id="a1p" min="0" max="360" value="40" oninput="IQ.calc()"><span class="v" id="a1pv"></span></div>
+    <div class="ctl"><label>Tuned offset</label><input type="range" id="a1f" min="-5" max="5" step="1" value="0" oninput="IQ.calc()"><span class="v" id="a1fv"></span></div>
+    <div class="read" id="a1r"></div>
+    <div class="note">The point turns when the signal is not exactly on the tuned frequency. Its turning rate is the offset. Set the offset to 0 and it holds still, because the signal sits at the centre frequency.</div></div></div>
+  <h3>ADC bits and dynamic range</h3>
+  <p>The ADC measures each sample with a fixed number of steps. More bits means finer steps, and a bigger gap between the loudest signal it can hold and the quantization noise floor. An ideal ADC gives about 6 dB per bit.</p>
+  <div class="formula">ideal SNR (dB) &approx; 6.02 &times; bits + 1.76</div>
+  <p>An 8-bit ADC (a typical $30 dongle) gives about 50 dB, a 12-bit ADC about 74 dB, a 14-bit ADC about 86 dB. Real devices do a little worse. This is why a strong nearby signal can bury weak ones on a cheap SDR.</p>
+  <div class="why"><b>Why a 17E cares</b>SDRs are how most modern receivers and EW sensors are built. Knowing the signal path tells you where each limit comes from: the antenna, the front end, the ADC, or the software.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>An SDR does only the radio-to-numbers step in hardware. Everything after that is software.</li><li>Each sample is I and Q. Amplitude = &radic;(I&sup2;+Q&sup2;) and phase = atan2(Q, I).</li><li>Ideal ADC dynamic range &approx; 6.02 dB per bit, plus 1.76 dB.</li></ul></div>
+  <div class="kt"><span class="term" data-t="sdr">SDR</span><span class="term" data-t="iq">I/Q</span><span class="term" data-t="adc">ADC</span><span class="term" data-t="dynrange">dynamic range</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: Hardware &rarr;</button></div>
+</section>
+<section class="ch" id="ch2">
+  <h2>2 &middot; Hardware: What You Can Buy</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Compare common SDRs by frequency range, bandwidth, bit depth, and transmit ability.</li><li>Pick a sensible SDR for a stated need.</li></ul></div>
+  <p>SDRs differ in four ways that matter: <b>frequency range</b>, <b>instantaneous bandwidth</b> (how much spectrum it sees at once), <b>bits</b>, and whether it can <b>transmit</b>. Figures below are typical for common models. Check the datasheet for the unit you have.</p>
+  <table class="t"><tr><th>SDR</th><th>Range (approx.)</th><th>Bandwidth</th><th>ADC</th><th>Transmit</th></tr>
+   <tr><td>RTL-SDR (v3)</td><td>about 0.5 MHz to 1.7 GHz</td><td>up to about 2.4 MHz stable</td><td>8-bit</td><td>No</td></tr>
+   <tr><td>Airspy R2</td><td>24 MHz to 1.8 GHz</td><td>10 MHz</td><td>12-bit</td><td>No</td></tr>
+   <tr><td>HackRF One</td><td>1 MHz to 6 GHz</td><td>up to 20 MHz</td><td>8-bit</td><td>Yes, half duplex</td></tr>
+   <tr><td>LimeSDR</td><td>about 0.1 MHz to 3.8 GHz</td><td>up to about 60 MHz</td><td>12-bit</td><td>Yes, full duplex</td></tr>
+   <tr><td>USRP B200 (Ettus)</td><td>70 MHz to 6 GHz</td><td>up to 56 MHz</td><td>12-bit</td><td>Yes, full duplex</td></tr></table>
+  <p>Half duplex means it can send or receive but not both at once. Full duplex does both together. Price roughly tracks capability, from a few tens of dollars to a few thousand.</p><div class="try"><div class="th">Try it: pick an SDR</div><div class="tb"><div class="ctl"><label>Highest frequency</label><div class="chips" id="b1f"></div></div>
+    <div class="ctl"><label>Bandwidth needed</label><div class="chips" id="b1b"></div></div>
+    <div class="ctl"><label>Transmit?</label><div class="chips" id="b1t"></div></div>
+    <div class="read" id="b1r"></div>
+    <div class="note">The match uses the table above. Receive-only is the safe default for learning: it cannot transmit by accident.</div></div></div><div class="try"><div class="th">Try it: ADC bits to dynamic range</div><div class="tb"><div class="ctl"><label>ADC bits</label><div class="chips" id="b2b"></div></div><div class="read" id="b2r"></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>The kit you are handed decides what you can and cannot see. An 8-bit receiver beside a strong transmitter will mislead you, and you need to know that before you trust what it shows.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Frequency range, bandwidth, bit depth, and transmit ability set what an SDR can do.</li><li>Match the radio to the job: a cheap receive-only dongle for learning, wider and better ADCs for serious work.</li><li>More bits means more dynamic range, about 6 dB per bit.</li></ul></div>
+  <div class="kt"><span class="term" data-t="bandwidth">instantaneous bandwidth</span><span class="term" data-t="halfduplex">half duplex</span><span class="term" data-t="dynrange">dynamic range</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Sample rate and tuning &rarr;</button></div>
+</section>
+<section class="ch" id="ch3">
+  <h2>3 &middot; Sample Rate, Span, and Tuning</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Explain how sample rate sets the span you see.</li><li>Work out FFT resolution and the time per waterfall line.</li><li>Tell whether a signal sits inside the tuned span.</li></ul></div>
+  <p>An SDR does not tune like a dial. It captures one block of spectrum at a time. Two numbers define that block:</p>
+  <ul><li><b>Center frequency:</b> the middle of the block.</li><li><b>Sample rate:</b> for IQ samples, the sample rate in samples per second equals the span in hertz. At 2.4 MS/s you see 2.4 MHz, from 1.2 MHz below centre to 1.2 MHz above.</li></ul>
+  <p>The software turns each block into a spectrum with an FFT of N points. Each point (a <span class="term" data-t="bin">bin</span>) is one slice of the span:</p>
+  <div class="formula">span = sample rate     bin width = sample rate &divide; N     time per FFT line = N &divide; sample rate</div>
+  <p>A bigger FFT gives narrower bins, so you can separate close signals, but each line takes longer, so quick bursts smear. You cannot have both. Bin width &times; time per line is always 1.</p>
+  <p>Signals near the edge of the span are weak and may show an image or roll-off. The tuner also makes a spike at the exact centre (the DC spike). Do not read that as a signal. Tune slightly off, and use the middle of the span.</p><div class="try"><div class="th">Try it: what can I see?</div><div class="tb"><div class="ctl"><label>Centre</label><input type="range" id="c1c" min="0" max="100" value="55" oninput="Tn.calc()"><span class="v" id="c1cv"></span></div>
+    <div class="ctl"><label>Sample rate</label><div class="chips" id="c1s"></div></div>
+    <div class="ctl"><label>FFT size</label><div class="chips" id="c1n"></div></div>
+    <canvas id="c1k" width="480" height="150"></canvas>
+    <div class="read" id="c1r"></div>
+    <div class="note">The tuning range runs from 88 to 108 MHz, the FM broadcast band. The bars are example stations. Stations inside the green box are in your span.</div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Choosing a span and FFT size is the first decision of every survey. Too narrow and you miss the signal. Too wide and you cannot resolve it, or the bursts blur away.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Span equals the sample rate for IQ data.</li><li>Bin width = sample rate &divide; N, and time per line = N &divide; sample rate.</li><li>Resolution and time resolution trade off. Avoid the centre spike and the edges.</li></ul></div>
+  <div class="kt"><span class="term" data-t="bin">bin</span><span class="term" data-t="fft">FFT</span><span class="term" data-t="dcspike">DC spike</span><span class="term" data-t="samplerate">sample rate</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Gain and overload &rarr;</button></div>
+</section>
+<section class="ch" id="ch4">
+  <h2>4 &middot; Gain, Noise, and Overload</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Explain what gain does to weak and strong signals.</li><li>Say what overload looks like and how to fix it.</li><li>Pick a gain setting for a given situation.</li></ul></div>
+  <p>Gain amplifies the signal before the ADC. It is a balancing act:</p>
+  <ul><li><b>Too low:</b> a weak signal never rises above the ADC&rsquo;s quantization noise and disappears.</li><li><b>Too high:</b> a strong signal exceeds the ADC&rsquo;s full scale and clips. That makes false signals (spurs and images) all across the display and can bury the real ones.</li></ul>
+  <p>The usual method: start low, raise gain until the noise floor just lifts a little, and stop. If strange signals appear in a pattern, or the whole display fills with junk when you tune near a strong transmitter, reduce gain.</p>
+  <p>Gain helps only up to a point: it raises the signal and the front-end noise together. Once the front-end noise is above the ADC noise, more gain gains nothing.</p><div class="try"><div class="th">Try it: gain, a weak signal, and a strong one</div><div class="tb"><canvas id="d1c" width="480" height="260"></canvas>
+    <div class="ctl"><label>Gain</label><input type="range" id="d1g" min="0" max="60" value="25" oninput="Gn.calc()"><span class="v" id="d1gv"></span></div>
+    <div class="ctl"><label>Strong signal</label><input type="range" id="d1s" min="-60" max="-10" value="-35" oninput="Gn.calc()"><span class="v" id="d1sv"></span></div>
+    <div class="read" id="d1r"></div>
+    <div class="note">A teaching model for an 8-bit receiver. Input levels are in dBm. The weak signal is fixed at &minus;95 dBm. The ADC clips when the strong signal plus gain passes its full scale at 0 dB. The red spikes are the junk that clipping creates.</div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Overload makes false signals, and a false signal in an EW sensor can send you chasing something that is not there. Check your gain before you trust an odd signal.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Low gain loses weak signals. High gain clips strong ones and creates false signals.</li><li>Raise gain until the noise floor lifts slightly, then stop.</li><li>Junk everywhere near a strong transmitter means overload: lower the gain.</li></ul></div>
+  <div class="kt"><span class="term" data-t="gain">gain</span><span class="term" data-t="overload">overload</span><span class="term" data-t="noisefloor">noise floor</span><span class="term" data-t="agc">AGC</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Demodulation &rarr;</button></div>
+</section>
+<section class="ch" id="ch5">
+  <h2>5 &middot; Demodulation Modes</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Match a signal to the right demodulation mode.</li><li>Say what happens when you pick the wrong one.</li><li>Give typical bandwidths for the common modes.</li></ul></div>
+  <p>The SDR cannot guess how the information is carried. You tell the software, and it applies the matching math to the I and Q samples. Wrong mode means wrong sound.</p>
+  <table class="t"><tr><th>Mode</th><th>Typical bandwidth</th><th>Used for</th></tr>
+   <tr><td>AM</td><td>6 to 10 kHz (aviation voice about 8 kHz)</td><td>AM broadcast, airband voice</td></tr>
+   <tr><td>NFM (narrow FM)</td><td>12.5 to 25 kHz</td><td>Land mobile, public safety, amateur FM</td></tr>
+   <tr><td>WFM (wide FM)</td><td>about 200 kHz</td><td>FM broadcast</td></tr>
+   <tr><td>USB / LSB (single sideband)</td><td>about 2.4 to 3 kHz</td><td>HF voice, amateur and some military. By convention, LSB below 10 MHz and USB above.</td></tr>
+   <tr><td>CW</td><td>about 100 to 500 Hz</td><td>Morse code</td></tr></table>
+  <p>Single sideband sounds like cartoon chatter when slightly off tune, because the carrier is missing. Fine-tune until the voice is natural. A narrowband filter on a wideband signal chops the audio. A wideband filter on a narrow signal lets in extra noise. Digital modes need a decoder program on top of the demodulated audio.</p><div class="try"><div class="th">Try it: pick the mode</div><div class="tb"><div id="e1q"></div><div class="fb ok" id="e1f" style="display:none;margin-top:6px"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="Md.new()">Next signal</button></div></div></div>
+  <a class="tool" href="../sdrsim/"><b>Practice in the SDR Console Simulator &rarr;</b>Tune, set gain, switch modes, and find five hidden signals.</a>
+  <div class="why"><b>Why a 17E cares</b>Picking the wrong mode is the most common reason a signal &ldquo;is there but unreadable.&rdquo; Getting it right quickly is part of working a live spectrum.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Choose the mode that matches how the signal is modulated.</li><li>Typical widths: AM about 8 kHz, NFM 12.5 to 25 kHz, WFM 200 kHz, SSB about 3 kHz, CW a few hundred hertz.</li><li>Wrong mode or wrong bandwidth sounds distorted or noisy.</li></ul></div>
+  <div class="kt"><span class="term" data-t="demod">demodulation</span><span class="term" data-t="ssb">single sideband</span><span class="term" data-t="squelch">squelch</span><span class="term" data-t="filterbw">filter bandwidth</span></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Waterfall and recording &rarr;</button></div>
+</section>
+<section class="ch" id="ch6">
+  <h2>6 &middot; Waterfall, Antennas, and Recording</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Read the main features of a waterfall.</li><li>Say why the antenna matters more than the SDR.</li><li>Estimate the size of an IQ recording.</li></ul></div>
+  <p>A <span class="term" data-t="waterfall">waterfall</span> shows frequency across, time down, and brightness for power. A steady vertical streak is a fixed-frequency signal. A streak that jumps hops. A diagonal line is a sweep. Short bright dashes are bursts. The Signal ID Explained guide covers reading these in depth.</p>
+  <h3>The antenna comes first</h3>
+  <p>The stock antenna on a dongle is a compromise. A longer or better-matched antenna for your band, mounted high and clear, often does more than a better SDR. Cables and USB hubs add noise: put the dongle on a short USB extension away from the computer, and keep the antenna away from it.</p>
+  <ul><li><b>Frequency error:</b> cheap dongles drift. A PPM correction shifts the display so a known signal lands where it should.</li><li><b>Bias tee:</b> a small DC voltage up the cable for an active antenna or amplifier. Turn it on only when the antenna needs it.</li></ul>
+  <h3>Recording</h3>
+  <p>An IQ recording stores every sample. The file is large.</p>
+  <div class="formula">bytes per second = sample rate &times; 2 (I and Q) &times; bytes per value</div><div class="try"><div class="th">Try it: how big is the recording?</div><div class="tb"><div class="ctl"><label>Sample rate</label><div class="chips" id="f1s"></div></div>
+    <div class="ctl"><label>Bytes per value</label><div class="chips" id="f1b"></div></div>
+    <div class="ctl"><label>Length</label><input type="range" id="f1m" min="1" max="120" value="10" oninput="Rc.calc()"><span class="v" id="f1mv"></span></div>
+    <div class="read" id="f1r"></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Recordings are evidence and training material. Knowing the size helps you plan storage on a field laptop, and a good antenna means a better survey from the same kit.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Read the waterfall: streak, jump, diagonal, dash.</li><li>The antenna and its placement matter more than the SDR. Use a short cable and keep noise sources away.</li><li>IQ files: sample rate &times; 2 &times; bytes per value, per second.</li></ul></div>
+  <div class="kt"><span class="term" data-t="waterfall">waterfall</span><span class="term" data-t="ppm">PPM correction</span><span class="term" data-t="biastee">bias tee</span><span class="term" data-t="iqfile">IQ recording</span></div>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('ch7')">Next: Law and responsible use &rarr;</button></div>
+</section>
+<section class="ch" id="ch7">
+  <h2>7 &middot; Law, Responsibility, and Putting It Together</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Separate receiving from transmitting in law and practice.</li><li>Name the main limits on what you may listen to.</li><li>Plan a listening session from start to finish.</li></ul></div>
+  <p>This is a general overview, not legal advice. Laws differ by place, and military and government networks have their own rules. Ask your unit and your legal office if you are unsure.</p>
+  <h3>Receiving</h3>
+  <p>In the United States, listening to many signals is lawful: broadcast, aviation, weather, amateur radio, and a good deal of public safety traffic (though some jurisdictions restrict mobile scanners or certain services). Limits include <b>cellular calls</b>, which federal law protects from interception, <b>private communications</b>, which you may not use or pass on, and <b>decrypting</b> anything encrypted. A receive-only dongle does not give you permission to do any of that.</p>
+  <h3>Transmitting</h3>
+  <p>Transmitting needs authority for the frequency and power you use: for example an amateur licence for the amateur bands, or a licence for any other service. Transmit-capable hardware gives you no permission. Unlicensed devices follow technical limits (FCC Part 15 in the United States). Interfering with licensed users, or jamming, is illegal outside of authorised military use.</p>
+  <h3>A listening session</h3>
+  <ol><li>Know your rules and your purpose.</li><li>Choose an antenna and a clear spot.</li><li>Set centre frequency, sample rate, and FFT size for the band.</li><li>Start gain low and raise it to just lift the noise floor.</li><li>Find signals on the waterfall, then pick the mode and filter.</li><li>Log what you find and record only what you need and are allowed to keep.</li></ol><div class="try"><div class="th">Try it: may I do this?</div><div class="tb"><div id="g1q"></div><div class="fb ok" id="g1f" style="display:none;margin-top:6px"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="Lw.new()">Next</button></div>
+    <div class="note">General US teaching answers, not legal advice.</div></div></div>
+  <a class="tool" href="../sigidguide/"><b>Next: Signal Identification Explained &rarr;</b>Learn to tell what a signal is from its traits.</a>
+  <a class="tool" href="../sdrsim/"><b>Then the SDR Console Simulator &rarr;</b>Put the whole session together.</a>
+  <div class="why"><b>Why a 17E cares</b>You will use SDRs in training and, later, in the job. Knowing where lawful receiving ends keeps you and your unit out of trouble and keeps your results usable.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch7-score"></span></div><div class="tb" id="ch7-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Receiving is broadly lawful but not unlimited: cellular, private traffic, and encrypted data have limits.</li><li>Transmitting needs authority for the frequency and power. Hardware does not grant it.</li><li>Plan the session: rules, antenna, span, gain, mode, and a log.</li></ul></div>
+  <div class="kt"><span class="term" data-t="part15">Part 15</span><span class="term" data-t="encrypt">encrypted traffic</span></div>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
 
-<div class="section-wrap">
-
-  <h2>What Makes It "Software-Defined"</h2>
-  <p class="lede">A traditional radio has physical circuits — filters, mixers, demodulators — each hard-wired to do one job on one type of signal. An SDR replaces most of that with one simple job in hardware (turn radio waves into raw digital samples) and does everything else afterward, in software.</p>
-  <div class="fact-card"><div class="fact-card-emoji">📡</div><div class="fact-card-text"><strong>The hardware's only real job</strong> — receive the raw radio signal and convert it to digital samples (an ADC, analog-to-digital converter) — everything past that point is just software processing those numbers.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">🔄</div><div class="fact-card-text"><strong>Same hardware, any mode</strong> — the exact same $30 dongle can decode AM broadcast, aircraft transponders, or a ham repeater, just by running different software. A traditional radio would need entirely different circuits for each.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">💻</div><div class="fact-card-text"><strong>IQ data</strong> is the raw stream an SDR captures — two numbers per sample (I and Q) that together preserve both the amplitude and the phase of the signal, which is what lets software reconstruct AM, FM, or digital modes after the fact.</div></div>
-
-  <h2>Common Hardware</h2>
-  <p class="lede">Prices and capability vary a lot — from a $25 receive-only dongle to serious transmit-capable gear.</p>
-  <div class="hw-grid">
-    <div class="hw-chip"><b>RTL-SDR</b><span>~$25–35, receive-only, the standard cheap starting point</span></div>
-    <div class="hw-chip"><b>HackRF One</b><span>~$300–450, transmit + receive, wide frequency range</span></div>
-    <div class="hw-chip"><b>LimeSDR</b><span>~$250–400, transmit + receive, full-duplex</span></div>
-    <div class="hw-chip"><b>USRP (Ettus)</b><span>Higher-end, research/professional grade</span></div>
-  </div>
-
-  <h2>Common Software</h2>
-  <div class="hw-grid">
-    <div class="hw-chip"><b>SDR# (SDRSharp)</b><span>Windows, the most common beginner choice</span></div>
-    <div class="hw-chip"><b>GQRX</b><span>Linux/Mac, similar workflow to SDR#</span></div>
-    <div class="hw-chip"><b>SDR++</b><span>Cross-platform, actively developed</span></div>
-    <div class="hw-chip"><b>GNU Radio</b><span>Build your own signal-processing chains — much steeper learning curve</span></div>
-  </div>
-
-  <h2>The Controls You'll Actually Use</h2>
-  <p class="lede">Nearly every SDR program has the same handful of controls, just laid out differently.</p>
-  <div class="fact-card"><div class="fact-card-emoji">🎯</div><div class="fact-card-text"><strong>Center frequency</strong> — where you're tuned. Everything visible on the waterfall is centered around this number.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">↔️</div><div class="fact-card-text"><strong>Sample rate / bandwidth</strong> — how wide a slice of spectrum you can see at once. Wider means you see more, but each part is captured in less detail.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">📶</div><div class="fact-card-text"><strong>Gain</strong> — how much the weak incoming signal gets amplified before digitizing. Too low and weak signals disappear into the noise floor; too high and strong signals distort ("overload").</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">🔊</div><div class="fact-card-text"><strong>Demodulation mode</strong> — AM, FM, USB/LSB (sideband, common on HF), or CW (Morse) — you have to tell the software which one to decode the signal as, since it can't guess for you.</div></div>
-
-  <h2>Reading the Waterfall</h2>
-  <p class="lede">This is the same skill the Signal ID Trainer builds — an SDR's waterfall is a real one, not a simulation, but the reading skill transfers directly.</p>
-  <div class="fact-card"><div class="fact-card-emoji">👀</div><div class="fact-card-text">A bright vertical streak that never moves is a strong, fixed-frequency signal. Something that drifts, hops, or only flickers on and off tells you about its behavior before you've even identified what it is.</div></div>
-
-  <h2>Legal Basics — Receiving vs. Transmitting</h2>
-  <div class="fact-card"><div class="fact-card-emoji">✅</div><div class="fact-card-text"><strong>Receiving</strong> is broadly legal for almost anything in the US, with a few specific exceptions (like decoding encrypted cellular traffic). A basic RTL-SDR dongle is receive-only, so this is the safe default to start with.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">⚠️</div><div class="fact-card-text"><strong>Transmitting</strong> requires the appropriate license for whatever frequency you're using — an amateur (ham) license for the ham bands, for example. Transmit-capable hardware like a HackRF doesn't come with permission to transmit; that's on you to have separately.</div></div>
-
-  <div class="cta">
-    <p><strong>Ready to actually turn some knobs?</strong> The SDR Console Simulator gives you a hands-on practice version of a real SDR interface — tune, adjust gain, switch demodulation modes, and find signals hidden across the spectrum.</p>
-    <a href="../sdrsim/">Open the SDR Console Simulator &rarr;</a>
-  </div>
-
-  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:1.5rem;font-family:'Nunito',sans-serif;font-size:11px">
-    <span style="color:var(--text-muted)">Related:</span>
-    <a href="../sigid/" style="color:var(--accent);text-decoration:none">📻 Signal ID Trainer</a>
-    <a href="../rftheory/" style="color:var(--accent);text-decoration:none">📡 RF Theory</a>
-    <a href="../sdrsim/" style="color:var(--accent);text-decoration:none">📻 SDR Console Simulator</a>
-    <a href="../cuas/" style="color:var(--accent);text-decoration:none">🛸 UAS Signature</a>
-    <a href="../cuasdemo/" style="color:var(--accent);text-decoration:none">🛸 C-UAS Engagement Simulator</a>
-    <a href="../dronedef/" style="color:var(--accent);text-decoration:none">🎮 Drone Defender Simulator</a>
-    <a href="../fieldops/" style="color:var(--accent);text-decoration:none">🎮 Field Ops: Enlist to First Unit</a>
-  </div>
-
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch7')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>PySDR, a free online textbook by Marc Lichtman (pysdr.org). Chapters on the frequency domain, IQ sampling, and digital modulation; the source for the sample rate, FFT, and IQ ideas here.</li>
+   <li>Manufacturer datasheets and documentation for the RTL-SDR (v3), Airspy R2, HackRF One, LimeSDR, and Ettus USRP B200. Ranges and bandwidths are typical values. Check your unit.</li>
+   <li>Standard ADC theory: ideal SNR of about 6.02N + 1.76 dB for an N-bit converter.</li>
+   <li>FCC rules (47 CFR Part 15, Part 97) and the Electronic Communications Privacy Act for the general legal overview. This is not legal advice.</li>
+   <li><b>Notes.</b> The gain model, the span view, and the mode and legal quizzes are simplified teaching tools. Ask your unit and legal office about rules that apply to you. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
 </div>
-
-<div class="footer">Software-Defined Radio Explained · Companion guide to the SDR Console Simulator · UNCLASSIFIED</div>
-
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">Software-Defined Radio Explained &middot; Interactive textbook &middot; Companion to the SDR Console Simulator &middot; UNCLASSIFIED</div>
 <script>
-function toggleTheme(){
-  const h=document.documentElement, d=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme', d?'light':'dark');
-  document.getElementById('t-icon').textContent = d?'🌙':'☀️';
-  document.getElementById('t-label').textContent = d?'Dark mode':'Light mode';
-}
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+const LV=(v,a,b)=>a*Math.pow(b/a,v/100);
+/* ch1: IQ phasor */
+const IQ={calc(){const A=+$('a1a').value/100,ph=+$('a1p').value,off=+$('a1f').value;$('a1av').textContent=A.toFixed(2);$('a1pv').textContent=ph+'\u00B0';$('a1fv').textContent=off===0?'on frequency':(off>0?'+':'')+off+' turns per 12 samples';
+ const [c,x]=cv('a1c');clear(c,x);const cx=240,cy=115,R=95;x.strokeStyle='#26394a';x.beginPath();x.arc(cx,cy,R,0,TAU);x.moveTo(cx-R-10,cy);x.lineTo(cx+R+10,cy);x.moveTo(cx,cy-R-10);x.lineTo(cx,cy+R+10);x.stroke();lab(x,'I',cx+R+12,cy+4,'#9db4c8','left',12);lab(x,'Q',cx+4,cy-R-12,'#9db4c8','left',12);
+ for(let k=11;k>=0;k--){const a=(ph+360*off*k/12)*Math.PI/180,px=cx+R*A*Math.cos(a),py=cy-R*A*Math.sin(a);x.fillStyle=k===0?'#2edc8a':'rgba(127,208,224,'+(0.9-k*0.07)+')';x.beginPath();x.arc(px,py,k===0?7:4,0,TAU);x.fill();}
+ const a0=ph*Math.PI/180,I=A*Math.cos(a0),Q=A*Math.sin(a0);x.strokeStyle='#ffb454';x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+R*I,cy-R*Q);x.stroke();x.setLineDash([3,3]);x.beginPath();x.moveTo(cx+R*I,cy);x.lineTo(cx+R*I,cy-R*Q);x.moveTo(cx,cy-R*Q);x.lineTo(cx+R*I,cy-R*Q);x.stroke();x.setLineDash([]);
+ read('a1r',[['I',I.toFixed(3)],['Q',Q.toFixed(3)],['Amplitude \u221A(I\u00B2+Q\u00B2)',Math.hypot(I,Q).toFixed(3)],['Phase atan2(Q,I)',((Math.atan2(Q,I)*180/Math.PI+360)%360).toFixed(0)+'\u00B0']]);}};
+/* ch2: pick an SDR */
+const SD=[['RTL-SDR (v3)',0.5,1700,2.4,8,0],['Airspy R2',24,1800,10,12,0],['HackRF One',1,6000,20,8,1],['LimeSDR',0.1,3800,60,12,2],['USRP B200',70,6000,56,12,2]];
+const BANDS=[['hf','HF (3 to 30 MHz)',3,30],['vu','VHF/UHF (30 to 1000 MHz)',30,1000],['g24','2.4 GHz',1000,2500],['g58','5.8 GHz',1000,5900]];
+const PK={b:'vu',w:2,t:0,set(k,v){this[k]=k==='b'?v:+v;this.calc();},
+ calc(){chips('b1f',BANDS.map(b=>[b[0],b[1]]),this.b,'PK.sb');chips('b1b',[[2,'2 MHz'],[10,'10 MHz'],[20,'20 MHz'],[50,'50 MHz']],this.w,'PK.sw');chips('b1t',[[0,'Receive only'],[1,'Transmit too']],this.t,'PK.st');
+  const B=BANDS.find(x=>x[0]===this.b),ok=SD.filter(s=>s[1]<=B[2]&&s[2]>=B[3]&&s[3]>=this.w&&(this.t===0||s[5]>0));
+  read('b1r',ok.length?ok.map(s=>[s[0],s[3]+' MHz, '+s[4]+'-bit'+(s[5]===2?', full duplex':s[5]===1?', half duplex':''),'good']):[['No match','Relax a requirement','bad']]);},
+ sb(v){this.set('b',v);},sw(v){this.set('w',v);},st(v){this.set('t',v);}};
+const AB={b:8,set(v){this.b=+v;this.calc();},calc(){chips('b2b',[8,10,12,14,16].map(i=>[i,i+'-bit']),this.b,'AB.set');const s=6.02*this.b+1.76;read('b2r',[['Ideal dynamic range',s.toFixed(1)+' dB'],['As a power ratio','about '+Math.pow(10,s/10).toExponential(1)],['Practical note','Real devices come in lower']]);}};
+/* ch3: tuner */
+const STN=[88.1,90.9,93.3,95.5,98.7,101.1,103.5,105.3,107.9];
+const Tn={sr:2.4,n:1024,setS(v){this.sr=+v;this.calc();},setN(v){this.n=+v;this.calc();},
+ calc(){chips('c1s',[[0.25,'0.25 MS/s'],[2.4,'2.4 MS/s'],[10,'10 MS/s']],this.sr,'Tn.setS');chips('c1n',[256,1024,4096].map(i=>[i,String(i)]),this.n,'Tn.setN');
+  const c=88+(+$('c1c').value)/100*20;$('c1cv').textContent=c.toFixed(2)+' MHz';const lo=c-this.sr/2,hi=c+this.sr/2,inn=STN.filter(s=>s>=lo&&s<=hi);
+  const [cn,x]=cv('c1k');clear(cn,x);const px=f=>20+(f-88)/20*440;x.strokeStyle='#26394a';x.beginPath();x.moveTo(20,120);x.lineTo(460,120);x.stroke();[88,93,98,103,108].forEach(f=>lab(x,f+'',px(f),138,'#9db4c8','center',10));
+  x.fillStyle='rgba(46,220,138,.18)';x.fillRect(px(Math.max(88,lo)),20,px(Math.min(108,hi))-px(Math.max(88,lo)),100);x.strokeStyle='#2edc8a';x.strokeRect(px(Math.max(88,lo)),20,px(Math.min(108,hi))-px(Math.max(88,lo)),100);
+  STN.forEach((s,i)=>{const h=45+((i*37)%40);x.fillStyle=s>=lo&&s<=hi?'#ffb454':'#5b6f80';x.fillRect(px(s)-2,120-h,4,h);});x.strokeStyle='#e86a6a';x.beginPath();x.moveTo(px(c),14);x.lineTo(px(c),122);x.stroke();lab(x,'centre',px(c),12,'#e86a6a','center',10);
+  const bw=this.sr*1e6/this.n,tl=this.n/(this.sr*1e6);
+  read('c1r',[['Span',this.sr+' MHz'],['Range seen',lo.toFixed(2)+' to '+hi.toFixed(2)+' MHz'],['Bin width',bw>=1000?(bw/1000).toFixed(2)+' kHz':bw.toFixed(0)+' Hz'],['Time per line',(tl*1000).toFixed(3)+' ms'],['Stations in span',String(inn.length)+(inn.length?' ('+inn.join(', ')+')':''),inn.length?'good':'mid']]);}};
+/* ch4: gain model */
+const GM={fe:-105,weak:-95,clip:G=>-10-G,nadc:G=>-10-G-70,total(G){return 10*Math.log10(Math.pow(10,this.fe/10)+Math.pow(10,this.nadc(G)/10));}};
+const Gn={calc(){const G=+$('d1g').value,S=+$('d1s').value;$('d1gv').textContent=G+' dB';$('d1sv').textContent=S+' dBm';const N=GM.total(G),snr=GM.weak-N,C=GM.clip(G),clip=S>C;
+  const [c,x]=cv('d1c');clear(c,x);const base=220,k=3.2;x.strokeStyle='#26394a';x.beginPath();x.moveTo(10,base);x.lineTo(470,base);x.stroke();
+  const noiseH=12;x.strokeStyle='#4b6f8a';x.setLineDash([3,3]);x.beginPath();x.moveTo(10,base-noiseH);x.lineTo(470,base-noiseH);x.stroke();x.setLineDash([]);lab(x,'noise floor',12,base-noiseH-4,'#7e97ab','left',10);
+  const wh=noiseH+Math.max(0,Math.min(60,snr*k)),sh=noiseH+Math.max(0,Math.min(200,(S-N)*k*0.5));
+  x.fillStyle='#ffb454';x.fillRect(110,base-wh,8,wh);lab(x,'weak',114,base+14,'#9db4c8','center',10);x.fillStyle=clip?'#e86a6a':'#2edc8a';x.fillRect(330,base-sh,10,sh);lab(x,'strong',335,base+14,'#9db4c8','center',10);
+  if(clip){let sd=5;const r=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296;};for(let i=0;i<14;i++){const px=40+i*30+r()*10;x.fillStyle='#e86a6a';x.fillRect(px,base-(20+r()*sh*0.4),4,20+r()*sh*0.4);}lab(x,'CLIPPING: false signals everywhere',240,24,'#e86a6a','center',13);}
+  read('d1r',[['Noise floor',N.toFixed(1)+' dBm'],['Weak signal SNR',snr.toFixed(1)+' dB',snr<3?'bad':snr<10?'mid':'good'],['ADC clips above',C.toFixed(0)+' dBm'],['Strong signal',clip?'CLIPPING':(S>C-6?'near clipping':'OK'),clip?'bad':S>C-6?'mid':'good']]);}};
+/* ch5: pick the mode */
+const MS=[['A music station on 98.7 MHz, about 200 kHz wide','WFM'],['An airport tower on 118.3 MHz','AM'],['A ham talking on 7.200 MHz (40 m). It sounds like chatter when tuned.','LSB'],['Voice on 14.250 MHz (20 m)','USB'],['A public-safety dispatch on 154.4 MHz, 12.5 kHz wide','NFM'],['Beeping Morse code on 7.030 MHz','CW'],['An AM broadcast station on 1010 kHz','AM'],['Marine VHF channel 16 on 156.8 MHz','NFM']];
+const MWHY={WFM:'Broadcast FM uses wide FM, about 200 kHz.',AM:'Aviation voice and AM broadcast are amplitude modulated.',LSB:'By convention HF voice below 10 MHz uses lower sideband.',USB:'By convention HF voice above 10 MHz uses upper sideband.',NFM:'Land mobile and marine voice use narrow FM.',CW:'Morse is on and off keying of a carrier. Use CW with a narrow filter.'};
+const Md={i:-1,new(){let k;do{k=Math.floor(Math.random()*MS.length);}while(k===this.i);this.i=k;$('e1q').innerHTML='<p style="font-size:14px;margin:0 0 6px"><b>'+MS[k][0]+'</b></p><div class="chips">'+['AM','NFM','WFM','USB','LSB','CW'].map(m=>'<button class="chip" onclick="Md.pick(\''+m+'\')">'+m+'</button>').join('')+'</div>';$('e1f').style.display='none';},
+ pick(m){const c=MS[this.i][1],f=$('e1f');f.style.display='block';f.className='fb '+(m===c?'ok':'no');f.innerHTML=m===c?'<b>Correct.</b> '+MWHY[c]:'<b>Not quite.</b> The right choice is <b>'+c+'</b>. '+MWHY[c];}};
+/* ch6: recording */
+const Rc={s:2.4,b:1,setS(v){this.s=+v;this.calc();},setB(v){this.b=+v;this.calc();},calc(){chips('f1s',[0.25,1,2.4,10,20].map(i=>[i,i+' MS/s']),this.s,'Rc.setS');chips('f1b',[[1,'1 (8-bit)'],[2,'2 (16-bit)'],[4,'4 (32-bit float)']],this.b,'Rc.setB');
+  const m=+$('f1m').value;$('f1mv').textContent=m+' min';const mbps=this.s*2*this.b,gb=mbps*60*m/1000;read('f1r',[['Data rate',mbps.toFixed(1)+' MB/s'],['File size',gb<1?(gb*1000).toFixed(0)+' MB':gb.toFixed(1)+' GB',gb>100?'bad':gb>20?'mid':'good'],['Per hour',(mbps*3.6).toFixed(1)+' GB']]);}};
+/* ch7: legal scenarios */
+const LG=[['Listening to an FM broadcast station with an RTL-SDR','ok','Broadcast reception is lawful.'],['Listening to aircraft voice on 118 to 137 MHz','ok','Receiving aviation voice is generally lawful in the US.'],['Listening to a neighbour\u2019s cell phone call','no','Federal law protects cellular calls from interception. Do not.'],['Transmitting on a ham band with a licence you hold, at legal power and with ID','ok','This is what the licence is for, within its rules.'],['Transmitting on a ham band with no licence','perm','You need the licence first. Hardware does not grant permission.'],['Transmitting a jamming signal at home to \u201Ctest\u201D a Wi-Fi network','no','Jamming and interfering with licensed or unlicensed users is illegal outside authorised military use.'],['Decoding an encrypted public-safety channel','no','Do not decrypt encrypted communications.'],['Receiving a public weather satellite picture','ok','These broadcasts are meant to be received.'],['Using unit equipment to receive on a government network that is not part of the training','perm','You need authority from your unit first.']];
+const Lw={i:-1,new(){let k;do{k=Math.floor(Math.random()*LG.length);}while(k===this.i);this.i=k;$('g1q').innerHTML='<p style="font-size:14px;margin:0 0 6px"><b>'+LG[k][0]+'</b></p><div class="chips"><button class="chip" onclick="Lw.pick(\'ok\')">Generally fine</button><button class="chip" onclick="Lw.pick(\'perm\')">Needs permission or a licence</button><button class="chip" onclick="Lw.pick(\'no\')">Not allowed</button></div>';$('g1f').style.display='none';},
+ pick(a){const c=LG[this.i][1],f=$('g1f');f.style.display='block';f.className='fb '+(a===c?'ok':'no');f.innerHTML=(a===c?'<b>Correct.</b> ':'<b>Not quite.</b> ')+LG[this.i][2];}};
+/* ===== questions ===== */
+const Qd={
+ ch1:[{id:'s1a',t:'num',q:'A sample has I = 3 and Q = 4. What is its amplitude?',a:5,tol:0.01,u:'',ex:'\u221A(3\u00B2 + 4\u00B2) = \u221A25 = 5.'},
+  {id:'s1b',t:'num',q:'For that sample, what is the phase in degrees (nearest whole)?',a:53,tol:0.6,u:'\u00B0',ex:'atan2(4, 3) = 53.13\u00B0.'},
+  {id:'s1c',t:'num',q:'What is the ideal dynamic range of a 12-bit ADC? (dB, nearest whole)',a:74,tol:0.6,u:'dB',ex:'6.02 \u00D7 12 + 1.76 = 74.0 dB.'},
+  {id:'s1d',t:'mc',q:'What does an SDR do in hardware?',o:['Everything, in separate circuits','It turns the radio signal into digital samples; software does the rest','Only the display','Only the antenna'],a:1,ex:'Front end and ADC are hardware. Demodulation and decoding are software.'},
+  {id:'s1e',t:'mc',q:'Why are two numbers (I and Q) stored for every sample?',o:['To store both amplitude and phase','To double the speed','To save space','Because radio has two antennas'],a:0,ex:'One number cannot describe both the strength and the phase of a wave.'},
+  {id:'s1f',t:'mc',q:'A signal sits exactly at the tuned centre frequency. What does its IQ point do?',o:['Holds still on the circle','Spins fast','Disappears','Jumps randomly'],a:0,ex:'The point turns at a rate equal to the offset from the centre. No offset, no turning.'}],
+ ch2:[{id:'s2a',t:'num',q:'What is the ideal dynamic range of a 16-bit ADC? (dB, one decimal)',a:98.1,tol:0.3,u:'dB',ex:'6.02 \u00D7 16 + 1.76 = 98.08 dB.'},
+  {id:'s2b',t:'mc',q:'Which of these can receive and transmit at the same time?',o:['RTL-SDR','HackRF One','LimeSDR (full duplex)','Airspy R2'],a:2,ex:'LimeSDR and USRP are full duplex. HackRF is half duplex. RTL-SDR and Airspy R2 are receive only.'},
+  {id:'s2c',t:'mc',q:'You need HF reception and you only have these: Airspy R2 (24 MHz to 1.8 GHz) or RTL-SDR v3. Which can reach HF?',o:['Airspy R2','RTL-SDR v3 (direct sampling mode)','Neither','Both'],a:1,ex:'The RTL-SDR v3 reaches below 24 MHz with direct sampling. The Airspy R2 starts at 24 MHz.'},
+  {id:'s2d',t:'mc',q:'What is a safe default for a first SDR?',o:['A transmit-capable one','A receive-only dongle','The most expensive one','One with no antenna'],a:1,ex:'A receive-only dongle cannot transmit by accident.'},
+  {id:'s2e',t:'mc',q:'Why can an 8-bit SDR next to a strong transmitter mislead you?',o:['Its limited dynamic range lets a strong signal swamp weak ones and make false signals','It uses too much power','It cannot tune','It has no antenna'],a:0,ex:'50 dB of range is easily used up by a strong nearby signal.'}],
+ ch3:[{id:'s3a',t:'num',q:'An SDR centred on 100 MHz runs at 2.4 MS/s. What is the highest frequency it shows? (MHz)',a:101.2,tol:0.01,u:'MHz',ex:'Span = 2.4 MHz, so 1.2 MHz either side: 100 + 1.2 = 101.2 MHz.'},
+  {id:'s3b',t:'num',q:'With a 1024-point FFT at 2.4 MS/s, what is the bin width? (kHz, two decimals)',a:2.34,tol:0.02,u:'kHz',ex:'2,400,000 \u00F7 1,024 = 2,343.75 Hz = 2.34 kHz.'},
+  {id:'s3c',t:'num',q:'How long does one FFT line take at 2.4 MS/s with a 1024-point FFT? (milliseconds, two decimals)',a:0.43,tol:0.01,u:'ms',ex:'1,024 \u00F7 2,400,000 = 0.000427 s = 0.43 ms.'},
+  {id:'s3d',t:'num',q:'You change to a 4096-point FFT at 2.4 MS/s. What is the bin width now? (kHz, two decimals)',a:0.59,tol:0.01,u:'kHz',ex:'2,400,000 \u00F7 4,096 = 585.9 Hz = 0.59 kHz. Narrower bins, but each line now takes 1.7 ms.'},
+  {id:'s3e',t:'mc',q:'What is the trade-off in choosing a bigger FFT?',o:['Better frequency detail, worse time detail','Better time detail, worse frequency detail','Nothing changes','Louder audio'],a:0,ex:'Bin width \u00D7 time per line = 1, so improving one worsens the other.'},
+  {id:'s3f',t:'mc',q:'A sharp spike sits exactly at the centre of the display and does not move when you retune a little. What is it likely?',o:['An enemy transmitter','The DC spike from the receiver','A GPS satellite','A jammer'],a:1,ex:'Most SDRs show a spike at the centre. Tune slightly off to check.'}],
+ ch4:[{id:'s4a',t:'num',q:'Two noise sources of \u2212105 dBm each add together. What is the total? (dBm, nearest whole)',a:-102,tol:0.6,u:'dBm',ex:'Equal powers add to 3 dB more: \u2212105 + 3 = \u2212102 dBm.'},
+  {id:'s4b',t:'num',q:'You raise the gain by 10 dB. By how many dB does a strong signal\u2019s level at the ADC rise?',a:10,tol:0.01,u:'dB',ex:'Gain adds directly in dB.'},
+  {id:'s4c',t:'mc',q:'The display fills with junk when you tune near a strong transmitter. What first?',o:['Lower the gain','Raise the gain','Change the colour map','Turn the antenna off and on'],a:0,ex:'This is the sign of overload. Reduce gain until the false signals go.'},
+  {id:'s4d',t:'mc',q:'What does too little gain do?',o:['Weak signals sink into the noise','Strong signals clip','It cannot be tuned','It changes the mode'],a:0,ex:'A weak signal needs to rise above the ADC noise.'},
+  {id:'s4e',t:'mc',q:'How should you set gain?',o:['Maximum, always','Start low and raise until the noise floor just lifts, then stop','Zero','Match the sample rate'],a:1,ex:'This gets the weak signals up without overloading on strong ones.'},
+  {id:'s4f',t:'mc',q:'Why does extra gain stop helping after a point?',o:['It raises the front-end noise as much as the signal','The antenna falls off','The mode changes','The SDR overheats'],a:0,ex:'Once the front-end noise sits above the ADC noise, more gain lifts signal and noise together.'}],
+ ch5:[{id:'s5a',t:'num',q:'How many 200 kHz FM broadcast channels fit in 88 to 108 MHz?',a:100,tol:0.01,u:'channels',ex:'20 MHz \u00F7 0.2 MHz = 100.'},
+  {id:'s5b',t:'num',q:'How many 25 kHz channels fit in the aviation band 118 to 137 MHz?',a:760,tol:0.5,u:'channels',ex:'(137 \u2212 118) \u00F7 0.025 = 760.'},
+  {id:'s5c',t:'mc',q:'Which mode is normally used for HF voice on 14.250 MHz?',o:['LSB','USB','WFM','AM'],a:1,ex:'By convention, upper sideband above 10 MHz.'},
+  {id:'s5d',t:'mc',q:'Single sideband voice sounds like cartoon chatter. What should you do?',o:['Fine-tune until the voice sounds natural','Switch to WFM','Raise gain','Turn off squelch'],a:0,ex:'The carrier is missing, so tuning must be exact for natural pitch.'},
+  {id:'s5e',t:'mc',q:'Which mode suits Morse code?',o:['CW with a narrow filter','WFM','NFM','USB with a wide filter'],a:0,ex:'Morse is keyed on and off, so use CW and a narrow filter.'},
+  {id:'s5f',t:'mc',q:'You use a wide filter on a narrow signal. What happens?',o:['You let in extra noise','The audio is chopped','Nothing','The signal is louder'],a:0,ex:'A wider filter passes more noise than needed.'}],
+ ch6:[{id:'s6a',t:'num',q:'What is the data rate of an IQ recording at 2.4 MS/s with 1 byte per value? (MB/s, one decimal)',a:4.8,tol:0.05,u:'MB/s',ex:'2.4 \u00D7 2 \u00D7 1 = 4.8 MB/s.'},
+  {id:'s6b',t:'num',q:'How big is one hour of that recording? (GB, one decimal)',a:17.3,tol:0.2,u:'GB',ex:'4.8 MB/s \u00D7 3,600 s = 17,280 MB = 17.3 GB.'},
+  {id:'s6c',t:'num',q:'At 10 MS/s with 2 bytes per value, how many MB/s? ',a:40,tol:0.1,u:'MB/s',ex:'10 \u00D7 2 \u00D7 2 = 40 MB/s.'},
+  {id:'s6d',t:'mc',q:'What often improves reception more than a better SDR?',o:['A better-placed antenna','A bigger monitor','A faster mouse','A louder speaker'],a:0,ex:'The antenna and its placement set what reaches the receiver.'},
+  {id:'s6e',t:'mc',q:'On the waterfall, a streak that jumps from place to place is:',o:['A fixed-frequency signal','A hopping signal','A sweep','Nothing'],a:1,ex:'Jumps between frequencies mean hopping.'},
+  {id:'s6f',t:'mc',q:'When do you turn on the bias tee?',o:['Only when the antenna or amplifier needs power from the cable','Always','Never','Only on transmit'],a:0,ex:'It puts DC on the cable. An antenna not built for it could be damaged.'}],
+ ch7:[{id:'s7a',t:'mc',q:'Which is generally lawful to receive in the US?',o:['A neighbour\u2019s cell phone call','An aircraft voice channel','A decrypted police channel','A private conversation to pass on'],a:1,ex:'Aviation voice is broadcast for anyone. The others are protected or restricted.'},
+  {id:'s7b',t:'mc',q:'A HackRF can transmit. Does that give you permission to transmit?',o:['Yes','No, you need authority for the frequency and power','Only on weekends','Only at low power'],a:1,ex:'Hardware gives you no permission. You need a licence or authority.'},
+  {id:'s7c',t:'mc',q:'Which is the correct order for setting up a listening session?',o:['Rules, antenna, span, gain, mode, log','Gain, mode, rules, log','Log, rules, gain','Mode, rules, span'],a:0,ex:'Know the rules first. Then set up the antenna and SDR, and log what you find.'},
+  {id:'s7d',t:'mc',q:'Who may jam?',o:['Anyone for a test','No one without authority; military use is authorised separately','Hams','Anyone with a HackRF'],a:1,ex:'Jamming is illegal for civilians. Military jamming is under its own authority.'},
+  {id:'s7e',t:'mc',q:'You are unsure whether you may record a signal. What do you do?',o:['Record it anyway','Ask your unit or legal office','Post it online','Delete the SDR'],a:1,ex:'Ask before you act.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'num',q:'A sample has I = 6 and Q = 8. What is the amplitude?',a:10,tol:0.01,u:'',ex:'\u221A(36 + 64) = 10.'},
+ {id:'k2',ch:'ch1',t:'num',q:'Ideal dynamic range of a 14-bit ADC (dB, nearest whole)?',a:86,tol:0.6,u:'dB',ex:'6.02 \u00D7 14 + 1.76 = 86.0 dB.'},
+ {id:'k3',ch:'ch2',t:'mc',q:'Which SDR can transmit but not receive at the same time?',o:['HackRF One','LimeSDR','USRP B200','RTL-SDR'],a:0,ex:'HackRF is half duplex.'},
+ {id:'k4',ch:'ch3',t:'num',q:'Bin width at 10 MS/s with a 1024-point FFT? (kHz, two decimals)',a:9.77,tol:0.05,u:'kHz',ex:'10,000,000 \u00F7 1,024 = 9,765.6 Hz = 9.77 kHz.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'Bin width \u00D7 time per FFT line equals:',o:['1','The sample rate','The gain','The FFT size'],a:0,ex:'(fs \u00F7 N) \u00D7 (N \u00F7 fs) = 1.'},
+ {id:'k6',ch:'ch4',t:'mc',q:'Sign of overload:',o:['False signals across the display near a strong transmitter','A quiet display','A missing antenna','A low battery'],a:0,ex:'Clipping makes spurs and images across the display.'},
+ {id:'k7',ch:'ch4',t:'num',q:'Two equal noise sources add. By how many dB does the total exceed one source?',a:3,tol:0.1,u:'dB',ex:'Doubling power adds about 3 dB.'},
+ {id:'k8',ch:'ch5',t:'mc',q:'Mode for a public-safety dispatch 12.5 kHz wide:',o:['NFM','WFM','USB','CW'],a:0,ex:'Land mobile voice is narrow FM.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'LSB or USB on 7.200 MHz voice?',o:['LSB','USB','WFM','AM'],a:0,ex:'Below 10 MHz the convention is lower sideband.'},
+ {id:'k10',ch:'ch6',t:'num',q:'How big is 30 minutes of IQ at 2.4 MS/s with 2 bytes per value? (GB, one decimal)',a:17.3,tol:0.2,u:'GB',ex:'2.4 \u00D7 2 \u00D7 2 = 9.6 MB/s. \u00D7 1,800 s = 17,280 MB = 17.3 GB.'},
+ {id:'k11',ch:'ch7',t:'mc',q:'Does a transmit-capable SDR give you permission to transmit?',o:['No','Yes','Only low power','Only on HF'],a:0,ex:'You need a licence or authority.'},
+ {id:'k12',ch:'ch7',t:'mc',q:'Which is NOT generally lawful?',o:['Listening to a neighbour\u2019s cell call','Listening to FM broadcast','Receiving a weather satellite picture','Listening to air traffic voice'],a:0,ex:'Cellular calls are protected from interception.'}];
+const GLd={sdr:['SDR','Software-defined radio: a receiver that turns the signal into digital samples and does the rest in software.'],iq:['I/Q','The two numbers stored for each sample, in-phase and quadrature, that together give amplitude and phase.'],adc:['ADC','Analog-to-digital converter: turns a voltage into numbers.'],dynrange:['Dynamic range','The gap between the loudest signal a receiver can hold and its noise floor.'],bandwidth:['Instantaneous bandwidth','How much spectrum an SDR can see at one time.'],halfduplex:['Half duplex','Can send or receive, but not both at once.'],bin:['Bin','One slice of the span in an FFT display.'],fft:['FFT','Fast Fourier transform: the math that turns samples into a spectrum.'],dcspike:['DC spike','A false spike at the exact centre of many SDR displays.'],samplerate:['Sample rate','How many IQ samples per second the SDR captures. It sets the span.'],gain:['Gain','Amplification applied before the ADC.'],overload:['Overload','A signal so strong it clips the ADC and makes false signals.'],noisefloor:['Noise floor','The background level below which signals cannot be seen.'],agc:['AGC','Automatic gain control: gain that adjusts itself to the signal level.'],demod:['Demodulation','Recovering the information (sound or data) from the modulated signal.'],ssb:['Single sideband','A voice mode that sends one side of the signal and no carrier, used on HF.'],squelch:['Squelch','A control that mutes the audio until a signal is present.'],filterbw:['Filter bandwidth','The width of the receive filter, which should match the signal.'],waterfall:['Waterfall','A display of frequency across, time down, and brightness for power.'],ppm:['PPM correction','A frequency error correction in parts per million for a drifting oscillator.'],biastee:['Bias tee','A way to send DC power up the antenna cable to an active antenna.'],iqfile:['IQ recording','A file of every raw IQ sample. It is large.'],part15:['Part 15','The FCC rules for unlicensed devices and their power and interference limits.'],encrypt:['Encrypted traffic','Communications scrambled so only authorised users can read them. Do not decrypt it.']};
+const GUIDE={key:'sdrguide',chapters:[["ch1","1 What SDR means"],["ch2","2 Hardware"],["ch3","3 Span and tuning"],["ch4","4 Gain"],["ch5","5 Modes"],["ch6","6 Waterfall and recording"],["ch7","7 Law and practice"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>IQ.calc(),ch2:()=>{PK.calc();AB.calc();},ch3:()=>Tn.calc(),ch4:()=>Gn.calc(),ch5:()=>{if(Md.i<0)Md.new();},ch6:()=>Rc.calc(),ch7:()=>{if(Lw.i<0)Lw.new();}}};
+
+boot();
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<div style="text-align:center;padding:14px 16px 0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
   <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
 </div>
-<div style="text-align:center;padding:14px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
@@ -149,6 +505,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
 <style>
 #fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
   border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
@@ -176,5 +533,8 @@ if ('serviceWorker' in navigator) {
   }, 3 * 60 * 1000); // 3 minutes of being on the page
 })();
 </script>
+</body>
+</html>
+
 </body>
 </html>

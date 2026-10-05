@@ -56,79 +56,443 @@ h2:first-child{margin-top:0}
 .cta a:hover{opacity:.9}
 
 .footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
-  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
-  <h1>Signal <span>Identification</span> Explained</h1>
-  <p class="hero-sub">Every radio signal leaves a visual fingerprint. Learn the handful of traits that give it away — then go practice reading them for real.</p>
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>Signal Identification <span>Explained</span></h1>
+  <p class="hero-sub">The four traits that identify almost any signal, how to read a spectrum and a waterfall, how to spot an anomaly against a baseline, and where machine learning is going. Seven chapters with hands-on widgets.</p>
 </header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>Know what an SDR shows? Read <a href="../sdrguide/">Software-Defined Radio Explained</a>. Need modulation and bandwidth ideas? See <a href="../modguide/">Modulation &amp; Noise Explained</a>.</div><div><b>Then practice in the tools</b><a href="../sigid/">Signal ID Trainer</a> &middot; <a href="../sdrsim/">SDR Console Simulator</a> &middot; <a href="../fhop/">Frequency Hop</a> &middot; <a href="../rfspect/">RF Spectrum</a>. About 40 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<section class="ch on" id="ch1">
+  <h2>1 &middot; Why Identify Signals?</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Say what signal identification is for in Electronic Support.</li><li>Name the four traits that identify almost any signal.</li><li>Describe the order of questions you ask about an unknown signal.</li></ul></div>
+  <p>Every radio signal leaves a visual fingerprint. In <b>Electronic Support (ES)</b> you search, intercept, and identify emitters so a commander knows what is in the spectrum, who is using it, and what has changed. You rarely get a label with the signal. You get its traits.</p>
+  <h3>The four traits</h3>
+  <table class="t"><tr><th>Trait</th><th>Question</th><th>Where you see it</th></tr>
+   <tr><td><span class="term" data-t="freq">Frequency</span></td><td>Where is it?</td><td>Position left to right</td></tr>
+   <tr><td><span class="term" data-t="bw">Bandwidth</span></td><td>How wide is it?</td><td>Width on the display</td></tr>
+   <tr><td><span class="term" data-t="duty">Duty cycle / timing</span></td><td>When and how often is it on?</td><td>Pattern down a waterfall</td></tr>
+   <tr><td><span class="term" data-t="motion">Motion</span></td><td>Does it stay, hop, or sweep?</td><td>Streak shape</td></tr></table>
+  <p>Learn these four and you can reason through a signal you have never seen.</p>
+  <h3>The order of questions</h3>
+  <ol><li><b>Is something there?</b> Is it above the noise floor?</li><li><b>What are its traits?</b> Frequency, width, timing, motion.</li><li><b>What family does that fit?</b> Broadcast, radar, land mobile, data, and so on.</li><li><b>Is it where and when it should be?</b> That is the baseline question, and it finds anomalies.</li><li><b>What do I do with it?</b> Log, report, locate (direction finding), or monitor.</li></ol><div class="try"><div class="th">Try it: trait or question?</div><div class="tb"><div id="h1q"></div><div class="fb ok" id="h1f" style="display:none;margin-top:6px"></div><div class="chips" style="margin-top:6px"><button class="chip" onclick="Tr.new()">Next</button></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>In a contested spectrum there are thousands of emitters. The skill is deciding which two or three need attention, and that starts with reading traits quickly.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Signal ID turns traits into a guess about what a signal is, for Electronic Support.</li><li>The four traits are frequency, bandwidth, timing, and motion.</li><li>Ask: is it there, what traits, what family, does it belong, what next.</li></ul></div>
+  <div class="kt"><span class="term" data-t="freq">frequency</span><span class="term" data-t="bw">bandwidth</span><span class="term" data-t="duty">duty cycle</span><span class="term" data-t="motion">hopping and sweeping</span><span class="term" data-t="es">Electronic Support</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: Frequency and bandwidth &rarr;</button></div>
+</section>
+<section class="ch" id="ch2">
+  <h2>2 &middot; Frequency and Bandwidth</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Read a bandwidth off a display.</li><li>Match a width to a likely family.</li><li>Explain why a signal&rsquo;s bandwidth is not its data rate.</li></ul></div>
+  <p>On a spectrum or waterfall, frequency runs across and a signal&rsquo;s width is its bandwidth. To measure it, put a cursor on each edge. If the display spans <i>S</i> hertz over <i>P</i> pixels, each pixel is <i>S &divide; P</i> hertz.</p>
+  <div class="formula">bandwidth = pixels wide &times; (span &divide; pixels across)</div>
+  <p>Bandwidth is a strong clue to the family:</p>
+  <table class="t"><tr><th>Signal</th><th>Typical width</th></tr>
+   <tr><td>CW (Morse), FT8 and other narrow data</td><td>under 1 kHz (FT8 about 50 Hz)</td></tr>
+   <tr><td>HF single-sideband voice</td><td>about 3 kHz</td></tr>
+   <tr><td>AM broadcast</td><td>about 10 kHz</td></tr>
+   <tr><td>Narrow FM voice (land mobile)</td><td>12.5 to 25 kHz</td></tr>
+   <tr><td>FM broadcast</td><td>about 200 kHz</td></tr>
+   <tr><td>Bluetooth</td><td>1 MHz per channel</td></tr>
+   <tr><td>GPS C/A</td><td>about 2 MHz</td></tr>
+   <tr><td>Wi-Fi (2.4 GHz)</td><td>20 MHz (also 40 MHz)</td></tr>
+   <tr><td>Wideband jammer or video link</td><td>several MHz to tens of MHz</td></tr></table>
+  <p>Bandwidth is not the same as data rate. Many signals carry little data and use a lot of room on purpose, such as spread spectrum (GPS). The relation depends on the modulation, as in the Modulation &amp; Noise guide.</p><div class="try"><div class="th">Try it: measure a width and name the family</div><div class="tb"><canvas id="i1c" width="480" height="160"></canvas>
+    <div class="ctl"><label>Display span</label><div class="chips" id="i1s"></div></div>
+    <div class="ctl"><label>Signal width</label><input type="range" id="i1w" min="2" max="300" value="60" oninput="Bw.calc()"><span class="v" id="i1wv"></span></div>
+    <div class="read" id="i1r"></div>
+    <div class="note">The display is 480 pixels across. Drag the width in pixels, and see the bandwidth and which families are about that size.</div></div></div>
+  <div class="why"><b>Why a 17E cares</b>A wideband signal where a narrow one should be is the first thing that stands out on a survey. Measuring width fast is a core ES skill.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Bandwidth = pixels wide &times; span &divide; pixels across.</li><li>Typical widths run from tens of hertz (FT8) to tens of MHz (video, jammers).</li><li>Bandwidth is not data rate.</li></ul></div>
+  <div class="kt"><span class="term" data-t="bw">bandwidth</span><span class="term" data-t="span">span</span><span class="term" data-t="spread">spread spectrum</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Timing &rarr;</button></div>
+</section>
+<section class="ch" id="ch3">
+  <h2>3 &middot; Timing: Duty Cycle and Pulses</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Calculate duty cycle and burst rate.</li><li>Work out radar PRF and its unambiguous range.</li><li>Say what continuous, bursty, and pulsed patterns usually mean.</li></ul></div>
+  <p>Watch a waterfall for a few seconds and the timing pattern shows. A <b>continuous</b> carrier is a solid vertical line. A <b>push-to-talk</b> radio shows irregular bursts. A <b>data link</b> shows regular short bursts. A <b>radar</b> shows very short, regular pulses.</p>
+  <div class="formula">duty cycle = on time &divide; period     rate = 1 &divide; period<br>radar: PRF = 1 &divide; pulse repetition interval     max unambiguous range = c &divide; (2 &times; PRF)</div>
+  <p>Radar sends a pulse and waits for the echo. If the echo comes back after the next pulse has already gone out, the radar cannot tell which pulse it belongs to. So the longest range it can state without ambiguity is the distance light covers (there and back) in one interval. At a PRF of 1,000 Hz that is 150 km.</p><div class="try"><div class="th">Try it: duty cycle, rate, and radar range</div><div class="tb"><canvas id="j1c" width="480" height="100"></canvas>
+    <div class="ctl"><label>On time</label><input type="range" id="j1a" min="0" max="100" value="45" oninput="Dt.calc()"><span class="v" id="j1av"></span></div>
+    <div class="ctl"><label>Period</label><input type="range" id="j1b" min="0" max="100" value="50" oninput="Dt.calc()"><span class="v" id="j1bv"></span></div>
+    <div class="read" id="j1r"></div>
+    <div class="note">The last two readings treat the signal as a radar and use the period as its pulse interval.</div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Timing is hard to fake and easy to see. A transmitter that goes on at the same instant every time is telling you its schedule.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Duty cycle = on time &divide; period. Rate = 1 &divide; period.</li><li>Radar PRF sets unambiguous range: c &divide; (2 &times; PRF).</li><li>Continuous, bursty, and pulsed patterns point to different families.</li></ul></div>
+  <div class="kt"><span class="term" data-t="duty">duty cycle</span><span class="term" data-t="prf">PRF</span><span class="term" data-t="pri">pulse repetition interval</span><span class="term" data-t="burst">burst</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Hopping and sweeping &rarr;</button></div>
+</section>
+<section class="ch" id="ch4">
+  <h2>4 &middot; Hopping, Sweeping, and Spreading</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Recognize fixed, hopping, swept, bursty, and wideband patterns on a waterfall.</li><li>Explain why hopping and spreading are used.</li><li>Name an example of each.</li></ul></div>
+  <table class="t"><tr><th>Pattern</th><th>On a waterfall</th><th>Why and example</th></tr>
+   <tr><td>Fixed</td><td>Vertical streak that holds still</td><td>Broadcast, GPS, beacons</td></tr>
+   <tr><td>Hopping</td><td>Short dashes jumping between frequencies</td><td>Anti-jam and anti-intercept. Bluetooth (about 1,600 hops a second over 79 channels), SINCGARS (about 100 hops a second)</td></tr>
+   <tr><td>Swept (chirp)</td><td>Diagonal line</td><td>FMCW radar, some jammers, sounders</td></tr>
+   <tr><td>Wideband / spread</td><td>Broad flat block, sometimes below the noise</td><td>Spread spectrum such as GPS, and noise jammers</td></tr></table>
+  <p>Fast regular jumps usually mean a deliberate design, not an accident. A hopper spends only a moment on each frequency, so a narrowband jammer or listener catches only a fraction of it. A spread signal puts its energy over so wide a band that each part is faint.</p>
+  <p>Do not judge from one frame. Hopping and duty cycle only show after a few seconds scroll by.</p><div class="try"><div class="th">Try it: what is it doing?</div><div class="tb"><canvas id="k1c" width="480" height="280"></canvas>
+    <div class="ctl"><label>Pattern</label><div class="chips" id="k1p"></div></div>
+    <div class="fb ok" id="k1f" style="display:block;font-size:14px"></div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="Wf.quiz()">Quiz me</button></div>
+    <div id="k1q"></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Pattern is what separates a friendly radio from a jammer from a surveillance radar at a glance, and it is what a machine-learning classifier learns to read too.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Fixed is a still streak, hopping is jumping dashes, a sweep is a diagonal, spread is a broad block.</li><li>Hopping and spreading are for resisting jamming and interception.</li><li>Watch a few seconds before judging.</li></ul></div>
+  <div class="kt"><span class="term" data-t="hop">hopping</span><span class="term" data-t="chirp">chirp</span><span class="term" data-t="spread">spread spectrum</span><span class="term" data-t="fmcw">FMCW</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Reading the display &rarr;</button></div>
+</section>
+<section class="ch" id="ch5">
+  <h2>5 &middot; Reading the Display</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Tell a spectrum display from a waterfall.</li><li>Explain the resolution and time trade-off in an FFT.</li><li>Use averaging, peak hold, and the noise floor.</li></ul></div>
+  <p>A <b>spectrum</b> shows one instant: frequency across, power as height. A <b>waterfall</b> adds time: frequency across, time scrolling down, brightness for power. The waterfall shows timing and motion. The spectrum shows exact levels.</p>
+  <ul><li><b>Noise floor:</b> the fuzz everything sits on. A signal must rise above it to be seen. The floor rises with bandwidth: a wider setting shows more noise.</li><li><b>Averaging:</b> smooths the noise so steady signals stand out. It hides short bursts.</li><li><b>Peak hold:</b> keeps the highest value seen. It shows every burst that ever happened, but loses timing.</li><li><b>Dynamic range:</b> a very strong signal can hide weak ones nearby or cause false signals (see the SDR guide).</li></ul>
+  <h3>The FFT trade-off</h3>
+  <div class="formula">frequency resolution &Delta;f = sample rate &divide; N     time per line &Delta;t = N &divide; sample rate     &Delta;f &times; &Delta;t = 1</div>
+  <p>A big FFT can separate two close tones but misses brief bursts. A small FFT catches bursts but cannot separate neighbours.</p><div class="try"><div class="th">Try it: can you resolve it? can you catch it?</div><div class="tb"><div class="ctl"><label>Sample rate</label><div class="chips" id="l1s"></div></div>
+    <div class="ctl"><label>FFT size</label><div class="chips" id="l1n"></div></div>
+    <div class="ctl"><label>Two tones apart</label><input type="range" id="l1d" min="0" max="100" value="40" oninput="Fr.calc()"><span class="v" id="l1dv"></span></div>
+    <div class="ctl"><label>Burst length</label><input type="range" id="l1b" min="0" max="100" value="40" oninput="Fr.calc()"><span class="v" id="l1bv"></span></div>
+    <div class="read" id="l1r"></div>
+    <div class="note">Tones are resolved when they are at least one bin apart. A burst is caught cleanly when it lasts at least one line.</div></div></div>
+  <div class="why"><b>Why a 17E cares</b>The same signal looks different with different settings. Knowing what the settings do keeps you from missing a burst or calling two neighbours one signal.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Spectrum is one instant, waterfall adds time.</li><li>Averaging smooths steady signals and hides bursts. Peak hold shows bursts and loses timing.</li><li>&Delta;f = fs &divide; N, &Delta;t = N &divide; fs, and &Delta;f &times; &Delta;t = 1.</li></ul></div>
+  <div class="kt"><span class="term" data-t="waterfall">waterfall</span><span class="term" data-t="noisefloor">noise floor</span><span class="term" data-t="fftbin">FFT bin</span><span class="term" data-t="peakhold">peak hold</span></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Families and anomalies &rarr;</button></div>
+</section>
+<section class="ch" id="ch6">
+  <h2>6 &middot; Families, Baselines, and Anomalies</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Name the broad signal families and their usual traits.</li><li>Explain what a baseline is.</li><li>Spot what has changed from a baseline.</li></ul></div>
+  <p>You do not have to memorize every signal. Know the broad families and what is normal where you are.</p>
+  <table class="t"><tr><th>Family</th><th>Examples</th><th>Usual traits</th></tr>
+   <tr><td>Radar and EW</td><td>Pulsed, chirped radar; jammers</td><td>Pulses, sweeps, or wide noise; high power</td></tr>
+   <tr><td>Satellite</td><td>GPS, weather, comms downlinks</td><td>Very weak, steady, specific frequencies</td></tr>
+   <tr><td>Land mobile and trunked</td><td>Push-to-talk, P25, DMR</td><td>12.5 kHz class, bursts, control channels</td></tr>
+   <tr><td>Aviation and maritime</td><td>ADS-B, VOR, AIS</td><td>Fixed channels, short regular bursts</td></tr>
+   <tr><td>Consumer and IoT</td><td>Wi-Fi, Bluetooth, remotes, sensors</td><td>Unlicensed bands (433, 915 MHz, 2.4 and 5 GHz), bursts, hopping</td></tr>
+   <tr><td>Amateur and digital modes</td><td>CW, RTTY, FT8</td><td>Narrow, in known sub-bands</td></tr></table>
+  <h3>Baseline and anomaly</h3>
+  <p>A <span class="term" data-t="baseline">baseline</span> is what the spectrum normally looks like in a place and at a time. An <span class="term" data-t="anomaly">anomaly</span> is any difference that matters: a new signal, one that has gone missing, one that is wider, louder, or on a different schedule, or one that hops where it used to sit still. Finding a threat often means noticing it does not belong.</p><div class="try"><div class="th">Try it: spot the change</div><div class="tb"><canvas id="m1c" width="480" height="200"></canvas>
+    <div class="fb ok" id="m1f" style="display:block;font-size:14px">Tap the signal that is different from the baseline above.</div>
+    <div class="chips" style="margin-top:6px"><button class="chip" onclick="An.new()">New survey</button></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Most real detections are anomalies, not exotic signals. A baseline you trust is the best sensor you have.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Know the broad families: radar and EW, satellite, land mobile, aviation and maritime, consumer, amateur.</li><li>A baseline is the normal picture for a place and time.</li><li>An anomaly is any meaningful difference: new, missing, wider, louder, or on a different schedule.</li></ul></div>
+  <div class="kt"><span class="term" data-t="baseline">baseline</span><span class="term" data-t="anomaly">anomaly</span><span class="term" data-t="trunked">trunked radio</span></div>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('ch7')">Next: Put it together &rarr;</button></div>
+</section>
+<section class="ch" id="ch7">
+  <h2>7 &middot; Put It Together and Where It Is Going</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Narrow a signal to a family from its traits.</li><li>Describe how machine learning is being used for signal identification.</li><li>Know where to read more.</li></ul></div>
+  <p>Use all four traits together. Choose what you see and the lookup shows which families fit.</p><div class="try"><div class="th">Try it: trait lookup</div><div class="tb"><div class="ctl"><label>Width</label><div class="chips" id="n1w"></div></div>
+    <div class="ctl"><label>Timing</label><div class="chips" id="n1t"></div></div>
+    <div class="ctl"><label>Motion</label><div class="chips" id="n1m"></div></div>
+    <div class="read" id="n1r"></div>
+    <div class="note">A rough guide from the table in this guide, not a rule: many signals overlap, so confirm with frequency and context.</div></div></div>
+  <h3>Worked example</h3>
+  <details class="work" open><summary>An unknown signal</summary><div>
+   <p>You see a signal at 433.9 MHz. It is about 100 kHz wide, appears in short bursts a few seconds apart, and stays on one frequency.</p>
+   <p>At 100 kHz it is a medium width (30 kHz to 1 MHz), bursty, and fixed. The 433 MHz band is an unlicensed band used by remote controls, weather stations, and sensors. Likely family: a consumer or IoT device. Check the baseline: is it new? Where is it strongest? A sensor beside a window is normal. The same burst from a place that should be empty is worth reporting.</p></div></details>
+  <h3>Real research</h3>
+  <p>Signal identification and anomaly detection are active, funded research areas. The Georgia Tech Research Institute&rsquo;s &ldquo;Angry Kitten&rdquo; is a cognitive electromagnetic warfare pod flown on U.S. Air Force F-16s that uses machine learning to recognise and adapt to unfamiliar threat signals instead of relying only on a fixed library. GTRI&rsquo;s electromagnetic battle management work builds tools to help operators make sense of a crowded spectrum picture across many sensors. PySDR (pysdr.org) is a free textbook that explains what is behind a real waterfall, including the frequency domain, IQ sampling, and digital modulation.</p>
+  <a class="tool" href="../sigid/"><b>Practice in the Signal ID Trainer &rarr;</b>A live spectrum survey, an ID quiz with anomaly detection, and a reference library.</a>
+  <a class="tool" href="../sdrguide/"><b>Back to Software-Defined Radio Explained &rarr;</b>How the receiver behind the waterfall works.</a>
+  <div class="why"><b>Why a 17E cares</b>Whatever tools you use, an operator who can read traits and a baseline will find the odd one out faster than one who cannot.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch7-score"></span></div><div class="tb" id="ch7-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Use all four traits together and then check frequency and context.</li><li>Anomalies, not exotic signals, are most real detections.</li><li>Machine learning is being used to recognise unfamiliar signals, which is why the trait skills still matter.</li></ul></div>
+  <div class="kt"><span class="term" data-t="baseline">baseline</span><span class="term" data-t="anomaly">anomaly</span></div>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
 
-<div class="section-wrap">
-
-  <h2>The Four Traits That Matter</h2>
-  <p class="lede">Almost any signal can be identified from just four characteristics. Learn these and you can reason through a signal you've never seen before.</p>
-  <div class="fact-card"><div class="fact-card-emoji">📶</div><div class="fact-card-text"><strong>Frequency</strong> — where it sits on the dial. Some signals are pinned to one exact frequency (GPS, aviation nav beacons); others roam across a whole band.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">↔️</div><div class="fact-card-text"><strong>Bandwidth</strong> — how wide it is. A voice channel is narrow; live video or a wideband jammer is wide. Width on the waterfall = bandwidth.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">⏱️</div><div class="fact-card-text"><strong>Duty Cycle</strong> — how often it transmits. Always-on and continuous (a broadcast carrier) looks very different from brief, occasional bursts (a push-to-talk radio).</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">🦘</div><div class="fact-card-text"><strong>Hopping / Sweeping</strong> — does it stay put, or does it jump or slide around? Fast, regular jumps usually mean a deliberate anti-jam design, not an accident.</div></div>
-
-  <h2>Reading a Waterfall</h2>
-  <p class="lede">A waterfall shows frequency left-to-right and time scrolling top-to-bottom. A spectrum view shows the same instant differently: frequency left-to-right, but power (signal strength) as height.</p>
-  <div class="fact-card"><div class="fact-card-emoji">👀</div><div class="fact-card-text">Don't judge from one frame. Duty cycle and hopping only become obvious after watching a few seconds scroll by.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">🎯</div><div class="fact-card-text">A vertical streak that never moves = fixed frequency. A streak that jumps around between frames = hopping. A diagonal line = a swept/chirped signal.</div></div>
-
-  <h2>Broad Categories You'll See</h2>
-  <p class="lede">You don't need to memorize every signal — just recognize the broad families. The full reference covers specifics.</p>
-  <div class="cat-grid">
-    <div class="cat-chip"><b>Radar & EW</b><span>Pulsed, chirped, jamming</span></div>
-    <div class="cat-chip"><b>Satellite</b><span>GPS, weather, comms downlinks</span></div>
-    <div class="cat-chip"><b>Land Mobile & Trunked</b><span>PTT radios, P25, DMR</span></div>
-    <div class="cat-chip"><b>Aviation & Maritime</b><span>ADS-B, VOR, AIS</span></div>
-    <div class="cat-chip"><b>Consumer & IoT</b><span>Wi-Fi, Bluetooth, remotes, sensors</span></div>
-    <div class="cat-chip"><b>Amateur & Digital Modes</b><span>CW, RTTY, FT8</span></div>
-  </div>
-
-  <h2>Real Research Behind This</h2>
-  <p class="lede">This isn't just an academic exercise — signal identification and anomaly detection are active, funded research areas right now, including close to home.</p>
-  <div class="fact-card"><div class="fact-card-emoji">🐱</div><div class="fact-card-text"><strong>Georgia Tech Research Institute's "Angry Kitten"</strong> — a cognitive electromagnetic warfare pod deployed on USAF F-16s (flown at Red Flag exercises) that uses machine learning to recognize and adapt to unfamiliar threat signals in real time, rather than relying on a fixed pre-programmed library. That's the same core idea behind this tool's anomaly quiz mode — noticing when something doesn't match a known baseline.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">📡</div><div class="fact-card-text"><strong>GTRI's Electromagnetic Battle Management (EMBM) program</strong> builds tools like ATOM to help operators make sense of a crowded, contested spectrum picture across multiple distributed sensors — the same "what am I actually looking at" problem this trainer practices at a small scale.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">📘</div><div class="fact-card-text"><strong>Want the real math?</strong> <a href="https://pysdr.org/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">PySDR</a> is a free, open-source textbook covering exactly what's happening under the hood of a real waterfall, written for people learning SDR from scratch. A few chapters that connect directly to this guide:
-    <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
-      <a href="https://pysdr.org/content/frequency_domain.html" target="_blank" rel="noopener" style="color:var(--accent)">→ Ch. 2 — Frequency Domain (FFT &amp; the spectrogram/waterfall, explained from scratch)</a>
-      <a href="https://pysdr.org/content/sampling.html" target="_blank" rel="noopener" style="color:var(--accent)">→ Ch. 3 — IQ Sampling (how a receiver actually captures a signal)</a>
-      <a href="https://pysdr.org/content/digital_modulation.html" target="_blank" rel="noopener" style="color:var(--accent)">→ Ch. 4 — Digital Modulation (ASK/PSK/FSK/QAM — the "why" behind several signals in the Reference tab)</a>
-      <a href="https://pysdr.org/content/detection.html" target="_blank" rel="noopener" style="color:var(--accent)">→ Ch. 24 — Detection Using Correlation (pulling a real signal out of the noise floor — the theory behind anomaly detection)</a>
-    </div>
-  </div>
-
-  <div class="cta">
-    <p><strong>Reading about it only gets you so far.</strong> The Signal ID Trainer has a live, animated reference for every category above, plus a quiz that tests you on real waterfalls — including anomalies that don't match the baseline.</p>
-    <a href="../sigid/">Open the Signal ID Trainer &rarr;</a>
-  </div>
-
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch7')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>ATP 3-12.3, <i>Electromagnetic Warfare Techniques</i>. Electronic support tasks and the role of signal identification.</li>
+   <li>PySDR (pysdr.org), Marc Lichtman. The frequency domain, IQ sampling, and digital modulation behind a waterfall.</li>
+   <li>Georgia Tech Research Institute public releases on &ldquo;Angry Kitten&rdquo; and electromagnetic battle management.</li>
+   <li>Standard radar relations: PRF = 1/PRI and unambiguous range = c/(2&middot;PRF).</li>
+   <li>Public band plans and standards for typical widths: FCC and NTIA allocations, IEEE 802.11, Bluetooth, IS-GPS-200, and amateur FT8 documentation.</li>
+   <li><b>Notes.</b> Widths and the trait lookup are rough teaching guides. The waterfall and anomaly widgets are simulations. Your class slides and instructor remain the authority. <b>Last verified:</b> October 4, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
 </div>
-
-<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
-<div class="footer">Signal Identification Explained · Companion guide to the Signal ID Trainer · UNCLASSIFIED</div>
-
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">Signal Identification Explained &middot; Interactive textbook &middot; Companion to the Signal ID Trainer &middot; UNCLASSIFIED</div>
 <script>
-function toggleTheme(){
-  const h=document.documentElement, d=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme', d?'light':'dark');
-  document.getElementById('t-icon').textContent = d?'🌙':'☀️';
-  document.getElementById('t-label').textContent = d?'Dark mode':'Light mode';
-}
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+const LV=(v,a,b)=>a*Math.pow(b/a,v/100);
+const fHz=h=>h>=1e6?(h/1e6).toPrecision(3)+' MHz':h>=1e3?(h/1e3).toPrecision(3)+' kHz':h.toPrecision(3)+' Hz';
+const fT=t=>t>=1?t.toPrecision(3)+' s':t>=1e-3?(t*1e3).toPrecision(3)+' ms':(t*1e6).toPrecision(3)+' \u00B5s';
+function rngf(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+function qpick(boxId,fbId,items,opts,state,fn){let k;do{k=Math.floor(Math.random()*items.length);}while(k===state.i&&items.length>1);state.i=k;$(boxId).innerHTML='<p style="font-size:14px;margin:0 0 6px"><b>'+items[k][0]+'</b></p><div class="chips">'+opts.map(o=>'<button class="chip" onclick="'+fn+'(\''+o+'\')">'+o+'</button>').join('')+'</div>';$(fbId).style.display='none';}
+function qans(fbId,ok,msg){const f=$(fbId);f.style.display='block';f.className='fb '+(ok?'ok':'no');f.innerHTML=(ok?'<b>Correct.</b> ':'<b>Not quite.</b> ')+msg;}
+/* ch1 */
+const TRI=[['It sits at 121.5 MHz','Frequency','Where it is on the dial.'],['It is 200 kHz wide','Bandwidth','How wide it is.'],['It transmits for two seconds every ten seconds','Timing','When and how often it is on.'],['It jumps to a new frequency every 10 ms','Motion','Does it stay put, hop, or sweep.'],['A diagonal line crosses the display','Motion','A diagonal is a sweep.'],['The streak is only 12 kHz wide','Bandwidth','Width on the display is bandwidth.'],['It is always on and never gaps','Timing','Continuous versus bursty is timing.'],['It sits at 1575.42 MHz','Frequency','Position on the dial.']];
+const Tr={s:{i:-1},new(){qpick('h1q','h1f',TRI,['Frequency','Bandwidth','Timing','Motion'],this.s,'Tr.pick');},pick(a){const t=TRI[this.s.i];qans('h1f',a===t[1],'This is <b>'+t[1]+'</b>. '+t[2]);}};
+/* ch2 */
+const FAM=[['CW or FT8 (narrow data)',0,1000],['HF single-sideband voice',2000,3500],['AM broadcast',8000,12000],['Narrow FM voice',11000,26000],['FM broadcast',150e3,250e3],['Bluetooth channel',0.8e6,1.2e6],['GPS C/A',1.5e6,2.5e6],['Remote control or sensor (433 MHz)',20e3,300e3],['Wi-Fi (20 or 40 MHz)',15e6,45e6],['Wideband jammer or video link',3e6,50e6]];
+const Bw={sp:5e6,set(v){this.sp=+v;this.calc();},calc(){chips('i1s',[[5e4,'50 kHz'],[5e5,'500 kHz'],[5e6,'5 MHz'],[5e7,'50 MHz']],this.sp,'Bw.set');const px=+$('i1w').value,bw=px*this.sp/480;$('i1wv').textContent=px+' px';
+  const m=FAM.filter(f=>bw>=f[1]&&bw<=f[2]).map(f=>f[0]);read('i1r',[['Pixel size',fHz(this.sp/480)],['Bandwidth',fHz(bw)],['Families about this wide',m.length?m.join('; '):'no common family: check the span'],]);
+  const [c,x]=cv('i1c');clear(c,x);x.strokeStyle='#26394a';x.beginPath();x.moveTo(0,130);x.lineTo(480,130);x.stroke();const L=240-px/2;x.fillStyle='#ffb454';x.fillRect(L,50,px,80);x.strokeStyle='#e86a6a';x.beginPath();x.moveTo(L,30);x.lineTo(L,135);x.moveTo(L+px,30);x.lineTo(L+px,135);x.stroke();lab(x,fHz(bw),240,22,'#e8f1f8','center',13);lab(x,'cursor',L,148,'#e86a6a','center',10);lab(x,'cursor',L+px,148,'#e86a6a','center',10);}};
+/* ch3 */
+const Dt={calc(){const on=+$('j1a').value,per=LV(+$('j1b').value,1e-4,10);$('j1av').textContent=Math.max(1,on)+'%';$('j1bv').textContent=fT(per);const d=Math.max(1,on)/100,pr=1/per,R=299792458/(2*pr)/1000;
+  read('j1r',[['Duty cycle',(d*100).toFixed(0)+' %'],['On time',fT(d*per)],['Repeats per second',pr>=100?pr.toFixed(0)+' Hz':pr.toPrecision(3)+' Hz'],['If radar: PRF',(pr>=100?pr.toFixed(0):pr.toPrecision(3))+' Hz'],['Max unambiguous range',R>=1000?R.toFixed(0)+' km':R.toPrecision(3)+' km']]);
+  const [c,x]=cv('j1c');clear(c,x);x.fillStyle='#ffb454';for(let k=0;k<5;k++){const x0=20+k*92;x.fillRect(x0,25,92*d,50);}x.strokeStyle='#26394a';x.beginPath();x.moveTo(10,75);x.lineTo(470,75);x.stroke();lab(x,'period',20+46,92,'#9db4c8','center',10);}};
+/* ch4 waterfall generator */
+const PAT=[['fixed','Fixed','A vertical streak that holds still: a fixed-frequency signal.'],['hop','Hopping','Short dashes jump between frequencies: a hopping signal.'],['chirp','Swept (chirp)','A diagonal line: a swept signal such as FMCW radar or a sweep jammer.'],['burst','Bursty','Short irregular bursts on one frequency: push-to-talk or a data link.'],['wide','Wideband','A broad flat block: a wideband or spread signal, perhaps a noise jammer.']];
+const WFP={drawPat(id,k,seed){const [c,x]=cv(id);clear(c,x);const r=rngf(seed),W=120,H=70,cw=4;const bg=()=>r()*0.35;
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){let v=bg();
+   if(k==='fixed'&&Math.abs(i-60)<=1)v=0.9;
+   if(k==='hop'){const hp=Math.floor(j/3);const f=10+Math.floor(rngf(hp*977+seed)()*100);if(Math.abs(i-f)<=1&&j%3!==2)v=0.9;}
+   if(k==='chirp'){const f=(j*1.6+seed%20)%110+5;if(Math.abs(i-f)<=1)v=0.9;}
+   if(k==='burst'){const on=rngf(Math.floor(j/4)*131+seed)()<0.35;if(on&&Math.abs(i-50)<=1)v=0.9;}
+   if(k==='wide'&&i>=30&&i<=90)v=0.55+r()*0.15;
+   const g=Math.floor(255*Math.min(1,v));x.fillStyle='rgb('+Math.floor(g*0.25)+','+Math.floor(g*0.9)+','+Math.floor(g*0.5)+')';x.fillRect(i*cw,j*cw,cw,cw);}}};
+const Wf={p:'fixed',cur:null,set(k){this.p=k;this.draw();},draw(){chips('k1p',PAT.map(p=>[p[0],p[1]]),this.p,'Wf.set');WFP.drawPat('k1c',this.p,41);const e=PAT.find(p=>p[0]===this.p);$('k1f').innerHTML='<b>'+e[1]+'.</b> '+e[2];},
+ quiz(){this.cur=PAT[Math.floor(Math.random()*PAT.length)];WFP.drawPat('k1c',this.cur[0],Math.floor(Math.random()*1000));$('k1f').innerHTML='<b>Quiz.</b> What is this?';$('k1q').innerHTML='<div class="chips" style="margin-top:6px">'+PAT.map(p=>'<button class="chip" onclick="Wf.ans(\''+p[0]+'\')">'+p[1]+'</button>').join('')+'</div>';},
+ ans(k){const ok=k===this.cur[0];$('k1f').className='fb '+(ok?'ok':'no');$('k1f').innerHTML=(ok?'<b>Correct.</b> ':'<b>Not quite.</b> ')+this.cur[2];}};
+/* ch5 */
+const Fr={sr:2.4e6,n:1024,setS(v){this.sr=+v;this.calc();},setN(v){this.n=+v;this.calc();},calc(){chips('l1s',[[0.25e6,'0.25 MS/s'],[2.4e6,'2.4 MS/s'],[10e6,'10 MS/s']],this.sr,'Fr.setS');chips('l1n',[256,1024,4096,16384].map(i=>[i,String(i)]),this.n,'Fr.setN');
+  const df=this.sr/this.n,dt=this.n/this.sr,sp=LV(+$('l1d').value,10,1e5),bl=LV(+$('l1b').value,1e-5,0.1);$('l1dv').textContent=fHz(sp);$('l1bv').textContent=fT(bl);
+  read('l1r',[['Bin width',fHz(df)],['Time per line',fT(dt)],['Two tones',sp>=df?'resolved (apart by '+(sp/df).toFixed(1)+' bins)':'blurred into one',sp>=df?'good':'bad'],['Burst',bl>=dt?'caught cleanly ('+(bl/dt).toFixed(1)+' lines)':'smeared into one line',bl>=dt?'good':'bad']]);}};
+/* ch6 anomaly */
+const AN={base:null,ano:null,xs:[40,95,150,215,280,335,395,440],new(){const r=Math.random;this.base=this.xs.map((x,i)=>({x:x+(r()*10-5),h:50+r()*50,w:4+Math.floor(r()*3)}));const types=['new','missing','wider','louder'];const t=types[Math.floor(r()*4)],i=Math.floor(r()*this.xs.length);this.cur=this.base.map(s=>Object.assign({},s));this.ano={t,i};
+  if(t==='new'){this.cur.push({x:20+r()*440,h:70,w:5,newSig:true});this.ano.x=this.cur[this.cur.length-1].x;do{this.ano.x=20+r()*440;}while(this.base.some(s=>Math.abs(s.x-this.ano.x)<30));this.cur[this.cur.length-1].x=this.ano.x;}
+  else if(t==='missing'){this.ano.x=this.cur[i].x;this.cur.splice(i,1);}else if(t==='wider'){this.cur[i].w*=4;this.ano.x=this.cur[i].x;}else{this.cur[i].h=Math.min(120,this.cur[i].h*1.9);this.ano.x=this.cur[i].x;}
+  this.draw();$('m1f').className='fb ok';$('m1f').textContent='Tap the signal that is different from the baseline above.';},
+ draw(){const [c,x]=cv('m1c');clear(c,x);const spec=(set,y0,col)=>{x.strokeStyle='#26394a';x.beginPath();x.moveTo(0,y0);x.lineTo(480,y0);x.stroke();x.fillStyle=col;set.forEach(s=>{x.fillRect(s.x-s.w/2,y0-s.h*0.8,s.w,s.h*0.8);});};spec(this.base,92,'#4b6f8a');spec(this.cur,190,'#ffb454');lab(x,'BASELINE (normal)',6,12,'#9db4c8','left',10);lab(x,'NOW',6,108,'#ffb454','left',10);},
+ tap(px){if(!this.ano)return;const ok=Math.abs(px-this.ano.x)<=22;const nm={new:'a new signal appeared',missing:'a normal signal is missing',wider:'a signal is much wider than normal',louder:'a signal is much louder than normal'}[this.ano.t];$('m1f').className='fb '+(ok?'ok':'no');$('m1f').innerHTML=(ok?'<b>Found it.</b> ':'<b>Not that one.</b> ')+'Here '+nm+'.';}};
+/* ch7 lookup */
+const LK=[['AM or FM broadcast',['narrow','medium'],['cont'],['fixed']],['HF single-sideband voice',['narrow'],['burst'],['fixed']],['CW, FT8, or narrow data',['narrow'],['burst','cont'],['fixed']],['Land mobile push-to-talk',['narrow'],['burst'],['fixed']],['Trunked control channel (P25, DMR)',['narrow'],['cont'],['fixed']],['Tactical frequency-hopping radio',['narrow'],['burst','cont'],['hop']],['Remote control or sensor (433 MHz)',['narrow','medium'],['burst'],['fixed']],['Bluetooth',['wide'],['burst'],['hop']],['Wi-Fi',['wide'],['burst'],['fixed']],['GPS L1',['wide'],['cont'],['fixed']],['Cellular (LTE)',['wide'],['cont'],['fixed']],['ADS-B (1090 MHz)',['wide'],['pulse'],['fixed']],['Pulsed radar',['wide'],['pulse'],['fixed']],['FMCW radar or sweep jammer',['wide'],['cont','pulse'],['sweep']],['Noise jammer',['wide','vwide'],['cont'],['fixed']],['Analog FPV video',['wide'],['cont'],['fixed']]];
+const LKC={w:'medium',t:'burst',m:'fixed',set(k,v){this[k]=v;this.calc();},
+ calc(){chips('n1w',[['narrow','Narrow (under 30 kHz)'],['medium','Medium (30 kHz to 1 MHz)'],['wide','Wide (1 to 25 MHz)'],['vwide','Very wide (over 25 MHz)']],this.w,'LKC.sw');chips('n1t',[['cont','Continuous'],['burst','Bursts'],['pulse','Short regular pulses']],this.t,'LKC.st');chips('n1m',[['fixed','Fixed'],['hop','Hopping'],['sweep','Sweeping']],this.m,'LKC.sm');
+  const ok=LK.filter(f=>f[1].includes(this.w)&&f[2].includes(this.t)&&f[3].includes(this.m));read('n1r',ok.length?ok.map(f=>[f[0],'fits','good']):[['No match','Relax a trait or check the measurements','mid']]);},
+ sw(v){this.set('w',v);},st(v){this.set('t',v);},sm(v){this.set('m',v);}};
+/* ===== questions ===== */
+const Qd={
+ ch1:[{id:'g1a',t:'mc',q:'Which is NOT one of the four traits?',o:['Frequency','Bandwidth','Colour','Duty cycle / timing'],a:2,ex:'The four traits are frequency, bandwidth, timing (duty cycle), and motion (fixed, hopping, sweeping).'},
+  {id:'g1b',t:'mc',q:'What is the first question to ask about an unknown signal?',o:['Is something there above the noise floor?','Who built it?','What is the price?','How old is it?'],a:0,ex:'Confirm there is a signal before you work out its traits.'},
+  {id:'g1c',t:'mc',q:'Why does a baseline matter?',o:['It tells you whether a signal belongs where and when it is seen','It increases gain','It sets the colour map','It saves power'],a:0,ex:'Knowing what is normal is how you notice what is not.'},
+  {id:'g1d',t:'mc',q:'In Electronic Support, signal identification mainly supports:',o:['Searching, intercepting, and identifying emitters','Jamming them','Hiding your own signals','Repairing radios'],a:0,ex:'ES is about finding and identifying emitters. Jamming is Electronic Attack.'},
+  {id:'g1e',t:'mc',q:'A signal that jumps to a new frequency every 10 ms is showing which trait?',o:['Motion (hopping)','Bandwidth','Frequency','Duty cycle only'],a:0,ex:'Hopping is a motion trait.'}],
+ ch2:[{id:'g2a',t:'num',q:'A display spans 2 MHz across 480 pixels. A signal is 24 pixels wide. How wide is it? (kHz, nearest whole)',a:100,tol:0.6,u:'kHz',ex:'Each pixel = 2,000 kHz \u00F7 480 = 4.17 kHz. 24 \u00D7 4.17 = 100 kHz.'},
+  {id:'g2b',t:'num',q:'A display spans 10 MHz across 480 pixels. A signal is 96 pixels wide. How wide is it? (MHz)',a:2,tol:0.02,u:'MHz',ex:'10 MHz \u00F7 480 = 20.8 kHz per pixel. 96 \u00D7 20.8 kHz = 2.0 MHz. That is about GPS C/A.'},
+  {id:'g2c',t:'num',q:'A 200 kHz FM broadcast signal on a display spanning 2.4 MHz across 480 pixels is how many pixels wide?',a:40,tol:0.5,u:'px',ex:'2.4 MHz \u00F7 480 = 5 kHz per pixel. 200 \u00F7 5 = 40 pixels.'},
+  {id:'g2d',t:'mc',q:'A signal 3 kHz wide on HF is most likely:',o:['Single-sideband voice','FM broadcast','Wi-Fi','GPS'],a:0,ex:'SSB voice is about 3 kHz wide.'},
+  {id:'g2e',t:'mc',q:'Is bandwidth the same as data rate?',o:['No: many signals use far more bandwidth than their data needs, such as spread spectrum','Yes always','Only for FM','Only for AM'],a:0,ex:'Bandwidth depends on the modulation and any spreading, not just the rate.'}],
+ ch3:[{id:'g3a',t:'num',q:'A transmitter is on for 2 s out of every 10 s. What is its duty cycle? (percent)',a:20,tol:0.1,u:'%',ex:'2 \u00F7 10 = 20%.'},
+  {id:'g3b',t:'num',q:'A radar has a pulse repetition interval of 1 ms. What is the PRF? (Hz)',a:1000,tol:1,u:'Hz',ex:'PRF = 1 \u00F7 PRI = 1,000 Hz.'},
+  {id:'g3c',t:'num',q:'What is that radar\u2019s maximum unambiguous range? (km, nearest whole)',a:150,tol:1,u:'km',ex:'c \u00F7 (2 \u00D7 PRF) = 299,792 \u00F7 2,000 = 150 km.'},
+  {id:'g3d',t:'num',q:'A radar has a PRF of 2,000 Hz. What is its maximum unambiguous range? (km, nearest whole)',a:75,tol:1,u:'km',ex:'299,792 \u00F7 (2 \u00D7 2,000) = 75 km. Higher PRF means shorter unambiguous range.'},
+  {id:'g3e',t:'mc',q:'A signal shows very short, perfectly regular pulses. What is likely?',o:['Radar','FM broadcast','A hopping radio','A voice channel'],a:0,ex:'Short regular pulses are the pattern of radar (or similar pulsed systems).'}],
+ ch4:[{id:'g4a',t:'num',q:'Bluetooth hops 1,600 times a second. How long does it stay on each channel? (microseconds)',a:625,tol:1,u:'\u00B5s',ex:'1 s \u00F7 1,600 = 625 \u00B5s.'},
+  {id:'g4b',t:'num',q:'A radio hops 100 times a second. How long on each frequency? (milliseconds)',a:10,tol:0.1,u:'ms',ex:'1 \u00F7 100 s = 10 ms.'},
+  {id:'g4c',t:'num',q:'Bluetooth uses 79 channels of 1 MHz. How wide a span does it hop over? (MHz)',a:79,tol:0.1,u:'MHz',ex:'79 \u00D7 1 MHz = 79 MHz.'},
+  {id:'g4d',t:'mc',q:'A diagonal line crossing a waterfall is:',o:['A swept (chirped) signal','A fixed signal','A burst','Nothing'],a:0,ex:'A line sliding in frequency over time is a sweep.'},
+  {id:'g4e',t:'mc',q:'Why do radios hop?',o:['To resist jamming and make interception harder','To save battery','To look nicer','To use less bandwidth'],a:0,ex:'A hopper spends only a moment on each frequency, so a narrowband jammer or listener catches only a part.'},
+  {id:'g4f',t:'mc',q:'Why should you watch a few seconds before judging a signal?',o:['Hopping and duty cycle only show over time','The display needs to warm up','Colours change','It is a rule'],a:0,ex:'A single frame cannot show timing or motion.'}],
+ ch5:[{id:'g5a',t:'num',q:'What is the FFT bin width at 2.4 MS/s with N = 4096? (Hz, nearest whole)',a:586,tol:1,u:'Hz',ex:'2,400,000 \u00F7 4,096 = 585.9 Hz.'},
+  {id:'g5b',t:'num',q:'What is the time per line at 10 MS/s with N = 4096? (milliseconds, two decimals)',a:0.41,tol:0.01,u:'ms',ex:'4,096 \u00F7 10,000,000 = 0.000410 s = 0.41 ms.'},
+  {id:'g5c',t:'num',q:'You want 1 kHz bins at 2.4 MS/s. What FFT size is needed?',a:2400,tol:1,u:'points',ex:'N = fs \u00F7 \u0394f = 2,400,000 \u00F7 1,000 = 2,400. In practice you pick the next power of two, 4,096.'},
+  {id:'g5b2',t:'mc',q:'Which setting shows every burst that ever happened but loses their timing?',o:['Peak hold','Averaging','A smaller FFT','Gain'],a:0,ex:'Peak hold keeps the highest value seen.'},
+  {id:'g5c2',t:'mc',q:'Averaging a spectrum helps steady signals stand out. What does it risk?',o:['Hiding short bursts','Lowering the frequency','Changing the mode','Stopping the display'],a:0,ex:'Averaging smooths the noise but also smooths brief events.'}],
+ ch6:[{id:'g6a',t:'mc',q:'What is a baseline?',o:['What the spectrum normally looks like in a place and at a time','The lowest frequency','The noise floor only','A kind of antenna'],a:0,ex:'The baseline is the normal picture. Differences from it are what matter.'},
+  {id:'g6b',t:'mc',q:'Which is an anomaly?',o:['A normal signal that has gone missing','A signal exactly as usual','The noise floor','The waterfall colours'],a:0,ex:'Missing, new, wider, louder, or on a new schedule: all anomalies.'},
+  {id:'g6c',t:'mc',q:'Wi-Fi, Bluetooth, and remotes usually live in:',o:['Unlicensed bands','Only military bands','Only HF','Only satellite bands'],a:0,ex:'Consumer devices use unlicensed bands such as 433 MHz, 915 MHz, 2.4 GHz, and 5 GHz.'},
+  {id:'g6d',t:'mc',q:'Land mobile radios (push-to-talk) typically show:',o:['Narrow bursts','Wide continuous noise','A diagonal sweep','A pulse train at megahertz widths'],a:0,ex:'Narrow, bursty, and fixed is the push-to-talk pattern.'},
+  {id:'g6e',t:'mc',q:'A strong signal appears at a frequency that is normally empty. What is the best first step?',o:['Check it against the baseline, then measure its traits','Ignore it','Turn the radio off','Raise gain'],a:0,ex:'Is it new, and what are its traits? Those answers drive the next step.'}],
+ ch7:[{id:'g7a',t:'mc',q:'A signal is narrow, bursty, and fixed. Which is most likely?',o:['Land mobile push-to-talk','GPS','Pulsed radar','FM broadcast'],a:0,ex:'Narrow, bursty, fixed matches push-to-talk radios.'},
+  {id:'g7b',t:'mc',q:'A signal is wide, continuous, and sweeping. Which fits?',o:['FMCW radar or a sweep jammer','FM broadcast','Wi-Fi','CW'],a:0,ex:'Wide and swept points to FMCW radar or a sweep jammer.'},
+  {id:'g7c',t:'mc',q:'Why do the trait skills still matter now that machine learning classifies signals?',o:['You must be able to check, interpret, and trust or challenge the machine','Machine learning is never right','They do not matter','Only for exams'],a:0,ex:'Operators still need to read traits to verify and understand what a classifier says.'},
+  {id:'g7d',t:'mc',q:'What does GTRI\u2019s \u201CAngry Kitten\u201D use to handle unfamiliar threat signals?',o:['Machine learning','A fixed library only','A person on the pod','Nothing'],a:0,ex:'It uses machine learning to recognise and adapt to unfamiliar signals rather than relying only on a fixed library.'},
+  {id:'g7e',t:'mc',q:'A 433.9 MHz burst, 100 kHz wide, fixed, every few seconds. First guess?',o:['A consumer remote or sensor','A radar','A satellite','FM broadcast'],a:0,ex:'433 MHz is an unlicensed band used by remotes and sensors.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'mc',q:'Which trait tells you whether a signal stays put or jumps around?',o:['Motion','Frequency','Bandwidth','Colour'],a:0,ex:'Fixed, hopping, and sweeping are motion.'},
+ {id:'k2',ch:'ch2',t:'num',q:'Display span 1 MHz over 480 pixels. A signal is 12 pixels wide. How wide is it? (kHz, nearest whole)',a:25,tol:0.3,u:'kHz',ex:'1,000 \u00F7 480 = 2.083 kHz per pixel. \u00D7 12 = 25 kHz.'},
+ {id:'k3',ch:'ch2',t:'mc',q:'About how wide is an FM broadcast signal?',o:['200 kHz','3 kHz','2 MHz','20 MHz'],a:0,ex:'FM broadcast uses about 200 kHz.'},
+ {id:'k4',ch:'ch3',t:'num',q:'On for 3 ms out of every 12 ms. Duty cycle? (percent)',a:25,tol:0.1,u:'%',ex:'3 \u00F7 12 = 25%.'},
+ {id:'k5',ch:'ch3',t:'num',q:'A radar with PRF 500 Hz has what unambiguous range? (km, nearest whole)',a:300,tol:1,u:'km',ex:'299,792 \u00F7 1,000 = 300 km.'},
+ {id:'k6',ch:'ch4',t:'mc',q:'A vertical streak that never moves is:',o:['A fixed-frequency signal','A hopper','A sweep','A burst'],a:0,ex:'It holds one frequency.'},
+ {id:'k7',ch:'ch4',t:'num',q:'A signal hops 200 times a second. Dwell time? (ms)',a:5,tol:0.1,u:'ms',ex:'1 \u00F7 200 = 5 ms.'},
+ {id:'k8',ch:'ch5',t:'num',q:'FFT bin width at 10 MS/s with N = 1024? (kHz, two decimals)',a:9.77,tol:0.05,u:'kHz',ex:'10,000,000 \u00F7 1,024 = 9,766 Hz.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'A bigger FFT gives:',o:['Narrower bins but slower lines','Wider bins and faster lines','Louder audio','More gain'],a:0,ex:'Bin width times time per line is 1.'},
+ {id:'k10',ch:'ch6',t:'mc',q:'A baseline is used to:',o:['Notice what has changed','Set gain','Measure power','Change the mode'],a:0,ex:'Differences from the normal picture are what you look for.'},
+ {id:'k11',ch:'ch7',t:'mc',q:'Wide, continuous, fixed, at 1575.42 MHz. What is it?',o:['GPS L1','Wi-Fi','Bluetooth','A radar'],a:0,ex:'GPS L1 is at 1575.42 MHz and is continuous.'},
+ {id:'k12',ch:'ch7',t:'mc',q:'Short regular pulses at megahertz widths, fixed frequency. Likely?',o:['Pulsed radar','FM broadcast','Land mobile','FT8'],a:0,ex:'Pulsed radar is wide, pulsed, and fixed.'}];
+const GLd={freq:['Frequency','Where a signal sits on the dial. Shown left to right on a spectrum or waterfall.'],bw:['Bandwidth','How wide a signal is in frequency.'],duty:['Duty cycle','The share of time a signal is on: on time divided by the period.'],motion:['Hopping and sweeping','Whether a signal stays on one frequency, jumps between frequencies, or slides across them.'],es:['Electronic Support','Searching for, intercepting, and identifying emitters to know what is in the spectrum.'],span:['Span','The width of spectrum shown on a display.'],spread:['Spread spectrum','A signal sent over much more bandwidth than its data needs, to resist jamming and interference.'],prf:['PRF','Pulse repetition frequency: pulses per second.'],pri:['Pulse repetition interval','The time between the start of one pulse and the next. PRI = 1 \u00F7 PRF.'],burst:['Burst','A short transmission followed by a gap.'],hop:['Hopping','Jumping between frequencies in a set pattern.'],chirp:['Chirp','A signal whose frequency slides steadily up or down.'],fmcw:['FMCW','Frequency-modulated continuous-wave radar, which sends a continuous chirp.'],waterfall:['Waterfall','A display with frequency across, time down, and brightness for power.'],noisefloor:['Noise floor','The background level below which signals cannot be seen.'],fftbin:['FFT bin','One frequency slice in an FFT display.'],peakhold:['Peak hold','A display mode that keeps the highest value seen at each frequency.'],baseline:['Baseline','What the spectrum normally looks like in a place and at a time.'],anomaly:['Anomaly','A meaningful difference from the baseline: new, missing, wider, louder, or on a different schedule.'],trunked:['Trunked radio','A system that shares a pool of channels among many users, using a control channel.']};
+const GUIDE={key:'sigidguide',chapters:[["ch1","1 Why identify"],["ch2","2 Frequency and width"],["ch3","3 Timing"],["ch4","4 Hop and sweep"],["ch5","5 The display"],["ch6","6 Families and anomalies"],["ch7","7 Put it together"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>{if(Tr.s.i<0)Tr.new();},ch2:()=>Bw.calc(),ch3:()=>Dt.calc(),ch4:()=>Wf.draw(),ch5:()=>Fr.calc(),ch6:()=>{if(!AN.base)AN.new();else AN.draw();},ch7:()=>LKC.calc()}};
+document.addEventListener('DOMContentLoaded',()=>{});
+
+setTimeout(()=>{const c=document.getElementById('m1c');if(c)c.addEventListener('click',e=>{const r=c.getBoundingClientRect();AN.tap((e.clientX-r.left)/r.width*480);});},0);
+
+boot();
 </script>
-<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px;max-width:1500px;margin:0 auto">
-  <span style="color:var(--text-muted)">Related:</span>
-  <a href="../sigid/" style="color:var(--accent);text-decoration:none">&#128225; Signal ID Trainer</a>
-  <a href="../ewguide/" style="color:var(--accent);text-decoration:none">&#9889; Electromagnetic Warfare Explained</a>
-  <a href="../rfspect/" style="color:var(--accent);text-decoration:none">&#128225; RF Spectrum</a>
-</div>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
   <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
@@ -170,5 +534,8 @@ if ('serviceWorker' in navigator) {
   }, 3 * 60 * 1000); // 3 minutes of being on the page
 })();
 </script>
+</body>
+</html>
+
 </body>
 </html>

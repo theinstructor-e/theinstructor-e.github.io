@@ -87,32 +87,120 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
   .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
   .section-wrap{padding-top:1rem}
 }
+
+/* interactive textbook overlay */
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+
+.tab-btn.done::after{content:" \2713";color:#2e9e5b;font-weight:800}.prog-wrap .prog{margin:0}.tab-content .obj{margin:12px 0}.tab-content .chk,.tab-content .sumbox{margin:16px 0}.tab-content .kt{margin:8px 0 14px}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
   <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
+  <p class="hero-eyebrow">Interactive Textbook</p>
   <h1>The <span>MDMP</span><br>How a headquarters turns a mission into a plan.</h1>
   <p class="hero-sub">Seven steps from receiving a mission to writing the order. Learn what each step does, what it produces, and how to shorten it under pressure.</p>
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('over',this)">🧭 Overview</button><button class="tab-btn" onclick="switchTab('s12',this)">📥 Steps 1–2</button><button class="tab-btn" onclick="switchTab('s34',this)">🛠️ Steps 3–4</button><button class="tab-btn" onclick="switchTab('s57',this)">✅ Steps 5–7</button><button class="tab-btn" onclick="switchTab('terms',this)">📖 Products &amp; Terms</button><button class="tab-btn" onclick="switchTab('time',this)">⏱️ Time &amp; Tools</button>
-  </div>
+  <button class="tab-btn" onclick="switchTab('chk',this)">✅ Checkpoint</button><button class="tab-btn" onclick="switchTab('gl',this)">📖 Glossary</button></div>
 </header>
 
+<div class="prog-wrap" style="max-width:820px;margin:14px auto 0;padding:0 16px"><div class="prog"><div class="bar"><i id="barfill"></i></div><div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div></div></div>
 <div class="section-wrap">
   <div class="tab-content active" id="tab-over">
 
     <h2>MDMP — how a headquarters plans</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>List the seven MDMP steps in order.</li><li>Say who does what in the process.</li></ul></div>
     <p class="lede">The Military Decision Making Process is the Army's step-by-step method for a commander and staff to understand a mission, build options, pick the best one, and turn it into an order.</p>
     <div class="analogy">🏗️ <strong>Like a design-and-build project:</strong> you study the problem, sketch several designs, test them, choose one, and then write the blueprints everyone will build from.</div>
     <h3>The seven steps</h3>
     <div class="steps">
       <div class="step"><div><div class="st">Receipt of mission</div><div class="sd">The staff is alerted, gathers tools, and the commander gives initial guidance.</div></div></div>
-      <div class="step"><div><div class="st">Mission analysis</div><div class="sd">Understand the problem: tasks, constraints, facts, assumptions, and risks. End with a restated mission and the commander’s intent.</div></div></div>
-      <div class="step"><div><div class="st">COA development</div><div class="sd">Build several workable courses of action.</div></div></div>
-      <div class="step"><div><div class="st">COA analysis</div><div class="sd">Wargame each course of action to see how it plays out.</div></div></div>
+      <div class="step"><div><div class="st">Mission analysis</div><div class="sd">Understand the problem: tasks, constraints, facts, assumptions, and risks. End with a restated mission and the <span class="term" data-t="intent">commander’s intent</span>.</div></div></div>
+      <div class="step"><div><div class="st"><span class="term" data-t="coa">COA</span> development</div><div class="sd">Build several workable courses of action.</div></div></div>
+      <div class="step"><div><div class="st">COA analysis</div><div class="sd"><span class="term" data-t="wargame">Wargame</span> each course of action to see how it plays out.</div></div></div>
       <div class="step"><div><div class="st">COA comparison</div><div class="sd">Compare the courses of action against the evaluation criteria.</div></div></div>
       <div class="step"><div><div class="st">COA approval</div><div class="sd">The commander picks one and gives final guidance.</div></div></div>
       <div class="step"><div><div class="st">Orders production, dissemination, and transition</div><div class="sd">Write the order, share it, and hand off to execution.</div></div></div>
@@ -125,11 +213,16 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
     <p>Staffs usually work the steps in order, but they go back when they learn something new. The process is also meant to be shortened when time is tight. See the Time &amp; Tools tab.</p>
     <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../mdmp/" style="color:inherit"><em>MDMP Planner</em></a> has step cards, a sequencing drill, a match-the-output quiz, a planning-time calculator, and a COA decision matrix.</div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="over-score"></span></div><div class="tb" id="over-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>COA</li><li>Where EW fits</li></ul></div>
+    <div class="kt"><span class="term" data-t="intent">Commander’s intent</span><span class="term" data-t="coa">COA</span><span class="term" data-t="wargame">Wargame</span></div>
     <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('s12')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📥 Steps 1–2</span></button></div>
   </div>
   <div class="tab-content" id="tab-s12">
 
     <h2>Steps 1–2 — Start and understand the problem</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Say what happens in receipt of mission.</li><li>Name the products of mission analysis.</li></ul></div>
     <h3>Step 1: Receipt of mission</h3>
     <p>Planning begins when the commander gets a mission or sees one coming. Quick, focused actions set everything else up.</p>
     <div class="steps">
@@ -138,66 +231,86 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
       <div class="step"><div><div class="st">Make an initial assessment</div><div class="sd">A first look at the time and resources available and the situation.</div></div></div>
       <div class="step"><div><div class="st">Issue initial guidance</div><div class="sd">The commander gives early direction, including how to use the time.</div></div></div>
       <div class="step"><div><div class="st">Publish the planning timeline</div><div class="sd">The staff sets who does what and when.</div></div></div>
-      <div class="step"><div><div class="st">Issue a warning order</div><div class="sd">Tell subordinate units so they can begin their own preparation.</div></div></div>
+      <div class="step"><div><div class="st">Issue a <span class="term" data-t="warnord">warning order</span></div><div class="sd">Tell subordinate units so they can begin their own preparation.</div></div></div>
     </div>
     <h3>Step 2: Mission analysis</h3>
     <p>This is the step where the staff figures out what the problem really is. It is the base for every later step.</p>
-    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Question</th><th>What the staff produces</th></tr></thead><tbody><tr><td>What were we told to do?</td><td>Analysis of the higher headquarters’ order: task, purpose, and intent</td></tr><tr><td>What is the situation?</td><td>Intelligence preparation of the battlefield (the enemy, terrain, and weather)</td></tr><tr><td>What must we do?</td><td>A list of specified, implied, and essential tasks</td></tr><tr><td>What limits us?</td><td>Constraints: what we must do and must not do</td></tr><tr><td>What do we know and assume?</td><td>Critical facts and assumptions</td></tr><tr><td>What could go wrong?</td><td>A first risk assessment</td></tr><tr><td>What does the commander need to know?</td><td>Commander’s critical information requirements (CCIR) and essential elements of friendly information (EEFI)</td></tr><tr><td>What is our mission?</td><td>A restated mission statement (who, what, when, where, why)</td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Question</th><th>What the staff produces</th></tr></thead><tbody><tr><td>What were we told to do?</td><td>Analysis of the higher headquarters’ order: task, purpose, and intent</td></tr><tr><td>What is the situation?</td><td>Intelligence preparation of the battlefield (the enemy, terrain, and weather)</td></tr><tr><td>What must we do?</td><td>A list of specified, implied, and essential tasks</td></tr><tr><td>What limits us?</td><td>Constraints: what we must do and must not do</td></tr><tr><td>What do we know and assume?</td><td>Critical facts and assumptions</td></tr><tr><td>What could go wrong?</td><td>A first risk assessment</td></tr><tr><td>What does the commander need to know?</td><td>Commander’s critical information requirements (<span class="term" data-t="ccir">CCIR</span>) and essential elements of friendly information (<span class="term" data-t="eefi">EEFI</span>)</td></tr><tr><td>What is our mission?</td><td>A restated mission statement (who, what, when, where, why)</td></tr></tbody></table></div>
     <div class="mnem"><span class="k">Specified</span><span>A task the higher order tells you to do.</span><span class="k">Implied</span><span>A task you must do to accomplish a specified task, though nobody wrote it down.</span><span class="k">Essential</span><span>A task you must do to accomplish the mission. Essential tasks go into the mission statement.</span></div>
-    <p>Step 2 ends with a <strong>mission analysis briefing</strong> to the commander. The commander approves the restated mission and gives the <strong>commander’s intent</strong> and <strong>planning guidance</strong>. The staff also sets the <strong>evaluation criteria</strong> it will use to compare courses of action later, and a second warning order goes out.</p>
+    <p>Step 2 ends with a <strong>mission analysis briefing</strong> to the commander. The commander approves the restated mission and gives the <strong><span class="term" data-t="intent">commander’s intent</span></strong> and <strong>planning guidance</strong>. The staff also sets the <strong>evaluation criteria</strong> it will use to compare <span class="term" data-t="coa">courses of action</span> later, and a second warning order goes out.</p>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="s12-score"></span></div><div class="tb" id="s12-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="ccir">CCIR</span><span class="term" data-t="eefi">EEFI</span><span class="term" data-t="intent">Commander’s intent</span><span class="term" data-t="coa">COA</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('over')"><span class="tj-label">&larr; Back</span><span class="tj-title">🧭 Overview</span></button><button class="tab-jump-btn next" onclick="goToTab('s34')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🛠️ Steps 3–4</span></button></div>
   </div>
   <div class="tab-content" id="tab-s34">
 
     <h2>Steps 3–4 — Build options and test them</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Apply the five screening tests to a COA.</li><li>Name the three wargaming methods.</li></ul></div>
     <h3>Step 3: COA development</h3>
-    <p>The staff builds several possible courses of action. A COA is a broad possible solution, described well enough to be tested. Typical work includes weighing relative combat power, generating options, arranging forces, developing a broad concept, and writing a COA statement and sketch.</p>
+    <p>The staff builds several possible <span class="term" data-t="coa">courses of action</span>. A COA is a broad possible solution, described well enough to be tested. Typical work includes weighing relative combat power, generating options, arranging forces, developing a broad concept, and writing a COA statement and sketch.</p>
     <p>Each COA is screened against five tests:</p>
     <div class="mnem"><span class="k">S</span><span><strong>Suitable</strong>: it accomplishes the mission and follows the commander’s guidance.</span><span class="k">F</span><span><strong>Feasible</strong>: it can be done with the time, space, and resources available.</span><span class="k">A</span><span><strong>Acceptable</strong>: the advantage is worth the risk and cost.</span><span class="k">D</span><span><strong>Distinguishable</strong>: it is meaningfully different from the other COAs.</span><span class="k">C</span><span><strong>Complete</strong>: it covers the operation from start to finish.</span></div>
     <h3>Step 4: COA analysis (wargaming)</h3>
-    <p>Wargaming plays each COA against the likely enemy actions to find out what works. It goes in a rhythm of <strong>action, reaction, counteraction</strong>: we do something, the enemy responds, we respond to that.</p>
+    <p><span class="term" data-t="wargame">Wargaming</span> plays each COA against the likely enemy actions to find out what works. It goes in a rhythm of <strong>action, reaction, counteraction</strong>: we do something, the enemy responds, we respond to that.</p>
     <div class="tbl-wrap"><table class="compare"><thead><tr><th>Method</th><th>How it works</th></tr></thead><tbody><tr><td>Belt</td><td>Divides the battlefield into areas (belts) across its width and plays each in turn</td></tr><tr><td>Avenue-in-depth</td><td>Follows one avenue of approach from start to finish, then the next</td></tr><tr><td>Box</td><td>Focuses in detail on a specific area, such as the objective</td></tr></tbody></table></div>
     <p>Wargaming turns up weak points, decision points, and sequencing problems. The staff refines each COA and updates its plans and estimates.</p>
     <div class="fact-card"><span class="fact-card-emoji">🎲</span><span class="fact-card-text"><strong>Tip.</strong> A good wargame needs someone to play the enemy honestly. If the "enemy" only does what is convenient for us, the results are worthless.</span></div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="s34-score"></span></div><div class="tb" id="s34-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="coa">COA</span><span class="term" data-t="wargame">Wargame</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s12')"><span class="tj-label">&larr; Back</span><span class="tj-title">📥 Steps 1–2</span></button><button class="tab-jump-btn next" onclick="goToTab('s57')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Steps 5–7</span></button></div>
   </div>
   <div class="tab-content" id="tab-s57">
 
     <h2>Steps 5–7 — Choose and write the plan</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Say what a decision matrix does and its limits.</li><li>Say what the commander does at COA approval.</li></ul></div>
     <h3>Step 5: COA comparison</h3>
-    <p>The staff compares the COAs against the evaluation criteria set in mission analysis. A <strong>decision matrix</strong> is a common tool: score each COA on each criterion, weight the criteria, and total the scores. The staff then recommends a COA.</p>
+    <p>The staff compares the <span class="term" data-t="coa">COAs</span> against the evaluation criteria set in mission analysis. A <strong>decision matrix</strong> is a common tool: score each COA on each criterion, weight the criteria, and total the scores. The staff then recommends a COA.</p>
     <div class="fact-card"><span class="fact-card-emoji">⚠️</span><span class="fact-card-text"><strong>A matrix supports judgment. It does not replace it.</strong> Scores and weights are opinions. Look at whether the answer changes if a weight changes, and ask why.</span></div>
     <h3>Step 6: COA approval</h3>
-    <p>The staff briefs the commander on the recommended COA. The commander picks one, changes it, or asks for more work. Then the commander gives <strong>final planning guidance</strong>, refines the intent, and updates the commander's critical information requirements. Another warning order goes to subordinates.</p>
+    <p>The staff briefs the commander on the recommended COA. The commander picks one, changes it, or asks for more work. Then the commander gives <strong>final planning guidance</strong>, refines the intent, and updates the commander's critical information requirements. Another <span class="term" data-t="warnord">warning order</span> goes to subordinates.</p>
     <h3>Step 7: Orders production, dissemination, and transition</h3>
     <p>The staff turns the approved COA into an operation order or plan, the commander approves it, and it goes out to the units. Rehearsals help everyone understand it. The plan then <strong>transitions</strong> from the planners to the people who run current operations.</p>
     <div class="fact-card"><span class="fact-card-emoji">📄</span><span class="fact-card-text"><strong>Orders follow a standard format.</strong> The five-paragraph OPORD (Situation, Mission, Execution, Sustainment, Command and Signal) is the same one you use for small-unit orders. See the <a href="/opord/" style="color:inherit">OPORD Builder</a>.</span></div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="s57-score"></span></div><div class="tb" id="s57-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>A matrix supports judgment. It does not replace it</li><li>Orders follow a standard format</li></ul></div>
+    <div class="kt"><span class="term" data-t="coa">COA</span><span class="term" data-t="warnord">Warning order</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s34')"><span class="tj-label">&larr; Back</span><span class="tj-title">🛠️ Steps 3–4</span></button><button class="tab-jump-btn next" onclick="goToTab('terms')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📖 Products &amp; Terms</span></button></div>
   </div>
   <div class="tab-content" id="tab-terms">
 
     <h2>Products and terms</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Define the key products and terms.</li><li>Tell the CCIR from the EEFI.</li></ul></div>
     <p class="lede">These are the words and documents you will hear most in planning.</p>
-    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Term</th><th>What it means</th></tr></thead><tbody><tr><td>Warning order (WARNORD)</td><td>An early notice of an upcoming operation, so units can start preparing. Sent at several points in the MDMP.</td></tr><tr><td>Running estimate</td><td>A staff section’s continuous assessment of its area. It is updated throughout planning and execution.</td></tr><tr><td>Commander’s intent</td><td>A clear, short statement of the purpose of the operation and the desired end state. Subordinates use it when the plan no longer fits.</td></tr><tr><td>Planning guidance</td><td>The commander’s direction to the staff about how to plan, given in mission analysis and again at COA approval.</td></tr><tr><td>Restated mission</td><td>The mission in who, what, when, where, and why form, developed in mission analysis.</td></tr><tr><td>Essential task</td><td>A task that must be done to accomplish the mission.</td></tr><tr><td>CCIR</td><td>Commander’s critical information requirements: information the commander needs to make timely decisions. It includes priority intelligence requirements (PIR) and friendly force information requirements (FFIR).</td></tr><tr><td>EEFI</td><td>Essential elements of friendly information: things the enemy must not learn about our operations.</td></tr><tr><td>Evaluation criteria</td><td>The standards used to compare COAs, chosen during mission analysis.</td></tr><tr><td>Decision point</td><td>A time or place where the commander expects to make a key decision.</td></tr><tr><td>Wargame</td><td>A step-by-step test of a COA against the enemy’s likely actions.</td></tr><tr><td>OPORD / OPLAN</td><td>The order or plan that results from the MDMP.</td></tr><tr><td>FRAGORD</td><td>A fragmentary order: a quick change to an existing order.</td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Term</th><th>What it means</th></tr></thead><tbody><tr><td><span class="term" data-t="warnord">Warning order</span> (WARNORD)</td><td>An early notice of an upcoming operation, so units can start preparing. Sent at several points in the <span class="term" data-t="mdmp">MDMP</span>.</td></tr><tr><td>Running estimate</td><td>A staff section’s continuous assessment of its area. It is updated throughout planning and execution.</td></tr><tr><td><span class="term" data-t="intent">Commander’s intent</span></td><td>A clear, short statement of the purpose of the operation and the desired end state. Subordinates use it when the plan no longer fits.</td></tr><tr><td>Planning guidance</td><td>The commander’s direction to the staff about how to plan, given in mission analysis and again at <span class="term" data-t="coa">COA</span> approval.</td></tr><tr><td>Restated mission</td><td>The mission in who, what, when, where, and why form, developed in mission analysis.</td></tr><tr><td>Essential task</td><td>A task that must be done to accomplish the mission.</td></tr><tr><td><span class="term" data-t="ccir">CCIR</span></td><td>Commander’s critical information requirements: information the commander needs to make timely decisions. It includes priority intelligence requirements (PIR) and friendly force information requirements (FFIR).</td></tr><tr><td><span class="term" data-t="eefi">EEFI</span></td><td>Essential elements of friendly information: things the enemy must not learn about our operations.</td></tr><tr><td>Evaluation criteria</td><td>The standards used to compare COAs, chosen during mission analysis.</td></tr><tr><td>Decision point</td><td>A time or place where the commander expects to make a key decision.</td></tr><tr><td><span class="term" data-t="wargame">Wargame</span></td><td>A step-by-step test of a COA against the enemy’s likely actions.</td></tr><tr><td>OPORD / OPLAN</td><td>The order or plan that results from the MDMP.</td></tr><tr><td><span class="term" data-t="fragord">FRAGORD</span></td><td>A fragmentary order: a quick change to an existing order.</td></tr></tbody></table></div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="terms-score"></span></div><div class="tb" id="terms-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="mdmp">MDMP</span><span class="term" data-t="intent">Commander’s intent</span><span class="term" data-t="coa">COA</span><span class="term" data-t="ccir">CCIR</span><span class="term" data-t="eefi">EEFI</span><span class="term" data-t="wargame">Wargame</span><span class="term" data-t="fragord">FRAGORD</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s57')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Steps 5–7</span></button><button class="tab-jump-btn next" onclick="goToTab('time')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⏱️ Time &amp; Tools</span></button></div>
   </div>
   <div class="tab-content" id="tab-time">
 
     <h2>Time and tools</h2>
-    <p class="lede">The full MDMP takes time. Real headquarters often have less, so they need to shorten it without losing the point.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Apply the one-third, two-thirds rule.</li><li>Name ways to shorten the process and the steps of RDSP.</li></ul></div>
+    <p class="lede">The full <span class="term" data-t="mdmp">MDMP</span> takes time. Real headquarters often have less, so they need to shorten it without losing the point.</p>
     <h3>The one-third, two-thirds rule</h3>
     <p>A commander should use no more than about <strong>one third</strong> of the available time for the headquarters' own planning and leave at least <strong>two thirds</strong> for subordinates. Late plans starve the units that have to execute them.</p>
     <div class="fact-card"><span class="fact-card-emoji">🧮</span><span class="fact-card-text"><strong>Example.</strong> Available time: 24 hours. Headquarters planning: no more than 8 hours. Subordinate units: at least 16 hours.</span></div>
     <h3>When time is short</h3>
     <p>Commanders can direct the staff to abbreviate the MDMP. Common methods include:</p>
-    <div class="mnem"><span class="k">More guidance</span><span>The commander gives clearer, more detailed guidance early, so the staff wastes less time.</span><span class="k">Fewer COAs</span><span>Develop one COA, or even just refine the commander’s own concept.</span><span class="k">Parallel planning</span><span>Subordinates start planning as soon as warning orders arrive instead of waiting.</span><span class="k">Fewer briefs</span><span>Combine or skip some briefings.</span></div>
+    <div class="mnem"><span class="k">More guidance</span><span>The commander gives clearer, more detailed guidance early, so the staff wastes less time.</span><span class="k">Fewer <span class="term" data-t="coa">COAs</span></span><span>Develop one COA, or even just refine the commander’s own concept.</span><span class="k">Parallel planning</span><span>Subordinates start planning as soon as <span class="term" data-t="warnord">warning orders</span> arrive instead of waiting.</span><span class="k">Fewer briefs</span><span>Combine or skip some briefings.</span></div>
     <div class="fact-card"><span class="fact-card-emoji">📘</span><span class="fact-card-text"><strong>Learn the full version first.</strong> Doctrine says a staff should master the full MDMP before trying to abbreviate it. You cannot safely skip what you do not understand.</span></div>
     <h3>Changing the plan during execution</h3>
-    <p>When the situation changes after the order is out, commanders and staffs often use the <strong>Rapid Decision-making and Synchronization Process (RDSP)</strong>:</p>
+    <p>When the situation changes after the order is out, commanders and staffs often use the <strong>Rapid Decision-making and Synchronization Process (<span class="term" data-t="rdsp">RDSP</span>)</strong>:</p>
     <div class="steps">
       <div class="step"><div><div class="st">Compare the current situation to the order</div><div class="sd">Is what is happening what we expected?</div></div></div>
       <div class="step"><div><div class="st">Determine whether a decision is needed, and what type</div><div class="sd">Some changes need a new decision; others do not.</div></div></div>
@@ -208,7 +321,22 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
     <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> FM 5-0, <em>Planning and Orders Production</em> (2022), and ADP 5-0, <em>The Operations Process</em>. Use your class slides and instructor as the authority.</span></div>
     <div class="tryit"><strong>▶ Try it:</strong> the <a href="../mdmp/" style="color:inherit"><em>MDMP Planner</em></a> timeline tab works out the one-third and two-thirds split from your times.</div>
 
-    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('terms')"><span class="tj-label">&larr; Back</span><span class="tj-title">📖 Products &amp; Terms</span></button></div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="time-score"></span></div><div class="tb" id="time-q"></div></div>
+    <div class="sumbox"><b>Key takeaways</b><ul><li>Example</li><li>Learn the full version first</li></ul></div>
+    <div class="kt"><span class="term" data-t="mdmp">MDMP</span><span class="term" data-t="coa">COA</span><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="rdsp">RDSP</span></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('terms')"><span class="tj-label">&larr; Back</span><span class="tj-title">📖 Products &amp; Terms</span></button><button class="tab-jump-btn next" onclick="goToTab('chk')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Checkpoint</span></button></div></div>
+  <div class="tab-content" id="tab-chk">
+    <h2>Checkpoint</h2>
+    <p class="lede">Mixed questions from the whole guide. One try each. You see what you missed and where to review. Your best score is saved on this device.</p>
+    <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+    <div class="pn"><button class="pri" onclick="Check.start()">Start / retake</button></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('time')"><span class="tj-label">&larr; Back</span><span class="tj-title">⏱️ Time & Tools</span></button><button class="tab-jump-btn next" onclick="goToTab('gl')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📖 Glossary</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-gl">
+    <h2>Glossary</h2>
+    <div class="gl"><input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()"><div id="gllist"></div></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('chk')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Checkpoint</span></button></div>
   </div>
 </div>
 
@@ -224,6 +352,55 @@ function goToTab(id){
   document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<script>
+(function(){
+/* E-WIT retrofit overlay: adds objectives, check questions, checkpoint, glossary and progress to an existing tab guide */
+const $=id=>document.getElementById(id);
+let KEY,SAVE,Q,CKQ,GL,TABS;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function tabBtn(id){return document.querySelector('.tab-btn[onclick*="\''+id+'\'"]');}
+function go(id){goToTab(id);}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();TABS.forEach(t=>renderQs(t));updateProgress();}
+function chapDone(t){return Q[t].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){let n=0;TABS.forEach(t=>{const d=chapDone(t);if(d)n++;const b=tabBtn(t);if(b)b.classList.toggle('done',d);const s=$(t+'-score');if(s){const T=Q[t].length,k=Q[t].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+T+' answered correctly';}});
+ const cb=tabBtn('chk');if(cb)cb.classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/TABS.length*100)+'%';$('progtxt').textContent=n+' of '+TABS.length+' sections complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));$('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+ if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+ else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+ return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(t){const box=$(t+'-q');if(!box)return;box.innerHTML=Q[t].map(q=>qHtml(q,'q-','ch')).join('');Q[t].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+ if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+ else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+ fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+ const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v))return;const ok=Math.abs(v-q.a)<=q.tol;
+ if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+ if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in this section, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+ if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();const chs={};miss.forEach(q=>chs[q.ch]=1);
+ $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+(TABNAMES[c]||c)+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+let TABNAMES={};
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+ Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;TABS=Object.keys(Q);TABNAMES=GUIDE.names||{};Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+ TABS.forEach(t=>renderQs(t));Gloss.render();updateProgress();}
+
+const GUIDE={"key": "mdmp", "Q": {"over": [{"t": "num", "q": "How many steps are in the MDMP?", "a": 7, "tol": 0.01, "u": "steps", "ex": "Receipt of mission, mission analysis, COA development, COA analysis, COA comparison, COA approval, and orders production, dissemination, and transition.", "id": "mdmp-over-1"}, {"t": "mc", "q": "What is the second step?", "o": ["Mission analysis", "COA development", "COA analysis", "Receipt of mission"], "a": 0, "ex": "Mission analysis is where the staff understands the problem.", "id": "mdmp-over-2"}, {"t": "mc", "q": "Who is the most important participant?", "o": ["The commander", "The XO", "The S3", "The operations sergeant"], "a": 0, "ex": "The commander frames the problem, gives guidance and intent, and chooses the COA.", "id": "mdmp-over-3"}, {"t": "mc", "q": "What does COA stand for?", "o": ["Course of action", "Chain of authority", "Concept of attack", "Control of area"], "a": 0, "ex": "A COA is a broad possible way to accomplish the mission.", "id": "mdmp-over-4"}], "s12": [{"t": "mc", "q": "What ends mission analysis?", "o": ["A mission analysis briefing to the commander", "A COA statement", "A rehearsal", "The OPORD"], "a": 0, "ex": "The commander approves the restated mission and gives intent and planning guidance.", "id": "mdmp-s12-1"}, {"t": "mc", "q": "A task that the higher order does not state but that you must do to accomplish a specified task is:", "o": ["An implied task", "A specified task", "An essential task", "A support task"], "a": 0, "ex": "Specified tasks are in the order. Implied tasks are needed to do them. Essential tasks are those that must be done to accomplish the mission.", "id": "mdmp-s12-2"}, {"t": "mc", "q": "Which tasks go into the mission statement?", "o": ["Essential tasks", "Specified tasks only", "All tasks", "Implied tasks only"], "a": 0, "ex": "Essential tasks go into the restated mission.", "id": "mdmp-s12-3"}, {"t": "mc", "q": "What does the restated mission answer?", "o": ["Who, what, when, where, and why", "Who, how, how much", "What, how long, how far", "Which, when, how"], "a": 0, "ex": "It is the mission in who, what, when, where, and why form.", "id": "mdmp-s12-4"}], "s34": [{"t": "num", "q": "How many screening tests does each COA face?", "a": 5, "tol": 0.01, "u": "tests", "ex": "Suitable, Feasible, Acceptable, Distinguishable, Complete (SFADC).", "id": "mdmp-s34-1"}, {"t": "mc", "q": "What does “D” in the screening tests stand for?", "o": ["Distinguishable", "Decisive", "Defensible", "Detailed"], "a": 0, "ex": "A COA must be meaningfully different from the others.", "id": "mdmp-s34-2"}, {"t": "mc", "q": "Which wargame method follows one avenue of approach from start to finish?", "o": ["Avenue-in-depth", "Belt", "Box", "Phase"], "a": 0, "ex": "Belt divides the battlefield across its width. Box focuses on a specific area.", "id": "mdmp-s34-3"}, {"t": "mc", "q": "What is the rhythm of a wargame?", "o": ["Action, reaction, counteraction", "Plan, act, review", "Observe, orient, decide", "Prepare, move, report"], "a": 0, "ex": "We do something, the enemy responds, we respond to that.", "id": "mdmp-s34-4"}], "s57": [{"t": "mc", "q": "What does a decision matrix do?", "o": ["Scores each COA against the evaluation criteria to support judgment", "Replaces the commander", "Picks the enemy COA", "Writes the order"], "a": 0, "ex": "A matrix supports judgment. It does not replace it, and scores and weights are opinions.", "id": "mdmp-s57-1"}, {"t": "mc", "q": "What does the commander do at COA approval?", "o": ["Picks a COA, changes it, or asks for more work, then gives final guidance", "Writes the OPORD", "Wargames it", "Briefs the staff on the enemy"], "a": 0, "ex": "The commander also refines the intent and updates the CCIR.", "id": "mdmp-s57-2"}, {"t": "mc", "q": "What is the standard order format for the result?", "o": ["The five-paragraph OPORD", "A single paragraph", "Three paragraphs", "A matrix"], "a": 0, "ex": "Situation, Mission, Execution, Sustainment, Command and Signal.", "id": "mdmp-s57-3"}, {"t": "mc", "q": "What happens in the last step besides writing the order?", "o": ["The plan transitions to the people running current operations", "Planning starts over", "The enemy is briefed", "The commander is replaced"], "a": 0, "ex": "Rehearsals help everyone understand it.", "id": "mdmp-s57-4"}], "terms": [{"t": "mc", "q": "What does CCIR stand for?", "o": ["Commander’s critical information requirements", "Command center information report", "Combat communications and intel review", "Critical control information record"], "a": 0, "ex": "It is information the commander needs to make timely decisions.", "id": "mdmp-terms-1"}, {"t": "mc", "q": "What does EEFI stand for?", "o": ["Essential elements of friendly information", "Enemy essential force information", "Evaluated enemy force intent", "Estimated enemy fire intensity"], "a": 0, "ex": "These are things the enemy must not learn about our operations.", "id": "mdmp-terms-2"}, {"t": "mc", "q": "What is a FRAGORD?", "o": ["A quick change to an existing order", "A new full plan", "A warning order", "A map overlay"], "a": 0, "ex": "A fragmentary order.", "id": "mdmp-terms-3"}, {"t": "mc", "q": "What is commander’s intent?", "o": ["A short statement of purpose and desired end state", "A list of tasks", "The enemy plan", "A timeline"], "a": 0, "ex": "Subordinates use it when the plan no longer fits.", "id": "mdmp-terms-4"}], "time": [{"t": "num", "q": "You have 24 hours. At most how many hours should the headquarters use for its own planning?", "a": 8, "tol": 0.1, "u": "hours", "ex": "About one third, leaving two thirds (16 hours) for subordinates.", "id": "mdmp-time-1"}, {"t": "num", "q": "You have 24 hours. At least how many hours should be left for subordinate units?", "a": 16, "tol": 0.1, "u": "hours", "ex": "Two thirds of 24 is 16.", "id": "mdmp-time-2"}, {"t": "mc", "q": "Which is a way to abbreviate the MDMP?", "o": ["Parallel planning, with fewer COAs and fewer briefs", "Skip mission analysis", "Ignore the commander", "Cancel the order"], "a": 0, "ex": "Doctrine says to learn the full MDMP first.", "id": "mdmp-time-3"}, {"t": "mc", "q": "What process do commanders often use to change a plan during execution?", "o": ["The Rapid Decision-making and Synchronization Process (RDSP)", "Full MDMP", "Troop leading procedures", "A new OPORD only"], "a": 0, "ex": "It compares the current situation with the order and then develops, validates, and issues a change.", "id": "mdmp-time-4"}]}, "CKQ": [{"t": "mc", "q": "Which is the correct start of the seven steps?", "o": ["Receipt of mission, mission analysis, COA development", "COA analysis, mission analysis", "Orders production, receipt", "COA approval, comparison"], "a": 0, "ex": "Receipt of mission is the first step.", "id": "mdmp-ck-1", "ch": "over"}, {"t": "mc", "q": "Where does EW fit in planning?", "o": ["The staff adds the spectrum picture: what the enemy emits and friendly units depend on", "EW has no part", "Only in the order", "Only at the end"], "a": 0, "ex": "Your instructors will show the exact products.", "id": "mdmp-ck-2", "ch": "over"}, {"t": "mc", "q": "What do you issue at the end of receipt of mission?", "o": ["A warning order", "An OPORD", "A FRAGORD", "A COA"], "a": 0, "ex": "Subordinates can begin their own preparation.", "id": "mdmp-ck-3", "ch": "s12"}, {"t": "mc", "q": "Mission analysis ends with:", "o": ["A briefing to the commander", "An order", "A rehearsal", "A wargame"], "a": 0, "ex": "The commander approves the restated mission.", "id": "mdmp-ck-4", "ch": "s12"}, {"t": "mc", "q": "Which test asks whether the advantage is worth the risk and cost?", "o": ["Acceptable", "Suitable", "Feasible", "Complete"], "a": 0, "ex": "SFADC: Suitable, Feasible, Acceptable, Distinguishable, Complete.", "id": "mdmp-ck-5", "ch": "s34"}, {"t": "mc", "q": "Why must someone play the enemy honestly in a wargame?", "o": ["Otherwise the results are worthless", "It is required by law", "To save time", "To fill a role"], "a": 0, "ex": "If the enemy only does what is convenient, the wargame shows nothing.", "id": "mdmp-ck-6", "ch": "s34"}, {"t": "mc", "q": "A decision matrix is:", "o": ["A tool that supports judgment", "A replacement for the commander", "Proof of the best COA", "An order"], "a": 0, "ex": "Test whether the answer changes if a weight changes.", "id": "mdmp-ck-7", "ch": "s57"}, {"t": "mc", "q": "The final step is called:", "o": ["Orders production, dissemination, and transition", "COA approval", "Mission analysis", "Wargaming"], "a": 0, "ex": "Write the order, share it, and hand off to execution.", "id": "mdmp-ck-8", "ch": "s57"}, {"t": "mc", "q": "A running estimate is:", "o": ["A staff section’s continuous assessment of its area", "A final order", "A map", "A timeline"], "a": 0, "ex": "It is updated throughout planning and execution.", "id": "mdmp-ck-9", "ch": "terms"}, {"t": "mc", "q": "Which term lists things the enemy must not learn?", "o": ["EEFI", "CCIR", "WARNORD", "COA"], "a": 0, "ex": "Essential elements of friendly information.", "id": "mdmp-ck-10", "ch": "terms"}, {"t": "num", "q": "With 36 hours total, at most how many hours for headquarters planning by the one-third rule?", "a": 12, "tol": 0.1, "u": "hours", "ex": "36 ÷ 3 = 12 hours.", "id": "mdmp-ck-11", "ch": "time"}, {"t": "mc", "q": "Doctrine says a staff should first master:", "o": ["The full MDMP before abbreviating it", "The shortcut only", "The order only", "Nothing"], "a": 0, "ex": "You cannot safely skip what you do not understand.", "id": "mdmp-ck-12", "ch": "time"}], "GL": {"mdmp": ["MDMP", "Military Decision Making Process: the Army’s step-by-step planning method for a commander and staff."], "coa": ["COA", "Course of action: a broad possible way to accomplish the mission."], "warnord": ["Warning order", "An early notice of an upcoming operation so units can start preparing."], "intent": ["Commander’s intent", "A clear, short statement of the purpose of the operation and the desired end state."], "ccir": ["CCIR", "Commander’s critical information requirements."], "eefi": ["EEFI", "Essential elements of friendly information: what the enemy must not learn."], "wargame": ["Wargame", "A step-by-step test of a COA against the enemy’s likely actions."], "fragord": ["FRAGORD", "A fragmentary order: a quick change to an existing order."], "rdsp": ["RDSP", "Rapid Decision-making and Synchronization Process: changing the plan during execution."]}, "names": {"over": "🧭 Overview", "s12": "📥 Steps 1–2", "s34": "🛠️ Steps 3–4", "s57": "✅ Steps 5–7", "terms": "📖 Products & Terms", "time": "⏱️ Time & Tools"}};
+window.Qz=Qz;window.Check=Check;window.Sheet=Sheet;window.Gloss=Gloss;window.go=go;window.resetProgress=resetProgress;
+boot();
+})();
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>

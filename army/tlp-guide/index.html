@@ -87,111 +87,234 @@ table.compare td:first-child{font-weight:700;color:var(--text-primary)}
   .card,.step,.fact-card,.mnem,.analogy,table.compare tr{break-inside:avoid}
   .section-wrap{padding-top:1rem}
 }
+
+/* interactive textbook overlay */
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+
+.tab-btn.done::after{content:" \2713";color:#2e9e5b;font-weight:800}.prog-wrap .prog{margin:0}.tab-content .obj{margin:12px 0}.tab-content .chk,.tab-content .sumbox{margin:16px 0}.tab-content .kt{margin:8px 0 14px}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="qc">⚠ TRAINING AID — under QC/QA. Use your class slides &amp; instructor as the authority.</div>
   <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">🌙</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
+  <p class="hero-eyebrow">Interactive Textbook</p>
   <h1>Troop Leading <span>Procedures</span><br>The leader’s plan in eight steps.</h1>
   <p class="hero-sub">From "here is your mission" to "we are ready." Learn the eight steps, the clock rule, and how TLP fits with MDMP.</p>
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('big',this)">📋 The Big Picture</button><button class="tab-btn" onclick="switchTab('s14',this)">🚀 Steps 1–4</button><button class="tab-btn" onclick="switchTab('s58',this)">✅ Steps 5–8</button><button class="tab-btn" onclick="switchTab('ex',this)">🧩 Worked Example</button><button class="tab-btn" onclick="switchTab('vs',this)">⚖️ TLP vs MDMP</button>
-  </div>
+  <button class="tab-btn" onclick="switchTab('chk',this)">✅ Checkpoint</button><button class="tab-btn" onclick="switchTab('gl',this)">📖 Glossary</button></div>
 </header>
 
+<div class="prog-wrap" style="max-width:820px;margin:14px auto 0;padding:0 16px"><div class="prog"><div class="bar"><i id="barfill"></i></div><div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div></div></div>
 <div class="section-wrap">
   <div class="tab-content active" id="tab-big">
 
     <h2>Troop Leading Procedures — the leader's plan in 8 steps</h2>
-    <p class="lede">TLP is the routine a small-unit leader runs to take a mission from "here's the task" to "we're ready to go." It helps you use your time well and keeps your team from finding out about the plan at the last minute.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>List the eight steps of TLP in order.</li><li>Apply the one-third, two-thirds rule.</li></ul></div>
+    <p class="lede"><span class="term" data-t="tlp">TLP</span> is the routine a small-unit leader runs to take a mission from "here's the task" to "we're ready to go." It helps you use your time well and keeps your team from finding out about the plan at the last minute.</p>
     <div class="analogy">✈️ <strong>Like a pilot’s pre-flight routine:</strong> the same steps every time, in a sensible order, so nothing important gets skipped when you are busy.</div>
     <h3>Who uses it</h3>
     <p>TLP is for leaders who plan without a dedicated staff, typically at company level and below. Battalion and higher headquarters use the <a href="../mdmp-guide/" style="color:var(--accent)">MDMP</a>. Step 3 of TLP is where the MDMP way of thinking shows up, done quickly by one leader.</p>
     <h3>The eight steps</h3>
     <div class="steps">
       <div class="step"><div><div class="st">Receive the mission</div><div class="sd">Figure out what you have been told to do, and why.</div></div></div>
-      <div class="step"><div><div class="st">Issue a warning order</div><div class="sd">Get your team moving early with a heads-up.</div></div></div>
+      <div class="step"><div><div class="st">Issue a <span class="term" data-t="warnord">warning order</span></div><div class="sd">Get your team moving early with a heads-up.</div></div></div>
       <div class="step"><div><div class="st">Make a tentative plan</div><div class="sd">Analyze the situation and pick a course of action.</div></div></div>
       <div class="step"><div><div class="st">Initiate movement</div><div class="sd">Start any movement that cannot wait for the finished plan.</div></div></div>
-      <div class="step"><div><div class="st">Conduct reconnaissance</div><div class="sd">Check your assumptions against the ground and the enemy.</div></div></div>
+      <div class="step"><div><div class="st">Conduct <span class="term" data-t="recon">reconnaissance</span></div><div class="sd">Check your assumptions against the ground and the enemy.</div></div></div>
       <div class="step"><div><div class="st">Complete the plan</div><div class="sd">Finalize it in light of what you learned.</div></div></div>
-      <div class="step"><div><div class="st">Issue the order</div><div class="sd">Brief the operation order.</div></div></div>
-      <div class="step"><div><div class="st">Supervise and refine</div><div class="sd">Rehearse, inspect, and adjust until the moment you execute.</div></div></div>
+      <div class="step"><div><div class="st">Issue the order</div><div class="sd">Brief the <span class="term" data-t="opord">operation order</span>.</div></div></div>
+      <div class="step"><div><div class="st">Supervise and refine</div><div class="sd"><span class="term" data-t="rehearsal">Rehearse</span>, inspect, and adjust until the moment you execute.</div></div></div>
     </div>
     <h3>The one-third, two-thirds rule</h3>
     <p>Use no more than <strong>one third</strong> of the time you have for your own planning. That leaves at least <strong>two thirds</strong> for your subordinates to plan, rehearse, and prepare. If you have 12 hours before you move, your plan and your order should be done in about 4.</p>
     <h3>It is a loop, not a straight line</h3>
     <p>The steps are numbered, but they overlap. You will often start step 4 before you finish step 3. A recon in step 5 can send you back to change the plan from step 3. Step 8 never really ends. Leaders keep supervising until the mission starts.</p>
-    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../tlp-planner/" style="color:inherit"><em>TLP Planner</em></a> builds a backward time plan and walks you through a patrol. The <a href="/tlp/" style="color:inherit"><em>TLP Trainer</em></a> lets you put the eight steps in order and drills METT-TC. The <a href="/opord/" style="color:inherit"><em>OPORD Builder</em></a> helps with step 7.</div>
+    <div class="tryit"><strong>▶ Practice it:</strong> the <a href="../tlp-planner/" style="color:inherit"><em>TLP Planner</em></a> builds a backward time plan and walks you through a patrol. The <a href="/tlp/" style="color:inherit"><em>TLP Trainer</em></a> lets you put the eight steps in order and drills <span class="term" data-t="metttc">METT-TC</span>. The <a href="/opord/" style="color:inherit"><em>OPORD Builder</em></a> helps with step 7.</div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="big-score"></span></div><div class="tb" id="big-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="tlp">TLP</span><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="recon">Reconnaissance</span><span class="term" data-t="opord">OPORD</span><span class="term" data-t="rehearsal">Rehearsal</span><span class="term" data-t="metttc">METT-TC</span></div>
     <div class="tab-jump"><button class="tab-jump-btn next" onclick="goToTab('s14')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🚀 Steps 1–4</span></button></div>
   </div>
   <div class="tab-content" id="tab-s14">
 
     <h2>Steps 1–4 — Getting started</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Say what happens in steps 1 to 4.</li><li>Say what a warning order covers.</li></ul></div>
     <p class="lede">The first four steps get you oriented, get your team moving, and give you a draft plan. Speed matters here, because everything your team does later depends on the time you give them.</p>
     <h3>Step 1: Receive the mission</h3>
-    <p>You may get the mission as a warning order, an operation order, or a fragmentary order. Read it for the <strong>task and purpose</strong> of your unit, the higher commander's <strong>intent</strong>, and any times or limits you have been given.</p>
+    <p>You may get the mission as a <span class="term" data-t="warnord">warning order</span>, an <span class="term" data-t="opord">operation order</span>, or a fragmentary order. Read it for the <strong>task and purpose</strong> of your unit, the higher commander's <strong>intent</strong>, and any times or limits you have been given.</p>
     <div class="steps">
       <div class="step"><div><div class="st">Find your task and purpose</div><div class="sd">What must your unit do, and what is it for?</div></div></div>
       <div class="step"><div><div class="st">Work the clock backward</div><div class="sd">Start from the time you must execute and list what has to happen before then. This is your time plan.</div></div></div>
       <div class="step"><div><div class="st">Note what is fixed</div><div class="sd">Times, locations, and limits from higher headquarters are not yours to change.</div></div></div>
     </div>
     <h3>Step 2: Issue a warning order</h3>
-    <p>Send a warning order (WARNORD) as soon as you have something useful to say. Do not wait for a perfect plan. A short early WARNORD lets your team start preparing while you keep planning. It usually covers the situation as you know it, the mission or the type of operation, the time schedule (when the order, rehearsals, and movement are), and any instructions to get moving. Issue updates as you learn more.</p>
+    <p>Send a warning order (WARNORD) as soon as you have something useful to say. Do not wait for a perfect plan. A short early WARNORD lets your team start preparing while you keep planning. It usually covers the situation as you know it, the mission or the type of operation, the time schedule (when the order, <span class="term" data-t="rehearsal">rehearsals</span>, and movement are), and any instructions to get moving. Issue updates as you learn more.</p>
     <h3>Step 3: Make a tentative plan</h3>
-    <p>Analyze the situation with <strong>METT-TC</strong>, then build a course of action and check whether it works.</p>
+    <p>Analyze the situation with <strong><span class="term" data-t="metttc">METT-TC</span></strong>, then build a course of action and check whether it works.</p>
     <div class="mnem"><span class="k">M</span><span><strong>Mission</strong>: your task, purpose, and higher intent</span><span class="k">E</span><span><strong>Enemy</strong>: what they are, where they are, what they can do</span><span class="k">T</span><span><strong>Terrain and weather</strong>: use OAKOC to read the ground</span><span class="k">T</span><span><strong>Troops and support</strong>: what you have and what shape it is in</span><span class="k">T</span><span><strong>Time available</strong>: how much clock you have</span><span class="k">C</span><span><strong>Civil considerations</strong>: people, places, and infrastructure</span></div>
     <div class="fact-card"><span class="fact-card-emoji">ℹ️</span><span class="fact-card-text"><strong>Newer doctrine adds an "I".</strong> You may see <strong>METT-TC(I)</strong>, with informational considerations added to the list.</span></div>
     <p>Small-unit leaders often work with one main course of action rather than several. Think it through as a "what if": what do we do, what might the enemy do, and how do we react? Check for risk and write down the plan in outline.</p>
     <h3>Step 4: Initiate movement</h3>
     <p>If something needs to move before the plan is final, start it now. That might be getting to an assembly area, sending a recon element ahead, or pulling ammunition and gear. Moving early buys time for later steps.</p>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="s14-score"></span></div><div class="tb" id="s14-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="opord">OPORD</span><span class="term" data-t="rehearsal">Rehearsal</span><span class="term" data-t="metttc">METT-TC</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('big')"><span class="tj-label">&larr; Back</span><span class="tj-title">📋 The Big Picture</span></button><button class="tab-jump-btn next" onclick="goToTab('s58')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Steps 5–8</span></button></div>
   </div>
   <div class="tab-content" id="tab-s58">
 
     <h2>Steps 5–8 — Finishing and preparing</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Say what happens in steps 5 to 8.</li><li>Name the parts of supervise and refine.</li></ul></div>
     <p class="lede">The last four steps turn a tentative plan into a rehearsed, understood plan.</p>
     <h3>Step 5: Conduct reconnaissance</h3>
     <p>Confirm what you assumed. A <strong>ground recon</strong> is best, when the situation allows. If it does not, do a <strong>map recon</strong>. Look at the route, the objective, and any place that could surprise you. Ask: is the ground the way the map says, and is the enemy where I expect?</p>
     <h3>Step 6: Complete the plan</h3>
-    <p>Update the tentative plan with what you learned. Prepare what you need to brief it: a sketch, an overlay, or a terrain model. Check the plan against the higher commander's intent. Coordinate with the units next to you and with supporting elements.</p>
+    <p>Update the tentative plan with what you learned. Prepare what you need to brief it: a sketch, an overlay, or a terrain model. Check the plan against the higher <span class="term" data-t="intent">commander's intent</span>. Coordinate with the units next to you and with supporting elements.</p>
     <h3>Step 7: Issue the order</h3>
-    <p>Brief the operation order in its five-paragraph format: <strong>Situation, Mission, Execution, Sustainment, Command and Signal</strong>. Give it where your team can see the terrain or a model of it, if you can. Check that your subordinates understand it by having them repeat back key parts.</p>
+    <p>Brief the <span class="term" data-t="opord">operation order</span> in its five-paragraph format: <strong>Situation, Mission, Execution, Sustainment, Command and Signal</strong>. Give it where your team can see the terrain or a model of it, if you can. Check that your subordinates understand it by having them repeat back key parts.</p>
     <h3>Step 8: Supervise and refine</h3>
     <p>Do not assume the plan will be carried out as briefed. Go and look. This step has three main parts.</p>
-    <div class="card-row"><div class="card"><div class="card-head"><span class="card-emoji">🎭</span><div><div class="card-title">Rehearse</div><div class="card-sub">Practice the plan</div></div></div><p style="margin:0">A rehearsal finds gaps and builds shared understanding. Common types: confirmation brief, back-brief, support rehearsal, combined arms rehearsal, and battle drill or SOP rehearsal.</p></div><div class="card"><div class="card-head"><span class="card-emoji">🔎</span><div><div class="card-title">Inspect</div><div class="card-sub">Check readiness</div></div></div><p style="margin:0">Leaders run pre-combat checks (PCC) and pre-combat inspections (PCI): weapons, radios, gear, water, ammunition, and whether every Soldier knows the plan.</p></div><div class="card"><div class="card-head"><span class="card-emoji">🔁</span><div><div class="card-title">Refine</div><div class="card-sub">Adjust</div></div></div><p style="margin:0">Change the plan if the situation changes, and tell everyone. Keep supervising until you execute.</p></div></div>
+    <div class="card-row"><div class="card"><div class="card-head"><span class="card-emoji">🎭</span><div><div class="card-title"><span class="term" data-t="rehearsal">Rehearse</span></div><div class="card-sub">Practice the plan</div></div></div><p style="margin:0">A rehearsal finds gaps and builds shared understanding. Common types: confirmation brief, back-brief, support rehearsal, combined arms rehearsal, and battle drill or SOP rehearsal.</p></div><div class="card"><div class="card-head"><span class="card-emoji">🔎</span><div><div class="card-title">Inspect</div><div class="card-sub">Check readiness</div></div></div><p style="margin:0">Leaders run pre-combat checks (<span class="term" data-t="pcc">PCC</span>) and pre-combat inspections (PCI): weapons, radios, gear, water, ammunition, and whether every Soldier knows the plan.</p></div><div class="card"><div class="card-head"><span class="card-emoji">🔁</span><div><div class="card-title">Refine</div><div class="card-sub">Adjust</div></div></div><p style="margin:0">Change the plan if the situation changes, and tell everyone. Keep supervising until you execute.</p></div></div>
     <div class="fact-card"><span class="fact-card-emoji">📝</span><span class="fact-card-text"><strong>Rehearsal techniques.</strong> You can rehearse full-dress (the whole unit with equipment), reduced-force (key leaders only), or on a terrain model, sketch map, map, or radio network. Use the most realistic one your time allows.</span></div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="s58-score"></span></div><div class="tb" id="s58-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="intent">Commander’s intent</span><span class="term" data-t="opord">OPORD</span><span class="term" data-t="rehearsal">Rehearsal</span><span class="term" data-t="pcc">PCC / PCI</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s14')"><span class="tj-label">&larr; Back</span><span class="tj-title">🚀 Steps 1–4</span></button><button class="tab-jump-btn next" onclick="goToTab('ex')"><span class="tj-label">Next &rarr;</span><span class="tj-title">🧩 Worked Example</span></button></div>
   </div>
   <div class="tab-content" id="tab-ex">
 
     <h2>Worked example — a squad recon patrol</h2>
+    <div class="obj"><b>You will be able to</b><ul><li>Walk through a worked timeline.</li><li>Apply the rule to a real clock.</li></ul></div>
     <p class="lede">This is a sample timeline for illustration. Your times, mission, and details will be different.</p>
-    <div class="analogy">📋 <strong>The mission:</strong> "1st Squad conducts a reconnaissance patrol NLT 0600 at OBJ RAVEN in order to confirm enemy strength prior to the platoon's assault." The squad must leave at 0400 to get there in time. The squad leader gets the platoon order at 1800.</div>
+    <div class="analogy">📋 <strong>The mission:</strong> "1st Squad conducts a <span class="term" data-t="recon">reconnaissance</span> patrol NLT 0600 at OBJ RAVEN in order to confirm enemy strength prior to the platoon's assault." The squad must leave at 0400 to get there in time. The squad leader gets the platoon order at 1800.</div>
     <h3>The time plan</h3>
     <p>From 1800 to 0400 is 10 hours. One third is about 3 hours 20 minutes. The squad leader aims to issue the order by 2100, which uses 3 hours, and leaves 7 hours for the squad.</p>
-    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Time</th><th>Step</th><th>What happens</th></tr></thead><tbody><tr><td>1800</td><td>1. Receive the mission</td><td>Reads the platoon order. Task: recon OBJ RAVEN. Purpose: confirm enemy strength. Works the clock backward from 0400.</td></tr><tr><td>1815</td><td>2. Warning order</td><td>Tells the squad the mission, the OPORD time (2100), rehearsal time, and departure (0400). Team leaders start checking gear.</td></tr><tr><td>1830</td><td>3. Tentative plan</td><td>Runs METT-TC. Picks a route and an observation position. Notes the risks and how to react.</td></tr><tr><td>1900</td><td>4. Initiate movement</td><td>Sends a team to pull batteries, radios, and ammunition, and to move the squad to the assembly area.</td></tr><tr><td>1930</td><td>5. Reconnaissance</td><td>Does a map recon of the route and the approach. Studies the terrain features around the objective.</td></tr><tr><td>2030</td><td>6. Complete the plan</td><td>Adjusts the route after the map recon. Prepares a sketch for the brief.</td></tr><tr><td>2100</td><td>7. Issue the order</td><td>Briefs the five-paragraph OPORD at a sand table. Has team leaders back-brief their tasks.</td></tr><tr><td>2130–0330</td><td>8. Supervise and refine</td><td>Runs a rehearsal, then PCCs and PCIs. Makes updates. Squad rests.</td></tr><tr><td>0400</td><td>Execute</td><td>The squad departs.</td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>Time</th><th>Step</th><th>What happens</th></tr></thead><tbody><tr><td>1800</td><td>1. Receive the mission</td><td>Reads the platoon order. Task: recon OBJ RAVEN. Purpose: confirm enemy strength. Works the clock backward from 0400.</td></tr><tr><td>1815</td><td>2. <span class="term" data-t="warnord">Warning order</span></td><td>Tells the squad the mission, the <span class="term" data-t="opord">OPORD</span> time (2100), <span class="term" data-t="rehearsal">rehearsal</span> time, and departure (0400). Team leaders start checking gear.</td></tr><tr><td>1830</td><td>3. Tentative plan</td><td>Runs <span class="term" data-t="metttc">METT-TC</span>. Picks a route and an observation position. Notes the risks and how to react.</td></tr><tr><td>1900</td><td>4. Initiate movement</td><td>Sends a team to pull batteries, radios, and ammunition, and to move the squad to the assembly area.</td></tr><tr><td>1930</td><td>5. Reconnaissance</td><td>Does a map recon of the route and the approach. Studies the terrain features around the objective.</td></tr><tr><td>2030</td><td>6. Complete the plan</td><td>Adjusts the route after the map recon. Prepares a sketch for the brief.</td></tr><tr><td>2100</td><td>7. Issue the order</td><td>Briefs the five-paragraph OPORD at a sand table. Has team leaders back-brief their tasks.</td></tr><tr><td>2130–0330</td><td>8. Supervise and refine</td><td>Runs a rehearsal, then PCCs and PCIs. Makes updates. Squad rests.</td></tr><tr><td>0400</td><td>Execute</td><td>The squad departs.</td></tr></tbody></table></div>
     <div class="fact-card"><span class="fact-card-emoji">💡</span><span class="fact-card-text"><strong>What to notice.</strong> The warning order goes out 15 minutes after the mission arrives. Movement starts before the plan is final. The order is issued with 7 hours left, so the squad has time to rehearse and rest.</span></div>
 
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="ex-score"></span></div><div class="tb" id="ex-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="recon">Reconnaissance</span><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="opord">OPORD</span><span class="term" data-t="rehearsal">Rehearsal</span><span class="term" data-t="metttc">METT-TC</span></div>
     <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('s58')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Steps 5–8</span></button><button class="tab-jump-btn next" onclick="goToTab('vs')"><span class="tj-label">Next &rarr;</span><span class="tj-title">⚖️ TLP vs MDMP</span></button></div>
   </div>
   <div class="tab-content" id="tab-vs">
 
     <h2>TLP and MDMP — how they compare</h2>
-    <p class="lede">Both help a leader plan. TLP is built for a small unit with no staff. MDMP is built for a commander with a staff.</p>
+    <div class="obj"><b>You will be able to</b><ul><li>Say who uses TLP and who uses MDMP.</li><li>Say where the MDMP steps live inside TLP.</li></ul></div>
+    <p class="lede">Both help a leader plan. <span class="term" data-t="tlp">TLP</span> is built for a small unit with no staff. MDMP is built for a commander with a staff.</p>
     <div class="tbl-wrap"><table class="compare"><thead><tr><th></th><th>TLP</th><th>MDMP</th></tr></thead><tbody><tr><td>Who uses it</td><td>Small-unit leaders, typically company and below</td><td>Commanders with a staff, typically battalion and above</td></tr><tr><td>Who does the thinking</td><td>The leader, with input from key subordinates</td><td>The commander directs; the staff runs the process</td></tr><tr><td>Number of steps</td><td>8</td><td>7</td></tr><tr><td>Speed</td><td>Fast and flexible</td><td>More detailed and formal</td></tr><tr><td>Main output</td><td>A rehearsed unit that understands the order</td><td>A plan or order for subordinate units</td></tr></tbody></table></div>
     <h3>Where the MDMP steps live inside TLP</h3>
-    <div class="tbl-wrap"><table class="compare"><thead><tr><th>MDMP step</th><th>Where it appears in TLP</th></tr></thead><tbody><tr><td>1. Receipt of mission</td><td>TLP 1 (Receive the mission) and TLP 2 (Warning order)</td></tr><tr><td>2. Mission analysis</td><td>TLP 3, especially METT-TC</td></tr><tr><td>3–6. COA development, analysis, comparison, approval</td><td>TLP 3, done by the leader in a shorter form</td></tr><tr><td>7. Orders production</td><td>TLP 6 (Complete the plan) and TLP 7 (Issue the order)</td></tr></tbody></table></div>
+    <div class="tbl-wrap"><table class="compare"><thead><tr><th>MDMP step</th><th>Where it appears in TLP</th></tr></thead><tbody><tr><td>1. Receipt of mission</td><td>TLP 1 (Receive the mission) and TLP 2 (<span class="term" data-t="warnord">Warning order</span>)</td></tr><tr><td>2. Mission analysis</td><td>TLP 3, especially <span class="term" data-t="metttc">METT-TC</span></td></tr><tr><td>3–6. COA development, analysis, comparison, approval</td><td>TLP 3, done by the leader in a shorter form</td></tr><tr><td>7. Orders production</td><td>TLP 6 (Complete the plan) and TLP 7 (Issue the order)</td></tr></tbody></table></div>
     <div class="fact-card"><span class="fact-card-emoji">🔗</span><span class="fact-card-text"><strong>Why this matters.</strong> If you understand the MDMP, TLP feels familiar. If you know TLP, you already do a small version of the MDMP whenever you plan.</span></div>
     <div class="tryit"><strong>▶ Next:</strong> read <a href="../mdmp-guide/" style="color:inherit"><em>MDMP Explained</em></a>, then try the <a href="../mdmp/" style="color:inherit"><em>MDMP Planner</em></a>. For movement, see <a href="../foom-guide/" style="color:inherit"><em>FOOM Explained</em></a>. For battle drills, see <a href="../battle-drills-guide/" style="color:inherit"><em>Battle Drills Explained</em></a>.</div>
     <div class="fact-card"><span class="fact-card-emoji">📚</span><span class="fact-card-text"><strong>Reference.</strong> ADP 5-0, <em>The Operations Process</em>, and FM 5-0, <em>Planning and Orders Production</em> (2022). Use your class slides and instructor as the authority.</span></div>
 
-    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('ex')"><span class="tj-label">&larr; Back</span><span class="tj-title">🧩 Worked Example</span></button></div>
+    
+    <div class="chk"><div class="th"><span>Check yourself</span><span id="vs-score"></span></div><div class="tb" id="vs-q"></div></div>
+    
+    <div class="kt"><span class="term" data-t="tlp">TLP</span><span class="term" data-t="warnord">Warning order</span><span class="term" data-t="metttc">METT-TC</span></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('ex')"><span class="tj-label">&larr; Back</span><span class="tj-title">🧩 Worked Example</span></button><button class="tab-jump-btn next" onclick="goToTab('chk')"><span class="tj-label">Next &rarr;</span><span class="tj-title">✅ Checkpoint</span></button></div></div>
+  <div class="tab-content" id="tab-chk">
+    <h2>Checkpoint</h2>
+    <p class="lede">Mixed questions from the whole guide. One try each. You see what you missed and where to review. Your best score is saved on this device.</p>
+    <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+    <div class="pn"><button class="pri" onclick="Check.start()">Start / retake</button></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('vs')"><span class="tj-label">&larr; Back</span><span class="tj-title">⚖️ TLP vs MDMP</span></button><button class="tab-jump-btn next" onclick="goToTab('gl')"><span class="tj-label">Next &rarr;</span><span class="tj-title">📖 Glossary</span></button></div>
+  </div>
+  <div class="tab-content" id="tab-gl">
+    <h2>Glossary</h2>
+    <div class="gl"><input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()"><div id="gllist"></div></div>
+    <div class="tab-jump"><button class="tab-jump-btn prev" onclick="goToTab('chk')"><span class="tj-label">&larr; Back</span><span class="tj-title">✅ Checkpoint</span></button></div>
   </div>
 </div>
 
@@ -207,6 +330,55 @@ function goToTab(id){
   document.querySelector('.tab-nav')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function switchTab(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+</script>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<script>
+(function(){
+/* E-WIT retrofit overlay: adds objectives, check questions, checkpoint, glossary and progress to an existing tab guide */
+const $=id=>document.getElementById(id);
+let KEY,SAVE,Q,CKQ,GL,TABS;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function tabBtn(id){return document.querySelector('.tab-btn[onclick*="\''+id+'\'"]');}
+function go(id){goToTab(id);}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();TABS.forEach(t=>renderQs(t));updateProgress();}
+function chapDone(t){return Q[t].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){let n=0;TABS.forEach(t=>{const d=chapDone(t);if(d)n++;const b=tabBtn(t);if(b)b.classList.toggle('done',d);const s=$(t+'-score');if(s){const T=Q[t].length,k=Q[t].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+T+' answered correctly';}});
+ const cb=tabBtn('chk');if(cb)cb.classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/TABS.length*100)+'%';$('progtxt').textContent=n+' of '+TABS.length+' sections complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));$('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+ if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+ else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+ return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(t){const box=$(t+'-q');if(!box)return;box.innerHTML=Q[t].map(q=>qHtml(q,'q-','ch')).join('');Q[t].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+ if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+ else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+ fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+ const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v))return;const ok=Math.abs(v-q.a)<=q.tol;
+ if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+ if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+ else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in this section, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+ if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();const chs={};miss.forEach(q=>chs[q.ch]=1);
+ $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+(TABNAMES[c]||c)+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+let TABNAMES={};
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+ Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;TABS=Object.keys(Q);TABNAMES=GUIDE.names||{};Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+ TABS.forEach(t=>renderQs(t));Gloss.render();updateProgress();}
+
+const GUIDE={"key": "tlp", "Q": {"big": [{"t": "num", "q": "How many steps are in TLP?", "a": 8, "tol": 0.01, "u": "steps", "ex": "Receive the mission, issue a warning order, make a tentative plan, initiate movement, conduct reconnaissance, complete the plan, issue the order, supervise and refine.", "id": "tlp-big-1"}, {"t": "mc", "q": "What is the second step?", "o": ["Issue a warning order", "Make a tentative plan", "Conduct reconnaissance", "Issue the order"], "a": 0, "ex": "Get your team moving early with a heads-up.", "id": "tlp-big-2"}, {"t": "num", "q": "You have 12 hours before you move. About how many hours should you use for your own planning?", "a": 4, "tol": 0.1, "u": "hours", "ex": "One third of 12 is 4, leaving at least 8 for subordinates.", "id": "tlp-big-3"}, {"t": "mc", "q": "Who uses TLP?", "o": ["Leaders who plan without a dedicated staff, typically company level and below", "Division staffs", "Only commanders", "Only NCOs"], "a": 0, "ex": "Battalion and higher use the MDMP.", "id": "tlp-big-4"}], "s14": [{"t": "mc", "q": "What should you do in step 1 to find your timeline?", "o": ["Work the clock backward from the time you must execute", "Wait for orders", "Plan forward from now", "Skip it"], "a": 0, "ex": "List what has to happen before then.", "id": "tlp-s14-1"}, {"t": "mc", "q": "When do you send the warning order?", "o": ["As soon as you have something useful to say", "After the plan is perfect", "At the objective", "Never"], "a": 0, "ex": "A short early WARNORD lets your team start preparing.", "id": "tlp-s14-2"}, {"t": "mc", "q": "What does METT-TC stand for?", "o": ["Mission, Enemy, Terrain and weather, Troops and support, Time available, Civil considerations", "Mission, Equipment, Time, Terrain, Communications", "Move, Engage, Track, Target, Control", "Mission, Enemy, Time, Troops, Comms"], "a": 0, "ex": "You may see METT-TC(I) with informational considerations added.", "id": "tlp-s14-3"}, {"t": "mc", "q": "What is step 4?", "o": ["Initiate movement", "Make a tentative plan", "Issue the order", "Supervise"], "a": 0, "ex": "Start anything that cannot wait for the finished plan.", "id": "tlp-s14-4"}], "s58": [{"t": "mc", "q": "In step 5, which recon is best when the situation allows?", "o": ["A ground recon", "A map recon", "Neither", "A radio recon"], "a": 0, "ex": "If it does not, do a map recon.", "id": "tlp-s58-1"}, {"t": "mc", "q": "What is the format of the order in step 7?", "o": ["Five paragraphs: Situation, Mission, Execution, Sustainment, Command and Signal", "Three paragraphs", "A sketch only", "A matrix"], "a": 0, "ex": "Brief it where your team can see the terrain or a model.", "id": "tlp-s58-2"}, {"t": "mc", "q": "What are the three parts of step 8?", "o": ["Rehearse, inspect, refine", "Plan, brief, move", "Observe, orient, act", "Alert, assemble, depart"], "a": 0, "ex": "Keep supervising until you execute.", "id": "tlp-s58-3"}, {"t": "mc", "q": "What are PCC and PCI?", "o": ["Pre-combat checks and pre-combat inspections", "Patrol control and checks", "Plan check and issue", "Post-combat checks"], "a": 0, "ex": "Weapons, radios, gear, water, ammunition, and whether every Soldier knows the plan.", "id": "tlp-s58-4"}], "ex": [{"t": "num", "q": "The order comes at 1800 and the squad must leave at 0400. How many hours is that?", "a": 10, "tol": 0.1, "u": "hours", "ex": "From 1800 to 0400 is 10 hours.", "id": "tlp-ex-1"}, {"t": "num", "q": "By the one-third rule, about how many hours for the leader’s own planning out of those 10? (one decimal)", "a": 3.3, "tol": 0.1, "u": "hours", "ex": "10 ÷ 3 = 3.3 hours.", "id": "tlp-ex-2"}, {"t": "num", "q": "In the example the order is issued at 2100 and the squad departs at 0400. How many hours remain for rehearsal and rest?", "a": 7, "tol": 0.1, "u": "hours", "ex": "2100 to 0400 is 7 hours, so the squad has time to rehearse and rest.", "id": "tlp-ex-3"}, {"t": "mc", "q": "What is the task in the example mission?", "o": ["A reconnaissance patrol to confirm enemy strength before the platoon’s assault", "An ambush", "A defense", "A raid"], "a": 0, "ex": "The squad must leave at 0400 to reach OBJ RAVEN by 0600.", "id": "tlp-ex-4"}], "vs": [{"t": "mc", "q": "Which process has 8 steps?", "o": ["TLP", "MDMP", "Both", "Neither"], "a": 0, "ex": "TLP has 8 steps and the MDMP has 7.", "id": "tlp-vs-1"}, {"t": "mc", "q": "Who runs the MDMP?", "o": ["The staff, directed by the commander", "A single leader", "A squad leader", "No one"], "a": 0, "ex": "TLP is for small-unit leaders with no staff.", "id": "tlp-vs-2"}, {"t": "mc", "q": "MDMP mission analysis is found in which TLP step?", "o": ["TLP 3, especially METT-TC", "TLP 1", "TLP 5", "TLP 8"], "a": 0, "ex": "The leader does it in a shorter form.", "id": "tlp-vs-3"}, {"t": "mc", "q": "MDMP orders production appears in which TLP steps?", "o": ["TLP 6 (complete the plan) and TLP 7 (issue the order)", "TLP 1 and 2", "TLP 4 and 5", "TLP 8 only"], "a": 0, "ex": "MDMP steps 3 to 6 are done by the leader inside TLP 3.", "id": "tlp-vs-4"}]}, "CKQ": [{"t": "mc", "q": "TLP is for:", "o": ["Small-unit leaders without a staff", "Brigade staffs", "Only sergeants", "Only officers"], "a": 0, "ex": "Battalion and higher use the MDMP.", "id": "tlp-ck-1", "ch": "big"}, {"t": "mc", "q": "TLP steps are:", "o": ["A loop that overlaps, not a strict line", "Strictly sequential", "Optional", "Only for rehearsals"], "a": 0, "ex": "You often start step 4 before finishing step 3.", "id": "tlp-ck-2", "ch": "big"}, {"t": "num", "q": "With 6 hours available, how many hours for your own planning by the one-third rule?", "a": 2, "tol": 0.1, "u": "hours", "ex": "6 ÷ 3 = 2.", "id": "tlp-ck-3", "ch": "big"}, {"t": "mc", "q": "Which step starts movement that cannot wait?", "o": ["Step 4", "Step 2", "Step 6", "Step 8"], "a": 0, "ex": "Initiate movement.", "id": "tlp-ck-4", "ch": "s14"}, {"t": "mc", "q": "The T in METT-TC for terrain is read with:", "o": ["OAKOC", "TLP", "MDMP", "OPORD"], "a": 0, "ex": "See OAKOC Explained.", "id": "tlp-ck-5", "ch": "s14"}, {"t": "mc", "q": "What does the commander’s intent tell you?", "o": ["The purpose and desired end state", "The route", "The time hack only", "The enemy plan"], "a": 0, "ex": "You use it when the plan no longer fits.", "id": "tlp-ck-6", "ch": "s14"}, {"t": "mc", "q": "Step 6 is:", "o": ["Complete the plan", "Issue the order", "Reconnaissance", "Rehearsal"], "a": 0, "ex": "Update the tentative plan with what you learned.", "id": "tlp-ck-7", "ch": "s58"}, {"t": "mc", "q": "Which is a rehearsal type?", "o": ["Back-brief", "Radio check", "Map update", "Weapon zero"], "a": 0, "ex": "Others are confirmation brief, support rehearsal, combined arms rehearsal, and battle drill or SOP rehearsal.", "id": "tlp-ck-8", "ch": "s58"}, {"t": "mc", "q": "Step 8 never really ends because:", "o": ["You keep supervising until you execute", "Rehearsals take forever", "The order changes", "The enemy attacks"], "a": 0, "ex": "It is a loop.", "id": "tlp-ck-9", "ch": "s58"}, {"t": "mc", "q": "Why work the clock backward?", "o": ["To fit every task before the execution time", "To plan faster", "To avoid the order", "For fun"], "a": 0, "ex": "It is the time plan.", "id": "tlp-ck-10", "ch": "ex"}, {"t": "mc", "q": "The leader must leave at 0400 and gets the order at 1800. The time available is:", "o": ["10 hours", "6 hours", "14 hours", "8 hours"], "a": 0, "ex": "From 1800 to 0400.", "id": "tlp-ck-11", "ch": "ex"}, {"t": "mc", "q": "The second step is:", "o": ["Issue a warning order", "Issue the order", "Supervise", "Recon"], "a": 0, "ex": "Send it as soon as you have something useful to say.", "id": "tlp-ck-12", "ch": "big"}], "GL": {"tlp": ["TLP", "Troop leading procedures: the eight steps a small-unit leader uses to go from a mission to being ready."], "warnord": ["Warning order", "An early notice of an upcoming operation so units can start preparing."], "metttc": ["METT-TC", "Mission, Enemy, Terrain and weather, Troops and support, Time available, Civil considerations."], "intent": ["Commander’s intent", "A clear, short statement of the purpose of the operation and desired end state."], "opord": ["OPORD", "Operation order: the five-paragraph order that tells subordinates what to do."], "rehearsal": ["Rehearsal", "Practice of the plan to find gaps and build shared understanding."], "pcc": ["PCC / PCI", "Pre-combat checks and pre-combat inspections."], "recon": ["Reconnaissance", "A mission to gather information about the ground and the enemy."]}, "names": {"big": "📋 The Big Picture", "s14": "🚀 Steps 1–4", "s58": "✅ Steps 5–8", "ex": "🧩 Worked Example", "vs": "⚖️ TLP vs MDMP"}};
+window.Qz=Qz;window.Check=Check;window.Sheet=Sheet;window.Gloss=Gloss;window.go=go;window.resetProgress=resetProgress;
+boot();
+})();
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
