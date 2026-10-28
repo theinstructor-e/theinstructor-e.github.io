@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Operation Order Explained — Simple Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
+  --border:#E8E6DF;--border-hover:#B4B2A9;
+  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
+  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
+  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
+  --toggle-bg:rgba(255,255,255,0.15);
+  --accent:#1499b8;--accent-soft:#dcf1f6;
+}
+[data-theme="dark"]{
+  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
+  --border:#3a3830;--border-hover:#5a5850;
+  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
+  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
+  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
+  --toggle-bg:rgba(255,255,255,0.08);
+  --accent:#2ab8dc;--accent-soft:#0a2a32;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
+.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
+.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
+.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
+.hero h1 span{color:var(--hero-eyebrow)}
+.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
+.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
+.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+
+.section-wrap{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3.5rem}
+h2{font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;margin:2rem 0 .5rem}
+h2:first-child{margin-top:0}
+.lede{font-size:.95rem;color:var(--text-secondary);margin-bottom:1rem}
+
+.fact-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;display:flex;gap:10px;align-items:flex-start;margin-bottom:.55rem}
+.fact-card-emoji{font-size:17px;flex-shrink:0;margin-top:1px}
+.fact-card-text{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.fact-card-text strong{color:var(--text-primary)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:.5rem}
+.cat-chip{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .75rem;font-size:12.5px}
+.cat-chip b{display:block;color:var(--text-primary);font-size:12.5px;margin-bottom:2px}
+.cat-chip span{color:var(--text-secondary);font-size:11.5px}
+
+.cta{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:14px;padding:1.3rem 1.5rem;text-align:center;margin-top:1.8rem}
+.cta p{font-size:13.5px;color:var(--text-secondary);margin-bottom:.9rem}
+.cta a{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;
+  padding:.7rem 1.6rem;border-radius:999px;text-decoration:none}
+.cta a:hover{opacity:.9}
+
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
+  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
+  <p class="hero-eyebrow">Interactive Textbook</p>
+  <h1>The Operation Order <span>Explained</span></h1>
+  <p class="hero-sub">The five paragraphs of the order, what goes in each, how to write a mission statement and a commander&rsquo;s intent, how to plan the timeline, and how to deliver it. Six chapters with hands-on widgets.</p>
+</header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>New to planning? Read <a href="../army/tlp-guide/">Troop Leading Procedures Explained</a> first. Staff planning is in <a href="../army/mdmp-guide/">MDMP Explained</a>.</div><div><b>Then practice in the tools</b><a href="../opord/">OPORD Builder</a> &middot; <a href="../tlp/">TLP Trainer</a> &middot; <a href="../wtbd/">WTBD &amp; FOOM</a>. About 35 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<section class="ch on" id="ch1">
+  <h2>1 &middot; What an Order Is</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Tell a warning order, an OPORD, and a FRAGORD apart.</li><li>Give the five paragraphs of the order in sequence.</li><li>Say why a standard format exists.</li></ul></div>
+  <p>An <span class="term" data-t="opord">operation order (OPORD)</span> tells subordinates what the unit will do, why, and how they fit in. It is written to be understood quickly, by tired people, in the same place every time. Because every order uses the same <b>five paragraphs</b>, a Soldier who has read one knows where to look for the mission, the timeline, or the radio plan in the next.</p>
+  <table class="t"><tr><th>Paragraph</th><th>Name</th><th>Answers</th></tr>
+   <tr><td>1</td><td>Situation</td><td>What is going on? Enemy, friendly, and attachments.</td></tr>
+   <tr><td>2</td><td>Mission</td><td>What must we do, and why? The five Ws.</td></tr>
+   <tr><td>3</td><td>Execution</td><td>How will we do it? Intent, concept, tasks, coordinating instructions.</td></tr>
+   <tr><td>4</td><td>Sustainment</td><td>What supports us? Logistics, personnel, medical.</td></tr>
+   <tr><td>5</td><td>Command and Signal</td><td>Who is in charge, and how do we communicate?</td></tr></table>
+  <p>A memory aid is <b>SMESC</b>: Situation, Mission, Execution, Sustainment, Command and Signal.</p>
+  <h3>Three kinds of order</h3>
+  <ul><li><b><span class="term" data-t="warnord">Warning order (WARNORD)</span>:</b> an early heads-up so units can start preparing. It is short and goes out as soon as there is something useful to say.</li><li><b>OPORD:</b> the full five-paragraph order.</li><li><b><span class="term" data-t="fragord">Fragmentary order (FRAGORD)</span>:</b> a quick change to an order already in effect. It gives only what has changed.</li></ul>
+  <p>Squad and platoon leaders write the order during troop leading procedures (see the TLP guide, steps 2, 6, and 7). Battalion and higher staffs produce it at the end of the MDMP. The format in this guide is the small-unit version. Higher echelons use the same five paragraphs with more subparagraphs and annexes.</p><div class="try"><div class="th">Try it: which kind of order?</div><div class="tb"><div id="h1q"></div><div class="fb ok" id="h1f" style="display:none;margin-top:6px"></div><div class="chips" style="margin-top:6px"><button class="chip" onclick="Ot.new()">Next</button></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>A 17E often writes the signal and spectrum pieces of someone else&rsquo;s order, in paragraph 5 and in an annex. You need to know where your part fits so it can be found in the dark.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>An OPORD has five paragraphs: Situation, Mission, Execution, Sustainment, Command and Signal (SMESC).</li><li>A WARNORD gives early notice. An OPORD is the full order. A FRAGORD changes an order already in effect.</li><li>A standard format means everyone knows where to find each thing.</li></ul></div>
+  <div class="kt"><span class="term" data-t="opord">OPORD</span><span class="term" data-t="warnord">WARNORD</span><span class="term" data-t="fragord">FRAGORD</span><span class="term" data-t="smesc">SMESC</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: Situation &rarr;</button></div>
+</section>
+<section class="ch" id="ch2">
+  <h2>2 &middot; Paragraph 1: Situation</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Name the parts of paragraph 1.</li><li>Say what &ldquo;most likely&rdquo; and &ldquo;most dangerous&rdquo; mean for the enemy.</li><li>Put a statement in the right paragraph.</li></ul></div>
+  <p>Paragraph 1 gives the picture: who is out there, who is with you, and what is attached.</p>
+  <ul><li><b>a. Enemy forces.</b> Composition, disposition, and strength; capabilities; recent activity; and the enemy&rsquo;s <span class="term" data-t="mlcoa">most likely</span> and <span class="term" data-t="mdcoa">most dangerous</span> courses of action. Weather and terrain are often summarized here.</li><li><b>b. Friendly forces.</b> The higher unit&rsquo;s mission and intent (one and two levels up), the units on your left and right, and units in support.</li><li><b>c. Attachments and detachments.</b> What was added to or taken from your unit for this operation.</li><li><b>d. Civil considerations</b> (when it matters): civilians, key structures, and local conditions.</li></ul>
+  <p>Say what you know and what you do not. Mark an estimate as an estimate. Paragraph 1 is not where you say what <i>you</i> will do. That starts in paragraph 2.</p>
+  <h3>Which paragraph?</h3>
+  <p>The commonest mistake with order format is putting a thing in the wrong paragraph. Try sorting these.</p><div class="try"><div class="th">Try it: which paragraph?</div><div class="tb"><div id="i1q"></div><div class="fb ok" id="i1f" style="display:none;margin-top:6px"></div><div class="chips" style="margin-top:6px"><button class="chip" onclick="Pg.new()">Next</button></div><div class="note">Choose 1 Situation, 2 Mission, 3 Execution, 4 Sustainment, or 5 Command and Signal.</div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Your spectrum picture, what the enemy emits and what friendly units depend on, is a paragraph 1 and annex contribution. It tells the commander which of the enemy&rsquo;s abilities are real.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Paragraph 1 covers the enemy, friendly forces, attachments and detachments, and civil considerations.</li><li>The enemy&rsquo;s most likely course of action is what you expect. The most dangerous is what hurts you most.</li><li>What you will do starts in paragraph 2, never in paragraph 1.</li></ul></div>
+  <div class="kt"><span class="term" data-t="mlcoa">most likely COA</span><span class="term" data-t="mdcoa">most dangerous COA</span><span class="term" data-t="attach">attachment</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: Mission &rarr;</button></div>
+</section>
+<section class="ch" id="ch3">
+  <h2>3 &middot; Paragraph 2: Mission</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Write a mission statement with all five Ws.</li><li>Spot what is missing from a faulty statement.</li><li>Say why the mission has no &ldquo;how&rdquo;.</li></ul></div>
+  <p>The mission is one sentence, and it answers five questions:</p>
+  <table class="t"><tr><th>W</th><th>Answers</th><th>Example</th></tr>
+   <tr><td>Who</td><td>The unit</td><td>1st Squad, 2nd Platoon</td></tr>
+   <tr><td>What</td><td>The task</td><td>conducts a reconnaissance patrol</td></tr>
+   <tr><td>When</td><td>Time</td><td>NLT 0600 on 14 June</td></tr>
+   <tr><td>Where</td><td>Location</td><td>of OBJ RAVEN, vicinity grid 123456</td></tr>
+   <tr><td>Why</td><td>Purpose</td><td>to confirm enemy strength before the platoon&rsquo;s attack</td></tr></table>
+  <p>The mission says <b>what</b> and <b>why</b>, not <b>how</b>. The &ldquo;how&rdquo; is paragraph 3. The purpose matters most: if the plan falls apart, subordinates who know the <i>why</i> can still do something useful.</p>
+  <p>The same mission statement appears in the WARNORD (once it is known) and in paragraph 2 of the OPORD.</p><div class="try"><div class="th">Try it: what is wrong with this mission?</div><div class="tb"><div id="j1q"></div><div class="fb ok" id="j1f" style="display:none;margin-top:6px"></div><div class="chips" style="margin-top:6px"><button class="chip" onclick="Ms.new()">Next</button></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>A mission with a clear &ldquo;why&rdquo; also tells you what the spectrum is for: protect a link, deny one, or watch one. Without it you cannot choose your EW task.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>A mission has five Ws: who, what, when, where, and why.</li><li>The mission states the task and the purpose, not the method.</li><li>The purpose lets subordinates act when the plan fails.</li></ul></div>
+  <div class="kt"><span class="term" data-t="mission">mission statement</span><span class="term" data-t="purpose">purpose</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Execution &rarr;</button></div>
+</section>
+<section class="ch" id="ch4">
+  <h2>4 &middot; Paragraph 3: Execution</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Write a commander&rsquo;s intent with purpose, key tasks, and end state.</li><li>Tell the intent from the concept of operations.</li><li>Name what goes in coordinating instructions.</li></ul></div>
+  <p>Paragraph 3 is the heart of the order. It says how the mission will be done.</p>
+  <ul><li><b>a. <span class="term" data-t="intent">Commander&rsquo;s intent</span>.</b> A short statement of the <b>purpose</b> of the operation, the <b>key tasks</b> that must be done, and the <b>end state</b> (the desired result). It is the part subordinates use when the plan no longer fits.</li><li><b>b. Concept of operations.</b> The scheme of maneuver and how the pieces fit: which element does what, in what order.</li><li><b>c. Tasks to subordinate units.</b> What each element must do.</li><li><b>d. Coordinating instructions.</b> Things that apply to everyone: timeline, <span class="term" data-t="ccir">CCIR</span>, rules of engagement, risk and safety, EEFI, and so on.</li></ul>
+  <p>The intent is not a restatement of the concept. If you could change the whole scheme of maneuver and the intent would still be true, it is a good intent.</p>
+  <h3>Sort it out</h3><div class="try"><div class="th">Try it: intent, concept, task, or coordinating instruction?</div><div class="tb"><div id="k1q"></div><div class="fb ok" id="k1f" style="display:none;margin-top:6px"></div><div class="chips" style="margin-top:6px"><button class="chip" onclick="Ex.new()">Next</button></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Your EW tasks sit here: which emitters to deny, which to protect, and when to go to EMCON. They belong in the concept and the tasks, backed by an annex if they are long.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>The intent gives purpose, key tasks, and end state. It outlives the plan.</li><li>The concept is the scheme of maneuver. Tasks say what each element does.</li><li>Coordinating instructions apply to everyone: timeline, CCIR, ROE, risk, EEFI.</li></ul></div>
+  <div class="kt"><span class="term" data-t="intent">commander&rsquo;s intent</span><span class="term" data-t="endstate">end state</span><span class="term" data-t="ccir">CCIR</span><span class="term" data-t="eefi">EEFI</span><span class="term" data-t="roe">ROE</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('ch5')">Next: Paragraphs 4 and 5 &rarr;</button></div>
+</section>
+<section class="ch" id="ch5">
+  <h2>5 &middot; Paragraphs 4 and 5: Sustainment, Command and Signal</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Say what goes in sustainment.</li><li>Say what goes in command and in signal.</li><li>Name the parts of a PACE plan.</li></ul></div>
+  <h3>4. Sustainment</h3>
+  <ul><li><b>a. Logistics:</b> supply (food, water, ammunition, fuel, batteries), transport, and maintenance.</li><li><b>b. Personnel:</b> casualty and prisoner handling.</li><li><b>c. Health service support:</b> medical plan, casualty collection, and MEDEVAC (see the 9-Line MEDEVAC &amp; TCCC guide).</li></ul>
+  <p>Batteries are logistics too. A radio that dies at the objective is a sustainment failure.</p>
+  <h3>5. Command and Signal</h3>
+  <ul><li><b>a. Command:</b> where the leader and key leaders will be, and the <b>succession of command</b>, who takes over if the leader goes down.</li><li><b>b. Signal:</b> the <span class="term" data-t="soi">SOI</span> (frequencies, call signs, and codes), the nets and who is on them, pyrotechnic and visual signals, challenge and password, and the <span class="term" data-t="pace">PACE plan</span>.</li></ul>
+  <p>A PACE plan names a <b>primary</b> way to communicate, an <b>alternate</b>, a <b>contingency</b>, and an <b>emergency</b>. A common set for a small unit: FM voice, then a backup net or data, then visual signals, then a runner or pre-set meeting point. It also lists what to do about jamming. Short EW and spectrum plans fit here, and longer ones go in an annex (the Signal annex or the cyber and EW annex).</p><div class="try"><div class="th">Try it: sustainment, command, or signal?</div><div class="tb"><div id="l1q"></div><div class="fb ok" id="l1f" style="display:none;margin-top:6px"></div><div class="chips" style="margin-top:6px"><button class="chip" onclick="Sc.new()">Next</button></div></div></div>
+  <div class="why"><b>Why a 17E cares</b>Paragraph 5b is where a 17E&rsquo;s fingerprints are on every order. A clear PACE plan and a jamming drill there is the difference between a net that holds and one that does not.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch5-score"></span></div><div class="tb" id="ch5-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Paragraph 4: logistics, personnel, and health service support. Batteries are logistics.</li><li>Paragraph 5: command (leader locations and succession) and signal (SOI, nets, PACE, signals).</li><li>Short EW and spectrum plans go in 5b. Long ones go in an annex.</li></ul></div>
+  <div class="kt"><span class="term" data-t="soi">SOI</span><span class="term" data-t="pace">PACE</span><span class="term" data-t="succession">succession of command</span></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="go('ch6')">Next: Delivering the order &rarr;</button></div>
+</section>
+<section class="ch" id="ch6">
+  <h2>6 &middot; Delivering the Order</h2>
+  <div class="obj"><b>You will be able to</b><ul><li>Plan the timeline backward from execution.</li><li>Say how to brief and how to confirm understanding.</li><li>Say how orders connect to TLP and MDMP.</li></ul></div>
+  <p>A good order delivered too late is a bad order. Work the clock backward from the time you must move.</p>
+  <div class="formula">leader planning time &le; total time &divide; 3     subordinate time &ge; total time &times; 2 &divide; 3</div>
+  <p>The one-third, two-thirds rule leaves two thirds of the time for subordinates to prepare, rehearse, and inspect. Time you spend perfecting the plan comes straight out of theirs.</p><div class="try"><div class="th">Try it: timeline calculator</div><div class="tb"><div class="ctl"><label>Mission received</label><div class="chips" id="m1a"></div></div>
+    <div class="ctl"><label>Departure</label><input type="range" id="m1b" min="2" max="36" value="10" oninput="Tl.calc()"><span class="v" id="m1bv"></span></div>
+    <div class="read" id="m1r"></div>
+    <div class="note">Hours after the mission is received until departure. Latest times assume the leader uses no more than one third.</div></div></div>
+  <h3>Giving the order</h3>
+  <ol><li><b>Orient everyone</b> to the ground with a terrain model, sketch, or map, so people can see what you describe.</li><li><b>Brief, do not just read.</b> Look at your team. Keep it short enough to remember: the leader may have a few minutes, and the team will hold it in their heads.</li><li><b>Ask for questions</b>, and ask some of your own.</li><li><b>Confirm understanding.</b> A back-brief has subordinates tell the plan back to you in their own words.</li><li><b>Rehearse.</b> Walk through it. Rehearsals find the gaps that reading never will.</li></ol>
+  <p>The commonest failure is an order that is complete but not understood. Check understanding more than you check format.</p>
+  <h3>How it fits</h3>
+  <p>In TLP, the order comes in steps 2 (WARNORD), 6 (complete the plan), and 7 (issue the order), then step 8 supervises and rehearses. In the MDMP, step 7 produces and issues the order after the commander approves a course of action.</p>
+  <a class="tool" href="../opord/"><b>Build one in the OPORD Builder &rarr;</b>Fill in the five paragraphs and watch the order assemble.</a>
+  <a class="tool" href="../army/tlp-guide/"><b>Back to Troop Leading Procedures Explained &rarr;</b>Where the order fits in the eight steps.</a>
+  <div class="why"><b>Why a 17E cares</b>A good plan that nobody understood gets no one home. Delivery is where the work you put into the order either pays off or does not.</div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch6-score"></span></div><div class="tb" id="ch6-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Work the clock backward. Leader planning uses at most one third of the time.</li><li>Brief with a terrain model, ask questions, confirm with a back-brief, and rehearse.</li><li>TLP issues the order in step 7. MDMP issues it in step 7 after COA approval.</li></ul></div>
+  <div class="kt"><span class="term" data-t="backbrief">back-brief</span><span class="term" data-t="rehearsal">rehearsal</span><span class="term" data-t="annex">annex</span></div>
+  <div class="pn"><button onclick="go('ch5')">&larr; Back</button><button class="pri" onclick="go('chk')">Take the checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch6')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>ATP 5-0.1, <i>Army Design Methodology</i> and the order formats it points to, and the plans and orders appendix of ATP 3-21.8, <i>Infantry Platoon and Squad</i> (small-unit order format).</li>
+   <li>ADP 5-0, <i>The Operations Process</i>, and ADP 6-0, <i>Mission Command</i>. Mission, commander&rsquo;s intent, and the five-paragraph order.</li>
+   <li>ATP 3-12.3, <i>Electromagnetic Warfare Techniques</i>. Where EW and spectrum tasks go in an order.</li>
+   <li><b>Notes.</b> This is the small-unit format taught in the course and used in the OPORD Builder. Higher headquarters use more subparagraphs and annexes. The widgets are practice items, and your class slides, instructor, and unit SOP are the authority. <b>Last verified:</b> October 5, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
+</div>
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">The Operation Order Explained &middot; Interactive textbook &middot; Companion to the OPORD Builder &middot; UNCLASSIFIED</div>
+<script>
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+function mkCls(box,fb,items,opts,state){return {s:state||{i:-1},new(){let k;do{k=Math.floor(Math.random()*items.length);}while(k===this.s.i&&items.length>1);this.s.i=k;$(box).innerHTML='<p style="font-size:14px;margin:0 0 6px"><b>'+items[k][0]+'</b></p><div class="chips">'+opts.map((o,j)=>'<button class="chip" onclick="'+this.name+'.pick('+j+')">'+o+'</button>').join('')+'</div>';$(fb).style.display='none';},
+ pick(j){const t=items[this.s.i],f=$(fb),ok=j===t[1];f.style.display='block';f.className='fb '+(ok?'ok':'no');f.innerHTML=(ok?'<b>Correct.</b> ':'<b>Not quite.</b> The answer is <b>'+opts[t[1]]+'</b>. ')+t[2];},items,opts};}
+const OT=['Warning order','OPORD','FRAGORD'];
+const Ot=mkCls('h1q','h1f',[['A short notice sent at once, so subordinates can start preparing for an operation that is coming.',0,'That is a warning order: early notice, short, sent as soon as there is something useful to say.'],['The full order, in five paragraphs, issued after the plan is complete.',1,'The OPORD is the full five-paragraph order.'],['At 0300 the objective moved. You send only what changed, to units already working from an order.',2,'A FRAGORD gives only what has changed from an order already in effect.'],['Your platoon leader tells the squads at 1500 to prepare for a patrol tomorrow, with the details to follow.',0,'Early notice with details to come is a warning order.'],['A one-line change to the line of departure time for an order issued yesterday.',2,'A small change to an order in effect is a fragmentary order.'],['The product that contains Situation, Mission, Execution, Sustainment, and Command and Signal.',1,'That is the OPORD.']],OT);Ot.name='Ot';
+const PG=['1 Situation','2 Mission','3 Execution','4 Sustainment','5 Command and Signal'];
+const Pg=mkCls('i1q','i1f',[['The enemy has been seen in squad strength with two machine guns on the hill.',0,'Enemy composition and disposition belong in paragraph 1a.'],['Third Platoon is on our right flank and will secure the bridge.',0,'Adjacent friendly units are paragraph 1b.'],['1st Squad conducts a reconnaissance patrol of OBJ RAVEN NLT 0600 to confirm enemy strength before the platoon attack.',1,'A who, what, when, where, and why sentence is the mission, paragraph 2.'],['The patrol will move in a wedge to the ORP, then 1st Fire Team will bound to the objective.',2,'How the unit will move is the concept, paragraph 3.'],['The end state is the enemy position located and the squad back inside friendly lines.',2,'End state belongs in the commander\u2019s intent, paragraph 3a.'],['Resupply of water and batteries will be at the ORP at 0200.',3,'Supply is logistics, paragraph 4a.'],['The medic will set the casualty collection point at the ORP. MEDEVAC follows the 9-line.',3,'Health service support is paragraph 4c.'],['If the squad leader is lost, the team leader of 1st Fire Team takes command.',4,'Succession of command is paragraph 5a.'],['Primary net: FM on channel 2. Alternate: channel 4. Contingency: pyrotechnics. Emergency: runner to the ORP.',4,'A PACE plan is signal, paragraph 5b.'],['A weather summary: moonless night, light rain, low cloud.',0,'Weather is part of the situation, paragraph 1.'],['Rules of engagement and the risk assessment apply to every element.',2,'These are coordinating instructions, paragraph 3d.'],['The platoon is attached a combat engineer team for this operation.',0,'Attachments are paragraph 1c.']],PG);Pg.name='Pg';
+const MF=['Missing who','Missing what','Missing when','Missing where','Missing why','Includes how, not just what','Good: all five Ws and no how'];
+const Ms=mkCls('j1q','j1f',[['Conducts a reconnaissance patrol of OBJ RAVEN, NLT 0600, to confirm enemy strength.',0,'No unit is named, so nobody knows who has the mission.'],['1st Squad at OBJ RAVEN NLT 0600 to confirm enemy strength.',1,'There is no task, so nobody knows what to do.'],['1st Squad conducts a reconnaissance patrol of OBJ RAVEN to confirm enemy strength.',2,'There is no time, so nobody knows when it must be done.'],['1st Squad conducts a reconnaissance patrol NLT 0600 to confirm enemy strength.',3,'There is no location, so nobody knows where.'],['1st Squad conducts a reconnaissance patrol of OBJ RAVEN NLT 0600.',4,'There is no purpose. The why is what lets subordinates adapt.'],['1st Squad conducts a reconnaissance patrol of OBJ RAVEN NLT 0600 by moving in a wedge along the creek, then bounding, to confirm enemy strength.',5,'The method (a wedge, along the creek, bounding) belongs in the concept of operations, paragraph 3.'],['1st Squad, 2nd Platoon, conducts a reconnaissance patrol of OBJ RAVEN, grid 123456, NLT 0600 on 14 June to confirm enemy strength before the platoon\u2019s attack.',6,'All five Ws are present and there is no method.']],MF);Ms.name='Ms';
+const EXO=['Commander\u2019s intent','Concept of operations','Task to a subordinate unit','Coordinating instruction'];
+const Ex=mkCls('k1q','k1f',[['The purpose is to confirm the enemy\u2019s strength so the platoon can attack on its own terms.',0,'Purpose is part of the intent.'],['The squad will move by file to the ORP, then bound as two fire teams to the objective.',1,'It is the scheme of maneuver.'],['1st Fire Team: provide overwatch from the ridgeline.',2,'It tells one element what to do.'],['Departure at 0400, return by 0900. Rules of engagement are on the card.',3,'Timeline and ROE apply to everyone: coordinating instructions.'],['End state: the enemy position located, the squad back in friendly lines, no casualties.',0,'The desired end state belongs in the intent.'],['Key task: locate the machine gun positions.',0,'A key task belongs in the intent.'],['CCIR: any sign of armor on the road.',3,'CCIR are listed in coordinating instructions.'],['2nd Fire Team: assault the north side of the objective after the support element lifts fire.',2,'It is a task for one element.']],EXO);Ex.name='Ex';
+const SC2=['4a Logistics','4b Personnel','4c Health service support','5a Command','5b Signal'];
+const Sc=mkCls('l1q','l1f',[['Spare batteries and water are resupplied at the ORP.',0,'Supplies are logistics.'],['Prisoners are collected at the ORP and sent to the platoon collection point.',1,'Prisoner handling is personnel.'],['The medic sets up the casualty collection point.',2,'Medical support is health service support.'],['The squad leader will be with the base-of-fire team.',3,'Leader locations are command.'],['Call sign changes at 0300. Challenge: \u201CHammer.\u201D Password: \u201CAnvil.\u201D',4,'Codes and call signs are signal.'],['Primary net on channel 2, alternate on channel 4, contingency pyrotechnics, emergency runner.',4,'A PACE plan is signal.'],['If the squad leader goes down, the 1st team leader takes over.',3,'Succession of command is part of command.'],['Ammunition: each Soldier carries the basic load and one extra magazine.',0,'Ammunition is logistics.']],SC2);Sc.name='Sc';
+function hhmm(m){m=((Math.round(m)%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+String(m%60).padStart(2,'0');}
+const Tl={t:18,set(v){this.t=+v;this.calc();},calc(){chips('m1a',[[14,'1400'],[18,'1800'],[21,'2100'],[6,'0600']],this.t,'Tl.set');const T=+$('m1b').value;$('m1bv').textContent=T+' h';const start=this.t*60,lead=T*60/3,sub=T*60*2/3;
+  read('m1r',[['Mission received',hhmm(start)],['Departure',hhmm(start+T*60)],['Leader may use at most',(lead/60).toFixed(1)+' h'],['Issue the OPORD by',hhmm(start+lead),'good'],['Subordinates get at least',(sub/60).toFixed(1)+' h',sub<240?'mid':'good']]);}};
+const Qd={
+ ch1:[{id:'o1a',t:'num',q:'How many paragraphs does the order have?',a:5,tol:0.01,u:'',ex:'Situation, Mission, Execution, Sustainment, and Command and Signal.'},
+  {id:'o1b',t:'mc',q:'Which paragraph says what the unit will do and why, in one sentence?',o:['2 Mission','1 Situation','3 Execution','5 Command and Signal'],a:0,ex:'The mission is paragraph 2, a single who-what-when-where-why sentence.'},
+  {id:'o1c',t:'mc',q:'You must change one detail of an order already in effect. What do you send?',o:['A FRAGORD','A new OPORD','A WARNORD','Nothing'],a:0,ex:'A fragmentary order gives only what has changed.'},
+  {id:'o1d',t:'mc',q:'What is the purpose of a warning order?',o:['Early notice so units can start preparing','The full plan','A change to an order in effect','A report to higher'],a:0,ex:'Send it as soon as there is something useful to say.'},
+  {id:'o1e',t:'mc',q:'What does SMESC stand for?',o:['Situation, Mission, Execution, Sustainment, Command and Signal','Safety, Movement, Enemy, Support, Control','Scout, Move, Engage, Secure, Consolidate','Situation, Method, Enemy, Signal, Command'],a:0,ex:'It is the order of the five paragraphs.'}],
+ ch2:[{id:'o2a',t:'mc',q:'Which is NOT part of paragraph 1?',o:['The scheme of maneuver','Enemy forces','Friendly forces','Attachments and detachments'],a:0,ex:'The scheme of maneuver is in paragraph 3.'},
+  {id:'o2b',t:'mc',q:'What is the enemy\u2019s most dangerous course of action?',o:['The one that would hurt you most','The one most likely to happen','The easiest for them','The one you prefer'],a:0,ex:'Most likely is what you expect. Most dangerous is what hurts you most.'},
+  {id:'o2c',t:'mc',q:'How many levels up should you give the higher unit\u2019s mission and intent?',o:['One and two levels up','None','Only your own','Three levels'],a:0,ex:'Subordinates need to understand the larger picture.'},
+  {id:'o2d',t:'mc',q:'A combat engineer team is added to your unit for the operation. Where is it listed?',o:['1c, attachments and detachments','2, mission','3a, intent','5a, command'],a:0,ex:'Attachments are in paragraph 1c.'},
+  {id:'o2e',t:'mc',q:'Why mark an estimate as an estimate?',o:['So leaders know how much to trust it','It is a rule only','It looks better','To save space'],a:0,ex:'Honest uncertainty helps subordinates plan.'}],
+ ch3:[{id:'o3a',t:'num',q:'How many Ws are in a mission statement?',a:5,tol:0.01,u:'',ex:'Who, what, when, where, and why.'},
+  {id:'o3b',t:'mc',q:'Which W matters most when the plan falls apart?',o:['Why','Who','When','Where'],a:0,ex:'The purpose lets subordinates adapt and still do something useful.'},
+  {id:'o3c',t:'mc',q:'Which belongs in the mission statement?',o:['The task and the purpose','The route and the formation','The ammunition load','The radio channel'],a:0,ex:'The method goes in paragraph 3.'},
+  {id:'o3d',t:'mc',q:'\u201C1st Squad conducts a reconnaissance patrol NLT 0600 to confirm enemy strength.\u201D What is missing?',o:['Where','Who','When','Why'],a:0,ex:'There is no location.'},
+  {id:'o3e',t:'mc',q:'Where does the mission statement appear?',o:['In paragraph 2 and in the WARNORD','Only in paragraph 5','Only in the annex','Nowhere'],a:0,ex:'It is the same sentence in both.'}],
+ ch4:[{id:'o4a',t:'mc',q:'What are the three parts of the commander\u2019s intent?',o:['Purpose, key tasks, and end state','Mission, enemy, and terrain','Who, what, and when','Route, timeline, and signal'],a:0,ex:'Together they give subordinates what they need when the plan changes.'},
+  {id:'o4b',t:'mc',q:'Which is a coordinating instruction?',o:['The timeline and the rules of engagement','The scheme of maneuver','The commander\u2019s intent','A task to 1st Squad'],a:0,ex:'Coordinating instructions apply to everyone.'},
+  {id:'o4c',t:'mc',q:'What test shows a good intent?',o:['It would still be true if the scheme of maneuver changed','It repeats the concept','It is very long','It lists every task'],a:0,ex:'Intent should outlive the plan.'},
+  {id:'o4d',t:'mc',q:'What does CCIR stand for?',o:['Commander\u2019s critical information requirements','Command and control information report','Combat communications and intelligence review','Critical control information rules'],a:0,ex:'It is information the commander needs in order to decide.'},
+  {id:'o4e',t:'mc',q:'Who gets tasks in paragraph 3c?',o:['Each subordinate element','Only the leader','The enemy','Higher headquarters'],a:0,ex:'It says what each element must do.'}],
+ ch5:[{id:'o5a',t:'mc',q:'Where do spare batteries go in the order?',o:['4a, logistics','5b, signal','2, mission','1c'],a:0,ex:'Batteries are supplies, so logistics.'},
+  {id:'o5b',t:'mc',q:'Which is part of paragraph 5a?',o:['Succession of command','The SOI','The medical plan','The ammo load'],a:0,ex:'It says who takes over if the leader goes down.'},
+  {id:'o5c',t:'mc',q:'What does PACE stand for?',o:['Primary, alternate, contingency, emergency','Plan, act, check, evaluate','Power, antenna, channel, encryption','Position, azimuth, course, elevation'],a:0,ex:'A plan for how to communicate when the first method fails.'},
+  {id:'o5d',t:'mc',q:'A long EW and spectrum plan does not fit in 5b. Where does it go?',o:['An annex, such as the Signal or cyber and EW annex','Paragraph 1','The mission statement','Nowhere'],a:0,ex:'Reference it in the order and attach it separately.'},
+  {id:'o5e',t:'mc',q:'Where does the medical plan and MEDEVAC go?',o:['4c, health service support','5b, signal','3d, coordinating instructions','1a'],a:0,ex:'Medical support is part of sustainment.'}],
+ ch6:[{id:'o6a',t:'num',q:'The mission is received at 1800 and the unit departs at 0400. How many hours is that?',a:10,tol:0.1,u:'hours',ex:'1800 to 0400 is 10 hours.'},
+  {id:'o6b',t:'num',q:'By the one-third rule, at most how many hours may the leader use? (one decimal)',a:3.3,tol:0.1,u:'hours',ex:'10 \u00F7 3 = 3.3 hours.'},
+  {id:'o6c',t:'num',q:'The OPORD should be issued by what time? (24-hour clock, for example 2120)',a:2120,tol:1,u:'',ex:'1800 plus 3 hours 20 minutes is 2120.'},
+  {id:'o6d',t:'num',q:'How many hours does that leave for subordinates? (one decimal)',a:6.7,tol:0.1,u:'hours',ex:'10 \u00D7 2 \u00F7 3 = 6.7 hours.'},
+  {id:'o6e',t:'mc',q:'What shows that subordinates understood the plan?',o:['A back-brief in their own words','A nod','Silence','A signature'],a:0,ex:'Check understanding, not just completeness.'},
+  {id:'o6f',t:'mc',q:'In which TLP step is the order issued?',o:['Step 7','Step 1','Step 4','Step 8'],a:0,ex:'Step 6 completes the plan and step 7 issues the order.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'mc',q:'Which order is just a change to one already in effect?',o:['FRAGORD','OPORD','WARNORD','None'],a:0,ex:'A fragmentary order.'},
+ {id:'k2',ch:'ch1',t:'mc',q:'Paragraph 4 is:',o:['Sustainment','Execution','Mission','Situation'],a:0,ex:'Logistics, personnel, and health service support.'},
+ {id:'k3',ch:'ch2',t:'mc',q:'Where does an adjacent friendly unit go?',o:['1b','2','3b','5a'],a:0,ex:'Friendly forces are paragraph 1b.'},
+ {id:'k4',ch:'ch2',t:'mc',q:'Paragraph 1 describes:',o:['The situation, not what you will do','The scheme of maneuver','The radio plan','The timeline'],a:0,ex:'What you will do starts in paragraph 2.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'A mission statement has no:',o:['How (method)','Why','Who','Where'],a:0,ex:'The method belongs in paragraph 3.'},
+ {id:'k6',ch:'ch3',t:'num',q:'How many Ws are in the mission?',a:5,tol:0.01,u:'',ex:'Who, what, when, where, why.'},
+ {id:'k7',ch:'ch4',t:'mc',q:'The commander\u2019s intent includes the end state, which is:',o:['The desired result','The first task','The route','The enemy plan'],a:0,ex:'Purpose, key tasks, end state.'},
+ {id:'k8',ch:'ch4',t:'mc',q:'ROE and the timeline are:',o:['Coordinating instructions','The mission','Intent','Tasks to one unit'],a:0,ex:'They apply to everyone.'},
+ {id:'k9',ch:'ch5',t:'mc',q:'Call signs and the SOI are in:',o:['5b, signal','4a','2','1c'],a:0,ex:'Signal covers communications.'},
+ {id:'k10',ch:'ch5',t:'mc',q:'Succession of command is in:',o:['5a, command','4c','3c','1b'],a:0,ex:'Who takes over.'},
+ {id:'k11',ch:'ch6',t:'num',q:'You have 12 hours. At most how many hours may the leader use? (one decimal)',a:4,tol:0.1,u:'hours',ex:'12 \u00F7 3 = 4 hours.'},
+ {id:'k12',ch:'ch6',t:'mc',q:'What does a back-brief check?',o:['That subordinates understood the plan','That the format is correct','The ammunition','The weather'],a:0,ex:'Understanding matters more than format.'}];
+const GLd={opord:['OPORD','Operation order: the five-paragraph order that tells subordinates what to do.'],warnord:['Warning order','An early notice of an upcoming operation so units can start preparing.'],fragord:['FRAGORD','A fragmentary order: a quick change to an order already in effect.'],smesc:['SMESC','Situation, Mission, Execution, Sustainment, Command and Signal: the order of the five paragraphs.'],mlcoa:['Most likely COA','The enemy action you expect to see.'],mdcoa:['Most dangerous COA','The enemy action that would hurt you most.'],attach:['Attachment','A unit or element added to yours for an operation.'],mission:['Mission statement','One sentence with who, what, when, where, and why, and no method.'],purpose:['Purpose','The reason for the task: the why of the mission.'],intent:['Commander\u2019s intent','A short statement of purpose, key tasks, and end state that guides subordinates when the plan changes.'],endstate:['End state','The desired result at the end of an operation.'],ccir:['CCIR','Commander\u2019s critical information requirements: information the commander needs to decide.'],eefi:['EEFI','Essential elements of friendly information: what the enemy must not learn.'],roe:['ROE','Rules of engagement: the conditions for using force.'],soi:['SOI','Signal operating instructions: frequencies, call signs, and codes for a net.'],pace:['PACE','Primary, alternate, contingency, emergency: a plan for how to communicate.'],succession:['Succession of command','Who takes over if the leader cannot lead.'],backbrief:['Back-brief','Subordinates tell the plan back to the leader in their own words.'],rehearsal:['Rehearsal','Practising the plan to find gaps and build shared understanding.'],annex:['Annex','An attachment to an order that gives detail on one subject, such as signal or EW.']};
+const GUIDE={key:'opordguide',chapters:[["ch1","1 What an order is"],["ch2","2 Situation"],["ch3","3 Mission"],["ch4","4 Execution"],["ch5","5 Sustainment and C&S"],["ch6","6 Delivering it"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch1:()=>{if(Ot.s.i<0)Ot.new();},ch2:()=>{if(Pg.s.i<0)Pg.new();},ch3:()=>{if(Ms.s.i<0)Ms.new();},ch4:()=>{if(Ex.s.i<0)Ex.new();},ch5:()=>{if(Sc.s.i<0)Sc.new();},ch6:()=>Tl.calc()}};
+
+boot();
+</script>
+<script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
+  <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+      console.warn('SW registration failed:', e);
+    });
+  });
+}
+</script>
+
+<style>
+#fbNudge{position:fixed;bottom:18px;right:18px;max-width:260px;background:#0f1318;border:1px solid #2e3f52;
+  border-radius:6px;padding:14px 16px;font-family:'Segoe UI',Tahoma,sans-serif;font-size:12.5px;color:#c8d8e8;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);z-index:9998;display:none;line-height:1.5}
+#fbNudge.show{display:block}
+#fbNudge a{color:#00ff88;text-decoration:none;font-weight:600}
+#fbNudge .fbNudgeClose{position:absolute;top:6px;right:8px;cursor:pointer;color:#6a8090;font-size:14px;background:none;border:none}
+</style>
+<div id="fbNudge">
+  <button class="fbNudgeClose" onclick="document.getElementById('fbNudge').classList.remove('show')">&#10005;</button>
+  Got a sec? <a href="/feedback/">Let us know</a> what's working or what's not — takes under a minute.
+</div>
+<script>
+(function(){
+  var COOLDOWN_DAYS = 4;
+  var last = localStorage.getItem('fb_nudge_last');
+  var now = Date.now();
+  if (last && (now - parseInt(last, 10)) < COOLDOWN_DAYS * 24 * 60 * 60 * 1000) return;
+  setTimeout(function(){
+    var el = document.getElementById('fbNudge');
+    if (el) {
+      el.classList.add('show');
+      localStorage.setItem('fb_nudge_last', String(Date.now()));
+    }
+  }, 3 * 60 * 1000); // 3 minutes of being on the page
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

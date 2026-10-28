@@ -56,107 +56,413 @@ h2:first-child{margin-top:0}
 .cta a:hover{opacity:.9}
 
 .footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:12px;border-top:1px solid var(--border)}
+
+.hero{padding:2.2rem 1.4rem 1.6rem}
+@media(max-width:640px){.hero{padding-top:5rem}}
+.tb-wrap{max-width:780px;margin:0 auto;padding:1rem 1rem 3rem}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1rem}
+@media(max-width:560px){.pre{grid-template-columns:1fr}}
+.pre>div{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.pre b{display:block;color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pre a{color:var(--accent);font-weight:700;text-decoration:none}
+.prog{position:sticky;top:0;z-index:20;background:var(--bg-page);padding:8px 0 6px;border-bottom:1px solid var(--border)}
+.bar{height:8px;background:var(--table-head-bg);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .row{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:12px;color:var(--text-muted);gap:8px}
+.prog .row button{background:none;border:0;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+.nav button{flex:0 0 auto;font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}.nav button.done::after{content:" \2713";color:#2e9e5b}.nav button.on.done::after{color:#fff}
+.ch{display:none}.ch.on{display:block}
+.ch h2{margin-top:1.4rem}.ch h3{font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;margin:1.3rem 0 .4rem}
+.ch p{font-size:14.5px;color:var(--text-secondary);margin-bottom:.7rem}.ch p b,.ch li b{color:var(--text-primary)}
+.ch ul,.ch ol{margin:0 0 .8rem 1.2rem;font-size:14.5px;color:var(--text-secondary)}.ch li{margin-bottom:.25rem}
+.obj{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0 1rem}
+.obj b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.obj ul{margin:.3rem 0 0 1.1rem;font-size:14px;color:var(--text-primary)}
+.why{border-left:4px solid #e8913a;background:var(--bg-card);border-radius:0 12px 12px 0;padding:.7rem 1rem;margin:.8rem 0;font-size:14px;color:var(--text-secondary)}
+.why b{color:#c9701a;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.formula{background:var(--table-head-bg);border-radius:10px;padding:.65rem .9rem;margin:.6rem 0;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary);overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:.5rem 0 1rem;display:block;overflow-x:auto}
+table.t th{background:var(--table-head-bg);text-align:left;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:11.5px;letter-spacing:.04em}
+table.t td{padding:6px 8px;border-top:1px solid var(--table-border);color:var(--text-secondary);vertical-align:top}
+table.t td:first-child{color:var(--text-primary);font-weight:700;white-space:nowrap}
+.try{background:var(--bg-card);border:2px solid var(--accent);border-radius:14px;margin:1rem 0;overflow:hidden}
+.try>.th{background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px}
+.try>.tb{padding:10px 12px}
+.try canvas{display:block;width:100%;height:auto;background:#0b1620;border-radius:8px}
+.ctl{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)}
+.ctl label{min-width:104px;font-weight:700;color:var(--text-primary);font-size:12px}
+.ctl input[type=range]{flex:1;min-width:110px;accent-color:var(--accent)}
+.ctl .v{min-width:74px;text-align:right;font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:12.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.bits{display:flex;gap:4px;flex-wrap:wrap}.bits .chip{min-width:34px;text-align:center;font-family:'Courier New',monospace;font-size:14px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin-top:8px}
+.read div{background:var(--table-head-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--text-muted);line-height:1.35}
+.read b{display:block;font-family:'Courier New',monospace;font-size:14px;color:var(--text-primary)}
+.read .good{color:#1f8f4f}.read .bad{color:#c44}.read .mid{color:#c9701a}
+.note{font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.45}
+details.work{background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;margin:.8rem 0;padding:0}
+details.work>summary{cursor:pointer;padding:.65rem 1rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--accent);list-style:none}
+details.work>summary::-webkit-details-marker{display:none}details.work[open]>summary{border-bottom:1px solid var(--border)}
+details.work>div{padding:.7rem 1rem;font-size:14px;color:var(--text-secondary)}
+details.work p{margin:.2rem 0 .4rem}
+.chk{background:var(--bg-card);border:2px solid #7a5cff;border-radius:14px;margin:1.4rem 0 1rem;overflow:hidden}
+.chk>.th{background:#7a5cff;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;display:flex;justify-content:space-between}
+.chk>.tb{padding:10px 14px}
+.qq{border-top:1px solid var(--border);padding:11px 0}.qq:first-child{border-top:0}
+.qq .qt{font-size:14px;color:var(--text-primary);font-weight:700;margin-bottom:6px}
+.qq .opt{display:block;width:100%;text-align:left;font-family:'Nunito Sans',sans-serif;font-size:13.5px;padding:8px 10px;margin:4px 0;border-radius:9px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);cursor:pointer}
+.qq .opt.bad{border-color:#d66;background:rgba(220,90,90,.12);color:var(--text-primary)}
+.qq .opt.good{border-color:#2e9e5b;background:rgba(46,158,91,.14);color:var(--text-primary)}
+.qq .opt:disabled{cursor:default}
+.qq .numrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.qq input[type=number]{width:120px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-primary);font-size:14px}
+.qq .unit{font-size:13px;color:var(--text-muted)}
+.qq .go{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:8px;border:0;background:#7a5cff;color:#fff;cursor:pointer}
+.qq .alt{font-size:12px;background:none;border:0;color:var(--text-muted);text-decoration:underline;cursor:pointer}
+.qq .fb{margin-top:6px;font-size:13px;line-height:1.5;padding:7px 10px;border-radius:8px;display:none}
+.qq .fb.ok{display:block;background:rgba(46,158,91,.12);color:var(--text-primary)}.qq .fb.no{display:block;background:rgba(220,90,90,.1);color:var(--text-primary)}
+.sumbox{background:var(--table-head-bg);border-radius:12px;padding:.75rem 1rem;margin:1rem 0}
+.sumbox b{font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.sumbox ul{margin:.3rem 0 0 1.1rem}
+.kt{display:flex;gap:5px;flex-wrap:wrap;margin:.3rem 0 1rem}
+.term{border-bottom:1.5px dotted var(--accent);color:var(--text-primary);cursor:help}
+.kt .term{border:1.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;background:var(--bg-card);cursor:pointer}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:1.4rem 0 .4rem}
+.pn button{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--accent);background:var(--bg-card);color:var(--accent);cursor:pointer}
+.pn button.pri{background:var(--accent);color:#fff}
+.tool{display:block;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:.8rem 0;text-decoration:none;color:var(--text-primary);font-size:13.5px}
+.tool b{display:block;color:var(--accent);font-family:'Nunito',sans-serif}
+#sheet{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg-card);border-top:3px solid var(--accent);padding:12px 16px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.25);transform:translateY(110%);transition:transform .22s;max-height:46vh;overflow:auto}
+#sheet.on{transform:none;visibility:visible}#sheet b{font-family:'Nunito',sans-serif;font-size:15px;color:var(--text-primary)}#sheet p{font-size:13.5px;color:var(--text-secondary);margin:4px 0 8px}
+#sheet button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-page);color:var(--text-secondary);padding:6px 10px;margin-right:6px;cursor:pointer}
+.gl input{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:14px;margin:.3rem 0 .8rem}
+.gl .g{border-bottom:1px solid var(--border);padding:8px 0}.gl .g b{color:var(--text-primary);font-family:'Nunito',sans-serif;font-size:14px}.gl .g span{display:block;font-size:13.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.srcs{font-size:12.5px;color:var(--text-muted);line-height:1.6}.srcs li{margin-bottom:3px}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="qc">&#9888; TRAINING AID &mdash; under QC/QA. Use your class slides &amp; instructor as the authority.</div>
   <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">Simple Tech</p>
+  <p class="hero-eyebrow">Interactive Textbook</p>
   <h1>EMCON <span>Explained</span></h1>
-  <p class="hero-sub">Everything that transmits tells the enemy something. Emission control is how you decide what to say, when, how loudly, and from where.</p>
+  <p class="hero-sub">Everything that transmits tells the enemy something. Emission control is how you decide what to say, when, how loudly, and from where. Four chapters with hands-on widgets.</p>
 </header>
+<div class="tb-wrap">
+  <div class="pre"><div><b>Before you start</b>New to radio range and antennas? Skim <a href="../radioguide/">Tactical Radio Basics Explained</a>. For the wider EW picture, read <a href="../ewguide/">Electromagnetic Warfare Explained</a>.</div><div><b>Then practice in the tools</b><a href="../emcon/">EMCON &amp; Signature Lab</a> &middot; <a href="../df/">DF Trainer</a> &middot; <a href="../army/sincgars/">SINCGARS Radio Simulator</a>. About 25 minutes for the whole guide.</div></div>
+  <div class="prog"><div class="bar"><i id="barfill"></i></div>
+    <div class="row"><span id="progtxt"></span><button onclick="resetProgress()">Reset my progress</button></div><nav class="nav" id="nav"></nav></div>
+<!-- ============ CHAPTER 1 ============ -->
+<section class="ch" id="ch1">
+  <h2>1 &middot; What EMCON Is, and Why It Matters</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Define emission control in plain words.</li>
+    <li>Explain why EMCON is a dial and not an off switch.</li>
+    <li>Say why direction finding makes EMCON matter more now.</li></ul></div>
 
-<div class="section-wrap">
+  <p>EMCON is short for <b>emission control</b>. It is the planned, selective use of your own emitters so that command and control keeps working while you limit what the enemy can learn from your signals.</p>
+  <p>The DoD Dictionary describes it as the selective and controlled use of electromagnetic, acoustic, or other emitters to get the best command and control while limiting, for operations security: detection by enemy sensors, interference among your own systems, and enemy interference with a deception plan.</p>
 
-  <h2>What EMCON Is</h2>
-  <p class="lede">EMCON is short for emission control. It is the planned, selective use of your own emitters so that command and control keeps working while you limit what the enemy can learn from your signals.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#128214;</div><div class="fact-card-text"><strong>The definition, in plain words.</strong> The DoD Dictionary describes it as the selective and controlled use of electromagnetic, acoustic, or other emitters to get the best command and control while limiting, for operations security: detection by enemy sensors, interference among your own systems, and enemy interference with a deception plan.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#127899;&#65039;</div><div class="fact-card-text"><strong>It is a dial, not an off switch.</strong> Leaders set how restricted the unit is based on the threat and the mission. Total radio silence is the strictest end of that range, not the whole idea.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#128737;&#65039;</div><div class="fact-card-text"><strong>It is a form of electromagnetic protection.</strong> Army doctrine (ATP 3-12.3) groups emission control with spectrum management operations, electromagnetic hardening, electromagnetic masking, and electromagnetic compatibility.</div></div>
+  <h3>A dial, not an off switch</h3>
+  <p>Leaders set how restricted the unit is, based on the threat and the mission. Total radio silence is the strictest end of that range, not the whole idea. Army doctrine (ATP 3-12.3) treats emission control as one form of electromagnetic protection, alongside spectrum management operations, electromagnetic hardening, electromagnetic masking, and electromagnetic compatibility.</p>
 
-  <h2>Why It Matters</h2>
-  <p class="lede">For two decades Army units rarely had to think about their electromagnetic signature. Against an enemy with direction finding and jamming, that has changed.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#127919;</div><div class="fact-card-text"><strong>Direction finding leads to targeting.</strong> Enemy radio-frequency direction finding that supports lethal targeting is described as the most acute EW threat to ground maneuver. Command posts, field trains, and maintenance collection points are the most exposed, because they sit still and emit in the same way for hours.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#128752;&#65039;</div><div class="fact-card-text"><strong>Ukraine made it concrete.</strong> Reporting from the war describes jamming of drone control links and of GPS receivers on munitions, and direction finding used to locate drone control stations so they could be hit with indirect fire.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#128225;</div><div class="fact-card-text"><strong>Once they know your frequencies, they can attack them.</strong> An enemy that detects which frequencies you use can jam or spoof them, especially at the moments you most need them, such as a breach.</div></div>
+  <h3>Why it matters now</h3>
+  <ul>
+   <li><b>Direction finding leads to targeting.</b> Enemy radio-frequency direction finding that supports lethal targeting is described as the most acute EW threat to ground maneuver. Command posts, field trains, and maintenance collection points are the most exposed, because they sit still and emit the same way for hours.</li>
+   <li><b>Ukraine made it concrete.</b> Reporting from the war describes jamming of drone control links and of GPS receivers on munitions, and direction finding used to locate drone control stations so they could be hit with indirect fire.</li>
+   <li><b>Once they know your frequencies, they can attack them.</b> An enemy that detects which frequencies you use can jam or spoof them, especially when you most need them, such as at a breach.</li></ul>
 
-  <h2>How the Enemy Finds You</h2>
-  <p class="lede">The enemy does not need to understand your messages. It only needs to hear you.</p>
-  <div class="fact-card"><div class="fact-card-emoji">1&#65039;&#8419;</div><div class="fact-card-text"><strong>Detect.</strong> A sensor hears your signal above its detection limit. Stronger signals, longer transmissions, and clear paths to the sensor all help it.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">2&#65039;&#8419;</div><div class="fact-card-text"><strong>Bearing.</strong> Each sensor measures the direction the signal came from. One sensor gives a line of bearing.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">3&#65039;&#8419;</div><div class="fact-card-text"><strong>Fix.</strong> Two or more sensors give lines that cross at your position. More intercepts tighten the fix. A tight fix can be fired on.</div></div>
+  <div class="why"><b>Why a 17E cares</b>You understand what a signal gives away better than most Soldiers. When a leader asks what a radio, a vehicle, or a phone is telling the enemy, you are the person who can answer.</div>
 
-  <h2>The Five Habits: E-M-C-O-N</h2>
-  <p class="lede">A public Army article on writing EMCON standing operating procedures uses the letters of EMCON as a memory aid for the techniques in ATP 3-12.3. They need no special equipment or training on radio electronics.</p>
-  <div class="cat-grid">
-    <div class="cat-chip"><b>E: Emit on the least vulnerable frequencies</b><span>Use the part of the spectrum the enemy is least able to direction-find, intercept, or jam. Always use frequency-hopping modes.</span></div>
-    <div class="cat-chip"><b>M: Mask wave propagation</b><span>Shortest-range antennas, directional antennas, terrain between you and the enemy, and netting around antennas with a gap toward your own side.</span></div>
-    <div class="cat-chip"><b>C: Communicate concisely</b><span>Send only necessary transmissions. Plan messages first, be brief, use brevity codes, and use wire or physical messages when you can.</span></div>
-    <div class="cat-chip"><b>O: Only the power you need</b><span>Use the lowest power setting that still gets the message through.</span></div>
-    <div class="cat-chip"><b>N: No predictable patterns</b><span>Avoid repeating the same place, frequency, interval, and duration. Vary net calls and reports, and use offset antennas for command post radios.</span></div>
-  </div>
-  <div class="fact-card"><div class="fact-card-emoji">&#9878;&#65039;</div><div class="fact-card-text"><strong>Frequency choice is a trade.</strong> The article notes that HF is the least affected by jamming, but its long reach means it can be detected from farther away than VHF or UHF. Low-power UHF links such as GPS and the Joint Battle Command Platform are more vulnerable to jamming.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#127956;&#65039;</div><div class="fact-card-text"><strong>Terrain and the neighborhood help.</strong> A ridge can block line-of-sight signals. In built-up areas, the heavy civilian use of cell networks can hide military traffic on similar bands, though using unprotected commercial phones carries its own operations security risk.</div></div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch1-score"></span></div><div class="tb" id="ch1-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>EMCON is the selective, controlled use of your emitters to keep command and control while limiting what the enemy can detect.</li><li>It is a dial set by the threat and the mission. Radio silence is only the strict end.</li><li>Direction finding leads to targeting, and known frequencies can be jammed or spoofed.</li></ul></div>
+  <div class="kt"><span class="term" data-t="emcon">EMCON</span><span class="term" data-t="emitter">emitter</span><span class="term" data-t="df">direction finding</span><span class="term" data-t="signature">signature</span></div>
+  <div class="pn"><span></span><button class="pri" onclick="go('ch2')">Next: How the enemy finds you &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 2 ============ -->
+<section class="ch" id="ch2">
+  <h2>2 &middot; How the Enemy Finds You</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Name the three steps from signal to fix: detect, bearing, fix.</li>
+    <li>Explain why more sensors and longer transmissions give a tighter fix.</li>
+    <li>Say why the enemy does not need to read your message.</li></ul></div>
 
-  <h2>The Trade-Off</h2>
-  <p class="lede">Every step down in emissions costs you something. The skill is in picking the setting the mission can live with.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#128683;</div><div class="fact-card-text"><strong>Less emitting, less control.</strong> As EMCON gets stricter, leaders and command posts are less able to direct maneuver, pass guidance, coordinate changes, and receive frequent updates. Systems that emit continuously, such as JBC-P, also give real-time situational awareness and help prevent fratricide when they run unrestricted.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#128737;</div><div class="fact-card-text"><strong>Match the setting to the mission.</strong> Stricter levels suit operations with less frequent decisions and a static posture, such as defense, area security, and logistics, where sitting still raises the direction-finding threat. During offensive combined-arms operations, resilient command and control across many systems may be worth the added risk.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#129517;</div><div class="fact-card-text"><strong>Shrink the cost.</strong> Units can operate at stricter levels by relying more on mission-type orders, using prowords, and looking hard at their reporting requirements. A primary, alternate, contingency, and emergency (PACE) plan, plus extra systems such as tactical satellite radios, gives options when the main net goes quiet.</div></div>
+  <p>The enemy does not need to understand your messages. It only needs to hear you.</p>
+  <ol>
+   <li><b>Detect.</b> A sensor hears your signal above its detection limit. Stronger signals, longer transmissions, and clear paths to the sensor all help it.</li>
+   <li><b>Bearing.</b> Each sensor measures the direction the signal came from. One sensor gives a line of bearing.</li>
+   <li><b>Fix.</b> Two or more sensors give lines that cross at your position. More intercepts tighten the fix. A tight fix can be fired on.</li></ol>
 
-  <h2>It Takes More Than Radio Discipline</h2>
-  <p class="lede">The enemy has other ways to see you. EMCON only works as part of a wider concealment plan.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#128065;&#65039;</div><div class="fact-card-text"><strong>Look, listen, and light.</strong> Units have large visual signatures, and satellite imagery and drone cameras are widely available. Visual camouflage, noise discipline, and light discipline have to go with EMCON.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#127891;</div><div class="fact-card-text"><strong>Skills decide whether it works.</strong> Soldiers must be able to lower power, set up directional antennas, and transmit only in set windows, from dispersed positions without help. Limited skill with HF radios can stop a unit from moving to a stricter level.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#128295;</div><div class="fact-card-text"><strong>Plan for the specific enemy.</strong> Different enemy EW systems listen on different parts of the spectrum with different ranges. Signal and intelligence officers refine the EMCON SOP against what the enemy actually fields.</div></div>
+  <div class="try"><div class="th">Try it: build a fix</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px">Choose how many enemy sensors hear you, and how long you stay on the air. The shaded wedges are each sensor&rsquo;s bearing uncertainty.</p>
+    <div id="e2s"></div>
+    <div class="ctl"><label>Time on the air</label><input type="range" id="e2a" min="1" max="30" step="1" value="4" oninput="D1.calc()"><span class="v" id="e2av"></span></div>
+    <div class="read" id="e2r"></div>
+    <canvas id="e2c" width="480" height="220"></canvas>
+    <div class="note">Teaching model with made-up numbers: the bearing error shrinks with the square root of the seconds you transmit, and a third sensor tightens the fix further. Real sensors differ, but the pattern holds.</div></div></div>
 
-  <h2>EMCON Can Also Help You Attack</h2>
-  <p class="lede">Controlling your signature is not only defensive.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#127917;</div><div class="fact-card-text"><strong>Deception.</strong> A commander can have some units go quiet while others stay loud to make a feint more convincing, or change signatures to make the enemy less sure of what you intend.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#127911;</div><div class="fact-card-text"><strong>Better listening.</strong> When friendly units emit less, there is less clutter on the spectrum, which makes it easier for your own collectors to find and focus on enemy emitters.</div></div>
+  <div class="why"><b>Why a 17E cares</b>You can run this in reverse. Your own DF team builds a fix the same way, so what you learn about the enemy&rsquo;s bearings tells you what yours can do to them.</div>
 
-  <h2>It Has Been Done</h2>
-  <p class="lede">Moving a large formation without talking is not new.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#128507;&#65039;</div><div class="fact-card-text"><strong>REFORGER 1988, exercise Certain Strike.</strong> The 1st Cavalry Division moved two brigades and support units, 4,534 vehicles over about 150 kilometers in 42 hours, under radio listening silence. Military police and staff teams at refuel and maintenance halts controlled movement and passed only necessary reports. A pre-move exercise built the shared understanding the plan depended on.</div></div>
-  <div class="fact-card"><div class="fact-card-emoji">&#9875;</div><div class="fact-card-text"><strong>Marine Corps, 2019.</strong> During a division-level exercise at Twenty-nine Palms, the 2nd Marine Division practiced moving under restrictive EMCON levels and learned firsthand the command-and-control costs.</div></div>
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch2-score"></span></div><div class="tb" id="ch2-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Detect, then bearing, then fix.</li><li>One sensor gives a line. Two or more give a position.</li><li>Longer transmissions and more intercepts tighten the fix.</li></ul></div>
+  <div class="kt"><span class="term" data-t="df">direction finding</span><span class="term" data-t="lob">line of bearing</span><span class="term" data-t="fix">fix</span><span class="term" data-t="intercept">intercept</span></div>
+  <div class="pn"><button onclick="go('ch1')">&larr; Back</button><button class="pri" onclick="go('ch3')">Next: The five habits &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 3 ============ -->
+<section class="ch" id="ch3">
+  <h2>3 &middot; The Five Habits: E-M-C-O-N</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Name the five habits and what each asks of you.</li>
+    <li>Estimate how power and airtime change how easily you are heard.</li>
+    <li>Explain the trade between frequency choices.</li></ul></div>
 
-  <h2>Where to Read More</h2>
-  <p class="lede">Your unit's EMCON levels and procedures come from your command and the current publications. These are the sources behind this guide.</p>
-  <div class="fact-card"><div class="fact-card-emoji">&#128218;</div><div class="fact-card-text">
-    <strong>ATP 3-12.3</strong>, Electromagnetic Warfare Techniques (2023). The source of the EMCON techniques and the EMCON status table.<br>
-    <strong>ATP 6-02.53</strong>, Techniques for Tactical Radio Operations (2020). Radio propagation and directional antenna setup.<br>
-    <strong>FM 3-98</strong>, Reconnaissance and Security Operations, and <strong>ATP 3-90.5</strong>, Combined Arms Battalion.<br>
-    <strong>FM 3-13.4</strong>, Army Support to Military Deception.<br>
-    <strong>ATP 1-02.1</strong>, Multi-Service Brevity Codes.<br>
-    <strong>DoD Dictionary of Military and Associated Terms</strong>, "emission control."<br>
-    <a href="https://www.army.mil/article/284546/adapting_to_multi_domain_battlefield_developing_emissions_control_sop" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">CPT Ryan McGovern, "Adapting to Multi-Domain Battlefield: Developing Emissions Control SOP," Army.mil, April 2025</a>, the public article behind the E-M-C-O-N habits above.
-  </div></div>
+  <p>A public Army article on writing EMCON standing operating procedures uses the letters of EMCON as a memory aid for the techniques in ATP 3-12.3. They need no special equipment or training in radio electronics.</p>
+  <table class="t"><tr><th>Letter</th><th>Habit</th><th>In practice</th></tr>
+   <tr><td><b>E</b></td><td>Emit on the least vulnerable frequencies</td><td>Use the part of the spectrum the enemy is least able to direction-find, intercept, or jam. Always use frequency-hopping modes.</td></tr>
+   <tr><td><b>M</b></td><td>Mask wave propagation</td><td>Shortest-range antennas, directional antennas, terrain between you and the enemy, and netting around antennas with a gap toward your own side.</td></tr>
+   <tr><td><b>C</b></td><td>Communicate concisely</td><td>Send only necessary transmissions. Plan messages first, be brief, use brevity codes, and use wire or physical messages when you can.</td></tr>
+   <tr><td><b>O</b></td><td>Only the power you need</td><td>Use the lowest power setting that still gets the message through.</td></tr>
+   <tr><td><b>N</b></td><td>No predictable patterns</td><td>Avoid repeating the same place, frequency, interval, and duration. Vary net calls and reports, and use offset antennas for command post radios.</td></tr></table>
 
-  <div class="cta">
-    <p><strong>Reading about it only gets you so far.</strong> The EMCON &amp; Signature Lab puts you in charge of a command post. Set what each emitter does, choose where you sit, and watch an enemy direction-finding team build a fix on you. The settings map straight onto the habits above.</p>
-    <a href="../emcon/">Open the EMCON &amp; Signature Lab &rarr;</a>
-  </div>
+  <div class="try"><div class="th">Try it: power and airtime</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px">Pretend a 5 W signal can be heard by an enemy sensor 20 km away in free space. Where is the sensor, and what are you doing?</p>
+    <div id="e3p"></div>
+    <div class="ctl"><label>Sensor distance</label><input type="range" id="e3d" min="5" max="60" step="1" value="25" oninput="P1.calc()"><span class="v" id="e3dv"></span></div>
+    <div class="ctl"><label>Calls per hour</label><input type="range" id="e3n" min="1" max="20" step="1" value="6" oninput="P1.calc()"><span class="v" id="e3nv"></span></div>
+    <div class="ctl"><label>Seconds per call</label><input type="range" id="e3l" min="5" max="60" step="5" value="30" oninput="P1.calc()"><span class="v" id="e3lv"></span></div>
+    <div class="read" id="e3r"></div>
+    <canvas id="e3c" width="480" height="180"></canvas>
+    <div class="note">Free-space range grows with the square root of power, so cutting power to a quarter halves how far you can be heard. Terrain, antennas, and the sensor itself change the real answer. Airtime is simply calls times seconds.</div></div></div>
 
+  <h3>Frequency choice is a trade</h3>
+  <p>The article notes that HF is the least affected by jamming, but its long reach means it can be detected from farther away than VHF or UHF. Low-power UHF links such as GPS and the Joint Battle Command Platform are more vulnerable to jamming. A ridge can block line-of-sight signals. In built-up areas, heavy civilian use of cell networks can hide military traffic on similar bands, though using unprotected commercial phones has its own operations security risk.</p>
+
+  <div class="why"><b>Why a 17E cares</b>Each habit can be checked by a measurement you already know how to read: power, bandwidth, duty cycle, and pattern. You can tell a leader which habit a unit is breaking.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch3-score"></span></div><div class="tb" id="ch3-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>E-M-C-O-N: emit smart, mask propagation, communicate concisely, only the power needed, no predictable patterns.</li><li>Lower power and less airtime both shrink how often you can be heard.</li><li>No frequency range is safe from everything. Each choice trades one risk for another.</li></ul></div>
+  <div class="kt"><span class="term" data-t="hopping">frequency hopping</span><span class="term" data-t="brevity">brevity code</span><span class="term" data-t="directional">directional antenna</span><span class="term" data-t="offset">offset antenna</span><span class="term" data-t="airtime">airtime</span></div>
+  <div class="pn"><button onclick="go('ch2')">&larr; Back</button><button class="pri" onclick="go('ch4')">Next: Trade-offs and beyond &rarr;</button></div>
+</section>
+<!-- ============ CHAPTER 4 ============ -->
+<section class="ch" id="ch4">
+  <h2>4 &middot; Trade-offs and Beyond the Radio</h2>
+  <div class="obj"><b>You will be able to</b><ul>
+    <li>Explain what stricter EMCON costs a commander.</li>
+    <li>Match an EMCON posture to the kind of mission.</li>
+    <li>Name signatures besides radio that EMCON must go with.</li>
+    <li>Describe how EMCON can help an attack, not just defend.</li></ul></div>
+
+  <h3>Every step down in emissions costs something</h3>
+  <p>As EMCON gets stricter, leaders and command posts are less able to direct maneuver, pass guidance, coordinate changes, and receive frequent updates. Systems that emit continuously, such as JBC-P, also give real-time situational awareness and help prevent fratricide when they run unrestricted.</p>
+
+  <div class="try"><div class="th">Try it: match the posture to the mission</div><div class="tb">
+    <p style="font-size:13px;margin:0 0 6px">Pick a mission to see how the article and ATP 3-12.3 weigh the trade.</p>
+    <div id="e4m"></div>
+    <div class="fb ok" id="e4o" style="display:block"></div></div></div>
+
+  <h3>Shrink the cost</h3>
+  <p>Units can operate at stricter levels by relying more on mission-type orders, using prowords, and looking hard at their reporting requirements. A PACE plan, plus extra systems such as tactical satellite radios, gives options when the main net goes quiet.</p>
+
+  <h3>It takes more than radio discipline</h3>
+  <ul>
+   <li><b>Look, listen, and light.</b> Units have large visual signatures, and satellite imagery and drone cameras are widely available. Camouflage, noise discipline, and light discipline have to go with EMCON.</li>
+   <li><b>Skills decide whether it works.</b> Soldiers must be able to lower power, set up directional antennas, and transmit only in set windows, from dispersed positions without help. Limited skill with HF radios can stop a unit from moving to a stricter level.</li>
+   <li><b>Plan for the specific enemy.</b> Different enemy EW systems listen on different parts of the spectrum with different ranges. Signal and intelligence officers refine the EMCON SOP against what the enemy actually fields.</li></ul>
+
+  <h3>EMCON can also help you attack</h3>
+  <ul>
+   <li><b>Deception.</b> A commander can have some units go quiet while others stay loud to make a feint more convincing, or change signatures to make the enemy less sure of what you intend.</li>
+   <li><b>Better listening.</b> When friendly units emit less, there is less clutter on the spectrum, which makes it easier for your own collectors to find and focus on enemy emitters.</li></ul>
+
+  <h3>It has been done</h3>
+  <p><b>REFORGER 1988, exercise Certain Strike.</b> The 1st Cavalry Division moved two brigades and support units, 4,534 vehicles over about 150 kilometers in 42 hours, under radio listening silence. Military police and staff teams at refuel and maintenance halts controlled movement and passed only necessary reports. A pre-move exercise built the shared understanding the plan depended on.</p>
+  <p><b>Marine Corps, 2019.</b> During a division-level exercise at Twenty-nine Palms, the 2nd Marine Division practiced moving under restrictive EMCON levels and learned firsthand the command-and-control costs.</p>
+
+  <div class="why"><b>Why a 17E cares</b>Leaders will ask what a posture costs them as well as what it hides. Being able to answer both is what makes you useful in the planning room.</div>
+
+  <div class="chk"><div class="th"><span>Check yourself</span><span id="ch4-score"></span></div><div class="tb" id="ch4-q"></div></div>
+  <div class="sumbox"><b>Summary</b><ul><li>Stricter EMCON trades control and awareness for a lower signature.</li><li>Static, defensive, and logistics postures lean strict. Fast offensive operations may accept more risk.</li><li>EMCON works only with visual, noise, and light discipline, trained Soldiers, and a plan for the specific enemy.</li></ul></div>
+  <div class="kt"><span class="term" data-t="listensil">listening silence</span><span class="term" data-t="pace">PACE</span><span class="term" data-t="missionorders">mission-type orders</span><span class="term" data-t="deception">deception</span></div>
+  <div class="pn"><button onclick="go('ch3')">&larr; Back</button><button class="pri" onclick="go('chk')">Next: Checkpoint &rarr;</button></div>
+</section>
+
+<section class="ch" id="chk">
+  <h2>Checkpoint</h2>
+  <p>Mixed questions from the whole guide. One try each, then you see what you missed and where to review. Your best score is saved on this device.</p>
+  <div class="chk"><div class="th"><span>Checkpoint</span><span id="chk-score"></span></div><div class="tb" id="chk-q"></div></div>
+  <div class="pn"><button onclick="go('ch4')">&larr; Back</button><button class="pri" onclick="Check.start()">Start / retake</button></div>
+</section>
+<section class="ch gl" id="gl">
+  <h2>Glossary</h2>
+  <input type="search" id="glq" placeholder="Search terms" oninput="Gloss.render()">
+  <div id="gllist"></div>
+  <h2>Sources and notes</h2>
+  <ul class="srcs"><li>ATP 3-12.3, <i>Electromagnetic Warfare Techniques</i> (2023). The EMCON techniques and the EMCON status table.</li>
+   <li>ATP 6-02.53, <i>Techniques for Tactical Radio Operations</i> (2020). Radio propagation and directional antenna setup.</li>
+   <li>FM 3-98, <i>Reconnaissance and Security Operations</i>, and ATP 3-90.5, <i>Combined Arms Battalion</i>. FM 3-13.4, <i>Army Support to Military Deception</i>. ATP 1-02.1, <i>Multi-Service Brevity Codes</i>.</li>
+   <li>DoD Dictionary of Military and Associated Terms, &ldquo;emission control.&rdquo;</li>
+   <li>CPT Ryan McGovern, &ldquo;Adapting to Multi-Domain Battlefield: Developing Emissions Control SOP,&rdquo; Army.mil, April 2025. The public article behind the E-M-C-O-N habits.</li>
+   <li><b>Notes.</b> The direction-finding and airtime widgets are teaching models with made-up round numbers, not real sensor performance. Your unit&rsquo;s EMCON levels and procedures come from your command and the current publications. This is training material and not operational guidance. <b>Last verified:</b> October 9, 2026.</li></ul>
+  <div class="pn"><button onclick="go('chk')">&larr; Checkpoint</button><span></span></div>
+</section>
 </div>
-
-<div style="text-align:center;padding:16px 16px 0"><a href="/" style="color:var(--text-muted);text-decoration:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em">&larr; Back to E-WIT</a></div>
-<div class="footer">EMCON Explained &middot; Companion guide to the EMCON &amp; Signature Lab &middot; UNCLASSIFIED</div>
-
+<div id="sheet"><b id="sh-t"></b><p id="sh-d"></p><button onclick="Sheet.glossary()">Open glossary</button><button onclick="Sheet.close()">Close</button></div>
+<div class="footer">EMCON Explained &middot; Interactive textbook &middot; Companion to the EMCON &amp; Signature Lab &middot; UNCLASSIFIED</div>
 <script>
-function toggleTheme(){
-  const h=document.documentElement, d=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme', d?'light':'dark');
-  document.getElementById('t-icon').textContent = d?'🌙':'☀️';
-  document.getElementById('t-label').textContent = d?'Dark mode':'Light mode';
-}
+/* ===== E-WIT interactive textbook core =====
+   A guide supplies: GUIDE = {key, chapters:[[id,label]...], Q:{chapterId:[questions]}, CKQ:[questions with .ch], GL:{term:[name,def]}, WI:{chapterId:fn}}
+   Question: {id, t:'mc', q, o:[..], a:index, ex} or {id, t:'num', q, a, tol, u, ex}                         */
+const $=id=>document.getElementById(id),TAU=Math.PI*2,dB=x=>Math.pow(10,x/10);
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');$('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';$('t-label').textContent=d?'Dark mode':'Light mode';}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+const fmtHz=h=>h>=1e6?(h/1e6).toFixed(h>=1e7?1:2)+' MHz':h>=1e3?(h/1e3).toFixed(h>=1e4?1:2)+' kHz':h.toFixed(0)+' Hz';
+const fmtBps=b=>b>=1e6?(b/1e6).toFixed(b>=1e7?1:2)+' Mb/s':b>=1e3?(b/1e3).toFixed(b>=1e4?0:1)+' kb/s':b.toFixed(0)+' b/s';
+function chips(id,items,cur,fn){$(id).innerHTML=items.map(i=>'<button class="chip'+(String(i[0])===String(cur)?' on':'')+'" onclick="'+fn+'(\''+i[0]+'\')">'+i[1]+'</button>').join('');}
+function cv(id){const c=$(id);return [c,c.getContext('2d')];}
+function clear(c,x,w,h){x.setTransform(1,0,0,1,0,0);x.fillStyle='#0b1620';x.fillRect(0,0,w||c.width,h||c.height);}
+function plot(x,x0,y0,w,fn,col,lw){x.strokeStyle=col;x.lineWidth=lw||1.6;x.beginPath();for(let i=0;i<=w;i++){const y=fn(i/w);i?x.lineTo(x0+i,y0-y):x.moveTo(x0+i,y0-y);}x.stroke();}
+function lab(x,t,px,py,col,al,sz){x.fillStyle=col||'#9db4c8';x.font=(sz||11)+'px "Nunito Sans",sans-serif';x.textAlign=al||'left';x.fillText(t,px,py);}
+function read(id,items){$(id).innerHTML=items.map(i=>'<div>'+i[0]+'<b class="'+(i[2]||'')+'">'+i[1]+'</b></div>').join('');}
+/* ---------- state ---------- */
+let KEY,SAVE,Q,CKQ,GL,WI,CHS,cur;const tries={},CK={locked:{},res:{}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(SAVE));}catch(e){}}
+function resetProgress(){if(!confirm('Clear your progress on this guide?'))return;SAVE={ok:{},first:{},best:0};save();Object.keys(Q).forEach(c=>renderQs(c));updateProgress();}
+/* ---------- navigation ---------- */
+function buildNav(){$('nav').innerHTML=CHS.map(c=>'<button id="nv-'+c[0]+'" onclick="go(\''+c[0]+'\')">'+c[1]+'</button>').join('');}
+function go(id){cur=id;CHS.forEach(c=>{$(c[0]).classList.toggle('on',c[0]===id);$('nv-'+c[0]).classList.toggle('on',c[0]===id);});Sheet.close();
+  const b=$('nv-'+id);if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo({top:0});
+  if(WI[id])WI[id]();if(id==='gl')Gloss.render();}
+function chapDone(c){return Q[c].every(q=>SAVE.ok[q.id]);}
+function updateProgress(){const cs=Object.keys(Q);let n=0;cs.forEach(c=>{const d=chapDone(c);if(d)n++;$('nv-'+c).classList.toggle('done',d);const s=$(c+'-score');if(s){const t=Q[c].length,k=Q[c].filter(q=>SAVE.ok[q.id]).length;s.textContent=k+' of '+t+' answered correctly';}});
+  $('nv-chk').classList.toggle('done',SAVE.best>=Math.ceil(CKQ.length*0.8));$('barfill').style.width=Math.round(n/cs.length*100)+'%';$('progtxt').textContent=n+' of '+cs.length+' chapters complete'+(SAVE.best?' \u00B7 checkpoint best '+SAVE.best+'/'+CKQ.length:'');}
+/* ---------- glossary and term sheet ---------- */
+const Sheet={open(k){const g=GL[k];if(!g)return;$('sh-t').textContent=g[0];$('sh-d').textContent=g[1];$('sheet').classList.add('on');this.k=k;},close(){$('sheet').classList.remove('on');},glossary(){this.close();go('gl');const q=$('glq');if(this.k&&GL[this.k]){q.value=GL[this.k][0].split(' (')[0];Gloss.render();}}};
+document.addEventListener('click',e=>{const t=e.target.closest('.term');if(t){Sheet.open(t.dataset.t);e.stopPropagation();}else if(!e.target.closest('#sheet'))Sheet.close();});
+const Gloss={render(){const q=($('glq').value||'').toLowerCase();const keys=Object.keys(GL).sort((a,b)=>GL[a][0].localeCompare(GL[b][0])).filter(k=>!q||GL[k][0].toLowerCase().includes(q)||GL[k][1].toLowerCase().includes(q));
+  $('gllist').innerHTML=keys.map(k=>'<div class="g"><b>'+GL[k][0]+'</b><span>'+GL[k][1]+'</span></div>').join('')||'<p class="note">No terms match.</p>';}};
+/* ---------- questions ---------- */
+function qHtml(q,pre,mode){let h='<div class="qq" id="'+pre+q.id+'"><div class="qt">'+q.q+'</div>';
+  if(q.t==='mc'){q.o.forEach((o,i)=>{h+='<button class="opt" data-i="'+i+'" onclick="Qz.pick(\''+q.id+'\','+i+',\''+mode+'\')">'+o+'</button>';});}
+  else h+='<div class="numrow"><input type="number" step="any" inputmode="decimal" id="n-'+q.id+'" placeholder="your answer"><span class="unit">'+q.u+'</span><button class="go" onclick="Qz.num(\''+q.id+'\',\''+mode+'\')">Check</button><button class="alt" id="sh-'+q.id+'" style="display:none" onclick="Qz.show(\''+q.id+'\',\''+mode+'\')">Show me</button></div>';
+  return h+'<div class="fb" id="fb-'+q.id+'"></div></div>';}
+function findQ(id){for(const c in Q){const q=Q[c].find(x=>x.id===id);if(q)return q;}return CKQ.find(x=>x.id===id);}
+function renderQs(c){const box=$(c+'-q');box.innerHTML=Q[c].map(q=>qHtml(q,'q-','ch')).join('');Q[c].forEach(q=>{if(SAVE.ok[q.id])reveal(q,'q-',true);});updateProgress();}
+function reveal(q,pre,restore){const el=$(pre+q.id);if(!el)return;const fb=$('fb-'+q.id);
+  if(q.t==='mc'){el.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('good');});}
+  else{const inp=$('n-'+q.id);inp.value=q.a;inp.disabled=true;el.querySelector('.go').style.display='none';$('sh-'+q.id).style.display='none';}
+  fb.className='fb ok';fb.innerHTML=(restore?'':'<b>Correct. </b>')+q.ex;}
+const Qz={
+ pick(id,i,mode){const q=findQ(id);if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;const ok=i===q.a;CK.res[id]=ok;const el=$('k-'+id);el.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('good');else if(j===i)b.classList.add('bad');});const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite. </b>')+q.ex;Check.progress();return;}
+  const el=$('q-'+id),b=el.querySelector('[data-i="'+i+'"]');if(i===q.a){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;b.classList.add('bad');b.disabled=true;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Think it through and try another option.';}},
+ num(id,mode){const q=findQ(id),inp=$('n-'+id),v=parseFloat(inp.value);if(isNaN(v)){return;}const ok=Math.abs(v-q.a)<=q.tol;
+  if(mode==='ck'){if(CK.locked[id])return;CK.locked[id]=1;CK.res[id]=ok;inp.disabled=true;$('k-'+id).querySelector('.go').style.display='none';const fb=$('fb-'+id);fb.className='fb '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>Correct. </b>':'<b>Not quite (answer: '+q.a+' '+q.u+'). </b>')+q.ex;Check.progress();return;}
+  if(ok){if(!(id in tries))SAVE.first[id]=true;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}
+  else{tries[id]=(tries[id]||0)+1;SAVE.first[id]=false;const fb=$('fb-'+id);fb.className='fb no';fb.textContent='Not quite. Check your units and the steps in the chapter, then try again.';if(tries[id]>=2)$('sh-'+id).style.display='inline';}},
+ show(id){const q=findQ(id);SAVE.first[id]=false;SAVE.ok[id]=true;save();reveal(q,'q-');updateProgress();}};
+const Check={start(){CK.locked={};CK.res={};const order=CKQ.slice().sort(()=>Math.random()-0.5);this.order=order;$('chk-q').innerHTML=order.map(q=>qHtml(q,'k-','ck')).join('');this.progress();window.scrollTo({top:$('chk').offsetTop-40,behavior:'smooth'});},
+ progress(){const N=CKQ.length,n=Object.keys(CK.locked).length,sc=Object.values(CK.res).filter(Boolean).length;$('chk-score').textContent=n+' of '+N+' answered';
+  if(n===N){const miss=this.order.filter(q=>!CK.res[q.id]);if(sc>SAVE.best){SAVE.best=sc;save();}updateProgress();
+   const chs={};miss.forEach(q=>chs[q.ch]=1);const names=Object.fromEntries(CHS);
+   $('chk-q').insertAdjacentHTML('beforeend','<div class="sumbox"><b>Your score: '+sc+' of '+N+'</b>'+(miss.length?'<p>Review: '+Object.keys(chs).map(c=>'<a href="#" style="color:var(--accent);font-weight:700" onclick="go(\''+c+'\');return false">'+names[c]+'</a>').join(' &middot; ')+'</p>':'<p>Perfect. Now take it to the tools.</p>')+'</div>');}}};
+function shuffleMC(q){if(q.t!=='mc')return;const right=q.o[q.a],o=q.o.slice();for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}q.o=o;q.a=o.indexOf(right);}
+function boot(){KEY='ewit_guide_'+GUIDE.key+'_v1';SAVE={ok:{},first:{},best:0};try{SAVE=Object.assign(SAVE,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+  Q=GUIDE.Q;CKQ=GUIDE.CKQ;GL=GUIDE.GL;WI=GUIDE.WI;CHS=GUIDE.chapters.concat([['chk','Checkpoint'],['gl','Glossary']]);
+  Object.keys(Q).forEach(c=>Q[c].forEach(shuffleMC));CKQ.forEach(shuffleMC);
+  buildNav();Object.keys(Q).forEach(c=>renderQs(c));go(GUIDE.chapters[0][0]);}
+
+/* ===================== widgets ===================== */
+/* ---- D1: build a fix ---- */
+const D1={n:2,setN(v){this.n=+v;this.calc();},
+ calc(){const secs=+$('e2a').value;$('e2av').textContent=secs+' s';const n=this.n,sig=8/Math.sqrt(secs),sr=sig*Math.PI/180;
+  chips('e2s',[[1,'1 sensor'],[2,'2 sensors'],[3,'3 sensors']],n,'D1.setN');
+  const E=[360,110],S=[[60,185],[110,35],[210,205]].slice(0,n);const [c,x]=cv('e2c');clear(c,x);
+  S.forEach((s,i)=>{const th=Math.atan2(E[1]-s[1],E[0]-s[0]),L=520;x.fillStyle='rgba(255,180,84,.18)';x.beginPath();x.moveTo(s[0],s[1]);x.lineTo(s[0]+L*Math.cos(th-sr),s[1]+L*Math.sin(th-sr));x.lineTo(s[0]+L*Math.cos(th+sr),s[1]+L*Math.sin(th+sr));x.closePath();x.fill();
+   x.strokeStyle='#ffb454';x.lineWidth=1.5;x.beginPath();x.moveTo(s[0],s[1]);x.lineTo(s[0]+L*Math.cos(th),s[1]+L*Math.sin(th));x.stroke();
+   x.fillStyle='#7fd0e0';x.fillRect(s[0]-5,s[1]-5,10,10);lab(x,'sensor '+(i+1),s[0]+9,s[1]+4,'#7fd0e0','left',10);});
+  const md=S.reduce((a,s)=>a+Math.hypot(E[0]-s[0],E[1]-s[1]),0)/n;let rpx=md*Math.tan(sr)*(n===2?1:0.6);
+  if(n>1){x.strokeStyle='#ff6b6b';x.lineWidth=2;x.beginPath();x.arc(E[0],E[1],Math.max(rpx,4),0,7);x.stroke();}
+  x.fillStyle='#ff6b6b';x.beginPath();x.arc(E[0],E[1],4,0,7);x.fill();lab(x,'you',E[0]+8,E[1]-8,'#ff6b6b','left',11);
+  lab(x,n>1?'fix: you are somewhere inside the red ring':'one sensor: a line, not a position',240,16,'#9db4c8','center',12);
+  read('e2r',[['Sensors',n+''],['Bearing error','±'+sig.toFixed(1)+'°',sig<3?'good':'mid'],['Fix radius',n>1?'about '+(rpx*0.1).toFixed(1)+' km':'no fix yet',n>1?(rpx*0.1<1?'bad':'mid'):'good']]);}};
+/* ---- P1: power and airtime ---- */
+const P1={pw:5,setP(v){this.pw=+v;this.calc();},
+ calc(){const d=+$('e3d').value,n=+$('e3n').value,l=+$('e3l').value;$('e3dv').textContent=d+' km';$('e3nv').textContent=n;$('e3lv').textContent=l+' s';
+  chips('e3p',[[0.5,'0.5 W'],[5,'5 W'],[20,'20 W'],[50,'50 W']],this.pw,'P1.setP');
+  const rng=20*Math.sqrt(this.pw/5),heard=rng>=d,air=n*l,min=air/60,pct=air/36;
+  read('e3r',[['Heard out to',rng.toFixed(0)+' km'],['Sensor at',d+' km'],['Can it hear you?',heard?'yes':'no',heard?'bad':'good'],['Airtime per hour',min.toFixed(1)+' min ('+pct.toFixed(1)+'%)']]);
+  const [c,x]=cv('e3c');clear(c,x);const L=20,W=440,mx=70,px=k=>L+W*k/mx;
+  x.fillStyle='#1c2e3d';x.fillRect(L,70,W,26);x.fillStyle=heard?'#ff6b6b':'#4ec38a';x.fillRect(L,70,W*Math.min(rng,mx)/mx,26);
+  x.fillStyle='#7fd0e0';x.fillRect(px(d)-3,56,6,54);lab(x,'sensor',px(d),50,'#7fd0e0','center',11);lab(x,'you',L+2,62,'#ffb454','left',11);
+  for(let k=0;k<=70;k+=10)lab(x,k+' km',px(k),128,'#7e97ab',k?'center':'left',10);
+  lab(x,heard?'The sensor is inside your reach.':'The sensor is outside your reach.',240,160,heard?'#ff9a9a':'#8be0b4','center',12);}};
+/* ---- X1: posture to mission ---- */
+const X1={k:'def',set(v){this.k=v;this.draw();},
+ M:{def:['Defense','A static posture raises the direction-finding threat, and decisions come less often. This is where stricter EMCON fits best. Plan on mission-type orders, prowords, and a PACE plan for when the net goes quiet.'],
+  sec:['Area security','Less frequent decisions and a static posture. Stricter EMCON fits, and sitting still makes you an easier target for direction finding.'],
+  log:['Logistics site','Fuel points, maintenance collection points, and trains sit still and emit the same way for hours. They are among the most exposed. Strict EMCON fits.'],
+  off:['Offensive combined arms','Resilient command and control across many systems may be worth the added risk. Systems that emit continuously, like JBC-P, help awareness and prevent fratricide when unrestricted.']},
+ draw(){chips('e4m',Object.keys(this.M).map(k=>[k,this.M[k][0]]),this.k,'X1.set');$('e4o').innerHTML='<b>'+this.M[this.k][0]+'.</b> '+this.M[this.k][1];}};
+const Qd={
+ ch1:[
+  {id:'e1a',t:'mc',q:'What does EMCON stand for?',o:['Electronic mission control','Emission control','Emergency communications network','Electromagnetic containment'],a:1,ex:'EMCON is emission control: planned, selective use of your emitters.'},
+  {id:'e1b',t:'mc',q:'Which describes EMCON best?',o:['An off switch for all radios','A dial the leader sets based on the threat and mission','A type of antenna','A kind of encryption'],a:1,ex:'Radio silence is the strict end of a range, not the whole idea.'},
+  {id:'e1c',t:'mc',q:'Which units are among the most exposed to enemy direction finding?',o:['Units on the move every hour','Command posts, field trains, and maintenance collection points that sit still and emit alike for hours','Aircraft only','Units with no radios'],a:1,ex:'Staying in one place with the same emissions makes a steady target.'},
+  {id:'e1d',t:'mc',q:'Why can knowing your frequencies hurt you beyond being located?',o:['It slows your radio.','The enemy can jam or spoof them, especially when you need them most.','It changes your callsign.','It drains the battery.'],a:1,ex:'Detected frequencies can be targeted for jamming or spoofing.'}],
+ ch2:[
+  {id:'e2a',t:'mc',q:'Put the steps in order.',o:['Fix, bearing, detect','Detect, bearing, fix','Bearing, fix, detect','Detect, fix, bearing'],a:1,ex:'A sensor detects, measures a bearing, then lines from two or more sensors cross in a fix.'},
+  {id:'e2b',t:'mc',q:'One sensor hears you. What does it give the enemy?',o:['An exact position','A line of bearing','Your message','Nothing'],a:1,ex:'One sensor gives a line. A second one is needed to cross it.'},
+  {id:'e2c',t:'mc',q:'You transmit longer. What happens to a direction finder’s fix?',o:['It gets looser.','It gets tighter, because there is more signal to measure.','It stays the same.','It is cancelled.'],a:1,ex:'More intercepts and more time on the air tighten the fix.'},
+  {id:'e2d',t:'mc',q:'Can the enemy find you without understanding your message?',o:['No, they must decrypt it first.','Yes, they only need to hear the signal.','Only on HF.','Only with a satellite.'],a:1,ex:'Detecting and measuring a direction needs no understanding of the content.'}],
+ ch3:[
+  {id:'e3a',t:'mc',q:'What does the “C” in E-M-C-O-N stand for?',o:['Camouflage','Communicate concisely','Cipher','Channel'],a:1,ex:'Send only necessary transmissions, plan them, and keep them brief.'},
+  {id:'e3b',t:'num',q:'A 5 W signal is heard out to 20 km in free space. Roughly how far is a 20 W signal heard? (km)',a:40,tol:0.5,u:'km',ex:'Range grows with the square root of power: 20 × √4 = 40 km.'},
+  {id:'e3c',t:'num',q:'You make 6 calls an hour of 30 seconds each. How many minutes on the air per hour?',a:3,tol:0.05,u:'min',ex:'6 × 30 s = 180 s = 3 minutes.'},
+  {id:'e3d',t:'mc',q:'Which is true of HF in the article’s discussion?',o:['It is easy to jam and hard to detect.','It is the least affected by jamming, but its long reach means it can be detected from farther away.','It cannot be detected.','It is the same as VHF.'],a:1,ex:'Frequency choice is a trade between jam resistance and detection range.'},
+  {id:'e3e',t:'mc',q:'Which pair fits “O” and “N”?',o:['Lowest power that works, and avoid predictable patterns','Maximum power, and repeat the same schedule','Orange paint, and no radios','Open nets, and nightly calls'],a:0,ex:'Only the power you need, and no predictable patterns.'}],
+ ch4:[
+  {id:'e4a',t:'mc',q:'What is the main cost of stricter EMCON?',o:['Less control and awareness for leaders','Heavier radios','Higher power use','Longer antennas'],a:0,ex:'Leaders are less able to direct maneuver, pass guidance, and receive updates.'},
+  {id:'e4b',t:'mc',q:'Which posture is the best fit for stricter EMCON?',o:['A fast offensive combined-arms attack','A static defense or logistics site','Every mission equally','None'],a:1,ex:'Static postures raise the DF threat and have less frequent decisions.'},
+  {id:'e4c',t:'mc',q:'Which helps a unit operate under stricter EMCON?',o:['Longer orders','Mission-type orders, prowords, and a PACE plan','More frequent reports','Louder radios'],a:1,ex:'Mission-type orders, prowords, trimmed reporting, and PACE reduce the need to talk.'},
+  {id:'e4d',t:'mc',q:'Why must EMCON go with camouflage, noise, and light discipline?',o:['The enemy has other ways to see and hear you.','It is a paperwork rule.','Radios are visible.','Light changes the frequency.'],a:0,ex:'Radio discipline alone leaves visual, sound, and light signatures.'},
+  {id:'e4e',t:'mc',q:'How can EMCON help an attack?',o:['It cannot.','Through deception and cleaner listening for your own collectors','By boosting power','By making the net louder'],a:1,ex:'Some units can go quiet while others stay loud, and less friendly emission means less clutter.'}]};
+const CKQd=[
+ {id:'k1',ch:'ch1',t:'mc',q:'Which best defines EMCON?',o:['Total silence','Selective, controlled use of your emitters to keep command and control while limiting detection','A frequency band','A jamming method'],a:1,ex:'It is a controlled dial, not only silence.'},
+ {id:'k2',ch:'ch1',t:'mc',q:'Why are static command posts exposed?',o:['They sit still and emit the same way for hours.','They use bigger radios.','They are always near enemy sensors.','They use HF.'],a:0,ex:'Steady emissions from one place make direction finding easy.'},
+ {id:'k3',ch:'ch2',t:'mc',q:'What does the enemy need to build a fix?',o:['Your decrypted message','Lines of bearing from two or more sensors','Your callsign','A satellite'],a:1,ex:'Crossing lines of bearing give a position.'},
+ {id:'k4',ch:'ch2',t:'mc',q:'Short transmissions help because:',o:['They use fewer batteries only.','There are fewer chances to detect you and fewer intercepts to tighten a fix.','They change your frequency.','They disable DF.'],a:1,ex:'Less time on the air means fewer intercepts.'},
+ {id:'k5',ch:'ch3',t:'mc',q:'In E-M-C-O-N, what does “M” ask you to do?',o:['Mask wave propagation','Move often','Mute the net','Mark the map'],a:0,ex:'Use directional antennas, terrain, and short-range setups.'},
+ {id:'k6',ch:'ch3',t:'num',q:'A 5 W signal is heard out to 20 km. At 0.5 W, how far in free space? (km, one decimal)',a:6.3,tol:0.2,u:'km',ex:'20 × √0.1 ≈ 6.3 km.'},
+ {id:'k7',ch:'ch3',t:'num',q:'10 calls an hour at 20 seconds each. How many minutes on the air per hour? (one decimal)',a:3.3,tol:0.1,u:'min',ex:'200 s = 3.3 minutes.'},
+ {id:'k8',ch:'ch3',t:'mc',q:'Always using frequency hopping belongs to which letter?',o:['E','M','C','N'],a:0,ex:'E: emit on the least vulnerable frequencies, and always use hopping modes.'},
+ {id:'k9',ch:'ch4',t:'mc',q:'A fuel point that sits still for days. What posture fits?',o:['Stricter EMCON','No EMCON','Maximum power','Open nets'],a:0,ex:'Static logistics sites are exposed to direction finding.'},
+ {id:'k10',ch:'ch4',t:'mc',q:'Which is a benefit of EMCON beyond protecting yourself?',o:['Deception and easier detection of enemy emitters','Faster radios','Longer antennas','Brighter lights'],a:0,ex:'It supports deception and gives your collectors less clutter.'}];
+const GLd={
+ emcon:['EMCON (emission control)','The selective and controlled use of emitters to keep command and control while limiting detection, mutual interference, and interference with deception.'],
+ emitter:['Emitter','Anything that gives off a signal you could detect, such as a radio, radar, phone, or vehicle system.'],
+ signature:['Signature','What your unit gives off that a sensor can detect: radio, visual, sound, light, heat.'],
+ df:['Direction finding (DF)','Measuring the direction a signal comes from.'],
+ lob:['Line of bearing','The line from one sensor toward a signal source.'],
+ fix:['Fix','A position found where lines of bearing from two or more sensors cross.'],
+ intercept:['Intercept','Detecting and recording an enemy or friendly signal.'],
+ hopping:['Frequency hopping','Jumping rapidly among many frequencies, which makes a signal harder to find and jam than a fixed channel.'],
+ brevity:['Brevity code','A short standard word or phrase that replaces a longer message.'],
+ directional:['Directional antenna','An antenna that favors one direction, so less signal goes toward the enemy.'],
+ offset:['Offset antenna','An antenna placed away from the command post so a direction finder points to it and not to the post.'],
+ airtime:['Airtime','Total time spent transmitting.'],
+ listensil:['Listening silence','A state where radios receive but do not transmit.'],
+ pace:['PACE','Primary, alternate, contingency, and emergency: a plan for how to communicate if the first method fails.'],
+ missionorders:['Mission-type orders','Orders that say what to achieve and why, and leave the how to subordinates, so less radio traffic is needed.'],
+ deception:['Deception','Actions that mislead the enemy about your strength, location, or intent.']};
+const GUIDE={key:'emconguide',chapters:[["ch1","1 What EMCON is"],["ch2","2 How the enemy finds you"],["ch3","3 The five habits"],["ch4","4 Trade-offs and beyond"]],Q:Qd,CKQ:CKQd,GL:GLd,
+ WI:{ch2:()=>D1.calc(),ch3:()=>P1.calc(),ch4:()=>X1.draw()}};
+
+boot();
 </script>
-<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px 0;font-family:var(--mono);font-size:11px;max-width:1500px;margin:0 auto">
-  <span style="color:var(--text-muted)">Related:</span>
-  <a href="../emcon/" style="color:var(--accent);text-decoration:none">&#128225; EMCON &amp; Signature Lab</a>
-  <a href="../ewguide/" style="color:var(--accent);text-decoration:none">&#9889; Electromagnetic Warfare Explained</a>
-  <a href="../sigidguide/" style="color:var(--accent);text-decoration:none">&#128225; Signal Identification Explained</a>
-</div>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <div style="text-align:center;padding:22px 16px 12px;margin-top:0;opacity:.62;font-family:'Nunito Sans',sans-serif">
   <a href="/feedback/" style="color:var(--text-muted);text-decoration:none;border-bottom:1px dotted var(--text-muted);padding-bottom:2px;font-size:11px;letter-spacing:.03em">Report an issue or leave feedback</a>
@@ -198,5 +504,8 @@ if ('serviceWorker' in navigator) {
   }, 3 * 60 * 1000); // 3 minutes of being on the page
 })();
 </script>
+</body>
+</html>
+
 </body>
 </html>

@@ -172,7 +172,7 @@ const TOOLS=[
   {cat:'B2 Physics',nm:'AC Circuit Theory & Impedance',ds:'Ohm\u2019s Law, AC/DC, R/C/L, power factor, impedance & VSWR',file:'physics1',color:'#ffb300'},
   {cat:'B2 Physics',nm:'Wave Behavior & Propagation',ds:'EM fields, reflection/refraction, prop modes, polarization, multipath',file:'Physics2',color:'#00ff88'},
   {cat:'B2 Physics',nm:'Signal Quality & Link Performance',ds:'Harmonics, path loss, signal-to-noise ratio, EMI',file:'physics3',color:'#ff4444'},
-  {cat:'B2 Physics',kind:'guide',nm:'RF Spectrum',ds:'Frequency allocation reference, 3 MHz to 6 GHz: what each band is used for and whether it is taboo, protected, guarded, licensed, or unlicensed',file:'rfspect',color:'#00d4ff',kw:'frequency allocation FCC NTIA ITU band plan taboo protected guarded licensed unlicensed Part 15 HF VHF UHF SHF reference chart who uses what spectrum'},
+  {cat:'B2 Physics',nm:'RF Spectrum',ds:'Frequency allocation reference, 3 MHz to 6 GHz: what each band is used for and whether it is taboo, protected, guarded, licensed, or unlicensed',file:'rfspect',color:'#00d4ff',kw:'frequency allocation FCC NTIA ITU band plan taboo protected guarded licensed unlicensed Part 15 HF VHF UHF SHF reference chart who uses what spectrum'},
   // C BET
   {cat:'C BET',kind:'guide',nm:'Electricity Explained',ds:'Plain-language guide: voltage, current, Ohm\u2019s law, AC/DC & components',file:'betguide',color:'#ffb300'},
   {cat:'C BET',nm:'BET Components',ds:'Diodes, LED circuits, rectifiers & transistors',file:'bet',color:'#ffb300'},
@@ -217,7 +217,7 @@ const TOOLS=[
   {cat:'B2 Physics',nm:'Modulation & Jamming Lab',ds:'See AM, FM, ASK, FSK, BPSK and QPSK carry one message, then watch noise and jammers break each one and test your own digital link',file:'modlab',color:'#00ff88',kw:'modulation jamming AM FM ASK FSK BPSK QPSK BER constellation noise tone jammer digital link'},
   {cat:'C BET',kind:'guide',nm:'Measuring & Troubleshooting Electronics Explained',ds:'Interactive textbook: multimeter, oscilloscope, reading waveforms, and finding faults step by step',file:'testguide',color:'#ffb300',kw:'multimeter oscilloscope probe trigger troubleshooting half-split resistor color code ripple diode test continuity'},
   {cat:'C BET',nm:'Electronics Test Bench',ds:'Probe four circuit boards with a multimeter and a two-channel oscilloscope, then find the injected faults',file:'testbench',color:'#00ff88',kw:'multimeter oscilloscope test bench voltage divider rectifier RC filter 555 timer troubleshooting fault'},
-  {cat:'E EW Theory',kind:'guide',nm:'EMCON Explained',ds:'Plain-language guide: what emission control is, how the enemy finds you, and the habits that shrink your signature',file:'emconguide',color:'#ff4444',kw:'EMCON emission control signature direction finding OPSEC listening silence directional antenna'},
+  {cat:'E EW Theory',kind:'guide',nm:'EMCON Explained',ds:'Interactive textbook: what emission control is, how the enemy finds you, the five E-M-C-O-N habits, and the trade-offs',file:'emconguide',color:'#ff4444',kw:'EMCON emission control signature direction finding OPSEC listening silence directional antenna'},
   {cat:'E EW Theory',nm:'EMCON & Signature Lab',ds:'Run a command post: set what each emitter does, pick a site, and see how well enemy direction finders can locate you',file:'emcon',color:'#00ff88',kw:'EMCON signature command post emitter direction finding OPSEC risk intercept terrain masking'},
   {cat:'E EW Theory',kind:'guide',nm:'GNSS & Navigation Explained',ds:'Interactive textbook: how satellites give position and time, DOP and errors, MGRS and the DAGR, jamming, spoofing and fall-backs',file:'gnssguide',color:'#bb88ff',kw:'GPS GNSS pseudorange DOP MGRS datum WGS84 DAGR jamming spoofing meaconing dead reckoning PACE navigation'},
   {cat:'E EW Theory',nm:'GNSS Fundamentals Lab',ds:'Drag a receiver and solve a fix, watch satellite geometry and DOP, and see why a faint signal from space is easy to jam',file:'gnsslab',color:'#00ff88',kw:'GNSS GPS trilateration DOP geometry jamming denial range radio horizon anti-jam sky plot'},
@@ -406,6 +406,13 @@ const ARMY=[
   "file": "army/tlp-guide/",
   "kind": "guide",
   "kw": "troop leading procedures mission planning sequence order of operations METT-TC TLP warning order WARNORD METT-TC tentative plan reconnaissance rehearsal PCC PCI one third two thirds"
+ },
+ {
+  "nm": "The Operation Order Explained",
+  "ds": "Interactive textbook: the five paragraphs of the order, writing a mission and a commander's intent, planning the timeline, and delivering it",
+  "file": "opordguide/",
+  "kind": "guide",
+  "kw": "OPORD operation order five paragraph SMESC warning order WARNORD FRAGORD mission statement commander intent end state coordinating instructions PACE back-brief timeline one-third two-thirds"
  },
  {
   "nm": "TLP Planner",
@@ -662,6 +669,9 @@ const LEARN=[
     url:'https://www.khanacademy.org/math'},
 
   // B2 Physics
+  {cat:'B2 Physics', nm:'PhET Interactive Simulations', tag:'FREE SIMULATOR', color:'#00ff88',
+   ds:'Free, browser-based science and math simulations from the University of Colorado Boulder. Good picks for this course: Wave Interference, Radio Waves & Electromagnetic Fields, and Circuit Construction Kit — no account needed.',
+   url:'https://phet.colorado.edu/en/simulations'},
   {cat:'B2 Physics', nm:'Technician Class', tag:'HAM', color:'#00ff88',
     ds:'Entry-level FCC license \u2014 35-question exam, no Morse code required. Grants VHF/UHF privileges plus limited HF access. A strong hands-on complement to this course\u2019s RF/antenna theory. Free, always-current practice tests pulled straight from the active FCC question pool.',
     url:'https://hamstudy.org/'},
@@ -684,6 +694,9 @@ const LEARN=[
     url:'https://www.youtube.com/channel/UC2DjFE7Xf11URZqWBigcVOQ'},
 
   // D Networking
+  {cat:'D Networking', nm:'SIAM Wireless — Wi-Fi Learning Lab', tag:'FREE SIMULATOR', color:'#00d4ff',
+   ds:'Free interactive Wi-Fi tools for private and educational use: channel map, MCS data-rate index, multipath simulator, frame decoder, and topics from RF basics to Wi-Fi 7, security, and roaming. Pairs with the Wi-Fi Explained guide.',
+   url:'https://learnwifi.siamwireless.com/lab'},
   {cat:'D Networking', nm:'CompTIA A+', tag:'CERT', color:'#00d4ff',
     ds:'Foundational IT hardware, software & troubleshooting certification \u2014 a common first step before Network+ or Security+.',
     url:'https://www.comptia.org/certifications/a'},
@@ -712,6 +725,9 @@ const LEARN=[
     url:'https://www.cwnp.com/certifications/cwna/'},
 
   // E EW Theory
+  {cat:'E EW Theory', nm:'Waveshed — Line-of-Sight & RF Propagation', tag:'FREE SIMULATOR', color:'#ff4444',
+   ds:'Free in-browser map tool: place a transmitter anywhere, set antenna heights and range, and see what terrain is visible (line of sight) or how far a signal stays strong. Great for terrain masking and EMCON siting. No signup.',
+   url:'https://waveshed.io/simulate'},
   {cat:'E EW Theory', nm:'CemaXecuter \u2014 Linux & SDR', tag:'YOUTUBE', color:'#ff4444',
     ds:'Practical, hands-on videos on Linux and software-defined radio (SDR) \u2014 the same technology CEMA/EW operations lean on for spectrum monitoring, signal capture, and flexible tactical radios. A strong bridge between this course\u2019s theory and real SDR tooling.',
     url:'https://www.youtube.com/@cemaxecuter'},
@@ -807,7 +823,7 @@ const WRAVEN_MODULES=[
 function renderArmy(){
   const GROUPS=[
     {label:'Land Navigation', files:['army/land-nav-guide/','army/land-nav/']},
-    {label:'Troop Leading Procedures & OPORD', files:['army/tlp-guide/','army/tlp-planner/','opord']},
+    {label:'Troop Leading Procedures & OPORD', files:['army/tlp-guide/','opordguide/','army/tlp-planner/','opord']},
     {label:'MDMP', files:['army/mdmp-guide/','army/mdmp/']},
     {label:'WTBD & FOOM', files:['army/wtbd/']},
     {label:'OAKOC', files:['army/oakoc-guide/','army/oakoc/']},
