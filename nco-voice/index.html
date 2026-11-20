@@ -11,7 +11,7 @@
   --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
   --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
   --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;
-  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --text:#ffffff;--text-dim:#b6c8d8;--text-bright:#e8f4ff;
   --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
 }
 [data-theme="light"]{
@@ -50,6 +50,9 @@ textarea{resize:vertical;min-height:110px;font-family:var(--display)}
 .thanks p{font-family:var(--mono);font-size:13px;color:var(--text-dim);line-height:1.6}
 
 .wrap{max-width:680px}
+::placeholder{color:#8fa3b5;opacity:1}
+[data-theme="light"] ::placeholder{color:#6b7f90}
+.card .sub,.hint{font-size:12.5px}
 .card h3{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;margin:30px 0 4px;padding-top:18px;border-top:1px solid var(--border)}
 .card h3:first-of-type{margin-top:6px;border-top:0;padding-top:0}
 .hint{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);line-height:1.6;margin:2px 0 4px}
@@ -70,6 +73,8 @@ textarea{resize:vertical;min-height:110px;font-family:var(--display)}
 </header>
 
 <div class="wrap">
+  <a class="back-link" href="/">&larr; Back to E-WIT</a>
+
   <div class="card">
     <div id="formView">
       <h2>Graduate Feedback From Your Unit</h2>
@@ -133,6 +138,9 @@ textarea{resize:vertical;min-height:110px;font-family:var(--display)}
       <h2>Thank you!</h2>
       <p>Your feedback was sent to the schoolhouse. We read every response.</p>
     </div>
+  </div>
+  <div style="text-align:center;padding:22px 16px 6px;opacity:.85">
+    <a href="/feedback/" style="color:var(--text-dim);text-decoration:none;border-bottom:1px dotted var(--text-dim);padding-bottom:2px;font-size:12px;letter-spacing:.03em;font-family:var(--mono)">Report an issue or leave feedback</a>
   </div>
 </div>
 
