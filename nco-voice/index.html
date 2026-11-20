@@ -1,145 +1,170 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Graduate Feedback From Your Unit</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Unit Feedback — E-WIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
 :root{
-  --bg-page:#f7f6f2;--bg-card:#ffffff;--bg-card-hover:#fafaf8;
-  --border:#E8E6DF;--border-hover:#B4B2A9;
-  --text-primary:#2C2C2A;--text-secondary:#5F5E5A;--text-muted:#888780;
-  --hero-bg:#0e3b4d;--hero-eyebrow:#7fd0e0;--hero-sub:#b3dfe9;
-  --table-head-bg:#F1EFE8;--table-row-hover:#FAFAF8;--table-border:#E8E6DF;
-  --toggle-bg:rgba(255,255,255,0.15);
-  --accent:#1499b8;--accent-soft:#dcf1f6;
+  --bg:#0a0c0f;--panel:#0f1318;--border:#1e2530;--border-bright:#2e3f52;
+  --green:#00ff88;--green-dark:#003322;--amber:#ffb300;--amber-dim:#cc8800;--amber-dark:#331e00;
+  --cyan:#00d4ff;--cyan-dim:#0099cc;--cyan-dark:#001a22;--red:#ff4444;
+  --text:#ffffff;--text-dim:#6a8090;--text-bright:#e8f4ff;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;
 }
-[data-theme="dark"]{
-  --bg-page:#1a1917;--bg-card:#26251f;--bg-card-hover:#2e2d27;
-  --border:#3a3830;--border-hover:#5a5850;
-  --text-primary:#f0ede6;--text-secondary:#ffffff;--text-muted:#706d66;
-  --hero-bg:#0a2530;--hero-eyebrow:#5cc0d4;--hero-sub:#8fbfd0;
-  --table-head-bg:#222119;--table-row-hover:#2e2d27;--table-border:#3a3830;
-  --toggle-bg:rgba(255,255,255,0.08);
-  --accent:#2ab8dc;--accent-soft:#0a2a32;
+[data-theme="light"]{
+  --bg:#f0f2f5;--panel:#ffffff;--border:#d0d8e0;--border-bright:#a0b0c0;
+  --green:#007744;--green-dark:#d0ffe8;--amber:#cc7700;--amber-dim:#aa5500;--amber-dark:#fff3d0;
+  --cyan:#0077aa;--cyan-dim:#005588;--cyan-dark:#d0f0ff;--red:#cc2222;
+  --text:#1a2a3a;--text-dim:#4a6070;--text-bright:#000000;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito Sans',sans-serif;background:var(--bg-page);color:var(--text-primary);min-height:100vh;transition:background .3s,color .3s;line-height:1.6}
-.hero{background:var(--hero-bg);color:#fff;padding:2.6rem 2rem 1.8rem;text-align:center;position:relative;transition:background .3s}
-.hero-eyebrow{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-eyebrow);margin-bottom:.6rem}
-.hero h1{font-family:'Nunito',sans-serif;font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:.8rem}
-.hero h1 span{color:var(--hero-eyebrow)}
-.hero-sub{font-size:1rem;color:var(--hero-sub);max-width:560px;margin:0 auto;line-height:1.55}
-.theme-toggle{position:absolute;top:1.1rem;right:1.1rem;background:var(--toggle-bg);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px 6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700}
-.qc{position:absolute;top:1.25rem;left:1.25rem;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 12px;max-width:280px;text-align:left;line-height:1.4}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-size:16px;min-height:100vh;transition:background .2s,color .2s}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:9999}
+header{border-bottom:1px solid var(--border-bright);padding:16px 28px;background:var(--panel);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.mil-badge{font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid var(--amber-dim);padding:3px 8px;letter-spacing:2px;background:var(--amber-dark);margin-right:12px}
+h1{display:inline;font-size:19px;font-weight:700;color:var(--green);letter-spacing:2px}
+.theme-btn{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--border-bright);color:var(--text-dim);padding:7px 14px;cursor:pointer;letter-spacing:1px}
+.wrap{max-width:560px;margin:0 auto;padding:40px 24px 60px}
+.back-link{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--text-dim);text-decoration:none;margin-bottom:20px;letter-spacing:.5px}
+.back-link:hover{color:var(--green)}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:28px 26px}
+.card h2{font-size:22px;color:var(--text-bright);margin-bottom:8px}
+.card .sub{font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:22px}
+label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;margin-top:16px}
+label:first-of-type{margin-top:0}
+select,textarea,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border-bright);color:var(--text-bright);
+  padding:10px 12px;border-radius:4px;font-family:var(--display);font-size:15px}
+select:focus,textarea:focus,input[type=text]:focus{outline:none;border-color:var(--green)}
+textarea{resize:vertical;min-height:110px;font-family:var(--display)}
+.submit-btn{width:100%;background:var(--green-dark);border:1px solid var(--green);color:var(--green);
+  padding:12px;border-radius:5px;font-family:var(--mono);font-size:13px;letter-spacing:1px;cursor:pointer;margin-top:20px}
+.submit-btn:hover{background:var(--green);color:#052012}
+.err{color:var(--red);font-size:12.5px;font-family:var(--mono);margin-top:8px;min-height:16px}
+.thanks{display:none;text-align:center;padding:20px 0}
+.thanks.show{display:block}
+.thanks .icon{font-size:40px;margin-bottom:12px}
+.thanks h2{color:var(--green);margin-bottom:10px}
+.thanks p{font-family:var(--mono);font-size:13px;color:var(--text-dim);line-height:1.6}
 
-
-.wrap{max-width:820px;margin:0 auto;padding:1.8rem 1.25rem 3rem}
-h2{font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:800;margin:2rem 0 .6rem}
-.lede{color:var(--text-secondary);margin-bottom:1rem}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:.6rem 0 0}
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem}
-.card .n{font-family:'Nunito',sans-serif;font-weight:800;color:var(--accent);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase}
-.card h3{font-family:'Nunito',sans-serif;font-size:1.05rem;margin:.25rem 0 .35rem}
-.card p{font-size:.92rem;color:var(--text-secondary)}
-.btn{display:inline-block;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;text-decoration:none;border-radius:999px;padding:.7rem 1.4rem;border:0;cursor:pointer;font-size:1rem}
-.btn.alt{background:transparent;color:var(--accent);border:2px solid var(--accent)}
-.formbox{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-top:.8rem}
-.formbox iframe{width:100%;height:1500px;border:0;border-radius:8px;background:#fff}
-.notice{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:.8rem 1rem;font-size:.92rem;margin:.8rem 0}
-.warn{background:#fff4d6;border-left:4px solid #e0a100;color:#4a3800}
-[data-theme="dark"] .warn{background:#3a3010;color:#f1dfa0}
-details{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;margin:.5rem 0}
-summary{cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700}
-details ul{margin:.6rem 0 .2rem 1.2rem;color:var(--text-secondary);font-size:.92rem}
-.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:.8rem}
-.foot{text-align:center;color:var(--text-muted);font-size:.8rem;margin-top:2.2rem}
+.wrap{max-width:680px}
+.card h3{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;margin:30px 0 4px;padding-top:18px;border-top:1px solid var(--border)}
+.card h3:first-of-type{margin-top:6px;border-top:0;padding-top:0}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);line-height:1.6;margin:2px 0 4px}
+.warn{border:1px solid var(--amber-dim);background:var(--amber-dark);color:var(--amber);font-family:var(--mono);font-size:12px;line-height:1.6;padding:10px 12px;border-radius:4px;margin-bottom:20px}
+.grid{width:100%;border-collapse:collapse;margin-top:8px}
+.grid td{padding:5px 0;font-size:15px;color:var(--text-bright);border-bottom:1px solid var(--border)}
+.grid td:last-child{width:120px;text-align:right}
+.grid select{width:110px;padding:6px 8px}
+.chk{text-transform:none;letter-spacing:0;font-family:var(--display);display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:15px;color:var(--text-bright);cursor:pointer}
+.chk input{margin-top:4px;accent-color:var(--green)}
+.mail{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:12px;letter-spacing:1px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:8px 14px;border-radius:4px;text-decoration:none}
 </style>
 </head>
 <body>
-<header class="hero">
-  <button class="theme-toggle" onclick="toggleTheme()"><span id="t-icon">&#127769;</span><span id="t-label">Dark mode</span></button>
-  <p class="hero-eyebrow">17E AIT &middot; Fort Gordon</p>
-  <h1>Tell the Schoolhouse <span>How Our Graduates Are Doing</span></h1>
-  <p class="hero-sub">You see the Soldiers we send you every day. Five minutes of your honest feedback tells us what to keep, what to fix, and what to add.</p>
+<header>
+  <div><span class="mil-badge">MIL-SPEC</span><h1>E-WIT</h1></div>
+  <button class="theme-btn" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'dark':'light'">&#9728; THEME</button>
 </header>
 
-<main class="wrap">
-  <h2>What we are asking</h2>
-  <p class="lede">This is for NCOs who supervise or work with 17E Soldiers fresh out of AIT. Short answers are fine. Specifics help the most.</p>
-  <div class="cards">
-    <div class="card"><div class="n">1 &middot; Keep doing</div><h3>What they know that is good</h3><p>Skills and habits your new Soldiers arrive with that make your job easier.</p></div>
-    <div class="card"><div class="n">2 &middot; Fix or add</div><h3>What they do not know but you wish they did</h3><p>Gaps you had to teach on arrival, or equipment and tasks we do not cover.</p></div>
-    <div class="card"><div class="n">3 &middot; Reach back</div><h3>Stay in touch</h3><p>Ask for a call, a question answered, or an instructor visit to your unit.</p></div>
-  </div>
+<div class="wrap">
+  <div class="card">
+    <div id="formView">
+      <h2>Graduate Feedback From Your Unit</h2>
+      <p class="sub">For NCOs who work with 17E Soldiers fresh out of AIT. Tell the schoolhouse what your Soldiers do well, what they are missing, and how to reach you. About 5 minutes. This goes straight to the instructor.</p>
+      <div class="warn">UNCLASSIFIED ONLY. No classified information, CUI, Soldier names or personal details, or operational details of your unit. Use general terms.</div>
 
-  <h2>The feedback form</h2>
-  <div class="notice warn"><b>Unclassified only.</b> Do not enter classified information, CUI, personal details about a Soldier (names, SSNs, medical, or counseling information), or operational details of your unit. Describe skills and tasks in general terms.</div>
+      <h3>About you</h3>
+      <label for="fUnit">Unit</label>
+      <input type="text" id="fUnit" placeholder="e.g., battalion or company">
+      <label for="fRole">Your role (MOS and position) *</label>
+      <input type="text" id="fRole" placeholder="e.g., 17E, team leader">
+      <label for="fTenure">How long have you worked with 17Es? *</label>
+      <select id="fTenure"><option value="">Select</option><option>under 6 months</option><option>6-12 months</option><option>1-3 years</option><option>Over 3 Years</option></select>
+      <label for="fCount">About how many Soldiers have you received in the past 12 months? *</label>
+      <select id="fCount"><option value="">Select</option><option>1-2</option><option>3-5</option><option>6-10</option><option>More than 10</option></select>
+      <label for="fName">Name and email *</label>
+      <input type="text" id="fName" placeholder="Name required, email optional">
 
-  <div class="formbox" id="formbox">
-    <div id="formhost"></div>
-    <div class="row">
-      <a class="btn" id="openform" href="#" target="_blank" rel="noopener">Open the form in a new tab</a>
+      <h3>How are they doing?</h3>
+      <label for="fScale">How prepared are new 17E Soldiers when they arrive? (1 weak, 5 strong)</label>
+      <p class="hint">Think about: Basic electronics / Radio and RF fundamentals / Networking / EW concepts (ES, EA, EP) / SDR and spectrum tools / Troubleshooting / Army basics and warrior tasks / Land navigation and GPS / Writing reports and briefing / Initiative and professionalism</p>
+      <select id="fScale"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      <label for="fElab">Elaborate</label>
+      <textarea id="fElab" placeholder="Which areas are strongest or weakest..."></textarea>
+      <label for="fWell">What do your new 17E Soldiers do well?</label>
+      <textarea id="fWell" placeholder="Skills and habits that make your job easier..."></textarea>
+      <label for="fExample">Describe one task a recent graduate handled well when they arrived.</label>
+      <textarea id="fExample"></textarea>
+
+      <h3>What they are missing</h3>
+      <label for="fTop3">Pick the top three things you wish they knew on arrival.</label>
+      <p class="hint">Choose from: Basic electronics / Radio and RF fundamentals / Networking / EW concepts (ES, EA, EP) / SDR and spectrum tools / Troubleshooting / Army basics and warrior tasks / Land navigation and GPS / Writing reports and briefing / Initiative and professionalism</p>
+      <textarea id="fTop3"></textarea>
+      <label for="fFirst">What did you have to teach them first?</label>
+      <textarea id="fFirst"></textarea>
+      <label for="fWish">What do they not know that you wish they did?</label>
+      <textarea id="fWish" placeholder="Anything we should add or teach better..."></textarea>
+      <label for="fEquip">Systems, tools, or tasks your unit uses that we should be teaching. (Unclassified)</label>
+      <textarea id="fEquip" placeholder="General terms only..."></textarea>
+
+      <h3>Reach back</h3>
+      <label for="fContact">May the schoolhouse contact you about your answers?</label>
+      <select id="fContact"><option value="">Select</option><option>Yes</option><option>No</option></select>
+      <p class="hint" style="margin-top:14px">I would like:</p>
+      <div id="want">
+        <label class="chk"><input type="checkbox" name="want" value="Call"> A call or VTC with an instructor</label>
+        <label class="chk"><input type="checkbox" name="want" value="Visit"> An instructor visit or brief at my unit</label>
+        <label class="chk"><input type="checkbox" name="want" value="Question"> An answer to a question</label>
+        <label class="chk"><input type="checkbox" name="want" value="Nothing"> Nothing right now</label>
+      </div>
+      <label for="fOther">Anything Else?</label>
+      <textarea id="fOther"></textarea>
+      <a class="mail" id="mailbtn" href="#" style="display:none">&#9993; EMAIL THE SCHOOLHOUSE</a>
+
+      <div class="err" id="fbErr"></div>
+      <button class="submit-btn" onclick="submitFeedback()">SEND FEEDBACK</button>
     </div>
-    <p style="font-size:.85rem;color:var(--text-muted);margin-top:.7rem">If the form will not open on your network, try it on a personal device or email us instead (below).</p>
+
+    <div class="thanks" id="thanksView">
+      <div class="icon">&#9989;</div>
+      <h2>Thank you!</h2>
+      <p>Your feedback was sent to the schoolhouse. We read every response.</p>
+    </div>
   </div>
+</div>
 
-  <details>
-    <summary>Preview the questions (about 5 minutes)</summary>
-    <ul>
-      <li><b>About you.</b> Unit, your role, how long you have worked with 17E Soldiers, how many you have received in the past year. Name and email are optional.</li>
-      <li><b>What they do well.</b> Rate new arrivals from 1 to 5 on topics such as basic electronics, radio and RF fundamentals, networking, EW concepts, SDR and other tools, troubleshooting, Army basics, navigation, reports, and initiative. Then tell us in your own words what they do best.</li>
-      <li><b>What they are missing.</b> Pick the top three things you wish they knew on arrival, and tell us what you had to teach them first.</li>
-      <li><b>Your equipment.</b> Systems or tasks your unit uses that we should be teaching.</li>
-      <li><b>Reach back.</b> Whether we may contact you, whether you want a call or visit, and any other comments.</li></ul>
-  </details>
-
-  <h2>Reach back</h2>
-  <p class="lede">Prefer to talk or write? Questions about a Soldier&rsquo;s training, a topic you want covered, or a visit to your unit are all welcome.</p>
-  <div class="row">
-    <a class="btn alt" id="mailbtn" href="#">Email the schoolhouse</a>
-  </div>
-  <p style="font-size:.85rem;color:var(--text-muted);margin-top:.6rem" id="mailnote"></p>
-
-  <h2>What happens to your feedback</h2>
-  <p class="lede">Instructors read the responses and use them to adjust what we teach and how. Comments are summarized by theme, so no one is quoted by name without asking first.</p>
-
-  <p class="foot">UNCLASSIFIED &middot; 17E AIT unit feedback &middot; This page is an instructor-run training aid, not an official Army form.</p>
-</main>
-
+<iframe name="feedbackFrame" id="feedbackFrame" style="display:none" title="submission"></iframe>
 <script>
-/* ======= EDIT THESE THREE LINES ======= */
-var FORM_URL = "https://forms.gle/bUUgjrJWhXSrZ7gE9";   /* Google Form share link */
-var FORM_EMBED_URL = "https://docs.google.com/forms/d/e/1FAIpQLScI8THDxqJ19PGHNqecMzHzSQp_H7KCXgWCPNfQcesVAJ0vYA/viewform";      /* optional: full https://docs.google.com/forms/d/e/.../viewform link, to show the form inside this page */
-var REACHBACK_EMAIL = "";     /* the inbox you want NCOs to write to */
-var UNIT_LINE = "17E AIT, Fort Gordon";
-/* ====================================== */
+/* ======= SETTINGS ======= */
+var REACHBACK_EMAIL = "";   /* inbox for the email button; leave blank to hide it */
+var FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLScI8THDxqJ19PGHNqecMzHzSQp_H7KCXgWCPNfQcesVAJ0vYA/formResponse";
+var E = {unit:"entry.1932650839",role:"entry.1315841000",tenure:"entry.1139190956",count:"entry.667613183",name:"entry.753183096",
+  scale:"entry.1104997705",elab:"entry.2009863570",well:"entry.1427799501",example:"entry.1797828174",top3:"entry.151719721",first:"entry.342074630",
+  wish:"entry.204889818",equip:"entry.198567788",contact:"entry.816511057",want:"entry.2023824487",other:"entry.277198855"};
+/* ======================== */
 (function(){
-  var host=document.getElementById('formhost'),open=document.getElementById('openform');
-  if(FORM_URL){
-    open.href=FORM_URL;
-    if(FORM_EMBED_URL){
-      var u=FORM_EMBED_URL+(FORM_EMBED_URL.indexOf('?')>-1?'&':'?')+'embedded=true';
-      host.innerHTML='<iframe title="Graduate feedback form" src="'+u+'" loading="lazy">Loading&hellip;</iframe>';
-    }else{
-      host.innerHTML='<p style="margin:.2rem 0 .4rem"><b>Ready? It takes about 5 minutes.</b> The form opens in a new tab.</p>';
-      open.textContent='Open the feedback form';
-    }
-  }else{
-    host.innerHTML='<div class="notice"><b>Form link not set yet.</b> Paste the Google Form link into <code>FORM_URL</code> at the bottom of this file.</div>';
-    open.style.display='none';
-  }
-  var m=document.getElementById('mailbtn'),n=document.getElementById('mailnote');
-  if(REACHBACK_EMAIL){
-    var body='Unit:\nMy role:\n\nWhat your Soldiers do well:\n\nWhat they do not know that I wish they did:\n\nI would like: (a call / an instructor visit / a question answered)\n\nUnclassified information only.';
-    m.href='mailto:'+REACHBACK_EMAIL+'?subject='+encodeURIComponent('Graduate feedback from my unit')+'&body='+encodeURIComponent(body);
-    n.textContent='Opens your email app with a short template. Unclassified information only.';
-  }else{m.style.display='none';n.textContent='Reach-back email not set yet (REACHBACK_EMAIL at the bottom of this file).';}
+  if(REACHBACK_EMAIL){var m=document.getElementById('mailbtn');m.style.display='inline-block';
+    m.href='mailto:'+REACHBACK_EMAIL+'?subject='+encodeURIComponent('Graduate feedback from my unit')+'&body='+encodeURIComponent('Unit:\nMy role:\n\nWhat your Soldiers do well:\n\nWhat they do not know that I wish they did:\n\nUnclassified information only.');}
 })();
-function toggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('t-icon').textContent=d?'\u{1F319}':'\u2600\uFE0F';document.getElementById('t-label').textContent=d?'Dark mode':'Light mode';}
+function v(id){return document.getElementById(id).value.trim();}
+function submitFeedback(){
+  var err=document.getElementById('fbErr');
+  if(!v('fRole')||!v('fTenure')||!v('fCount')||!v('fName')){err.textContent='Please fill in the starred fields.';return;}
+  err.textContent='';
+  var p=new URLSearchParams();
+  function put(k,val){if(k&&val)p.append(k,val);}
+  put(E.unit,v('fUnit'));put(E.role,v('fRole'));put(E.tenure,v('fTenure'));put(E.count,v('fCount'));put(E.name,v('fName'));
+  put(E.scale,v('fScale'));put(E.elab,v('fElab'));put(E.well,v('fWell'));put(E.example,v('fExample'));put(E.top3,v('fTop3'));put(E.first,v('fFirst'));
+  put(E.wish,v('fWish'));put(E.equip,v('fEquip'));put(E.contact,v('fContact'));
+  document.querySelectorAll('input[name=want]:checked').forEach(function(c){put(E.want,c.value);});
+  put(E.other,v('fOther'));
+  document.getElementById('feedbackFrame').src=FORM_RESPONSE_URL+'?'+p.toString()+'&submit=Submit';
+  if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:'unit-feedback-submitted',title:'Unit Feedback Submitted',event:true});}
+  document.getElementById('formView').style.display='none';document.getElementById('thanksView').classList.add('show');
+}
 </script>
 <script data-goatcounter="https://ewit-training.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
